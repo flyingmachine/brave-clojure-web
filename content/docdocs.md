@@ -59,3 +59,8 @@ helpers.
 ## TODO
 
 * Explain scss layout
+* More HOWTO on doing less obvious stuff
+    * Syntax highlighting
+        * Markdown
+        * Textile
+    * Explain when a user would want to look at nanoc docs
