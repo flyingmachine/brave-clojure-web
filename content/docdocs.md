@@ -4,7 +4,7 @@ kind: page
 toc: true
 ---
 
-# Doc Template Detailed Documentation
+# Detailed Documentation
 
 This is a work in progress.
 
