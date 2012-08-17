@@ -3,8 +3,8 @@
   %head
     %meta{:charset => "utf-8"}/
     %title #{@item[:title]}
-    %link{:href => "/stylesheets/documentation.css", :media => "screen", :rel => "stylesheet", :type => "text/css"}/
-    %link{:href => "/stylesheets/pygments.css", :media => "screen", :rel => "stylesheet", :type => "text/css"}/
+    %link{:href => relative_path_to("/stylesheets/documentation.css"), :media => "screen", :rel => "stylesheet", :type => "text/css"}/
+    %link{:href => relative_path_to("/stylesheets/pygments.css"), :media => "screen", :rel => "stylesheet", :type => "text/css"}/
     
     / you don't need to keep this, but it's cool for stats!
     %meta{:content => "nanoc #{Nanoc::VERSION}", :name => "generator"}/
@@ -19,11 +19,11 @@
           %input#tipue_search_input{:name => "q", :type => "search", :placeholder => "Search"}
         %ul
           %li
-            %a{:href => "/"} Home
+            %a{:href => relative_path_to("/")} Home
           %li
-            %a{:href => "/quickstart"} Quick Start Guide
+            %a{:href => relative_path_to("/quickstart")} Quick Start Guide
           %li
-            %a{:href => "/docdocs"} Detailed Documentation
+            %a{:href => relative_path_to("/docdocs")} Detailed Documentation
 
     .page
       .content
@@ -31,7 +31,6 @@
         .secondary
           #toc.nav
     %script{ :src => "http://code.jquery.com/jquery-1.7.2.min.js" }
-    %script{ :src => "/javascripts/underscore.js" }
-    %script{ :src => "/javascripts/scrollspy.js" }
-    - # %script{ :src => "/javascripts/jqtoc.js" }
-    %script{ :src => "/javascripts/application.js" }
+    %script{ :src => relative_path_to("/javascripts/underscore.js") }
+    %script{ :src => relative_path_to("/javascripts/scrollspy.js") }
+    %script{ :src => relative_path_to("/javascripts/application.js") }

@@ -15,8 +15,8 @@ That's where this site comes in. The site itself is built using
 Doc Template ([git](https://github.com/flyingmachine/doctemplate)), an
 open-source tool which lets you focus on your content while allowing
 you to change the presentation easily. Of course,
-[detailed documentation](/docdocs) is included. There's also a
-[quick start guide](/quickstart) for the impatient.
+[detailed documentation](docdocs) is included. There's also a
+[quick start guide](quickstart) for the impatient.
 
 The site also contains an evolving set of guidelines for writing good
 documentation.
