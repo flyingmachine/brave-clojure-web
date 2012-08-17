@@ -1,0 +1,29 @@
+!!!
+%html{:lang => "en"}
+  %head
+    %meta{:charset => "utf-8"}/
+    %title Whoops
+    %link{:href => "/stylesheets/home.css", :media => "screen", :rel => "stylesheet", :type => "text/css"}/
+    %link{:href => "/stylesheets/pygments.css", :media => "screen", :rel => "stylesheet", :type => "text/css"}/
+    
+    / you don't need to keep this, but it's cool for stats!
+    %meta{:content => "nanoc #{Nanoc::VERSION}", :name => "generator"}/
+  %body{"data-spy" => "scroll", "data-target" => ".secondary"}
+    %header{:role => "banner"}
+      .name
+        Whoops:
+        .subname Log Anything
+      
+      %nav
+        %form#search{:action => "/search/"}
+          %input#tipue_search_input{:name => "q", :type => "search", :placeholder => "Search"}
+        %ul
+          %li
+            %a{:href => "/"} Home
+          %li
+            %a{:href => "/whoops-server"} Whoops Server
+          %li
+            %a{:href => "/whoops-logger"} Whoops Logger
+    .page
+      .content
+        .main= yield

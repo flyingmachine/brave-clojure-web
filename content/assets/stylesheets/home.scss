@@ -1,0 +1,14 @@
+// grid variables -----------------------------------------------------
+$total-columns: 9;             // a 12-column grid
+
+@import "_base.scss";
+
+
+h2 {
+  @include adjust-font-size-to(30px);
+  @include leader(1, 30px);
+}
+
+h2:first-child {
+  margin-top:0;
+}

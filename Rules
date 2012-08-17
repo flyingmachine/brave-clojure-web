@@ -1,0 +1,87 @@
+#!/usr/bin/env ruby
+# -*- coding: utf-8 -*-
+
+# A few helpful tips about the Rules file:
+#
+# * The string given to #compile and #route are matching patterns for
+#   identifiers--not for paths. Therefore, you can’t match on extension.
+#
+# * The order of rules is important: for each item, only the first matching
+#   rule is applied.
+#
+# * Item identifiers start and end with a slash (e.g. “/about/” for the file
+#   “content/about.html”). To select all children, grandchildren, … of an
+#   item, use the pattern “/about/*/”; “/about/*” will also select the parent,
+#   because “*” matches zero or more characters.
+require "rubygems"
+require "bundler/setup"
+Bundler.require(:default)
+
+require "lib/rule_helper"
+require "lib/filters/toc_filter"
+
+Compass.add_project_configuration 'compass/config.rb'
+
+compile '/assets/javascripts/tipuesearch-data/' do
+  filter :erb
+end
+
+compile '*' do
+  unless item.identifier.include?("#") # emacs tmp file
+    if item.binary?
+      # don’t filter binary items
+    elsif item.attributes[:draft]
+      # don't output drafts
+    else
+      item_layout = item.attributes[:toc] ? 'default' : 'no-toc'
+      
+      case item.attributes[:filename]
+      when /haml$/ then filter :haml; layout item_layout
+      when /textile$/ then filter :redcloth; layout item_layout
+      when /(markdown|md)$/ then filter :redcarpet, :options => {:fenced_code_blocks => true}, :renderer => RedcarpetSyntaxHighlighter; layout item_layout
+        
+      when /coffee$/ then filter :coffeescript;
+      when /scss$/ then filter(:sass, Compass.sass_engine_options)
+      end
+
+      if item.attributes[:toc]
+        filter :toc
+      end
+    end
+  end
+end
+
+route '/assets/javascripts/*' do
+  unless item.identifier.include?("#") # emacs tmp file
+    "/javascripts/#{basename(item.attributes[:filename])}.js"
+  end
+end
+
+route '/assets/stylesheets/*' do
+  unless item.identifier.include?("#") # emacs tmp file
+    "/stylesheets/#{basename(item.attributes[:filename])}.css" 
+  end
+end
+
+route '*' do
+  if item.binary?
+    # Write item with identifier /foo/ to /foo.ext
+    item.identifier.chop + '.' + item[:extension]
+  elsif item.attributes[:draft]
+    # don't output drafts
+  else
+    # Write item with identifier /foo/ to /foo/index.html
+
+    # Source file handling is experimental
+    if item.identifier.include? "/source/"
+      # TODO use the actual item extension
+      item.identifier.chop + ".rb"
+    else
+      item.identifier + 'index.html'
+    end
+    
+  end
+end
+
+
+layout '*', :haml

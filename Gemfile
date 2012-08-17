@@ -1,0 +1,16 @@
+source :rubygems
+
+gem "compass"
+gem "susy"
+gem "haml"
+gem "sass"
+gem "nanoc"
+gem "RedCloth"
+gem "kramdown"
+gem "builder"
+gem "adsf"
+gem "redcarpet"
+gem "pygments.rb"
+gem "oj"
+gem "nokogiri"
+gem "ruby-debug"

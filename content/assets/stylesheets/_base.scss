@@ -1,0 +1,188 @@
+// Imports -----------------------------------------------------------
+@import "compass/reset";
+@import "compass/utilities/general/clearfix";
+@import "compass/css3/border-radius";
+@import "compass/typography/vertical_rhythm"; // http://compass-style.org/reference/compass/typography/vertical_rhythm/
+@import "compass/css3/box-shadow";
+@import "compass/css3/box-sizing";
+@import "compass/css3/text-shadow";
+
+@import "susy"; // grid
+
+// Grid variables
+$column-width   : 4em;            // each column is 4em wide
+$gutter-width   : 1em;            // 1em gutters between columns
+$grid-padding   : $gutter-width;  // grid-padding equal to gutters
+
+// Fonts --------------------------------------------------------------
+@mixin sans-family {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+@mixin serif-family {
+  font-family: Palatino Linotype, Book Antiqua, Palatino, serif;
+}
+
+@mixin monospace-family {
+  font-family: "Bitstream Vera Sans Mono", monospace;
+}
+
+// Colors
+$purple: #767fa8;
+$light-purple-bg: #eeeff4;
+$dark-teal: #b5c5cf;
+$light-teal: #daedf9;
+$light-teal-bg: #f3fafe;
+$light-green-bg: #eef4f1;
+
+// To customize vertical ryhthm, see http://compass-style.org/reference/compass/typography/vertical_rhythm/
+@include establish-baseline;
+
+
+// actual css customization
+.mono {
+  @include monospace-family;
+}
+
+body {
+  @include serif-family;
+  background:url("/assets/images/ui/light_noise_diagonal.png");
+  font-size:16px;
+}
+
+h1 {
+  @include adjust-font-size-to(40px);
+}
+
+
+p {
+  @include leader;
+  @include trailer;
+}
+
+em {
+  font-style: italic;
+}
+
+a {
+  text-decoration: none;
+  color: #7694a8;
+  &:hover { text-decoration: underline; }
+  &:visited { color: #8976a8; }
+}
+
+pre, code, tt {
+  @extend .mono;
+}
+
+pre {
+  @include trailer;
+  @include leader;
+  @include padding-trailer(.5);
+  @include padding-leader(.5);
+}
+
+code {
+  background: #f3f3f3;
+  font-size: 14px;
+}
+
+.code {
+  background: #f9f9f9;
+  line-height:1.25em;
+  font-size: 14px;
+}
+
+
+.main {
+  li {
+    margin-left: 1.2em;
+  }
+
+  ul li {
+    list-style: disc;
+  }
+
+  ol li {
+    list-style: decimal;
+  }
+
+  img {
+    max-width:
+    44em;
+  }
+}
+
+header, footer { clear: both; }
+header {
+  @include container;
+  @include trailer;
+  @include sans-family;
+  @include border-radius(0 0 1em 1em);
+  .name {
+    @include adjust-font-size-to(60px);
+    @include trailer(1, 60px);
+    color: $purple;
+    font-weight:bold;
+    text-align: left;
+
+    .subname {
+      color: #69b5e4;
+      display:inline;
+    }
+  }
+}
+
+nav {
+  clear: both;
+  background: $dark-teal;
+  margin: 0 -1em;
+  @include border-radius(1em);
+
+  li {
+    display:inline-block;
+
+    a {
+      display: block;
+      padding: .5em 1em;
+      color: #333;
+      &:hover {
+        text-decoration: none;
+        background: $light-teal;
+      }
+      &:visited {
+        color:black
+      }
+    }
+
+    &:first-child a {
+      @include border-radius(1em 0 0 1em);
+    }
+  }
+
+  #search {
+    float:right;
+    input {
+      position:relative;
+      top: .6em;
+      right: 2em;
+      padding: 3px 0;
+    }
+  }
+}
+
+.page {
+  // page acts as a container for our grid.
+  @include container;
+  @include padding-trailer;
+  @include trailer;
+  @include padding-leader;
+  @include leader;
+  @include border-radius(1em);
+  background: white;
+}
+
+// Tipue search
+#tipue_search_content_title {
+  @include leader;
+}
