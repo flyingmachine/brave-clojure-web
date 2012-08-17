@@ -2,8 +2,8 @@
 %html{:lang => "en"}
   %head
     %meta{:charset => "utf-8"}/
-    %title Whoops
-    %link{:href => "/stylesheets/home.css", :media => "screen", :rel => "stylesheet", :type => "text/css"}/
+    %title #{@item[:title]}
+    %link{:href => "/stylesheets/no-toc.css", :media => "screen", :rel => "stylesheet", :type => "text/css"}/
     %link{:href => "/stylesheets/pygments.css", :media => "screen", :rel => "stylesheet", :type => "text/css"}/
     
     / you don't need to keep this, but it's cool for stats!
@@ -11,8 +11,8 @@
   %body{"data-spy" => "scroll", "data-target" => ".secondary"}
     %header{:role => "banner"}
       .name
-        Whoops:
-        .subname Log Anything
+        Doc
+        .subname Template
       
       %nav
         %form#search{:action => "/search/"}

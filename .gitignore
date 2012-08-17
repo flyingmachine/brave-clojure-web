@@ -2,4 +2,5 @@ tmp
 output
 crash.log
 *#*
-.DS_Store
+.DS_Storegst
+.sass-cache

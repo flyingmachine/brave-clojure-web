@@ -5,7 +5,7 @@ $total-columns: 9;             // a 12-column grid
 
 
 h2 {
-  @include adjust-font-size-to(30px);
+  @include adjust-font-size-to(30px, 1);
   @include leader(1, 30px);
 }
 

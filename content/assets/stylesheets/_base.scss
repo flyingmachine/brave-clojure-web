@@ -13,6 +13,7 @@
 $column-width   : 4em;            // each column is 4em wide
 $gutter-width   : 1em;            // 1em gutters between columns
 $grid-padding   : $gutter-width;  // grid-padding equal to gutters
+$base-line-height: 27px;
 
 // Fonts --------------------------------------------------------------
 @mixin sans-family {
@@ -121,7 +122,7 @@ header {
   @include border-radius(0 0 1em 1em);
   .name {
     @include adjust-font-size-to(60px);
-    @include trailer(1, 60px);
+    @include trailer(.5, 60px);
     color: $purple;
     font-weight:bold;
     text-align: left;
