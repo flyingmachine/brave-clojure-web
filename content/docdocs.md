@@ -53,4 +53,9 @@ math.
 ### Compass
 
 [Compass](http://compass-style.org/) is an awesome Sass library that
-provides all kinds of great stuff like vertical rhythm and CSS3 helpers.
+provides all kinds of great stuff like vertical rhythm and CSS3
+helpers.
+
+## TODO
+
+* Explain scss layout

@@ -12,7 +12,7 @@ likely for the same reason that it lacks groovy yodeling tunes. You
 have no idea what's involved or where to begin.
 
 That's where this site comes in. The site itself is built using
-[Doc Template](https://github.com/flyingmachine/doctemplate), an
+Doc Template ([git](https://github.com/flyingmachine/doctemplate)), an
 open-source tool which lets you focus on your content while allowing
 you to change the presentation easily. Of course,
 [detailed documentation](/docdocs) is included. There's also a
