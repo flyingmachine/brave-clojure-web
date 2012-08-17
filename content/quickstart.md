@@ -4,7 +4,7 @@ kind: page
 toc: true
 ---
 
-# Doc Template Quick Start Guide
+# Quick Start Guide
 
 ## Install Ruby
 
@@ -43,10 +43,11 @@ _Optional_ Initialize a git repo:
 git init
 ```
 
-Run the content viewer. This allows you to view the site at
-[http://localhost:3000](http://localhost:3000):
+Download gems and run the content viewer. This allows you to view the
+site at [http://localhost:3000](http://localhost:3000):
 
 ``` bash
+bundle
 nanoc view
 ```
 
