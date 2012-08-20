@@ -1,7 +1,6 @@
 --- 
 title: Detailed Documentation
 kind: documentation
-toc: true
 ---
 
 # Detailed Documentation

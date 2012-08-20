@@ -33,7 +33,7 @@ compile '*' do
     elsif item.attributes[:draft]
       # don't output drafts
     else
-      item_layout = item.attributes[:toc] ? 'default' : 'no-toc'
+      item_layout = "default"
       
       case item.attributes[:filename]
       when /haml$/ then filter :haml; layout item_layout
@@ -44,7 +44,7 @@ compile '*' do
       when /scss$/ then filter(:sass, Compass.sass_engine_options)
       end
 
-      if item.attributes[:toc]
+      if item.attributes[:kind] == "documentation"
         filter :toc
       end
     end

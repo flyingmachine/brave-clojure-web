@@ -20,6 +20,8 @@ class NokogiriTOC
     options[:content_selector] ||= "body"
 
     doc = Nokogiri::HTML(html)
+    return unless doc.at_css(options[:toc_selector])
+    
     toc_data = []
     
     @level = {"h2" => 0, "h3" => 0, "h4" => 0}

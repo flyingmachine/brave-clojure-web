@@ -1,7 +1,6 @@
 --- 
 title: Home
 kind: documentation
-toc: true
 ---
 
 # Make Great Documentation

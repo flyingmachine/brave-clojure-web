@@ -1,7 +1,6 @@
 --- 
 title: Quick Start Guide
 kind: documentation
-toc: true
 ---
 
 # Quick Start Guide
@@ -25,8 +24,8 @@ gem install bundler
 Download and unzip the latest commit:
 
 ``` bash
-curl -L -o doctemplate.tar.gz https://github.com/flyingmachine/doctemplate/zipball/master
-tar zxvf doctemplate.tar.gz
+curl -L -o doctemplate.zip https://github.com/flyingmachine/doctemplate/zipball/master
+unzip doctemplate.zip
 ```
 
 This will create a directory named "flyingmachine-doctemplate-XXXXXXX"
@@ -37,35 +36,25 @@ mv flyingmachine-doctemplate-XXXXXXX doctemplate
 cd doctemplate
 ```
 
-_Optional_ Initialize a git repo:
-
-```
-git init
-```
-
 Download gems and run the content viewer. This allows you to view the
 site at [http://localhost:3000](http://localhost:3000):
 
 ``` bash
 bundle
+nanoc compile
 nanoc view
 ```
 
 ## Create Content
 
-From here, you can edit content/index.md to change the home page. When
-you're done, run
+From here, you can edit content/index.md to change the home page. You
+can watch your files for changes so that they're updated automatically:
 
 ``` bash
-nanoc com
+nanoc watch
 ```
 
 If you visit [http://localhost:3000](http://localhost:3000) you should see your changes.
 
 If you change `toc:` to true at the top of index.md then a table of
 contents will be generated.
-
-## Update Layouts
-
-Update `layouts/no-toc.haml` and `layouts/default.haml` to include links
-to your files. (In the future, these links will automatically be generated).

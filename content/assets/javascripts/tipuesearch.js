@@ -45,8 +45,21 @@ function getTipueSearch(start, replace)
      var results = '';
      var show_replace = 0;
      var show_stop = 0;
+
+    function getUrlVars()
+    {
+        var vars = [], hash;
+        var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
+        for(var i = 0; i < hashes.length; i++)
+        {
+            hash = hashes[i].split('=');
+            vars.push(hash[0]);
+            vars[hash[0]] = hash[1];
+        }
+        return vars;
+    }
      
-     var d = $('#tipue_search_input').val().toLowerCase();
+     var d = getUrlVars()['q'].toLowerCase();
      d = $.trim(d);
      var d_w = d.split(' ');
           
