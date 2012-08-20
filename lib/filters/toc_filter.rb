@@ -3,7 +3,7 @@ class TocFilter < Nanoc::Filter
   type :text
 
   def run(content, params ={})
-    NokogiriTOC.run(content, :content_selector => ".content", :toc_selector => "#toc.nav li.active")
+    NokogiriTOC.run(content, :content_selector => ".content", :toc_selector => "#toc.nav li.active-section")
   end
 end
 

@@ -24,7 +24,7 @@
         #toc.nav
           %ol
             - @items.select{|i| i[:kind] == "documentation"}.sort{|a, b| a.identifier <=> b.identifier}.each do |i|
-              %li{:class => (i == @item ? "active" : "")}
+              %li{:class => (i == @item ? "active-section" : "")}
                 = link_to i[:title], i, :class => (i == @item ? "active" : "")
 
     %script{ :src => "http://code.jquery.com/jquery-1.7.2.min.js" }

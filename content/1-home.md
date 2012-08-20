@@ -20,6 +20,12 @@ you to change the presentation easily. Of course,
 The site also contains an evolving set of guidelines for writing good
 documentation.
 
+## Links
+
+* [Github repo](https://github.com/flyingmachine/doctemplate)
+* [Github issues](https://github.com/flyingmachine/doctemplate/issues)
+* [asciidoc](http://www.methods.co.nz/asciidoc/)
+
 ## TODO
 
 * Explain scss layout
