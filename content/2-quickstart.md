@@ -1,6 +1,6 @@
 --- 
-title: Doc Template Quick Start Guide
-kind: page
+title: Quick Start Guide
+kind: documentation
 toc: true
 ---
 

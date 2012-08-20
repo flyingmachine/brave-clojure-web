@@ -13,23 +13,20 @@
       .name
         Doc
         .subname Template
-      
+
+    .page
+      .content= yield
       %nav
         %form#search{:action => "/search/"}
           %input#tipue_search_input{:name => "q", :type => "search", :placeholder => "Search"}
-        %ul
-          %li
-            %a{:href => relative_path_to("/")} Home
-          %li
-            %a{:href => relative_path_to("/quickstart")} Quick Start Guide
-          %li
-            %a{:href => relative_path_to("/docdocs")} Detailed Documentation
+        
+        %h2 Table of Contents
+        #toc.nav
+          %ol
+            - @items.select{|i| i[:kind] == "documentation"}.sort{|a, b| a.identifier <=> b.identifier}.each do |i|
+              %li{:class => (i == @item ? "active" : "")}
+                = link_to i[:title], i, :class => (i == @item ? "active" : "")
 
-    .page
-      .content
-        .main= yield
-        .secondary
-          #toc.nav
     %script{ :src => "http://code.jquery.com/jquery-1.7.2.min.js" }
     %script{ :src => relative_path_to("/javascripts/underscore.js") }
     %script{ :src => relative_path_to("/javascripts/scrollspy.js") }

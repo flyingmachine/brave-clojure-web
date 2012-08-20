@@ -1,6 +1,6 @@
 --- 
-title: Doc Template Detailed Documentation
-kind: page
+title: Detailed Documentation
+kind: documentation
 toc: true
 ---
 

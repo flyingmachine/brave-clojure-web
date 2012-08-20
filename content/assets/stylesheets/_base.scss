@@ -95,7 +95,7 @@ code {
 }
 
 
-.main {
+.content {
   li {
     margin-left: 1.2em;
   }
@@ -116,13 +116,13 @@ code {
 
 header, footer { clear: both; }
 header {
-  @include container;
-  @include trailer;
   @include sans-family;
   @include border-radius(0 0 1em 1em);
+  @include container;
+  @include pre(3, 12);
+  margin-left:auto;
   .name {
     @include adjust-font-size-to(60px);
-    @include trailer(.5, 60px);
     color: $purple;
     font-weight:bold;
     text-align: left;
@@ -135,40 +135,80 @@ header {
 }
 
 nav {
-  clear: both;
-  background: $dark-teal;
-  margin: 0 -1em;
-  @include border-radius(1em);
+  @include span-columns(3,12);
+  position: fixed;
+  width: 14em;
+  top: 0;
+  bottom: 0;
+  overflow: auto;
+  margin-left:-1em;
+  padding-left: 1em;
+  padding-top:1em;
+  background: $light-purple-bg;
 
-  li {
-    display:inline-block;
+  h2 {
+    @include adjust-font-size-to(20px);
 
-    a {
-      display: block;
-      padding: .5em 1em;
-      color: #333;
-      &:hover {
-        text-decoration: none;
-        background: $light-teal;
-      }
-      &:visited {
-        color:black
+  }
+
+  a:hover {
+    text-decoration:none;
+  }
+
+  #toc > ol {
+    margin-left:-1em;
+
+    li {
+      display:block;
+      a {
+        display: block;
+        padding: .5em 1em;
+        color: #333;
+        
+        &:visited {
+          color:black
+        }
       }
     }
+    
+    > li.active > a, > li > a:hover {
+      background: $light-teal;
+    }
 
-    &:first-child a {
-      @include border-radius(1em 0 0 1em);
+    >li li a {
+      display: block;
+      @include adjust-font-size-to(14px);
+    }
+    
+    // Sub navigation, e.g. 2.3 Susy
+    ol {
+      a:hover {
+        border-left: .5em solid $purple;
+        padding-left: .5em;
+      }
+      ol {
+        a {
+          padding-left:2em;
+          &:hover { padding-left: 1.5em; }
+        }
+        
+        // Even more nested nav, e.g. 2.3.1. Installation instructions
+        ol a {
+          padding-left: 3em;
+          &:hover { padding-left: 2.5em; }
+        }
+      }
     }
   }
 
   #search {
-    float:right;
     input {
-      position:relative;
-      top: .6em;
-      right: 2em;
       padding: 3px 0;
+      @include adjust-font-size-to(16px);
+      @include serif-family;
+      width: 95%;
     }
+    @include trailer(.5);
   }
 }
 
@@ -178,9 +218,13 @@ nav {
   @include padding-trailer;
   @include trailer;
   @include padding-leader;
-  @include leader;
-  @include border-radius(1em);
+  @include border-radius(0 1em 1em 0);
   background: white;
+
+  margin-left: 0;
+  .content {
+
+  }
 }
 
 // Tipue search

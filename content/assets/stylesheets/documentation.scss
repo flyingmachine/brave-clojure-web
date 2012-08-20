@@ -5,7 +5,7 @@ $total-columns: 12;             // a 12-column grid
 
 .page {
   // main content spans 6 of those 9 columns.
-  .main {
+  .content {
     @include span-columns(9 omega,12);
     
     h2 {
@@ -52,8 +52,6 @@ $total-columns: 12;             // a 12-column grid
   }
 
   .toc-fixed {
-    position: fixed;
-    width: 14em;
-    top: 40px;
+
   }
 }

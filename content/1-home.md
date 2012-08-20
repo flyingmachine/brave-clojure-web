@@ -1,10 +1,10 @@
 --- 
-title: A Starting Point for Great Documentation
-kind: page
-toc: false
+title: Home
+kind: documentation
+toc: true
 ---
 
-## A Starting Point for Great Documentation
+# Make Great Documentation
 
 Writing documentation is a skill, just like programming or riding a
 bike or yodeling. If your project lacks great documentation, it's

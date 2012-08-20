@@ -13,16 +13,4 @@ $(function(){
     $(".secondary #toc > ol > li:first-child").addClass("active");
   })
 
-
-  $win.on('scroll', processScroll)
-  function processScroll() {
-    var i, scrollTop = $win.scrollTop()
-    if (scrollTop >= navTop && !isFixed) {
-      isFixed = 1
-      $toc.addClass('toc-fixed')
-    } else if (scrollTop <= navTop && isFixed) {
-      isFixed = 0
-      $toc.removeClass('toc-fixed')
-    }
-  }
 })
