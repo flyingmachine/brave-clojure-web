@@ -53,7 +53,8 @@ body {
 }
 
 h1 {
-  @include adjust-font-size-to(40px);
+  @include adjust-font-size-to(40px, 1);
+  @include trailer(1, 40px);
 }
 
 
@@ -148,8 +149,7 @@ nav {
   background: $light-purple-bg;
 
   h2 {
-    @include adjust-font-size-to(20px);
-
+    @include adjust-font-size-to(20px, 1);
   }
 
   a:hover {
@@ -228,7 +228,7 @@ nav {
     @include span-columns(9 omega,12);
     
     h2 {
-      @include adjust-font-size-to(32px);
+      @include adjust-font-size-to(32px, 1);
 
       @include trailer(1, 32px);
       border-left: 8px solid $purple;
