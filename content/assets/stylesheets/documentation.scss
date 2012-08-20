@@ -228,7 +228,7 @@ nav {
     @include span-columns(9 omega,12);
     
     h2 {
-      @include adjust-font-size-to(32px, 1);
+      @include adjust-font-size-to(32px, 2);
 
       @include trailer(1, 32px);
       border-left: 8px solid $purple;
