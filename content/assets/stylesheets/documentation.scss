@@ -188,15 +188,13 @@ nav {
         padding-left: .5em;
       }
       ol {
-        a {
-          padding-left:2em;
-          &:hover { padding-left: 1.5em; }
-        }
+        a { padding-left:2em; }
+        a:hover, li.active > a { padding-left: 1.5em; }
         
         // Even more nested nav, e.g. 2.3.1. Installation instructions
-        ol a {
-          padding-left: 3em;
-          &:hover { padding-left: 2.5em; }
+        ol {
+          a { padding-left: 3em; }
+          a:hover, li.active > a { padding-left: 2.5em; }
         }
       }
     }
