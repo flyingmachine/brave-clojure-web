@@ -22,16 +22,16 @@ $total-columns: 12;             // a 12-column grid
       @include leader(1, 24px);
       @include trailer(1, 24px);
       border-left: 4px solid $dark-teal;
-      padding-left: 8px;
-      margin-left: -12px;
+      padding-left: 12px;
+      margin-left: -16px;
     }
 
     h4 {
       font-weight:bold;
       @include leader;
       border-left: 2px solid $dark-teal;
-      padding-left: 8px;
-      margin-left: -10px;
+      padding-left: 14px;
+      margin-left: -16px;
     }
   }
   .secondary{
