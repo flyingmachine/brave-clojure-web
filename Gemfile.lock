@@ -8,7 +8,6 @@ GEM
     builder (3.0.0)
     chunky_png (1.2.5)
     colored (1.2)
-    columnize (0.3.6)
     compass (0.13.alpha.0)
       chunky_png (~> 1.2)
       fssm (>= 0.2.7)
@@ -19,8 +18,6 @@ GEM
     fssm (0.2.9)
     haml (3.1.6)
     kramdown (0.13.6)
-    linecache (0.46)
-      rbx-require-relative (> 0.0.4)
     nanoc (3.4.0)
       cri (~> 2.2)
     nokogiri (1.5.2)
@@ -28,13 +25,7 @@ GEM
     pygments.rb (0.2.13)
       rubypython (~> 0.5.3)
     rack (1.4.1)
-    rbx-require-relative (0.0.9)
     redcarpet (2.1.1)
-    ruby-debug (0.10.4)
-      columnize (>= 0.1)
-      ruby-debug-base (~> 0.10.4.0)
-    ruby-debug-base (0.10.4)
-      linecache (>= 0.3)
     rubypython (0.5.3)
       blankslate (>= 2.1.2.3)
       ffi (~> 1.0.7)
@@ -58,6 +49,5 @@ DEPENDENCIES
   oj
   pygments.rb
   redcarpet
-  ruby-debug
   sass
   susy
