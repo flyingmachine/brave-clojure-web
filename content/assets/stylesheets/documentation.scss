@@ -148,7 +148,7 @@ nav {
   padding-left: 1em;
   padding-top:1em;
   background: $light-purple-bg;
-  border-right: 0.25em solid $blue;
+  border-right: 0.25em solid $light-teal;
 
   h2 {
     @include adjust-font-size-to(20px, 1);
@@ -178,7 +178,7 @@ nav {
     }
     
     > li.active-section > a, > li > a:hover {
-      background: $blue;
+      background: $light-teal;
     }
 
     >li li a {
@@ -192,7 +192,7 @@ nav {
     // Sub navigation, e.g. 2.3 Susy
     ol {
       a:hover, li.active > a {
-        background:$light-teal;
+        background:white;
       }
 
       ol {
