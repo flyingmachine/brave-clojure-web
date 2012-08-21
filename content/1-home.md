@@ -32,6 +32,8 @@ providing:
   programming documentation generator
 * [backbone.js API](http://documentcloud.github.com/backbone/), API
   documentation for a javascript MVC framework
+* [yardoc](http://yardoc.org/), the project page for a Ruby
+  documentation tool
 
 ### Project Links
 
