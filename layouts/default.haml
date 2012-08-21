@@ -24,7 +24,7 @@
           %ol
             - @items.select{|i| i[:kind] == "documentation"}.sort{|a, b| a.identifier <=> b.identifier}.each do |i|
               %li{:class => (i == @item ? "active-section" : "")}
-                = link_to i[:title], relative_path_to(i), :class => (i == @item ? "active" : "")
+                = link_to i[:link_title] || i[:title], relative_path_to(i), :class => (i == @item ? "active" : "")
 
     %script{ :src => "http://code.jquery.com/jquery-1.7.2.min.js" }
     %script{ :src => relative_path_to("/javascripts/underscore.js") }

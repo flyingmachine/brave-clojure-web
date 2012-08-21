@@ -1,5 +1,6 @@
 --- 
-title: Home
+title: Make Great Documentation
+link_title: Home
 kind: documentation
 ---
 
@@ -10,21 +11,38 @@ bike or yodeling. If your project lacks great documentation, it's
 likely for the same reason that it lacks groovy yodeling tunes. You
 have no idea what's involved or where to begin.
 
-That's where this site comes in. The site itself is built using
-Doc Template ([git](https://github.com/flyingmachine/doctemplate)), an
-open-source tool which lets you focus on your content while allowing
-you to change the presentation easily. Of course,
-[detailed documentation](docdocs) is included. There's also a
-[quick start guide](quickstart) for the impatient.
+That's where this site comes in. It gives you a starting point by
+providing:
 
-The site also contains an evolving set of guidelines for writing good
-documentation.
+* A [tool](2-quickstart/) for creating documentation
+* Examples of great documentation
 
 ## Links
 
+### Examples of Great Documentation
+
+* [nanoc](http://nanoc.stoneship.org/docs/), a ruby static site
+  generator (which this site is built with)
+* [django](https://docs.djangoproject.com/en/1.4/), a python web
+  framework
+* [The stripe API](https://stripe.com/docs/api), the API for a payment
+  processing service
+* [docco.coffee](http://jashkenas.github.com/docco/), a literate
+  programming documentation generator
+* [backbone.js API](http://documentcloud.github.com/backbone/), API
+  documentation for a javascript MVC framework
+
+### Project Links
+
 * [Github repo](https://github.com/flyingmachine/doctemplate)
 * [Github issues](https://github.com/flyingmachine/doctemplate/issues)
+* [twitter](https://twitter.com/nonrecursive)
+
+### Other Documentation Tools
+
 * [asciidoc](http://www.methods.co.nz/asciidoc/)
+* [doxygen](http://www.doxygen.org/)
+* [docco.coffee](http://jashkenas.github.com/docco/)
 
 ## TODO
 

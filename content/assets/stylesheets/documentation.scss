@@ -64,6 +64,10 @@ p {
   @include trailer;
 }
 
+strong {
+  font-weight: bold;
+}
+
 em {
   font-style: italic;
 }
@@ -185,8 +189,8 @@ nav {
       display: block;
       padding: 0 1em;
       @include adjust-font-size-to(14px);
-      @include padding-trailer(.5, 14px);
-      @include padding-leader(.5, 14px);
+      @include padding-trailer(.25, 14px);
+      @include padding-leader(.25, 14px);
     }
     
     // Sub navigation, e.g. 2.3 Susy
