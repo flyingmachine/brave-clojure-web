@@ -46,6 +46,7 @@ providing:
 * [asciidoc](http://www.methods.co.nz/asciidoc/)
 * [doxygen](http://www.doxygen.org/)
 * [docco.coffee](http://jashkenas.github.com/docco/)
+* [yardoc](http://yardoc.org/)
 
 ## TODO
 
