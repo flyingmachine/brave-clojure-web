@@ -164,7 +164,7 @@ nav {
     li {
       display:block;
       a {
-        padding: 0 1em;
+        padding: 0 16px;
         @include adjust-font-size-to(20px, 1);
         @include padding-trailer(.5, 20px);
         @include padding-leader(.5, 20px);
@@ -183,6 +183,7 @@ nav {
 
     >li li a {
       display: block;
+      padding: 0 1em;
       @include adjust-font-size-to(14px);
       @include padding-trailer(.5, 14px);
       @include padding-leader(.5, 14px);
