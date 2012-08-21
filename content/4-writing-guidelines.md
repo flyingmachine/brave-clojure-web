@@ -4,7 +4,7 @@ kind: documentation
 toc: true
 ---
 
-# Guidelines for Writing Great Documentation
+# Writing Great Documentation
 
 Ther are many different kinds of documentation (architecture, API,
 tutorials, etc) but all are meant to help users answer questions. As
