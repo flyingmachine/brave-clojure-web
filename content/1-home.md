@@ -15,6 +15,7 @@ That's where this site comes in. It gives you a starting point by
 providing:
 
 * A [tool](2-quickstart/) for creating documentation
+* [Guidelines](3-writing-guidelines/) for writing documentation
 * Examples of great documentation
 
 ## Links
@@ -49,6 +50,6 @@ providing:
 * Explain scss layout
 * More HOWTO on doing less obvious stuff
     * Syntax highlighting
-        * Markdown
         * Textile
     * Explain when a user would want to look at nanoc docs
+* Elaborate on writing guidelines
