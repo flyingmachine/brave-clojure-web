@@ -36,6 +36,7 @@ $dark-teal: #b5c5cf;
 $light-teal: #daedf9;
 $light-teal-bg: #f3fafe;
 $light-green-bg: #eef4f1;
+$blue: #69b5e4;
 
 // To customize vertical ryhthm, see http://compass-style.org/reference/compass/typography/vertical_rhythm/
 @include establish-baseline;
@@ -130,7 +131,7 @@ header {
     text-align: left;
 
     .subname {
-      color: #69b5e4;
+      color: $blue;
       display:inline;
     }
   }
@@ -139,7 +140,7 @@ header {
 nav {
   @include span-columns(3,12);
   position: fixed;
-  width: 14em;
+  width: 13.75em;
   top: 0;
   bottom: 0;
   overflow: auto;
@@ -147,6 +148,7 @@ nav {
   padding-left: 1em;
   padding-top:1em;
   background: $light-purple-bg;
+  border-right: 0.25em solid $blue;
 
   h2 {
     @include adjust-font-size-to(20px, 1);
@@ -162,8 +164,11 @@ nav {
     li {
       display:block;
       a {
+        padding: 0 1em;
+        @include adjust-font-size-to(20px, 1);
+        @include padding-trailer(.5, 20px);
+        @include padding-leader(.5, 20px);
         display: block;
-        padding: .5em 1em;
         color: #333;
         
         &:visited {
@@ -173,28 +178,27 @@ nav {
     }
     
     > li.active-section > a, > li > a:hover {
-      background: $light-teal;
+      background: $blue;
     }
 
     >li li a {
       display: block;
       @include adjust-font-size-to(14px);
+      @include padding-trailer(.5, 14px);
+      @include padding-leader(.5, 14px);
     }
     
     // Sub navigation, e.g. 2.3 Susy
     ol {
       a:hover, li.active > a {
-        border-left: .5em solid $purple;
-        padding-left: .5em;
+        background:$light-teal;
       }
+
       ol {
         a { padding-left:2em; }
-        a:hover, li.active > a { padding-left: 1.5em; }
-        
         // Even more nested nav, e.g. 2.3.1. Installation instructions
         ol {
           a { padding-left: 3em; }
-          a:hover, li.active > a { padding-left: 2.5em; }
         }
       }
     }
