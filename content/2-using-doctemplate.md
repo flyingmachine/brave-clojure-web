@@ -72,11 +72,14 @@ curl -L -o doctemplate.zip https://github.com/flyingmachine/doctemplate/zipball/
 unzip doctemplate.zip
 ```
 
-This will create a directory named "flyingmachine-doctemplate-XXXXXXX"
-that you will want to move:
+This will create a directory with a name similar to
+"flyingmachine-doctemplate-XXXXXXX", where the instead of X's you'll
+get some random string.
+
+You'll want to move this directory:
 
 ``` bash
-mv flyingmachine-doctemplate-XXXXXXX doctemplate
+mv flyingmachine-doctemplate-* doctemplate
 cd doctemplate
 ```
 
