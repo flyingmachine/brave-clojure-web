@@ -88,12 +88,11 @@ pre, code, tt {
 pre {
   @include trailer;
   @include leader;
-  @include padding-trailer(.5);
   @include padding-leader(.5);
 }
 
 code {
-  background: #f3f3f3;
+  background: #fff4ea;
   font-size: 14px;
 }
 
@@ -118,8 +117,7 @@ code {
   }
 
   img {
-    max-width:
-    44em;
+    // max-width: 44em;
   }
 }
 
@@ -148,6 +146,7 @@ header {
 
 nav {
   @include span-columns(3,12);
+  @include padding-trailer(2);
   position: fixed;
   width: 13.75em;
   top: 0;

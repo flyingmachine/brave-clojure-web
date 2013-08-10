@@ -2,5 +2,6 @@ tmp
 output
 crash.log
 *#*
-.DS_Storegst
+.DS_Storage
 .sass-cache
+Guardfile
