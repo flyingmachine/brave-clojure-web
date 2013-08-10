@@ -57,6 +57,7 @@ body {
 
 h1 {
   @include adjust-font-size-to(40px, 1);
+  @include leader(1, 40px);
   @include trailer(1, 40px);
 }
 
@@ -138,6 +139,7 @@ header {
     text-align: left;
     
     span {
+      @include adjust-font-size-to(47px, 1, 50px);
       font-family: 'Gentium Book Basic', serif;
       font-style: italic;
       font-weight: normal;
