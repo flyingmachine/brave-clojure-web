@@ -16,7 +16,7 @@
         True
 
     .page
-      .content= yield
+      .content= find_and_preserve(yield)
       %nav
         %form#search{:action => "/search/"}
           %input#tipue_search_input{:name => "q", :type => "search", :placeholder => "Search"}
