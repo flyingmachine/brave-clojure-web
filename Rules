@@ -17,8 +17,8 @@ require "rubygems"
 require "bundler/setup"
 Bundler.require(:default)
 
-require "lib/rule_helper"
-require "lib/filters/toc_filter"
+require "./lib/rule_helper"
+require "./lib/filters/toc_filter"
 
 Compass.add_project_configuration 'compass/config.rb'
 

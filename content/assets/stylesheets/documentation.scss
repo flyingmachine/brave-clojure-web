@@ -16,6 +16,7 @@ $grid-padding   : $gutter-width;  // grid-padding equal to gutters
 $base-line-height: 27px;
 $total-columns: 12;             // a 12-column grid
 
+
 // Fonts --------------------------------------------------------------
 @mixin sans-family {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
@@ -29,11 +30,12 @@ $total-columns: 12;             // a 12-column grid
   font-family: "Bitstream Vera Sans Mono", monospace;
 }
 
+
 // Colors
 $purple: #767fa8;
 $light-purple-bg: #eeeff4;
 $dark-teal: #b5c5cf;
-$light-teal: #daedf9;
+$light-teal: #999;
 $light-teal-bg: #f3fafe;
 $light-green-bg: #eef4f1;
 $blue: #69b5e4;
@@ -48,8 +50,8 @@ $blue: #69b5e4;
 }
 
 body {
-  @include serif-family;
-  background:url("../assets/images/ui/light_noise_diagonal.png");
+  @include sans-family;
+  background: #666;
   font-size:16px;
 }
 
@@ -124,19 +126,22 @@ code {
 header, footer { clear: both; }
 header {
   @include sans-family;
-  @include border-radius(0 0 1em 1em);
   @include container;
-  @include pre(3, 12);
-  margin-left:15em;
+  @include padding-leader(.5);
+  @include padding-trailer(.5);
+  margin-left: 0;
+  background: #f26f53;
   .name {
-    @include adjust-font-size-to(60px);
-    color: $purple;
-    font-weight:bold;
+    @include span-columns(9 omega, 12);
+    @include adjust-font-size-to(50px);
+    font-family: 'Open Sans', sans-serif;
+    font-weight: 800;
     text-align: left;
-
-    .subname {
-      color: $blue;
-      display:inline;
+    
+    span {
+      font-family: 'Gentium Book Basic', serif;
+      font-style: italic;
+      font-weight: normal;
     }
   }
 }
@@ -151,8 +156,8 @@ nav {
   margin-left:-1em;
   padding-left: 1em;
   padding-top:1em;
-  background: $light-purple-bg;
-  border-right: 0.25em solid $light-teal;
+  background: #eee;
+
 
   h2 {
     @include adjust-font-size-to(20px, 1);
@@ -226,7 +231,7 @@ nav {
   @include padding-trailer;
   @include trailer;
   @include padding-leader;
-  @include border-radius(0 1em 1em 0);
+  @include border-radius(0 2px 2px 0);
   background: white;
 
   margin-left: 0;

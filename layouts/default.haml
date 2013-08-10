@@ -5,21 +5,22 @@
     %title #{@item[:title]}
     %link{:href => relative_path_to("/stylesheets/documentation.css"), :media => "screen", :rel => "stylesheet", :type => "text/css"}/
     %link{:href => relative_path_to("/stylesheets/pygments.css"), :media => "screen", :rel => "stylesheet", :type => "text/css"}/
-    
-    / you don't need to keep this, but it's cool for stats!
-    %meta{:content => "nanoc #{Nanoc::VERSION}", :name => "generator"}/
+    %link{:href => 'http://fonts.googleapis.com/css?family=Gentium+Book+Basic:400,400italic|Open+Sans:400,800', :rel => 'stylesheet', :type => 'text/css'}/
   %body{"data-spy" => "scroll", "data-target" => "nav"}
     %header{:role => "banner"}
       .name
-        Doc
-        .subname Template
+        Clojure
+        %span for the
+        Brave
+        %span and
+        True
 
     .page
       .content= yield
       %nav
         %form#search{:action => "/search/"}
           %input#tipue_search_input{:name => "q", :type => "search", :placeholder => "Search"}
-        
+
         #toc.nav
           %ol
             - @items.select{|i| i[:kind] == "documentation"}.sort{|a, b| a.identifier <=> b.identifier}.each do |i|

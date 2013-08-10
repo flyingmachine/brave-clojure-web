@@ -1,5 +1,5 @@
 --- 
-title: Make Great Documentation
+title: Clojure for the Brave and True
 link_title: Home
 kind: documentation
 ---
