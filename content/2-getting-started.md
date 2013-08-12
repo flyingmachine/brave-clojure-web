@@ -1,43 +1,26 @@
 --- 
-title: Getting Started
-link_title: Getting Started
+title: Running, Building, and The REPL
+link_title: Building, Running, and The REPL
 kind: documentation
 ---
 
-# Tools and Workflow
+# Building, Running, and The REPL
 
-In order to learn Clojure it makes sense to invest some time up front
-to get familiar with a set of tools and a workflow. This way you'll be
-able to focus just on the code and concepts you're trying to learn
-rather than struggling with problems with your Clojure development
-setup.
+In order to learn Clojure it makes sense to invest a small amount of
+time up front to get familiar with a quick, problem-free way to build
+and run Clojure programs. We'll also go over how to experiment with
+code within a running Clojure process using a REPL. The goal is to
+have a quick feedback loop where you can try some code, see what it
+does, and learn from the result.
 
 Below, we'll briefly introduce Clojure. Next, we'll cover Leiningen,
-the de-facto standard build tool for Clojure. Finally, we'll dive in
-to installing and setting up Emacs for Clojure development. By the
-end, you'll know how to do the following:
+the de-facto standard build tool for Clojure. By the end, you'll know
+how to do the following:
 
 * Create a new Clojure project with Leiningen
 * Build the project to create an executable jar file
 * Execute the jar file
 * Execute code in a Clojure REPL
-* Integrate a Clojure REPL with Emacs
-* Use Emacs productively to write Clojure
-
-But before we jump into all that fun stuff, a note on Emacs. You can,
-of course, use any editor you want. The primary reason I recommend
-Emacs, however, is that it offers tight integration with a Clojure
-REPL. This allows you to instantly try out your code as you write.
-That kind of tight feedback loop will be useful both when learning
-Clojure and, later, when writing real Clojure programs. If you don't
-follow the thorough Emacs instructions below, then it's still
-worthwhile to invest time in setting up your editor to work with a
-REPL. A secondary reason for using Emacs is that it's really great for
-working with any Lisp dialect; Emacs itself is written in a Lisp
-dialect called Emacs Lisp.
-
-OK, now that I've totally convinced you to use Emacs, let's get a
-brief overview of Clojure!
 
 ## First things first: What is Clojure?
 
@@ -75,7 +58,8 @@ actually build a freakin Clojure program!
 
 ## Leiningen
 
-Leiningen is the de-facto build tool for Clojure. You can read a
+Leiningen is a Clojure program which has become the de-facto standard
+build tool for Clojure. You can read a
 [full description of Leiningen](http://www.flyingmachinestudios.com/programming/how-clojure-babies-are-made-what-leiningen-is/),
 but for now we only care about using it for four things:
 
@@ -112,6 +96,12 @@ This should create a directory structure that looks like this:
 | | | core_test.clj
 ```
 
+There's nothing inherently special or Clojure-y about this project
+skeleton. It's just a convention used by Leiningen. You'll be using
+Leiningen to build and run Clojure apps, and Leiningen expects your
+app to be laid out this way. Here's the function of each part of the
+skeleton:
+
 * `project.clj` is a configuration file for Leiningen. It helps
   Leiningen answer questions like, "What dependencies does this
   project have?" and "When this Clojure program runs, what function
@@ -122,8 +112,6 @@ This should create a directory structure that looks like this:
 * The `test` directory obviously contains tests.
 * `resources` is a place for you to store assets like images; we won't
 be using it for awhile.
-
-So, `lein new` is a generator which 
 
 ### Running the Clojure project
 
@@ -163,7 +151,7 @@ Now, in your terminal, run this:
 lein run
 ```
 
-You should see the output, "I'm a little tea pot!"
+You should see the output, "I'm a little teapot!"
 
 ### Building the Clojure Project
 
@@ -187,8 +175,8 @@ a Clojure program, you can check out
 For now, though, you have all the basic details you need to build,
 run, and distribute (very) basic Clojure programs.
 
-Before we move on to the Wonder and Glory of Emacs, let's go over one
-last important tool: the REPL.
+Before we move on to the next chapter on the Wonder and Glory of
+Emacs, let's go over one last important tool: the REPL.
 
 ### Using the REPL
 
@@ -239,9 +227,17 @@ clojure-noob.core=> (first [1 2 3 4])
 1
 ```
 
-OK that's enough for now. Once we actually start learning Clojure the
-Language, the REPL will be an invaluable tool. It will allow you to
-instantly try out Clojure code.
+Awesome!
+
+Conceptually, the REPL is similar to SSH. In the same way that you can
+use SSH to interact with a remote server, the Clojure REPL allows you
+to monkey around with a running Clojure process. This can be very
+powerful, as you can even attach a REPL to a live, production app and
+modify your program as it runs. For now, though, we'll be using the
+REPL to build our knowledge of Clojure syntax and semantics.
 
 At this point you should have the basic knowledge you need to begin
-learning the Clojure language without having to fuss with tools.
+learning the Clojure language without having to fuss with tools. To
+learn how to interaact with Clojure even more proficiency, however,
+we'll cover Emacs in depth. If that's not your cup of tea, feel free
+to skip ahead! Once there's more content to skip ahead to!

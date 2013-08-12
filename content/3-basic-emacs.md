@@ -12,13 +12,20 @@ up other text editors for Clojure development:
 * [Clojure development with Sublime Text 2 (youtube)](http://www.youtube.com/watch?v=wBl0rYXQdGg)
 * [Writing Clojure with Vim in 2013](http://mybuddymichael.com/writings/writing-clojure-with-vim-in-2013.html)
 
-I won't try to sell you on Emacs (*cough* it's only the best
-editor-slash-operating-system in existence *cough*). However, if
-you're interested in taking advantage of Emacs's incredible power but
-feel like you don't know where to start or like it's too confusing,
-then this guide should help.
+You can, of course, use any editor you want. Other editors get pretty
+close to Emacs's Clojure functionality. The primary reason I recommend
+Emacs, however, is that it offers tight integration with a Clojure
+REPL. This allows you to instantly try out your code as you write.
+That kind of tight feedback loop will be useful both when learning
+Clojure and, later, when writing real Clojure programs. If you don't
+follow the thorough Emacs instructions below, then it's still
+worthwhile to invest time in setting up your editor to work with a
+REPL. A secondary reason for using Emacs is that it's really great for
+working with any Lisp dialect; Emacs itself is written in a Lisp
+dialect called Emacs Lisp.
 
-By the end, your Emacs setup will look something like this:
+By the end of this chapter, your Emacs setup will look something like
+this:
 
 ![Final look](http://i.imgur.com/AebBtQb.png)
 
@@ -42,8 +49,9 @@ You should use the latest major version of Emacs, Emacs 24.
 * **OS X**:
   [Install vanilla Emacs as a Mac app](http://emacsformacosx.com/).
   There are other options, like Aquamacs, which are supposed to make
-  Emacs mor "Mac-like", but they're problematic in the long run
-  because they 
+  Emacs more "Mac-like", but they're problematic in the long run
+  because they're set up so differently from standard Emacs that it's
+  difficult to use the Emacs manual or follow along with tutorials
 * **Ubuntu**: Follow
   [these instructions](https://launchpad.net/~cassou/+archive/emacs)
 * **Windows**: You can find a binary
@@ -65,7 +73,7 @@ following:
 1. Close Emacs
 2. Delete `~/.emacs` or `~/.emacs.d` if they exist
 3. Run `git clone
-   https://github.com/flyingmachine/emacs-for-clojure.git .emacs.d`
+   https://github.com/flyingmachine/emacs-for-clojure.git ~/.emacs.d`
 4. (Optional) delete the `.emacs.d/.git` directory. You'll probably
    want to create your own git repo for `.emacs.d`
 5. Open Emacs
@@ -84,14 +92,14 @@ everything set up, let's actually start doing some editing!
 
 Before we go further, you need to know an important Emacs key binding:
 Control+g. This key binding quits whatever Emacs command you're trying
-to run, so if things aren't going right hit Control+g and try again.
-It won't close Emacs or make you lose any work; it'll just cancel your
-current action.
+to run, so if things aren't going right hit, hold down the Control key
+and press "g" and then try again. It won't close Emacs or make you
+lose any work; it'll just cancel your current action.
 
 ## Emacs Buffers
 
 All editing happens in an Emacs **buffer**. When you first start Emacs,
-a buffer named *\*scratch\** is open. Emacs will always show you the
+a buffer named \**scratch*\* is open. Emacs will always show you the
 name of the current buffer, as shown here:
 
 ![Buffer name](http://i.imgur.com/VLeYMvy.png)
@@ -167,8 +175,8 @@ navigate to `~/.emacs.d/user.el`, your main Emacs configuration file.
 Emacs opens the file in a new buffer, and the buffer's name is the
 same as the filename.
 
-Let's go to line 11 and uncomment these lines by removing the
-semi-colons:
+Let's go to line 11 and uncomment it by removing the semi-colons. It
+will look like this:
 
 ```cl
 (setq initial-frame-alist '((top . 0) (left . 0) (width . 187) (height . 77)))
@@ -177,10 +185,10 @@ semi-colons:
 Then change the values for "width" and "height". Width is the number
 of characters wide, and height is the number of lines high. By
 changing these values, you won't have to resize Emacs every time it
-starts. Go with something small at first, like 20 and 20:
+starts. Go with something small at first, like 80 and 20:
 
 ```cl
-(setq initial-frame-alist '((top . 0) (left . 0) (width . 20) (height . 20)))
+(setq initial-frame-alist '((top . 0) (left . 0) (width . 80) (height . 20)))
 ```
 
 Now save your file with the following key binding:
@@ -190,8 +198,13 @@ C-x C-s
 ```
 
 You should get a message at the bottom of Emacs like "Wrote
-/Users/chauncy/.emacs.d/user.el". After saving the file, go ahead and
-quit Emacs and start it again. I bet it's really tiny!
+/Users/chauncy/.emacs.d/user.el". Also go ahead and try saving your
+buffer using the key binding you use in every other app. For me, it's
+&#8984;-s. The Emacs config you downloaded should allow that to work,
+but if it doesn't that's no big deal!
+
+After saving the file, go ahead and quit Emacs and start it again. I
+bet it's really tiny!
 
 ![Tinemacs](http://i.imgur.com/ZSH1TXD.png)
 
@@ -342,7 +355,7 @@ You can use your arrow keys to move point just like in any GUI text
 editor, but there are many key bindings which will allow you to move
 more efficiently:
 
-<table>
+<table class="keys">
   <tr>
     <td>C-a</td>
     <td>Move to beginning of line</td>
@@ -401,11 +414,11 @@ Go ahead and try these out in your Jack Handy quotes buffer!
 
 ### Selection / Regions
 
-In Emacs, we don't *select* text. We create *regions*, and we do so by
-setting the *mark* with `C-spc` (control+space). Then, when you move
-point, everything between *mark* and *point* is the region. It's very
-similar to shift-selecting text for basic purposes. For example, do
-the following in your Jack Handy quotes buffer:
+In Emacs, we don't *select* text. We create **regions**, and we do so
+by setting the **mark** with `C-spc` (control+space). Then, when you
+move point, everything between *mark* and *point* is the region. It's
+very similar to shift-selecting text for basic purposes. For example,
+do the following in your Jack Handy quotes buffer:
 
 1. Go to the beginning of the file
 2. Do `C-spc`
@@ -465,7 +478,7 @@ last yank, "choreograpahy", with the previous kill, "Treasure".
 
 Here's a summary of key bindings: 
 
-<table>
+<table class="keys">
   <tr>
     <td>C-w</td>
     <td>Kill region</td>
@@ -494,7 +507,13 @@ Here's a summary of key bindings:
 
 ## More Resources
 
-http://www.ic.unicamp.br/~helio/disciplinas/MC102/Emacs_Reference_Card.pdf
+* [Emacs Reference Card](http://www.ic.unicamp.br/~helio/disciplinas/MC102/Emacs_Reference_Card.pdf),
+  a nice cheat sheet
+* [The Emacs Manual](http://www.gnu.org/software/emacs/manual/html_node/emacs/index.html#Top),
+  excellent, comprehensive instructions.
+* [How to Learn Emacs, a Visual One-pager](http://sachachua.com/blog/wp-content/uploads/2013/05/How-to-Learn-Emacs8.png)  
+  for the more visually-minded folks
+* `C-h t`, the built-in tutorial
 
 ## Summary
 

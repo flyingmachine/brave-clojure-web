@@ -238,7 +238,7 @@ nav {
   @include padding-trailer;
   @include trailer;
   @include padding-leader;
-  @include border-radius(0 2px 2px 0);
+  @include border-radius(0 0 3px 0);
   background: white;
 
   margin-left: 0;
@@ -277,4 +277,20 @@ nav {
 // Tipue search
 #tipue_search_content_title {
   @include leader;
+}
+
+table.keys {
+  border-top: 1px solid #eee;
+  td {
+    border-bottom: 1px solid #eee;
+  }
+  td:first-child {
+    @include monospace-family;
+    white-space: pre;
+    padding: 0 1em;
+    border-right: 1px solid #eee;
+  }
+  td:last-child {
+    padding: 0 1em;
+  }
 }
