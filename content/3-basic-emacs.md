@@ -1,10 +1,10 @@
 --- 
-title: Basic Emacs
-link_title: Basic Emacs
+title: Start Using Emacs
+link_title: Start Using Emacs
 kind: documentation
 ---
 
-# Basic Emacs
+# Start Using Emacs
 
 Before we get started with Emacs, here are some resources for setting
 up other text editors for Clojure development:
@@ -273,10 +273,11 @@ This tinkerability extends to key bindings in another way. Just as you
 can redefine existing functions or redefine existing functions, you
 can create, redefine, and remove key bindings.
 
-Incidentally, you can run any Emacs function by name with `M-x
-{function-name}`, e.g. `M-x save-buffer`. "M" stands for "meta", a key
-which modern keyboards don't possess but which is usually mapped to
-"Alt" or "Option".
+You can also run functions by name, without a specific keybinding,
+using `M-x {function-name}`, e.g. `M-x save-buffer`. "M" stands for
+"meta", a key which modern keyboards don't possess but which is
+usually mapped to "Alt" or "Option". `M-x` runs the `smex` command,
+which prompts you for the name of another command to be run.
 
 Now that we understand key bindings and functions, we can understand
 what modes are and how they work.
@@ -300,16 +301,33 @@ modes. Markdown mode and Clojure mode are both major modes. Major
 modes are usually set by Emacs when you open a file, but you can also
 set the mode explicitly with e.g. `M-x clojure-mode` or `M-x
 major-mode` - you set a mode by running the relevant Emacs command.
+Only one major mode is active at a time.
 
 Whereas major modes special Emacs for a certain file type, minor modes
 usually provide functionally that's useful across many file types. For
 example, Abbrev mode "automatically expands text based on pre-defined
 abbreviation definitions" (per the
 [Emacs manual](http://www.gnu.org/software/emacs/manual/html_node/emacs/Minor-Modes.html#Minor-Modes)).
+You can have multiple minor modes active at the same time.
 
 You can see which modes are active on the **mode line**:
 
 ![Emacs mode line](http://i.imgur.com/nKb9vDx.png)
+
+### Installing Packages
+
+A lot of modes are distributed as `packages`, which are just bundles
+of elisp files stored in a package repository. Emacs 24, which you
+should have installed, makes it very easy to browse and install
+packages. `M-x package-list-packages` will show you almost every
+package available. You can install packages with `M-x
+package-install`.
+
+You can also customize Emacs by loading your own elisp files or files
+you find on the Internet. [This guide] has a good description of how
+to load customizations under the section "Loading New Packages" toward
+the bottom of the article.
+
 
 ## Core Editing Terminology and Key Bindings
 
@@ -507,6 +525,8 @@ Here's a summary of key bindings:
 
 ## More Resources
 
+* [Mastering Emacs](http://www.masteringemacs.org/reading-guide/) This
+  is one of the best Emacs resources.
 * [Emacs Reference Card](http://www.ic.unicamp.br/~helio/disciplinas/MC102/Emacs_Reference_Card.pdf),
   a nice cheat sheet
 * [The Emacs Manual](http://www.gnu.org/software/emacs/manual/html_node/emacs/index.html#Top),
@@ -528,6 +548,7 @@ Whew! We covered a lot of ground:
 * How Emacs is a Lisp interpreter
 * How key bindings are related to commands
 * How to run commands with `M-x {{command-name}}`
+* How to install packages with `M-x package-install`
 * Modes are collections of key bindings and functions
 * There are major and minor modes
 * Key Emacs terms
@@ -539,5 +560,5 @@ Whew! We covered a lot of ground:
     * Yanking
 * Moving point
 
-With all of this hard-won Emacs knowledge under our belt, let's dig in
-to some Clojure code!
+With all of this hard-won Emacs knowledge under our belt, let's start
+using Emacs with Clojure!
