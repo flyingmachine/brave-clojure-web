@@ -17,7 +17,8 @@ functions that operate on it. We'll handle this pedagogical
 chicken-and-egg problem by briefly introducing the most common Clojure
 data structures. Then, we'll dive deep into functions. Finally, we'll
 bring the two together to thoroughly explore the ways in which we can
-manipulate data with functions.
+manipulate data with functions in order to hit hobbits or giants with
+swords.
 
 One final note before we start: in Clojure, the core data structures
 aren't mutable. For example, we'll be looking at the vector data
@@ -514,3 +515,110 @@ returns the last form evaluated:
 ```
 
 ### Anonymous Functions
+
+In Clojure, your functions don't have to have names. In fact, you'll
+find yourself using anonymous functions all the time.
+
+There are two ways to create anonymous functions. The first is to use
+the +fn+ form:
+
+```
+;; This looks a lot like defn, doesn't it?
+(fn [param-list]
+  function body)
+  
+;; Example
+(map (fn [name]
+       (str "Hi, " name))
+     ["Darth Vader" "Mr. Magoo"])
+; => ("Hi, Darth Vader" "Hi, Mr. Magoo")
+
+;; Another example
+((fn [x] (* x 3)) 8)
+; => 24
+```
+
+You can treat +fn+ nearly identically to the way you treat +defn+.
+The parameter lists and function bodies work exactly the same. You can
+use argument destructuring, rest-params, and so on.
+
+You could even associate your anonymous function with a name, which
+shouldn't come as a surprise:
+
+```clojure
+(def my-special-multiplier (fn [x] (* x 3)))
+(my-special-multiplier 12)
+; => 36
+```
+
+(If it does come as a surprise, then... Surprise!)
+
+There's another, more compact way to create anonymous functions:
+
+```clojure
+;; Whoa this looks weird.
+#(* % 3)
+
+;; Example
+(#(* % 3) 8)
+
+;; Another example
+(map #(str "Hi, " %)
+     ["Darth Vader" "Mr. Magoo"])
+; => ("Hi, Darth Vader" "Hi, Mr. Magoo")
+```
+
+You can see that it's definitely more compact, but it's probably also
+confusing. Let's break it down.
+
+This kind of anonymous function looks a lot like a function call,
+except that it's preceded by a pound sign, `#`:
+
+```clojure
+;; Function expression
+(* 8 3)
+
+;; Anonymous function
+#(* % 3)
+```
+
+This similarity allows you to more quickly see what will happen when
+this anonymous function gets applied. "Oh," you can say to yourself,
+"this is going to multiple its argument by 3".
+
+As you may have guessed by now, the percent sign, `%`, indicates the
+argument passed to the function. If your anonymous function takes
+multiple arguments, you can distinguish them like this: `%1`, `%2`,
+`%3`, etc. `%` is equivalent to `%1`.
+
+One key difference between this kind of anonymous function and the
+`fn` kind is that this kind can't take a `rest-param`. The other
+difference isn't syntactical &mdash; this form can easily become
+unreadable and is best used for very short functions.
+
+### Returning Functions
+
+Functions can return other functions. The returned functions are
+closures, which means that they can access all the variables that were
+in scope when the function was created.
+
+Here's a standard example:
+
+```
+;; inc-by is in scope, so the returned function has access to it even
+;; when the returned function is used outside inc-maker
+(defn inc-maker
+  "Create a custom incrementor"
+  [inc-by]
+  #(+ % inc-by))
+
+(def inc3 (inc-maker 3))
+
+(inc3 7)
+; => 10
+```
+
+Woohoo!
+
+## Pulling It All Together
+
