@@ -405,7 +405,7 @@ Clojure functions can be defined with one or more parameters:
 ```clojure
 (defn no-params
   []
-  "I take no parameters!"
+  "I take no parameters!")
   
 (defn one-param
   [x]
@@ -424,10 +424,17 @@ default values for arguments:
 (defn x-chop
   "Describe the kind of chop you're inflicting on someone"
   ([name chop-type]
-     (str "I " chop-type " " name "! Take that!"))
+     (str "I " chop-type " chop " name "! Take that!"))
   ([name]
      (x-chop name "karate")))
-;; In this case, "karate" is the default argument for the chop-type param
+;; In this case, "karate" is the default argument for the chop-type
+;; param
+
+(x-chop "Kanye West")
+; => "I karate chop Kanye West! Take that!"
+
+(x-chop "Kanye East" "bear-wrestling")
+; => "I bear-wrestling chop Kanye East! Take that!"
 ```
 
 You can also make each arity do something completely unrelated:
