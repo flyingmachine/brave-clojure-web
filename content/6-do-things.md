@@ -481,3 +481,36 @@ come last:
 ; => "Hi, Doreen, here are my favorite things: gum, shoes, berries"
 ```
 
+Finally, Clojure has a more sophisticated way of defining parameters
+called "destructuring".
+[This blog post by Jay Fields](http://blog.jayfields.com/2010/07/clojure-destructuring.html)
+does a great job of explaining it.
+
+#### Function body
+
+Your function body can contain any forms. Clojure automatically
+returns the last form evaluated:
+
+```clojure
+(defn illustrative-function
+  []
+  (+ 1 304)
+  30
+  "joe")
+(illustrative-function)
+; => "joe"
+
+(defn number-comment
+  [x]
+  (if (> x 6)
+    "Oh my gosh! What a big number!"
+    "That number's OK, I guess"))
+
+(number-comment 5)
+; => "That number's OK, I guess"
+
+(number-comment 7)
+; => "Oh my gosh! What a big number!"
+```
+
+### Anonymous Functions
