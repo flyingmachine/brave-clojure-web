@@ -548,7 +548,7 @@ find yourself using anonymous functions all the time.
 There are two ways to create anonymous functions. The first is to use
 the `fn` form:
 
-```
+```clojure
 ;; This looks a lot like defn, doesn't it?
 (fn [param-list]
   function body)
