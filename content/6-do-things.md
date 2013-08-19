@@ -546,7 +546,7 @@ In Clojure, your functions don't have to have names. In fact, you'll
 find yourself using anonymous functions all the time.
 
 There are two ways to create anonymous functions. The first is to use
-the +fn+ form:
+the `fn` form:
 
 ```
 ;; This looks a lot like defn, doesn't it?
@@ -664,7 +664,7 @@ and randomly chooses the one hit.
 
 Fun!
 
-### Hobbit Modeling
+### The Shire's Next Top Model
 
 For our hobbit model, we'll eschew such characteristics as
 "joviality" and "mischievousnes" and focus only on the hobbit's tiny
