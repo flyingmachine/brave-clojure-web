@@ -37,7 +37,7 @@ failed_protagonist_names[0] = "Gary Potter"
 failed_protagonist_names # => ["Gary Potter", "Doreen the Explorer", "The Incredible Bulk"]
 ```
 
-In Clojure, there is not equivalent. We'll cover the implications of
+In Clojure, there is no equivalent. We'll cover the implications of
 immutability in more detail later on, but for now keep in mind that
 immutability distinguishes these data structures from the ones you're
 used to in other programming languages.
@@ -111,6 +111,9 @@ You can look up values in maps:
 ; => {:c "ho hum"}
 ```
 
+Notice that we didn't need to use commas. In Clojure, commas are
+considered whitespace.
+
 ### Keywords
 
 Clojure keywords are best understood by the way they're used. They're
@@ -149,7 +152,7 @@ Lists are similar to vectors in that they're linear collections of
 values. You can't access their elements in the same way, though:
 
 ```clojure
-;; Here's a list - not the preceding single quote
+;; Here's a list - note the preceding single quote
 '(1 2 3 4)
 ; => (1 2 3 4)
 ;; Notice that the REPL prints the list without a quote. This is OK,
@@ -161,15 +164,15 @@ values. You can't access their elements in the same way, though:
 
 ;; This works but has different performance characteristics which we
 ;; don't care about right now
-(nth '(100 200 300 400) 0)
-; => 100
+(nth '(100 200 300 400) 3)
+; => 400
 ```
 
 ### Symbols and Naming
 
 As [clojure.org](http://clojure.org/data_structures#Data
 Structures-Symbols) states, symbols are identifiers that are normally
-used to refer to something. Let's look at the example above again:
+used to refer to something. Let's associate a value with a symbol:
 
 ```clojure
 (def failed-protagonist-names
@@ -178,8 +181,7 @@ used to refer to something. Let's look at the example above again:
 
 In this case, `def` associates the value
 `["Larry Potter" "Doreen the Explorer" "The Incredible Bulk"]` with
-the symbol `failed-protagonist-names`. `failed-protagonist-names` now
-evaluates to that 
+the symbol `failed-protagonist-names`.
 
 You might be thinking, "So what? Every other programming language
 lets me associate a name with a value. Big whoop!" Lisps, however,
@@ -228,7 +230,7 @@ parenthesis, followed by a function expression, followed by one or
 more optional arguments.)
 
 What you might not know, however, is how flexible this structure is.
-For example, a `function-expression` can be any expression which
+For example, a `function expression` can be any expression which
 evaluates to a function. The following are all valid function calls
 which evaluate to `6`:
 
@@ -246,8 +248,10 @@ which evaluate to `6`:
 However, these aren't valid function calls:
 
 ```clojure
-;; 1 isn't a function
+;; Numbers aren't functions
 (1 2 3 4)
+
+;; Neither are strings
 ("test" 1 2 3)
 ```
 
@@ -263,8 +267,8 @@ Clojure. "x cannot be cast to clojure.lang.IFn" just means that you're
 trying something as a function when it's not.
 
 Function flexibility doesn't end with the function expression,
-however. Syntactically, functions can take any expressions as
-arguments &mdash; including *other functions*.
+Syntactically, functions can take any expressions as arguments &mdash;
+including *other functions*.
 
 Take the function `map` (not to be confused with the map data
 structure), which can be understood by example:
@@ -281,8 +285,9 @@ structure), which can be understood by example:
 ;; a collection.
 (map inc [0 1 2 3])
 ; => (1 2 3 4)
-;; Note that "map" returns a list even though we supplied a vector
-;; as an argument. You'll learn why later. For now, just trust
+
+;; Note that "map" doesn't return a vector even though we supplied a
+;; vector as an argument. You'll learn why later. For now, just trust
 ;; that this is OK and expected.
 
 ;; The "dec" function is like "inc" except it subtracts 1
@@ -328,6 +333,7 @@ term "expression" because it's more familiar, but in Lisp we call them
 ```
 
 But these are not valid forms:
+
 ```clojure
 ;; No closing paren
 (+ 1 2
@@ -366,20 +372,112 @@ Function definitions are comprised of five main parts:
 
 * `defn`
 * A name
-* An argument list
-* (optional) a docstring
+* (Optional) a docstring
+* Parameters
 * The function body
 
 Here's an example of a function definition and calling the function:
 
-```
+```clojure
 (defn too-enthusiastic
   "Return a cheer that might be a bit too enthusiastic"
   [name]
   (str "OH. MY. GOD! " name " YOU ARE MOST DEFINITELY LIKE THE BEST "
   "MAN SLASH WOMAN EVER I LOVE YOU AND WE SHOULD RUN AWAY TO SOMEWHERE"))
   
-(too-enthusiastic "Padme")
-; => "OH. MY. GOD! Padme YOU ARE MOST DEFINITELY LIKE THE BEST MAN SLASH WOMAN EVER I LOVE YOU AND WE SHOULD RUN AWAY TO SOMEWHERE"
+(too-enthusiastic "Zelda")
+; => "OH. MY. GOD! Zelda YOU ARE MOST DEFINITELY LIKE THE BEST MAN SLASH WOMAN EVER I LOVE YOU AND WE SHOULD RUN AWAY TO SOMEWHERE"
+```
+
+Let's dive deeper into the docstring, parameters, and function
+body.
+
+#### The Docstring
+
+The docstring is really cool. You can view the docstring for a
+function in the REPL with `(doc fn-name)`, e.g. `(doc map)`.
+
+#### Parameters
+
+Clojure functions can be defined with one or more parameters:
+
+```clojure
+(defn no-params
+  []
+  "I take no parameters!"
+  
+(defn one-param
+  [x]
+  (str "I take one param: " x " It'd better be a string!")
+  
+(defn two-params
+  [x y]
+  (str "Two parameters! That's nothing! Pah! I will smoosh them "
+  "together to spite you! " x y))
+```
+
+Functions can also be overloaded by arity. This is one way to provide
+default values for arguments:
+
+```clojure
+(defn x-chop
+  "Describe the kind of chop you're inflicting on someone"
+  ([name chop-type]
+     (str "I " chop-type " " name "! Take that!"))
+  ([name]
+     (x-chop name "karate")))
+;; In this case, "karate" is the default argument for the chop-type param
+```
+
+You can also make each arity do something completely unrelated:
+
+```clojure
+(defn weird-arity
+  ([]
+     "Destiny dressed you this morning my friend, and now Fear is
+     trying to pull off your pants. If you give up, if you give in,
+     you're gonna end up naked with Fear just standing there laughing
+     at your dangling unmentionables! - the Tick")
+  ([number]
+     (inc number)))
+```
+
+But most likely, you don't want to do that.
+
+Clojure also allows you to define variable-arity functions by
+including a "rest-param", as in "put the rest of these arguments in a
+list with the following name":
+
+```clojure
+(defn codger-communication
+  [whippersnapper]
+  (str "Get off my lawn, " whippersnapper "!!!"))
+
+(defn codger
+  [& whippersnappers] ;; the ampersand indicates the "rest-param"
+  (map codger-communication whippersnappers))
+
+(codger "Billy" "Henry" "Anne-Marie" "The Incredible Bulk")
+; =>
+; ("Get off my lawn, Billy!!!"
+;  "Get off my lawn, Henry!!!"
+;  "Get off my lawn, Anne-Marie!!!"
+;  "Get off my lawn, The Incredible Bulk!!!")
+```
+
+As you can see, when you provide arguments to a variable-arity
+functions, the arguments get treated as a list.
+
+You can mix rest-params with normal params, but the rest-param has to
+come last:
+
+```clojure
+(defn favorite-things
+  [name & things]
+  (str "Hi, " name ", here are my favorite things: "
+       (clojure.string/join ", " things)))
+
+(favorite-things "Doreen" "gum" "shoes" "berries")
+; => "Hi, Doreen, here are my favorite things: gum, shoes, berries"
 ```
 
