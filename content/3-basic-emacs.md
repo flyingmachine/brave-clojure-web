@@ -11,6 +11,10 @@ up other text editors for Clojure development:
 
 * [Clojure development with Sublime Text 2 (youtube)](http://www.youtube.com/watch?v=wBl0rYXQdGg)
 * [Writing Clojure with Vim in 2013](http://mybuddymichael.com/writings/writing-clojure-with-vim-in-2013.html)
+* [Counterclockwise](https://code.google.com/p/counterclockwise/) is a
+  highly-recommended Eclipse plugin
+
+If you're already familiar with Emacs, skip ahead to the next chapter.
 
 You can, of course, use any editor you want. Other editors get pretty
 close to Emacs's Clojure functionality. The primary reason I recommend

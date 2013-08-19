@@ -27,21 +27,43 @@ way*.
 
 Now, at long last, the web-based instructional material you have in
 front of your face will unite you with the programming language you've
-been longing for. Over the course of these pages, you will learn:
+been longing for.
 
-**How to set up your computer for optimal learning.**<br /> In order
-to learn Clojure it makes sense to invest a small amount of time up
-front to get familiar with a quick, problem-free way to build and run
-Clojure programs. We'll also go over how to experiment with code
-within a running Clojure process using a REPL. The goal is to have a
-quick feedback loop where you can try some code, see what it does, and
-learn from the result.
+## Part 1: Environment Set Up
 
-**Using Emacs for Clojure development.**<br /> Having a quick feedback
-loop for learning is so important that we cover Emacs from the ground
-up so that you'll have an efficient Emacs/Clojure workflow. Pointers
-to resources for other editors are also included.
+In order to stay motivated and learn efficiently, you need to be able
+to actually run code. No running code in a browser for you!
+
+### [How to set up your computer for optimal learning.](/2-getting-started/)
+
+In order to learn Clojure it makes sense to invest a small amount of
+time up front to get familiar with a quick, problem-free way to build
+and run Clojure programs. We'll also go over how to experiment with
+code within a running Clojure process using a REPL. The goal is to
+have a quick feedback loop where you can try some code, see what it
+does, and learn from the result.
+
+### [Using Emacs for Clojure development.](/3-basic-emacs/)
+
+Having a quick feedback loop for learning is so important that we
+cover Emacs from the ground up so that you'll have an efficient
+Emacs/Clojure workflow. Pointers to resources for other editors are
+also included.
 
 TODO: explain the approach. Give some concrete things to do, then
 explain the broader principles. Give enough to make it interesting,
 then provide the skeleton needed to make sense of it all.
+
+## [Part 2: Language Fundamentals](/5-language-fundamentals-overview/)
+
+The goal of this section is to provide you with a solid foundation on
+which to continue learning Clojure. You'll start by learning how to
+actually do things, and then take a step back to understand the
+underlying concepts.
+
+### [Do Things](/6-do-things/)
+
+While you've undoubtedly heard of Clojure's awesome concurrency
+support and other stupendous features, Clojure's most salient
+characteristic is that it is a Lisp. We're going to explore this Lisp
+core. And this core is comprised of two parts: functions and data.

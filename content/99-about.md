@@ -13,4 +13,5 @@ href="mailto:brave-clojure@googlegroups.com"> the mailing list</a>.
 
 Thank you!<br />
 Daniel Higginbotham<br />
-[@nonrecursive](https://twitter.com/nonrecursive)
+[@nonrecursive](https://twitter.com/nonrecursive)<br />
+[http://www.flyingmachinestudios.com](http://www.flyingmachinestudios.com)
