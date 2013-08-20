@@ -402,7 +402,7 @@ function in the REPL with `(doc fn-name)`, e.g. `(doc map)`.
 
 #### Parameters
 
-Clojure functions can be defined with one or more parameters:
+Clojure functions can be defined with zero or more parameters:
 
 ```clojure
 (defn no-params
@@ -589,6 +589,7 @@ There's another, more compact way to create anonymous functions:
 
 ;; Example
 (#(* % 3) 8)
+; => 24
 
 ;; Another example
 (map #(str "Hi, " %)
@@ -617,7 +618,12 @@ this anonymous function gets applied. "Oh," you can say to yourself,
 As you may have guessed by now, the percent sign, `%`, indicates the
 argument passed to the function. If your anonymous function takes
 multiple arguments, you can distinguish them like this: `%1`, `%2`,
-`%3`, etc. `%` is equivalent to `%1`.
+`%3`, etc. `%` is equivalent to `%1`:
+
+```clojure
+(#(str %1 " and " %2) "corn bread" "butter beans")
+; => "corn bread and butter beans"
+```
 
 One key difference between this kind of anonymous function and the
 `fn` kind is that this kind can't take a `rest-param`. The other
