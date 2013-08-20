@@ -1000,8 +1000,8 @@ And here's how regexes are used in our symmetrizer:
   [part]
   {:name (clojure.string/replace (:name part) #"^left-" "right-")
    :size (:size part)})
-(matching-part ["left-eye" 1])
-; => ["right-eye" 1]
+(matching-part {:name "left-eye" :size 1})
+; => {:name "right-eye" :size 1}]
 ```
 
 ### conj
