@@ -62,6 +62,6 @@
         target (inc (rand body-part-size-sum))]
     (loop [[part & rest] sym-parts
            accumulated-size (:size part)]
-      (if (> target accumulated-size)
+      (if (> accumulated-size target)
         part
         (recur rest (+ accumulated-size (:size part)))))))
