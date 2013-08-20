@@ -48,7 +48,9 @@ used to in other programming languages.
 This section will briefly introduce you to core Clojure data
 structures. If you're curious about the functions used,
 [ClojureDocs](http://clojuredocs.org/) is a great reference for
-finding out more.
+finding out more. You can also use `(doc functionname)` in the repl
+and `(source functionname)` in the REPL to see the documentation or
+source code for a function.
 
 ### Numbers
 
@@ -56,7 +58,7 @@ We're only going to work with integers and floats for awhile, though
 [Clojure's treatment of numbers](http://clojure.org/data_structures#Data
 Structures-Numbers) is more sophisticated than that. Examples:
 
-```
+```clojure
 93
 1.2
 ```
@@ -210,7 +212,7 @@ explaining:
 
 By now you've evaluated many function calls in the REPL:
 
-```
+```clojure
 (+ 1 2 3 4)
 (* 1 2 3 4)
 (first [1 2 3 4])
@@ -630,7 +632,7 @@ in scope when the function was created.
 
 Here's a standard example:
 
-```
+```clojure
 ;; inc-by is in scope, so the returned function has access to it even
 ;; when the returned function is used outside inc-maker
 (defn inc-maker
