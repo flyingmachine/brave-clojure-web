@@ -349,8 +349,21 @@ We'll go into more detail about how Clojure evaluates forms later in
 the chapter, but for now you can just think of it as a black box.
 Clojure encounters a form and magically evaluates it! Yay, magic!
 
-A **function call** is a form which is enclosed in parentheses. When
-Clojure encounters a function call, it kicks off the evaluation
+A **function call** is a form which is enclosed in parentheses where
+the first element in the parentheses is a function. Example:
+
+```clojure
+;; Not a function call. If "if" isn't a function, then what is it?
+;; Find out in section 3.2 below
+(if true 1 2)
+; => 1
+
+;; A proper function call
+(+ 1 2)
+3
+```
+
+When Clojure encounters a function call, it continues the evaluation
 process by first evaluating all sub-forms recursively. Once the
 sub-forms are evaluated, the function is applied and it returns a
 value. For example:
