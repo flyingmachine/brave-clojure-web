@@ -1,5 +1,5 @@
 --- 
-title: Clojure Alchemy: Reading and Evaluation
+title: "Clojure Alchemy: Reading and Evaluation"
 link_title: Reading and Evaluation
 kind: documentation
 ---
