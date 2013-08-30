@@ -1,6 +1,6 @@
 --- 
 title: "Clojure Alchemy: Reading and Evaluation"
-link_title: Reading and Evaluation
+link_title: "Clojure Alchemy: Reading and Evaluation"
 kind: documentation
 ---
 
@@ -60,7 +60,10 @@ consists of representations of lists!
 Clojure code consists of representations of lists. These lists are
 then parsed by the *reader*, which produces the data structure that's
 then *evaluated*. This makes Clojure *homoiconic*: Clojure programs
-are represented by Clojure data structures.
+are represented by Clojure data structures. Overall, the read/eval
+process looks something like this:
+
+![read-eval](/assets/images/read-eval/read-eval.png)
 
 To fully understand how what's going on here, we'll explore the
 reader and how it parses text to produce data structures. Then we'll
@@ -68,6 +71,11 @@ learn about the rules employed when evaluating data structures.
 Finally, we'll tie everything together with an introduction to macros.
 
 ## The Reader
+
+The reader is Clojure's bridge between the *textual representation*
+of a data structure and the data structure itself.
+
+
 
 ## Evaluation
 
