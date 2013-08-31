@@ -56,7 +56,7 @@ body {
 }
 
 h1 {
-  @include adjust-font-size-to(40px, 1);
+  @include adjust-font-size-to(40px, 2);
   @include leader(1, 40px);
   @include trailer(1, 40px);
 }
@@ -177,9 +177,9 @@ nav {
       display:block;
       a {
         padding: 0 16px;
-        @include adjust-font-size-to(20px, 1);
-        @include padding-trailer(.5, 20px);
-        @include padding-leader(.5, 20px);
+        @include adjust-font-size-to(16px, 1);
+        @include padding-trailer(.25, 16px);
+        @include padding-leader(.25, 16px);
         display: block;
         color: #333;
         

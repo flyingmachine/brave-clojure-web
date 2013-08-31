@@ -186,11 +186,19 @@ In this case, `def` associates the value
 `["Larry Potter" "Doreen the Explorer" "The Incredible Bulk"]` with
 the symbol `failed-protagonist-names`.
 
-You might be thinking, "So what? Every other programming language
-lets me associate a name with a value. Big whoop!" Lisps, however,
-allow you to manipulate symbols as data, something we'll see a lot of 
-when we start working with macros. For now, though, it's OK to think
-"Big whoop!" and not be very impressed.
+You might be thinking, "So what? Every other programming language lets
+me associate a name with a value. Big whoop!" Lisps, however, allow
+you to manipulate symbols as data, something we'll see a lot of when
+we start working with macros. Functions can return symbols and take
+them as arguments:
+
+```
+(identity 'test)
+; => test
+```
+
+For now, though, it's OK to think "Big whoop!" and not be very
+impressed.
 
 Thus concludes our Clojure data structures primer. Now it's time to
 dig in to functions and see how these data structures and be used!
@@ -638,10 +646,15 @@ multiple arguments, you can distinguish them like this: `%1`, `%2`,
 ; => "corn bread and butter beans"
 ```
 
-One key difference between this kind of anonymous function and the
-`fn` kind is that this kind can't take a `rest-param`. The other
-difference isn't syntactical &mdash; this form can easily become
-unreadable and is best used for very short functions.
+You can also pass a rest param:
+
+```clojure
+(#(identity %&) 1 "blarg" :yip)
+; => (1 "blarg" :yip)
+```
+
+The main difference between this form and `fn` is that this form can
+easily become unreadable and is best used for very short functions.
 
 ### Returning Functions
 
