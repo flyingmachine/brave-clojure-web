@@ -13,7 +13,7 @@ As alchemy, it lurched along in fits and starts, inextricably tied to
 magic and mysticism. Each chemical substance was its own force of
 nature with no rational relationship to other chemicals. Chemical
 reactions were proof of the supernatural. The philosopher's stone
-&nbsp; the supreme obsession of alchemsists &nbsp; was not just a
+&mdash; the supreme obsession of alchemsists &mdash; was not just a
 wonder tool for transmuting base metals into gold; it was also a
 metaphor for transcending duality and reaching enlightenment.
 
