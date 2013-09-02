@@ -26,7 +26,7 @@ been longing for.
 In order to stay motivated and learn efficiently, you need to be able
 to actually build stuff. No running code in a browser for you!
 
-### [How to set up your computer for optimal learning.](/getting-started/)
+### [How to set up your computer for optimal learning](/getting-started/)
 
 In order to learn Clojure it makes sense to invest a small amount of
 time up front to get familiar with a quick, problem-free way to build
@@ -37,7 +37,7 @@ does, and learn from the result.
 
 [Read "Building, Running, and The Repl"](/getting-started/)
 
-### [Using Emacs for Clojure development.](/basic-emacs/)
+### [Using Emacs for Clojure development](/basic-emacs/)
 
 Having a quick feedback loop for learning is so important that we
 cover Emacs from the ground up so that you'll have an efficient
