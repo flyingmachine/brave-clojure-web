@@ -28,6 +28,22 @@
     .page
       .content
         = find_and_preserve(yield)
+        .pagenav
+          - count = @items.size
+          - index = @items.select{|i| i[:kind] == "documentation"}.sort{|a, b| a.identifier <=> b.identifier}.index(@item)
+          - if index
+            - if index != 0
+              - i = @items[index - 1]
+              .prev
+                %a{:href => relative_path_to(i)}
+                  &larr;
+                  = i[:link_title]
+            - if i = @items[index + 1]
+              .next
+                %a{:href => relative_path_to(i)}
+                  = i[:link_title]
+                  &rarr;
+          
         #disqus_thread
         :javascript
           /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */

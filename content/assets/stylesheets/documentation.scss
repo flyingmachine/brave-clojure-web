@@ -339,3 +339,15 @@ table.keys {
 #disqus_thread {
   @include leader;
 }
+
+.pagenav {
+  @include clearfix;
+  border-top: 1px dotted #eee;
+  border-bottom: 1px dotted #eee;
+  .prev {
+    float: left;
+  }
+  .next {
+    float: right;
+  }
+}
