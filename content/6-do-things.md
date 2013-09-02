@@ -80,7 +80,8 @@ concatenation via the `str` function:
 
 ```clojure
 (def name "Chewbacca")
-(println (str "\"Uggllglglglglglglglll\ - " name))
+(println (str "\"Uggllglglglglglglglll\" - " name))
+; => "Uggllglglglglglglglll" - Chewbacca
 ```
 
 ### Maps
