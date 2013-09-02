@@ -6,28 +6,16 @@ kind: documentation
 
 # Clojure Alchemy: Reading, Evaluation, and Macros
 
-Those who endeavor to be *brave* and *true* will find a fascinating
-metaphor for their journey in the history of chemistry.
-
-As alchemy, it lurched along in fits and starts, inextricably tied to
-magic and mysticism. Each chemical substance was its own force of
-nature with no rational relationship to other chemicals. Chemical
-reactions were proof of the supernatural. The philosopher's stone
-&mdash; the supreme obsession of alchemsists &mdash; was not just a
-wonder tool for transmuting base metals into gold; it was also a
-metaphor for transcending duality and reaching enlightenment.
-
-Until, finally, Dmitri Mendeleev developed the periodic table. By
-clearly revealing the underlying pattern which governed the
-relationships among alements, Mendeleev ended millennia of confusion
-among philosophers and scientists.
-
 By this point, you probably have a magical understanding of Clojure.
-Your alchemical elements are "form", "special form", "evaluates", and
-so forth. By the end of this chapter you'll be able to clearly see the
-relationships among Clojure's component parts. We'll get you to this
-understanding by explaining Clojure's fundamental mechanisms: reading
-and evaluation.
+In the same way that alchemists thought of each chemical substance as
+a force of nature with no rational relationship to other chemicals,
+your alchemical elements are "form", "special form", "evaluates", and
+the like.
+
+This chapter will serve as your periodic table. By the end, you'll be
+able to clearly see the relationships among Clojure's component parts.
+We'll get you to this understanding by explaining Clojure's
+fundamental mechanisms: reading and evaluation.
 
 Once you understand these fundamentals, you'll be ready to go full
 circle and obtain Clojure enlightenment, transcending code/data
@@ -37,6 +25,11 @@ programmers: the macro. And thus you will become the most feared and
 respected programmers aliiiiiiiive!
 
 ## The Philosopher's Stone
+
+The philosopher's stone &mdash; the supreme obsession of alchemsists
+&mdash; was not just a wonder tool for transmuting base metals into
+gold; it was also a metaphor for transcending duality and reaching
+enlightenment.
 
 The key to Clojure enlightnment is that *Clojure evaluates data
 structures*. You can try this right now in a REPL:

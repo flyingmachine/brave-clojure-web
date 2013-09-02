@@ -256,15 +256,55 @@ nav {
   }
 }
 
+.announcement, footer {
+  @include container;
+  @include padding-trailer;
+  text-align: center;
+  .signup {
+    @include push(2);
+    @include span-columns(8, 12);
+  }
+}
+
+.announcement {
+  @include padding-leader;
+  border-bottom: 1px solid #eee;
+}
+
 .page {
   // page acts as a container for our grid.
   @include container;
   @include padding-trailer;
-  @include trailer;
-  @include border-radius(0 0 3px 0);
-
+  
+  border-bottom: 1px solid #eee;
   background: white;
 
+  h2 {
+    @include adjust-font-size-to(32px, 2);
+    @include leader(1, 32px);
+    @include trailer(1, 32px);
+    border-bottom: 1px solid #eee;
+    // border-left: 8px solid $purple;
+    // padding-left: 8px;
+    // margin-left: -16px;
+  }
+
+  h3 {
+    @include adjust-font-size-to(24px, 1);
+    @include leader(1, 24px);
+    @include trailer(1, 24px);
+    border-left: 4px solid $dark-teal;
+    padding-left: 12px;
+    margin-left: -16px;
+  }
+
+  h4 {
+    @include leader;
+    border-left: 2px solid $dark-teal;
+    padding-left: 14px;
+    margin-left: -16px;
+  }
+  
   .content {
     @include at-breakpoint($M) {
       @include span-columns(9, 12);
@@ -273,34 +313,6 @@ nav {
     }
     
     @include padding-leader;
-    
-    
-    h2 {
-      @include adjust-font-size-to(32px, 2);
-      @include leader(1, 32px);
-      @include trailer(1, 32px);
-      border-bottom: 1px solid #eee;
-      // border-left: 8px solid $purple;
-      // padding-left: 8px;
-      // margin-left: -16px;
-    }
-
-    h3 {
-      @include adjust-font-size-to(24px, 1);
-      @include leader(1, 24px);
-      @include trailer(1, 24px);
-      border-left: 4px solid $dark-teal;
-      padding-left: 12px;
-      margin-left: -16px;
-    }
-
-    h4 {
-      font-weight:bold;
-      @include leader;
-      border-left: 2px solid $dark-teal;
-      padding-left: 14px;
-      margin-left: -16px;
-    }
   }
 }
 

@@ -81,7 +81,7 @@ route '*' do
       # TODO use the actual item extension
       item.identifier.chop + ".rb"
     else
-      item.identifier + 'index.html'
+      item.identifier.gsub(/^\/\d+-/, '/') + 'index.html'
     end
     
   end
