@@ -4,14 +4,6 @@ link_title: Introduction
 kind: documentation
 ---
 
-# Pre-Introduction
-
-**Hold up!** This is a work in progress! The only reason I even have
-it online at all is so I can get feedback. If you'd like to send me
-some, please do <a href="mailto:brave-clojure@googlegroups.com">email
-the mailing list</a>! In the mean time, if you really are *brave* and
-*true*, then continue reading!
-
 # Introduction
 
 \**Clojure!*\*
