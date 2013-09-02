@@ -2,7 +2,10 @@
 %html{:lang => "en"}
   %head
     %meta{:charset => "utf-8"}/
-    %title #{@item[:title]}
+    %title
+      #{@item[:title]}
+      - if @item[:title] != 'Clojure for the Brave and True'
+        | Clojure for the Brave and True
     %link{:href => relative_path_to("/stylesheets/documentation.css"), :media => "screen", :rel => "stylesheet", :type => "text/css"}/
     %link{:href => relative_path_to("/stylesheets/pygments.css"), :media => "screen", :rel => "stylesheet", :type => "text/css"}/
     %link{:href => 'http://fonts.googleapis.com/css?family=Gentium+Book+Basic:400,400italic|Open+Sans:400,800', :rel => 'stylesheet', :type => 'text/css'}/
