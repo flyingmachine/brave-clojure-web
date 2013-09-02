@@ -162,13 +162,14 @@ header {
 
 
 @include at-breakpoint($M) {
-  .is-sticky {
-    nav {
-      width: 223px;
-      top:0;
-      bottom:0;
-    }
-  }
+  // .is-sticky {
+  //   nav {
+  //     width: 223px;
+  //     top:0;
+  //     bottom:0;
+  //     @include padding-leader(2);
+  //   }
+  // }
 }
 
 nav {
