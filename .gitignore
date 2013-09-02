@@ -5,3 +5,5 @@ crash.log
 .DS_Storage
 .sass-cache
 Guardfile
+.lein-env
+target

@@ -29,6 +29,10 @@ $L: 75em;
   font-family: Palatino Linotype, Book Antiqua, Palatino, serif;
 }
 
+@mixin fancy-serif {
+  font-family: 'Gentium Book Basic', serif;
+}
+
 @mixin monospace-family {
   font-family: "Bitstream Vera Sans Mono", monospace;
 }
@@ -38,14 +42,16 @@ $L: 75em;
 $purple: #767fa8;
 $light-purple-bg: #eeeff4;
 $dark-teal: #b5c5cf;
-$light-teal: #999;
+$light-teal: #d7e9f5;
 $light-teal-bg: #f3fafe;
 $light-green-bg: #eef4f1;
 $blue: #69b5e4;
+$orange: #f26f53;
+$magenta: #e14d6d;
 
 // To customize vertical ryhthm, see http://compass-style.org/reference/compass/typography/vertical_rhythm/
 @include establish-baseline;
-
+@include border-box-sizing;
 
 // actual css customization
 .mono {
@@ -54,13 +60,16 @@ $blue: #69b5e4;
 
 body {
   @include sans-family;
-  background: #666;
   font-size:16px;
+}
+
+h1, h2, h3, h4 {
+  @include fancy-serif;
+  font-weight: bold;
 }
 
 h1 {
   @include adjust-font-size-to(40px, 2);
-  @include leader(1, 40px);
   @include trailer(1, 40px);
 }
 
@@ -133,23 +142,20 @@ header {
   @include container;
   @include padding-leader(.5);
   @include padding-trailer(.5);
-  margin-left: 0;
-  background: #f26f53;
-  .name {
-    @include at-breakpoint($M) {
-      @include span-columns(9 omega, 12);
-    }
-    
-    @include adjust-font-size-to(50px);
+  color: #f26f53;
+  border-bottom: 1px solid #eee;
+  .name {    
+    @include adjust-font-size-to(62px);
+    text-align: center;
     font-family: 'Open Sans', sans-serif;
     font-weight: 800;
-    text-align: left;
     
     span {
-      @include adjust-font-size-to(47px, 1, 50px);
+      @include adjust-font-size-to(47px, 1, 62px);
       font-family: 'Gentium Book Basic', serif;
       font-style: italic;
       font-weight: normal;
+      color: black;
     }
   }
 }
@@ -157,19 +163,12 @@ header {
 nav {
   @include at-breakpoint($M) {
     @include span-columns(3,12);
-    position: fixed;
-    width: 13.75em;
-    top: 0;
-    bottom: 0;
-    overflow: auto;
-    margin-left:-1em;
-    padding-left: 1em;
-    padding-top:1em;
+    @include leader(-1);
+    @include padding-leader;
+    border-right: 1px solid #eee;
   }
   
   @include padding-trailer(2);
-  background: #eee;
-
 
   h2 {
     @include adjust-font-size-to(20px, 1);
@@ -190,16 +189,13 @@ nav {
         @include padding-trailer(.25, 16px);
         @include padding-leader(.25, 16px);
         display: block;
-        color: #333;
-        
-        &:visited {
-          color:black
-        }
       }
     }
     
     > li.active-section > a, > li > a:hover {
-      background: $light-teal;
+      border-left:1px solid #ccc;
+      margin-left: -1px;
+      // background: $light-teal;
     }
 
     >li li a {
@@ -213,7 +209,9 @@ nav {
     // Sub navigation, e.g. 2.3 Susy
     ol {
       a:hover, li.active > a {
-        background:white;
+        border-left: 2px solid #999;
+        margin-left: -2px;
+        //background:#d7f5e6;
       }
 
       ol {
@@ -232,7 +230,7 @@ nav {
     @include padding-trailer(.5);
     margin-left: -1em;
     padding-left: 1em;
-    background: #e14d6d;
+    // background: #e14d6d;
     input {
       padding: 3px 0;
       @include adjust-font-size-to(16px);
@@ -250,8 +248,6 @@ nav {
   @include padding-leader;
   @include border-radius(0 0 3px 0);
   background: white;
-
-  margin-left: 0;
 
   .content {
     @include at-breakpoint($M) {
