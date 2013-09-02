@@ -8,4 +8,7 @@ $(function(){
     $("#toc > ol > li.active-section > ol > li:first-child").addClass("active");
   })
 
+  $("nav").sticky();
 })
+
+
