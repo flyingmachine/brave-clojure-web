@@ -16,6 +16,9 @@ $grid-padding   : $gutter-width;  // grid-padding equal to gutters
 $base-line-height: 27px;
 $total-columns: 12;             // a 12-column grid
 
+$M: 47em;
+$L: 75em;
+
 
 // Fonts --------------------------------------------------------------
 @mixin sans-family {
@@ -133,7 +136,10 @@ header {
   margin-left: 0;
   background: #f26f53;
   .name {
-    @include span-columns(9 omega, 12);
+    @include at-breakpoint($M) {
+      @include span-columns(9 omega, 12);
+    }
+    
     @include adjust-font-size-to(50px);
     font-family: 'Open Sans', sans-serif;
     font-weight: 800;
@@ -149,16 +155,19 @@ header {
 }
 
 nav {
-  @include span-columns(3,12);
+  @include at-breakpoint($M) {
+    @include span-columns(3,12);
+    position: fixed;
+    width: 13.75em;
+    top: 0;
+    bottom: 0;
+    overflow: auto;
+    margin-left:-1em;
+    padding-left: 1em;
+    padding-top:1em;
+  }
+  
   @include padding-trailer(2);
-  position: fixed;
-  width: 13.75em;
-  top: 0;
-  bottom: 0;
-  overflow: auto;
-  margin-left:-1em;
-  padding-left: 1em;
-  padding-top:1em;
   background: #eee;
 
 
@@ -245,7 +254,10 @@ nav {
   margin-left: 0;
 
   .content {
-    @include span-columns(9 omega,12);
+    @include at-breakpoint($M) {
+      @include span-columns(9 omega,12);
+    }
+    
     
     h2 {
       @include adjust-font-size-to(32px, 2);
