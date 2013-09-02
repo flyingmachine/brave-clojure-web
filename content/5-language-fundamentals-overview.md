@@ -17,8 +17,8 @@ playing with the language and building things for fun to help solidify
 your knowledge.
 
 Next, you'll learn Clojure's underlying structure by explaining the
-Clojure *reader*. This will give you a crystal-clear understanding of
-how Clojure programs work.
+Clojure *reader* and *evaluation*. This will give you a crystal-clear
+understanding of how Clojure programs work.
 
 Finally, we'll build on our understanding of Clojure's underlying
 structure by exploring *macros*, one of the most powerful tools in
