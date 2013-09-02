@@ -202,8 +202,8 @@ nav {
       a {
         padding: 0 16px;
         @include adjust-font-size-to(16px, 1);
-        @include padding-trailer(.25, 16px);
-        @include padding-leader(.25, 16px);
+        @include padding-trailer(.5, 16px);
+        @include padding-leader(.5, 16px);
         display: block;
       }
     }

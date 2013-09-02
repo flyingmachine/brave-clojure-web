@@ -14,8 +14,10 @@
         Brave
         %span and
         True
-
+    
     .page
+      .announcement
+        
       .content= find_and_preserve(yield)
       %nav
         %form#search{:action => "/search/"}
