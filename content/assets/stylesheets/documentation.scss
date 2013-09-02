@@ -132,7 +132,7 @@ code {
   }
 
   img {
-    // max-width: 44em;
+    max-width: 100%;
   }
 }
 
@@ -141,7 +141,8 @@ header {
   @include sans-family;
   @include container;
   @include padding-leader(.5);
-  @include padding-trailer(.5);
+  @include padding-trailer(1);
+  border-top: 2px solid #f26f53;
   color: #f26f53;
   border-bottom: 1px solid #eee;
   .name {    
@@ -174,12 +175,15 @@ header {
 
 nav {
   @include at-breakpoint($M) {
-    @include span-columns(3,12);
-    @include leader(-1);
+    @include span-columns(3 omega,12);
     @include padding-leader;
-    border-right: 1px solid #eee;
+    opacity: 0.7;
+    &:hover {
+      opacity: 1;
+    }
   }
   
+  @include padding-leader;
   @include padding-trailer(2);
 
   h2 {
@@ -257,14 +261,18 @@ nav {
   @include container;
   @include padding-trailer;
   @include trailer;
-  @include padding-leader;
   @include border-radius(0 0 3px 0);
+
   background: white;
 
   .content {
     @include at-breakpoint($M) {
-      @include span-columns(9 omega,12);
+      @include span-columns(9, 12);
+      padding-right: 1em;
+      border-right: 1px solid #eee;
     }
+    
+    @include padding-leader;
     
     
     h2 {
