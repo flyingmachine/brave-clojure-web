@@ -684,7 +684,7 @@ Woohoo!
 ## Pulling It All Together
 
 OK! Let's pull all this together and use our knowledge for a noble
-purpose: hitting hobbits!
+purpose: smacking around hobbits!
 
 In order to hit a hobbit, we'll first model its body parts. Each body
 part will include its relative size to help us determine how likely it
@@ -837,8 +837,8 @@ This means that `if` is not a function. So what is it?
 
 In Lisp, there are a handful of **special forms** which do not follow
 the default evaluation rules. `if` is a special form, as are `def` and
-`defn`. We'll talk about special forms a bit more when we discuss
-macros. For now, you can feel special every time you use `if`.
+`defn`. We'll talk about special forms a bit in the next chapter. For
+now, you can feel special every time you use `if`.
 
 ### let
 
