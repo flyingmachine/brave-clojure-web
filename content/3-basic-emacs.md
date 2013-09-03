@@ -318,9 +318,10 @@ package available. You can install packages with `M-x
 package-install`.
 
 You can also customize Emacs by loading your own elisp files or files
-you find on the Internet. [This guide] has a good description of how
-to load customizations under the section "Loading New Packages" toward
-the bottom of the article.
+you find on the Internet.
+[This guide](http://www.masteringemacs.org/articles/2010/10/04/beginners-guide-to-emacs/)
+has a good description of how to load customizations under the section
+"Loading New Packages" toward the bottom of the article.
 
 
 ## Core Editing Terminology and Key Bindings
