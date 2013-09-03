@@ -238,6 +238,13 @@ REPL to build our knowledge of Clojure syntax and semantics.
 
 At this point you should have the basic knowledge you need to begin
 learning the Clojure language without having to fuss with tools. To
-learn how to interaact with Clojure even more proficiency, however,
-we'll cover Emacs in depth. If that's not your cup of tea, feel free
-to skip ahead!
+learn how to interaact with Clojure with even more proficiency,
+however, we'll cover Emacs in depth.
+
+If Emacs isn't your cup of tea, here are some resources for setting
+up other text editors for Clojure development:
+
+* [Clojure development with Sublime Text 2 (youtube)](http://www.youtube.com/watch?v=wBl0rYXQdGg)
+* [Writing Clojure with Vim in 2013](http://mybuddymichael.com/writings/writing-clojure-with-vim-in-2013.html)
+* [Counterclockwise](https://code.google.com/p/counterclockwise/) is a
+  highly-recommended Eclipse plugin

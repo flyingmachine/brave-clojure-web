@@ -588,7 +588,7 @@ the `fn` form:
 ; => 24
 ```
 
-You can treat +fn+ nearly identically to the way you treat +defn+.
+You can treat `fn` nearly identically to the way you treat `defn`.
 The parameter lists and function bodies work exactly the same. You can
 use argument destructuring, rest-params, and so on.
 
@@ -635,7 +635,7 @@ except that it's preceded by a pound sign, `#`:
 
 This similarity allows you to more quickly see what will happen when
 this anonymous function gets applied. "Oh," you can say to yourself,
-"this is going to multiple its argument by 3".
+"this is going to multiply its argument by 3".
 
 As you may have guessed by now, the percent sign, `%`, indicates the
 argument passed to the function. If your anonymous function takes
