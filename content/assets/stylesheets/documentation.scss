@@ -158,6 +158,14 @@ header {
       font-weight: normal;
       color: black;
     }
+
+    a, a:link, a:hover, a:visited {
+      color: #f26f53;
+      text-decoration: none;
+      span {
+        color: black;
+      }
+    }
   }
 }
 
