@@ -382,8 +382,8 @@ ready to learn about!
 
 ## Macros
 
-Macros are actually just functions. They take arguments and return a
-value, just like a function would.
+Macros actually behave very similarly to functions. They take
+arguments and return a value, just like a function would.
 
 What makes them interesting and powerful is the way they fit in to the
 evaluation process. Let's look at an example:
