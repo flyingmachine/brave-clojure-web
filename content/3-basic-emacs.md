@@ -364,7 +364,7 @@ Point is located between "I" and "f". Now, if you do `C-k`, then all
 the text from the letter "f" onward will disappear. `C-k` runs the
 command `kill-line`, which "kills" all text after point on the current
 line (We'll talk more about killing later). Go ahead and undo that
-change.
+change with `C-\`. Also try your normal OS key binding for undo.
 
 ### Movement
 
