@@ -265,7 +265,6 @@ nav {
 
 .announcement, footer {
   @include container;
-  @include padding-trailer;
   text-align: center;
   .signup {
     @include push(2);
@@ -276,6 +275,10 @@ nav {
 .announcement {
   @include padding-leader;
   border-bottom: 1px solid #eee;
+}
+
+footer {
+  @include padding-trailer;
 }
 
 .page {
@@ -357,5 +360,14 @@ table.keys {
   }
   .next {
     float: right;
+  }
+}
+
+.ebook {
+  span {
+    @include adjust-font-size-to(13px);
+  }
+  .ad {
+    text-align: center;
   }
 }
