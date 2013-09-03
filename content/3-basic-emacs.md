@@ -308,6 +308,9 @@ You can see which modes are active on the **mode line**:
 
 ![Emacs mode line](http://i.imgur.com/nKb9vDx.png)
 
+If you open a file and Emacs doesn't load a major mode for it, chances
+are that one exists. You'll just need to download its package...
+
 ### Installing Packages
 
 A lot of modes are distributed as `packages`, which are just bundles
