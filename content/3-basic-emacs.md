@@ -330,8 +330,9 @@ this section entirely! But you'll be missing out on some great stuff:
 
 * Key Emacs terms
 * How to select text, cut it, copy it, and paste it
+* How to select text, cut it, copy it, and paste it (see what I did
+  there? Ha ha ha!)
 * How to move through a buffer efficiently
-* How to cut, copy, and paste
 
 To get started, open up a new buffer in Emacs and name it
 "jack-handy". Then paste in the following text:
