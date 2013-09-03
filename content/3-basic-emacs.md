@@ -86,9 +86,9 @@ everything set up, let's actually start doing some editing!
 
 Before we go further, you need to know an important Emacs key binding:
 Control+g. This key binding quits whatever Emacs command you're trying
-to run, so if things aren't going right hit, hold down the Control key
-and press "g" and then try again. It won't close Emacs or make you
-lose any work; it'll just cancel your current action.
+to run, so if things aren't going right, hold down the Control key and
+press "g" and then try again. It won't close Emacs or make you lose
+any work; it'll just cancel your current action.
 
 ## Emacs Buffers
 
