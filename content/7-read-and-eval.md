@@ -404,8 +404,7 @@ evaluation process. Let's look at an example:
 
 Clearly, this isn't a function call! There is no way possible for a
 function to "reach into" one of its operands and alter it. The
-difference is all in the way "normal" functions and macro functions
-are evaluated:
+difference is all in the way functions and macros are evaluated:
 
 1. When you call a function, each of its operands is evaluated before
    being passed to the function as an argument. By contrast, when you
@@ -414,15 +413,14 @@ are evaluated:
    are not evaluated by calling a function, special form, or macro
    &mdash; the unevaluated list data structure itself is passed in.
 
-   In the above example, the macro function `ignore-last-operand`
-   receives the list `(+ 1 2 10)` as its argument, *not* the value
-   `13`.
+   In the above example, the macro `ignore-last-operand` receives the
+   list `(+ 1 2 10)` as its argument, *not* the value `13`.
 
 2. The data structure returned by a function is *not* evaluated, but
-   the data structure returned by a macro function *is*. In the above
-   example, `ignore-last-operand` returned the list `(+ 1 2)` both
-   times, and both times that list was then evaluated, resulting in
-   the `+` function being called.
+   the data structure returned by a macro *is*. In the above example,
+   `ignore-last-operand` returned the list `(+ 1 2)` both times, and
+   both times that list was then evaluated, resulting in the `+`
+   function being called.
 
 Macros allow you to use the full power of Clojure to transform the
 data structures used to represent your program into completely
