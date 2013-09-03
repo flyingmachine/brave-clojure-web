@@ -35,7 +35,7 @@
               - i = @items[index - 1]
               .prev
                 %a{:href => relative_path_to(i)}
-                  &larr;
+                  3&larr;
                   = i[:link_title]
             - if i = @items[index + 1]
               .next
@@ -57,14 +57,16 @@
 
     
       %nav
-        Get PDF, .epub, and .mobi versions (or just, you know, put money in my pocket):
-        <iframe width="160" height="400" src="https://leanpub.com/clojure-for-the-brave-and-true/embed" frameborder="0" allowtransparency="true"></iframe>
         %a{:href => "https://twitter.com/share", :class => "twitter-share-button", "data-via" => "nonrecursive"}tweet bravely and truly
         :javascript
           !function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs')
 
         %iframe{:src => "http://ghbtns.com/github-btn.html?user=flyingmachine&repo=brave-clojure-web&type=fork", :width => "62", :height => "20"}
 
+        %div
+          Get PDF, .epub, and .mobi versions (or just, you know, put money in my pocket):
+          <iframe width="160" height="360" src="https://leanpub.com/clojure-for-the-brave-and-true/embed" frameborder="0" allowtransparency="true"></iframe>
+          
         %form#search{:action => "/search/"}
           %input#tipue_search_input{:name => "q", :type => "search", :placeholder => "Search"}
             
