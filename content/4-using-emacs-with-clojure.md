@@ -367,4 +367,4 @@ the closing paren. Similarly, if you're right after a closing paren,
 
 ## Chapter Summary
 
-TODO
+Oh my god, you're using Emacs!

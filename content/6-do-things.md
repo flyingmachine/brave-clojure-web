@@ -1201,3 +1201,16 @@ hobbit gets hit:
 ```
 
 Oh my god, that poor hobbit! You monster!
+
+## What Now?
+
+By this point I *highly* recommend actually writing some code to
+solidify your Clojure knowledge. For example, write a REPL version of
+tic-tac-toe (you can use
+[my implementation](https://github.com/flyingmachine/minimax-tictactoe/tree/master/phase2/tictactoe)
+as a reference). Write a Twitter client. Write *anything*.
+
+In the next update, I'll include some project ideas and guidance. In
+the mean time, you can also check out
+[4Clojure](http://www.4clojure.com/problems), an online set of Clojure
+problems designed to test your knowledge.
