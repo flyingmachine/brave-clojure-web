@@ -36,7 +36,7 @@
               - i = @items[index - 1]
               .prev
                 %a{:href => relative_path_to(i)}
-                  3&larr;
+                  &larr;
                   = i[:link_title]
             - if i = @items[index + 1]
               .next
