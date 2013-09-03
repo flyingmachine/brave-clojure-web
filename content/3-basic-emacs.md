@@ -534,13 +534,11 @@ Here are some editing keybindings you should know about:
   </tr>
   <tr>
     <td>M-/</td>
-    <td>Hippie expand, cycles through possible expansions of the text
-        before point</td>
+    <td>Hippie expand, cycles through possible expansions of the text before point</td>
   </tr>
   <tr>
-    <td>M-\<td>
-    <td>Delete all spapces and tabs around point. I use this one a
-        lot</td>
+    <td>M-\</td>
+    <td>Delete all spaces and tabs around point. I use this one a lot</td>
   </tr>
 </table>
 
