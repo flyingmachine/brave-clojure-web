@@ -6,27 +6,17 @@ kind: documentation
 
 # Start Using Emacs
 
-Before we get started with Emacs, here are some resources for setting
-up other text editors for Clojure development:
-
-* [Clojure development with Sublime Text 2 (youtube)](http://www.youtube.com/watch?v=wBl0rYXQdGg)
-* [Writing Clojure with Vim in 2013](http://mybuddymichael.com/writings/writing-clojure-with-vim-in-2013.html)
-* [Counterclockwise](https://code.google.com/p/counterclockwise/) is a
-  highly-recommended Eclipse plugin
-
-If you're already familiar with Emacs, skip ahead to the next chapter.
-
 You can, of course, use any editor you want. Other editors get pretty
-close to Emacs's Clojure functionality. The primary reason I recommend
-Emacs, however, is that it offers tight integration with a Clojure
-REPL. This allows you to instantly try out your code as you write.
-That kind of tight feedback loop will be useful both when learning
-Clojure and, later, when writing real Clojure programs. If you don't
-follow the thorough Emacs instructions below, then it's still
-worthwhile to invest time in setting up your editor to work with a
-REPL. A secondary reason for using Emacs is that it's really great for
-working with any Lisp dialect; Emacs itself is written in a Lisp
-dialect called Emacs Lisp.
+close to Emacs's Clojure functionality. The reason I recommend Emacs,
+however, is that it offers tight integration with a Clojure REPL. This
+allows you to instantly try out your code as you write. That kind of
+tight feedback loop will be useful both when learning Clojure and,
+later, when writing real Clojure programs. If you don't follow the
+thorough Emacs instructions below, then it's still worthwhile to
+invest time in setting up your editor to work with a REPL. Another
+reason for using Emacs is that it's really great for working with any
+Lisp dialect; Emacs itself is written in a Lisp dialect called Emacs
+Lisp.
 
 By the end of this chapter, your Emacs setup will look something like
 this:
@@ -249,7 +239,7 @@ bunch of super useful key bindings.
 
 First, the term *key binding* derives from the fact that Emacs binds
 *keystrokes* to *commands*, which are just *elisp functions* (I'll use
-"command" and "function" interchangeable). For example, `C-x b` is
+"command" and "function" interchangeably). For example, `C-x b` is
 bound to the function `switch-to-buffer`. Likewise, `C-x C-s` is bound
 to `save-file`.
 
@@ -268,7 +258,7 @@ almost any other command you can run. Not only that, any functions
 even use Emacs to execute elisp, modifying Emacs as it runs - but
 that's a tale for another day.
 
-This is why Emacs is so flexible and why people such as myself are so
+This is why Emacs is so flexible and why people like myself are so
 crazy about Emacs. Yes, it has a lot of surface of complexity which
 can be difficult to learn. But underlying it is the elegant simplicity
 of Lisp and the infinite tinkerability which comes with it.
@@ -471,9 +461,11 @@ the clipboard, and pasting copies the contents of the clipboard to the
 current application.
 
 In Emacs, we take the homicidal approach and **kill** regions, adding
-them to do the **kill ring**. We then **yank**, inserting the most
-recently killed text at point. We can also **copy** text to the kill
-ring without actually killing it.
+them to do the **kill ring**. Don't you feel *braver* and *truer*
+knowing that you're laying waste to untold kilobytes of text?
+
+We then **yank**, inserting the most recently killed text at point. We
+can also **copy** text to the kill ring without actually killing it.
 
 Why bother with all this morbid terminology? Well, first, so you won't
 be frightened when you hear someone talking about killing things in
@@ -527,7 +519,50 @@ Here's a summary of key bindings:
   </tr>
 </table>
 
+### Editing and Help
+
+Here are some editing keybindings you should know about:
+
+<table class="keys">
+  <tr>
+    <td>Tab</td>
+    <td>Indent line</td>
+  </tr>
+  <tr>
+    <td>C-j</td>
+    <td>New line and indent, equivalent to "enter" followed by "tab"</td>
+  </tr>
+  <tr>
+    <td>M-/</td>
+    <td>Hippie expand, cycles through possible expansions of the text
+        before point</td>
+  </tr>
+  <tr>
+    <td>M-\<td>
+    <td>Delete all spapces and tabs around point. I use this one a
+        lot</td>
+  </tr>
+</table>
+
+Emacs has excellent built-in help. These two keybindings will serve
+you well:
+
+<table class="keys">
+  <tr>
+    <td>C-h k (keybinding)</td>
+    <td>Describes the function bound to the keybinding. To get this to
+    work, you actually perform the key sequence after typing C-h k</td>
+  </tr>
+  <tr>
+    <td>C-h f</td>
+    <td>Describe function</td>
+  </tr>
+</table>
+
 ## More Resources
+
+There's always more to learn about Emacs! These resources will help
+you as you continue you on your Emacs journey:
 
 * [Mastering Emacs](http://www.masteringemacs.org/reading-guide/) This
   is one of the best Emacs resources.
