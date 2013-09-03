@@ -240,4 +240,4 @@ At this point you should have the basic knowledge you need to begin
 learning the Clojure language without having to fuss with tools. To
 learn how to interaact with Clojure even more proficiency, however,
 we'll cover Emacs in depth. If that's not your cup of tea, feel free
-to skip ahead! Once there's more content to skip ahead to!
+to skip ahead!
