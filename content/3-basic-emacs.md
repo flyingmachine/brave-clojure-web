@@ -226,7 +226,7 @@ Let's recap:
 
 ## Key Bindings and Modes
 
-We've already come a long way, and can now use Emacs like a basic very
+We've already come a long way, and can now use Emacs like a very basic
 editor. This should help you get by if you ever need to use Emacs
 on a server or are forced into pairing with an Emacs nerd.
 
