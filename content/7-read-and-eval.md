@@ -286,7 +286,7 @@ examples of symbols resolving to values:
 ;; exclamation is *bound* to the argument passed to the function
 (defn exclaim
   [exclamation]
-  (str exclaim "!"))
+  (str exclamation "!"))
 (exclaim "Hadoken")
 ; => "Hadoken!"
 ```
