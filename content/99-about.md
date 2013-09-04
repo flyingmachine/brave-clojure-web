@@ -1,19 +1,12 @@
 --- 
-title: About
-link_title: About
+title: About the Author
+link_title: About the Author
 kind: documentation
 ---
 
-# About
+# About the Author
 
-This is an introduction to Clojure. I've heard a lot of folks talk
-about how Clojure is difficult to get into for various reasons; this
-is written for them.
-
-Please send any feedback to <a
-href="mailto:brave-clojure@googlegroups.com">the mailing list</a>.
-
-Thank you!<br />
-Daniel Higginbotham<br />
-[@nonrecursive](https://twitter.com/nonrecursive)<br />
-[http://www.flyingmachinestudios.com](http://www.flyingmachinestudios.com)
+Daniel Higginbotham has been doing programming things since he was a
+wee little lad, about yea high. You can find him using first person
+pronouns while writing about Clojure and other stuff at
+[http://www.flyingmachinestudios.com](http://www.flyingmachinestudios.com).
