@@ -265,6 +265,7 @@ nav {
 
 .announcement, footer {
   @include container;
+  @include padding-leader;
   text-align: center;
   .signup {
     @include push(2);
@@ -273,7 +274,6 @@ nav {
 }
 
 .announcement {
-  @include padding-leader;
   border-bottom: 1px solid #eee;
 }
 
