@@ -174,8 +174,9 @@ When you're done, save your file and do `C-c C-k`. This compiles your
 current file within the nrepl session. Now if you run `(train)` in
 nrepl it will echo back `Choo choo!`.
 
-While still in nrepl, try `C-<up>`, which is Control + the up key.
-`C-<up>` and `C-<down>` cycle through your nrepl history.
+While still in nrepl, try <code>C-&uarr;</code>, which is Control +
+the up key. <code>C-&uarr;</code> and <code>C-&darr;</code> cycle
+through your nrepl history.
 
 Finally, try this:
 
