@@ -45,7 +45,7 @@ starts a Clojure process with nrepl running and connects Emacs to it.
 After a short wait (it should be less than a minute), you should see
 something like this:
 
-![nrepl-jack-in](http://i.imgur.com/foMs4RQ.png)
+![nrepl-jack-in](/images/using-emacs-with-clojure/nrepl-jack-in.png)
 
 If you've never seen Emacs split into two halves like this, don't
 worry! We'll cover that in a second.
@@ -76,7 +76,7 @@ Emacs was invented in like, 1802 or something, so it uses terminology
 slightly different from what you're used to. When you ran
 `nrepl-jack-in` above, Emacs split its **frame** into two **windows**:
 
-![Frame and windows](http://i.imgur.com/HkO3qP8.png)
+![Frame and windows](/images/using-emacs-with-clojure/emacs-windows.png)
 
 Here are a bunch of key bindings for working with windows:
 
@@ -124,7 +124,7 @@ Then do the following:
 Once you do this, you should see the text `Cleanliness is next to
 godliness` appear in the nrepl buffer:
 
-![keep it clean](http://i.imgur.com/0Tk3nRW.png)
+![keep it clean](/images/using-emacs-with-clojure/nrepl-eval-last-expression.png)
 
 The key binding `C-x C-e` runs the command
 `nrepl-eval-last-expression`. As the command suggests, this makes
