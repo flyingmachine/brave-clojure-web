@@ -38,7 +38,7 @@ compile '*' do
       case item.attributes[:filename]
       when /haml$/ then filter :haml; layout item_layout
       when /textile$/ then filter :redcloth; layout item_layout
-      when /(markdown|md)$/ then filter :redcarpet, :options => {:fenced_code_blocks => true}, :renderer => RedcarpetSyntaxHighlighter; layout item_layout
+      when /(markdown|md)$/ then filter :redcarpet, :options => {fenced_code_blocks: true, tables: true}, :renderer => RedcarpetSyntaxHighlighter; layout item_layout
         
       when /coffee$/ then filter :coffeescript;
       when /scss$/ then filter(:sass, Compass.sass_engine_options)

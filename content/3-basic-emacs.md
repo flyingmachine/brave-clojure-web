@@ -372,60 +372,21 @@ You can use your arrow keys to move point just like in any GUI text
 editor, but there are many key bindings which will allow you to move
 more efficiently:
 
-<table class="keys">
-  <tr>
-    <td>C-a</td>
-    <td>Move to beginning of line</td>
-  </tr>
-  <tr>
-    <td>M-m</td>
-    <td>Move to the first non-whitespace character on the line</td>
-  <tr>
-    <td>C-e</td>
-    <td>Move to end of line</td>
-  </tr>
-  <tr>
-    <td>C-f</td>
-    <td>Move forward one character</td>
-  </tr>
-  <tr>
-    <td>C-b</td>
-    <td>Move backward one character</td>
-  </tr>
-  <tr>
-    <td>M-f</td>
-    <td>Move forward one word (I use this a lot)</td>
-  </tr>
-  <tr>
-    <td>M-b</td>
-    <td>Move backward one word (I use this a lot, too)</td>
-  </tr>
-  <tr>
-    <td>C-s</td>
-    <td>
-      Regex search for text in the current buffer and move to it. Hit
-      C-s again to move to the next match
-    </td>
-  </tr>
-  <tr>
-    <td>C-r</td>
-    <td>
-      Same as above, but search in reverse
-    </td>
-  </tr>
-  <tr>
-    <td>M-&lt;</td>
-    <td>Move to beginning of buffer</td>
-  </tr>
-  <tr>
-    <td>M-&gt;</td>
-    <td>Move to end of buffer</td>
-  </tr>
-  <tr>
-    <td>M-g g</td>
-    <td>Go to line</td>
-  </tr>
-</table>
+| Keys   | Description |
+|--------|-------------|
+| C-a    | Move to beginning of line |
+| M-m    | Move to the first non-whitespace character on the line |
+| C-e    | Move to end of line |
+| C-f    | Move forward one character |
+| C-b    | Move backward one character |
+| M-f    | Move forward one word (I use this a lot) |
+| M-b    | Move backward one word (I use this a lot, too) |
+| C-s    | Regex search for text in the current buffer and move to it. Hit C-s again to move to the next match
+| C-r    | Same as above, but search in reverse
+| M-&lt; | Move to beginning of buffer |
+| M-&gt; | Move to end of buffer |
+| M-g g  | Go to line |
+
 
 Go ahead and try these out in your Jack Handy quotes buffer!
 
@@ -497,70 +458,35 @@ last yank, "choreograpahy", with the previous kill, "Treasure".
 
 Here's a summary of key bindings: 
 
-<table class="keys">
-  <tr>
-    <td>C-w</td>
-    <td>Kill region</td>
-  </tr>
-  <tr>
-    <td>M-w</td>
-    <td>Copy region to kill ring</td>
-  </tr>
-  <tr>
-    <td>C-y</td>
-    <td>Yank</td>
-  </tr>
-  <tr>
-    <td>M-y</td>
-    <td>Cycle through kill ring after yanking</td>
-  </tr>
-  <tr>
-    <td>M-d</td>
-    <td>Kill word</td>
-  </tr>
-  <tr>
-    <td>C-k</td>
-    <td>Kill line</td>
-  </tr>
-</table>
+| Keys | Description |
+|------|-------------|
+| C-w | Kill region |
+| M-w | Copy region to kill ring |
+| C-y | Yank |
+| M-y | Cycle through kill ring after yanking |
+| M-d | Kill word |
+| C-k | Kill line |
+
 
 ### Editing and Help
 
 Here are some editing keybindings you should know about:
 
-<table class="keys">
-  <tr>
-    <td>Tab</td>
-    <td>Indent line</td>
-  </tr>
-  <tr>
-    <td>C-j</td>
-    <td>New line and indent, equivalent to "enter" followed by "tab"</td>
-  </tr>
-  <tr>
-    <td>M-/</td>
-    <td>Hippie expand, cycles through possible expansions of the text before point</td>
-  </tr>
-  <tr>
-    <td>M-\</td>
-    <td>Delete all spaces and tabs around point. I use this one a lot</td>
-  </tr>
-</table>
+| Keys | Description |
+|------|-------------|
+| Tab | Indent line |
+| C-j | New line and indent, equivalent to "enter" followed by "tab" |
+| M-/ | Hippie expand, cycles through possible expansions of the text before point |
+| M-\ | Delete all spaces and tabs around point. I use this one a lot |
+
 
 Emacs has excellent built-in help. These two keybindings will serve
 you well:
 
-<table class="keys">
-  <tr>
-    <td>C-h k (keybinding)</td>
-    <td>Describes the function bound to the keybinding. To get this to
-    work, you actually perform the key sequence after typing C-h k</td>
-  </tr>
-  <tr>
-    <td>C-h f</td>
-    <td>Describe function</td>
-  </tr>
-</table>
+| Keys | Description |
+|------|-------------|
+| C-h k (keybinding) | Describes the function bound to the keybinding. To get this to work, you actually perform the key sequence after typing C-h k |
+| C-h f | Describe function |
 
 ## More Resources
 

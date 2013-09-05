@@ -80,30 +80,14 @@ slightly different from what you're used to. When you ran
 
 Here are a bunch of key bindings for working with windows:
 
-<table class="keys">
-  <tr>
-    <td>C-x o</td>
-    <td>Switch cursor to another window. Go ahead and try this now to
-        switch between your Clojure file and the REPL</td>
-  </tr>
-  <tr>
-    <td>C-x 1</td>
-    <td>Delete all other windows. This doesn't close your buffers and
-  it won't cause you to lose any work. It just un-splits your frame.</td>
-  </tr>
-  <tr>
-    <td>C-x 2</td>
-    <td>Split window, above and below</td>
-  </tr>
-  <tr>
-    <td>C-x 3</td>
-    <td>Split window, side by side</td>
-  </tr>
-  <tr>
-    <td>C-x 0</td>
-    <td>Delete current window</td>
-  </tr>
-</table>
+| Keys | Description |
+|------|-------------|
+| C-x o | Switch cursor to another window. Go ahead and try this now to switch between your Clojure file and the REPL |
+| C-x 1 | Delete all other windows. This doesn't close your buffers and it won't cause you to lose any work. It just un-splits your frame. |
+| C-x 2 | Split window, above and below |
+| C-x 3 | Split window, side by side |
+| C-x 0 | Delete current window |
+
 
 I encourage you to try these out. For example, put your cursor in the
 left window, the one with the Clojure file, and do `C-x 1`. This
@@ -174,15 +158,15 @@ When you're done, save your file and do `C-c C-k`. This compiles your
 current file within the nrepl session. Now if you run `(train)` in
 nrepl it will echo back `Choo choo!`.
 
-While still in nrepl, try <code>C-&uarr;</code>, which is Control +
-the up key. <code>C-&uarr;</code> and <code>C-&darr;</code> cycle
+While still in nrepl, try `C-↑`, which is Control +
+the up key. `C-↑` and `C-↓` cycle
 through your nrepl history.
 
 Finally, try this:
 
 1. Write `(-main` at the nrepl prompt. Note the lack of a closing
    parenthesis.
-2. Press `C-enter`.
+2. Press `C-↵`.
 
 nrepl should close the parenthis and evaluate the expression.
 
@@ -192,33 +176,18 @@ for now here's a summary of the key bindings we just went over:
 
 ### Clojure Buffer Key Bindings
 
-<table class="keys">
-  <tr>
-    <td>C-c M-n</td>
-    <td>Switch to namespace of the current buffer</td>
-  </tr>
-  <tr>
-    <td>C-x C-e</td>
-    <td>Evaluate the expression immediately preceding point</td>
-  </tr>
-  <tr>
-    <td>C-c C-k</td>
-    <td>Compile current buffer</td>
-  </tr>
-</table>
+| Keys | Description |
+|------|-------------|
+| C-c M-n | Switch to namespace of the current buffer |
+| C-x C-e | Evaluate the expression immediately preceding point |
+| C-c C-k | Compile current buffer |
 
 ### nrepl Buffer Key Bindings
 
-<table class="keys">
-  <tr>
-    <td>C-<up>, C-<down></td>
-    <td>Cycle through nrepl history</td>
-  </tr>
-  <tr>
-    <td>C-enter</td>
-    <td>Close parentheses and evaluate</td>
-  </tr>
-</table>
+| Keys | Description |
+|------|-------------|
+| C-&uarr;, C-&darr; | Cycle through nrepl history |
+| C-&crarr; | Close parentheses and evaluate |
 
 ## How to Handle Errors
 
@@ -293,7 +262,7 @@ be represented as a pipe, `|`.
 (+ 1 (* |2) 3 4)
 
 ;; Now slurp in the remaining three:
-;; press C-<right>, or Control + the right arrow
+;; press C-→, or Control + the right arrow
 
 (+ 1 (* |2 3) 4)
 ```
@@ -317,7 +286,7 @@ Here's how you'd un-slurp it:
 ;; Place your cursor anywhere in inner parens
 (+ 1 (|* 2 3 4))
 
-;; Do C-<left>
+;; Do C-←
 (+ 1 (|* 2 3) 4)
 ```
 
@@ -343,28 +312,13 @@ the closing paren. Similarly, if you're right after a closing paren,
 
 ### Summary
 
-<table class="keys">
-  <tr>
-    <td>M-x paredit-mode</td>
-    <td>Toggle paredit mode</td>
-  </tr>
-  <tr>
-    <td>M-(</td>
-    <td>paredit-wrap-round, surround expression after point in parentheses</td>
-  </tr>
-  <tr>
-    <td>C-&rarr;</td>
-    <td>Slurp; move closing parenthesis to the right to include next expression</td>
-  </tr>
-  <tr>
-    <td>C-&larr;</td>
-    <td>Barf; move closing parenthesis to the left to exclude last expression</td>
-  </tr>
-  <tr>
-    <td>C-M-f, C-M-b</td>
-    <td>Move to the opening/closing parenthesis</td>
-  </tr>
-</table>
+| Keys | Description |
+|------|-------------|
+| M-x paredit-mode | Toggle paredit mode |
+| M-( | paredit-wrap-round, surround expression after point in parentheses |
+| C-&rarr; | Slurp; move closing parenthesis to the right to include next expression |
+| C-&larr; | Barf; move closing parenthesis to the left to exclude last expression |
+| C-M-f, C-M-b | Move to the opening/closing parenthesis |
 
 ## Chapter Summary
 

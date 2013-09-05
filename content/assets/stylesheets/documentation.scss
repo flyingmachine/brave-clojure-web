@@ -331,8 +331,11 @@ footer {
   @include leader;
 }
 
-table.keys {
+table {
   border-top: 1px solid #eee;
+  thead {
+    display: none;
+  }
   td {
     border-bottom: 1px solid #eee;
   }
