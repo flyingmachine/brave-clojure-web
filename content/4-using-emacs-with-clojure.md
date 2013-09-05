@@ -203,7 +203,7 @@ At the prompt, type this and hit enter:
 
 You should see something like this:
 
-![nrepl error](http://i.imgur.com/4szCXpm.png)
+![nrepl error](/images/using-emacs-with-clojure/nrepl-error.png)
 
 To get rid of the stack trace in the left window, do
 

@@ -3,6 +3,7 @@ output
 crash.log
 *#*
 .DS_Storage
+.DS_Store
 .sass-cache
 Guardfile
 .lein-env
