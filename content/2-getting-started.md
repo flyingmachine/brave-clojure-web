@@ -6,12 +6,15 @@ kind: documentation
 
 # Building, Running, and The REPL
 
-In order to learn Clojure it makes sense to invest a small amount of
-time up front to get familiar with a quick, problem-free way to build
-and run Clojure programs. We'll also go over how to experiment with
-code within a running Clojure process using a REPL. The goal is to
-have a quick feedback loop where you can try some code, see what it
-does, and learn from the result.
+There's something powerful and motivating about getting a real program
+running. Once you can do that, you're free to experiment and you can
+actually share your work.
+
+In this chapter, you'll invest a small amount of time up front to get
+familiar with a quick, problem-free way to build and run Clojure
+programs. You'll also learn how to instantly experiment with code
+within a running Clojure process using a REPL. This will tighten your
+feedback loop, allowing you to learn more efficiently.
 
 Below, we'll briefly introduce Clojure. Next, we'll cover Leiningen,
 the de-facto standard build tool for Clojure. By the end, you'll know

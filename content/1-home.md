@@ -8,7 +8,7 @@ kind: documentation
 
 \**Clojure!*\*
 
-For weeks, months &mdash; no, from the very moment you were born
+For weeks, *months* &mdash; no! *from the very moment you were born*
 &mdash; you've felt it calling to you. Every time you've held your
 keyboard aloft, crying out in anguish over an incomprehensible class
 hierarchy; every time you've lain awake at night, disturbing your
@@ -21,30 +21,62 @@ Now, at long last, the web-based instructional material you have in
 front of your face will unite you with the programming language you've
 been longing for.
 
-## Part 1: Environment Set Up
+Are you ready, brave reader? Are you ready to meet your true destiny?
+Get your best pair of parentheses: you're about to embark on the
+journey of a lifetime!
+
+**The Four Labyrinths**
+
+To wield Clojure to its fullest, you will need to find your way
+through the four labyrinths confronting every programmer learning a
+new language:
+
+* **The Cave of Artifacts.** In its depths you'll learn to build, run,
+  and distribute your own programs and use the libraries of others.
+  You'll learn Clojure's relationship to the JVM.
+* **The Forest of Tooling.** Getting your environment set up so that
+  you can quickly try things out and learn from them is paramount.
+* **The Mountain of Language.** As you ascend, you'll gain knowledge
+  of Clojure's syntax, semantics, and data structures.
+* **The Cloud Castle of Mindset.** In its rarified air you will come
+  to know the why and how of lisp, functional programming, and
+  immutability.
+
+Such a quest is fraught with obstacles and dead ends. Fear not,
+however! This *guide* is here to *guide* you. Make no mistake: you
+*will* work. But together, we'll make the work feel exhilirating,
+*not* exhausting. By the end, you'll be able to use Clojure, one of
+the most exciting and fun programming languages in existence.
+
+## Part 1: Environment Setup
 
 In order to stay motivated and learn efficiently, you need to be able
-to actually build stuff. No running code in a browser for you!
+to actually try things out and build executables. No running code in a
+browser for you!
 
-### [How to set up your computer for optimal learning](/getting-started/)
+### [Building, Running and the REPL](/getting-started/)
 
-In order to learn Clojure it makes sense to invest a small amount of
-time up front to get familiar with a quick, problem-free way to build
-and run Clojure programs. We'll also go over how to experiment with
-code within a running Clojure process using a REPL. The goal is to
-have a quick feedback loop where you can try some code, see what it
-does, and learn from the result.
+There's something powerful and motivating about getting a real program
+running. Once you can do that, you're free to experiment and you can
+actually share your work.
+
+In this short chapter, you'll invest a small amount of time up front
+to get familiar with a quick, problem-free way to build and run
+Clojure programs. You'll also learn how to instantly experiment with
+code within a running Clojure process using a REPL. This will tighten
+your feedback loop, allowing you to learn more efficiently.
 
 [Read "Building, Running, and The Repl"](/getting-started/)
 
 ### [Using Emacs for Clojure development](/basic-emacs/)
 
 Having a quick feedback loop for learning is so important that we
-cover Emacs from the ground up so that you'll have an efficient
-Emacs/Clojure workflow. Pointers to resources for other editors are
-also included.
+cover Emacs from the ground up so that you're guaranteed to have an
+efficient Emacs/Clojure workflow.
 
 [Read "Start Using Emacs"](/basic-emacs/)
+
+[Read "Using Emacs with Clojure"](/using-emacs-with-clojure/)
 
 ## [Part 2: Language Fundamentals](/language-fundamentals-overview/)
 
