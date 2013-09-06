@@ -34,8 +34,8 @@ new language:
 * **The Cave of Artifacts.** In its depths you'll learn to build, run,
   and distribute your own programs and use the libraries of others.
   You'll learn Clojure's relationship to the JVM.
-* **The Forest of Tooling.** Getting your environment set up so that
-  you can quickly try things out and learn from them is paramount.
+* **The Forest of Tooling.** It's paramount to set up your environment
+  so that you can quickly try things out and learn from them .
 * **The Mountain of Language.** As you ascend, you'll gain knowledge
   of Clojure's syntax, semantics, and data structures.
 * **The Cloud Castle of Mindset.** In its rarified air you will come
