@@ -6,17 +6,21 @@ kind: documentation
 
 # Start Using Emacs
 
-You can, of course, use any editor you want. Other editors get pretty
-close to Emacs's Clojure functionality. The reason I recommend Emacs,
-however, is that it offers tight integration with a Clojure REPL. This
-allows you to instantly try out your code as you write. That kind of
-tight feedback loop will be useful both when learning Clojure and,
-later, when writing real Clojure programs. If you don't follow the
-thorough Emacs instructions below, then it's still worthwhile to
-invest time in setting up your editor to work with a REPL. Another
-reason for using Emacs is that it's really great for working with any
-Lisp dialect; Emacs itself is written in a Lisp dialect called Emacs
-Lisp.
+On your journey to Clojure mastery, your editor will be your closest
+ally. You can, of course, use any editor you want. Some get pretty
+close to Emacs's Clojure functionality.
+
+The reason I recommend Emacs, however, is that it offers tight
+integration with a Clojure REPL. This allows you to instantly try out
+your code as you write. That kind of tight feedback loop will be
+useful both when learning Clojure and, later, when writing real
+Clojure programs.
+
+If you don't follow the thorough Emacs instructions below, then it's
+still worthwhile to invest time in setting up your editor to work with
+a REPL. Another reason for using Emacs is that it's really great for
+working with any Lisp dialect; Emacs itself is written in a Lisp
+dialect called Emacs Lisp.
 
 By the end of this chapter, your Emacs setup will look something like
 this:

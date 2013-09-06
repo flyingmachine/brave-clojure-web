@@ -8,7 +8,7 @@ kind: documentation
 
 There's something powerful and motivating about getting a real program
 running. Once you can do that, you're free to experiment and you can
-actually share your work.
+actually share your work!
 
 In this chapter, you'll invest a small amount of time up front to get
 familiar with a quick, problem-free way to build and run Clojure
@@ -42,7 +42,7 @@ Clojure is actually two things! They are:
 This distinction is necessary because, unlike most programming
 languages - Ruby, Python, C, a bazillion others - Clojure is a *hosted
 language*. Clojure programs are executed within a Java Virtual Machine
-and rely on the JVM for core features like threads and garbage
+and rely on the JVM for core features like threading and garbage
 collection. We'll explore the relationship between Clojure and the JVM
 more later on, but for now the main thing you need to understand is
 this:
@@ -114,7 +114,7 @@ skeleton:
   under `src/{project_name}`
 * The `test` directory obviously contains tests.
 * `resources` is a place for you to store assets like images; we won't
-be using it for awhile.
+  be using it for awhile.
 
 ### Running the Clojure project
 
@@ -154,7 +154,8 @@ Now, in your terminal, run this:
 lein run
 ```
 
-You should see the output, "I'm a little teapot!"
+You should see the output, "I'm a little teapot!" Congratulations,
+little teapot!
 
 ### Building the Clojure Project
 
@@ -211,7 +212,7 @@ clojure-noob.core=>
 The last line, `clojure-noob.core=>`, tells you that you're in the
 `clojure-noob.core` namespace. We won't get into namespaces now, but
 you might recognize that namespace from your
-`src/clojure_noob/core.clj` file. Try running your `-main` function:
+`src/clojure_noob/core.clj` file. Try executing your `-main` function:
 
 ```
 clojure-noob.core=> (-main)
@@ -251,3 +252,23 @@ up other text editors for Clojure development:
 * [Writing Clojure with Vim in 2013](http://mybuddymichael.com/writings/writing-clojure-with-vim-in-2013.html)
 * [Counterclockwise](https://code.google.com/p/counterclockwise/) is a
   highly-recommended Eclipse plugin
+* [Getting Started with La Clojure, a plugin for IntelliJ](http://wiki.jetbrains.net/intellij/Getting_started_with_La_Clojure)
+
+## Chapter Summary
+
+I'm so proud of you, little teapot. You've run your first Clojure
+program! Not only that, you've become acquainted with the REPL, one of
+the most important tools for developing Clojure software. Amazing!
+It brings to mind the immortal lines from Taylor Swift's master
+songwriting:
+
+```
+You held your head like a hero
+On a history book page
+It was the end of a decade
+But the start of an age
+
+- Taylor Swift, Voice of Our Age
+```
+
+Bravo!

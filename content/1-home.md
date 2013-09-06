@@ -42,11 +42,10 @@ new language:
   to know the why and how of lisp, functional programming, and
   immutability.
 
-Such a quest is fraught with obstacles and dead ends. Fear not,
-however! This *guide* is here to *guide* you. Make no mistake: you
-*will* work. But together, we'll make the work feel exhilirating,
-*not* exhausting. By the end, you'll be able to use Clojure, one of
-the most exciting and fun programming languages in existence.
+Make no mistake: you *will* work. But together, we'll make the work
+feel exhilirating, *not* exhausting. By the end, you'll be able to use
+Clojure, one of the most exciting and fun programming languages in
+existence.
 
 ## Part 1: Environment Setup
 
@@ -58,7 +57,7 @@ browser for you!
 
 There's something powerful and motivating about getting a real program
 running. Once you can do that, you're free to experiment and you can
-actually share your work.
+actually share your work!
 
 In this short chapter, you'll invest a small amount of time up front
 to get familiar with a quick, problem-free way to build and run
