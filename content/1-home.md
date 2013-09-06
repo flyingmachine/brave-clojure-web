@@ -74,8 +74,7 @@ Having a quick feedback loop for learning is so important that we
 cover Emacs from the ground up so that you're guaranteed to have an
 efficient Emacs/Clojure workflow.
 
-[Read "Start Using Emacs"](/basic-emacs/)
-
+[Read "Start Using Emacs"](/basic-emacs/)  
 [Read "Using Emacs with Clojure"](/using-emacs-with-clojure/)
 
 ## [Part 2: Language Fundamentals](/language-fundamentals-overview/)
