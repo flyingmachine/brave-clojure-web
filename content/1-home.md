@@ -22,7 +22,7 @@ front of your face will unite you with the programming language you've
 been longing for.
 
 Are you ready, brave reader? Are you ready to meet your true destiny?
-Get your best pair of parentheses: you're about to embark on the
+Grab your best pair of parentheses: you're about to embark on the
 journey of a lifetime!
 
 **The Four Labyrinths**
