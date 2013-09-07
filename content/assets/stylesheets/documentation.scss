@@ -195,7 +195,7 @@ nav {
   @include padding-trailer(2);
 
   h2 {
-    @include adjust-font-size-to(20px, 1);
+    @include adjust-font-size-to(21px, 1);
   }
 
   a:hover {
@@ -208,10 +208,10 @@ nav {
     li {
       display:block;
       a {
-        padding: 0 16px;
-        @include adjust-font-size-to(16px, 1);
-        @include padding-trailer(.5, 16px);
-        @include padding-leader(.5, 16px);
+        padding: 0 18px;
+        @include adjust-font-size-to(18px, 1);
+        @include padding-trailer(.5, 18px);
+        @include padding-leader(.5, 18px);
         display: block;
       }
     }

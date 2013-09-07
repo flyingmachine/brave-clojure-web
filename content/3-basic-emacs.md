@@ -14,13 +14,12 @@ The reason I recommend Emacs, however, is that it offers tight
 integration with a Clojure REPL. This allows you to instantly try out
 your code as you write. That kind of tight feedback loop will be
 useful both when learning Clojure and, later, when writing real
-Clojure programs.
+Clojure programs. Emacs is also great for working with any Lisp
+dialect; Emacs itself is written in a Lisp dialect called Emacs Lisp.
 
 If you don't follow the thorough Emacs instructions below, then it's
 still worthwhile to invest time in setting up your editor to work with
-a REPL. Another reason for using Emacs is that it's really great for
-working with any Lisp dialect; Emacs itself is written in a Lisp
-dialect called Emacs Lisp.
+a REPL!
 
 By the end of this chapter, your Emacs setup will look something like
 this:
@@ -37,6 +36,9 @@ After we're done installing and setting up Emacs, we'll cover:
 * Opening, editing, and saving files
 * Basic Emacs concepts
 * Essential Emacs key bindings
+
+In the next chapter, we'll cover:
+
 * Editing Clojure code
 * Interacting with the REPL
 
@@ -60,6 +62,8 @@ After you're done installing Emacs, open it up. You should see
 something like this:
 
 ![Fresh Emacs installation](/images/basic-emacs/emacs-fresh.png)
+
+Welcome to the Cult of Emacs! You've made Richard Stallman proud!
 
 ## Configuration
 
@@ -196,10 +200,10 @@ C-x C-s
 ```
 
 You should get a message at the bottom of Emacs like "Wrote
-/Users/chauncy/.emacs.d/user.el". Also go ahead and try saving your
-buffer using the key binding you use in every other app. For me, it's
-&#8984;-s. The Emacs config you downloaded should allow that to work,
-but if it doesn't that's no big deal!
+/Users/snuffleupagus/.emacs.d/user.el". Also go ahead and try saving
+your buffer using the key binding you use in every other app. For me,
+it's &#8984;-s. The Emacs config you downloaded should allow that to
+work, but if it doesn't that's no big deal!
 
 After saving the file, go ahead and quit Emacs and start it again. I
 bet it's really tiny!
@@ -268,8 +272,8 @@ can be difficult to learn. But underlying it is the elegant simplicity
 of Lisp and the infinite tinkerability which comes with it.
 
 This tinkerability extends to key bindings in another way. Just as you
-can redefine existing functions or redefine existing functions, you
-can create, redefine, and remove key bindings.
+can redefine existing functions, you can create, redefine, and remove
+key bindings.
 
 You can also run functions by name, without a specific keybinding,
 using `M-x {function-name}`, e.g. `M-x save-buffer`. "M" stands for
@@ -294,17 +298,17 @@ Markdown mode. When editing Clojure, we'll make use of the key
 binding `C-c C-k` to load the current buffer into a REPL and compile
 it.
 
-Modes is that they come in two flavors: *major* modes and *minor*
-modes. Markdown mode and Clojure mode are both major modes. Major
-modes are usually set by Emacs when you open a file, but you can also
-set the mode explicitly with e.g. `M-x clojure-mode` or `M-x
-major-mode` - you set a mode by running the relevant Emacs command.
-Only one major mode is active at a time.
+Modes come in two flavors: *major* modes and *minor* modes. Markdown
+mode and Clojure mode are both major modes. Major modes are usually
+set by Emacs when you open a file, but you can also set the mode
+explicitly with e.g. `M-x clojure-mode` or `M-x major-mode` - you set
+a mode by running the relevant Emacs command. Only one major mode is
+active at a time.
 
-Whereas major modes special Emacs for a certain file type, minor modes
-usually provide functionally that's useful across many file types. For
-example, Abbrev mode "automatically expands text based on pre-defined
-abbreviation definitions" (per the
+Whereas major modes specialize Emacs for a certain file type, minor
+modes usually provide functionally that's useful across many file
+types. For example, Abbrev mode "automatically expands text based on
+pre-defined abbreviation definitions" (per the
 [Emacs manual](http://www.gnu.org/software/emacs/manual/html_node/emacs/Minor-Modes.html#Minor-Modes)).
 You can have multiple minor modes active at the same time.
 
@@ -321,8 +325,9 @@ A lot of modes are distributed as `packages`, which are just bundles
 of elisp files stored in a package repository. Emacs 24, which you
 should have installed, makes it very easy to browse and install
 packages. `M-x package-list-packages` will show you almost every
-package available. You can install packages with `M-x
-package-install`.
+package available just make sure you run `M-x
+package-refresh-contents` first so you get the latest list. You can
+install packages with `M-x package-install`.
 
 You can also customize Emacs by loading your own elisp files or files
 you find on the Internet.
@@ -346,11 +351,15 @@ To get started, open up a new buffer in Emacs and name it
 "jack-handy". Then paste in the following text:
 
 ```
-If you were a pirate, you know what would be the one thing that would really make you mad? Treasure chests with no handles. How the hell are you supposed to carry it?!
+If you were a pirate, you know what would be the one thing that would
+really make you mad? Treasure chests with no handles. How the hell are
+you supposed to carry it?!
 
-The face of a child can say it all, especially the mouth part of the face.
+The face of a child can say it all, especially the mouth part of the
+face.
 
-To me, boxing is like a ballet, except there's no music, no choreography, and the dancers hit each other.
+To me, boxing is like a ballet, except there's no music, no
+choreography, and the dancers hit each other.
 ```
 
 ### Point
@@ -385,8 +394,8 @@ more efficiently:
 | C-b    | Move backward one character |
 | M-f    | Move forward one word (I use this a lot) |
 | M-b    | Move backward one word (I use this a lot, too) |
-| C-s    | Regex search for text in the current buffer and move to it. Hit C-s again to move to the next match
-| C-r    | Same as above, but search in reverse
+| C-s    | Regex search for text in the current buffer and move to it. Hit C-s again to move to the next match |
+| C-r    | Same as above, but search in reverse |
 | M-&lt; | Move to beginning of buffer |
 | M-&gt; | Move to end of buffer |
 | M-g g  | Go to line |
@@ -425,10 +434,10 @@ than the entire buffer after point, which is the default behavior.
 
 ### Killing and the Kill Ring
 
-In most applications we can "cut" text, which is mostly innocuous. We
-can also "copy" and "paste." Cutting and copying add the selection to
-the clipboard, and pasting copies the contents of the clipboard to the
-current application.
+In most applications we can "cut" text, which is only mildly violent.
+We can also "copy" and "paste." Cutting and copying add the selection
+to the clipboard, and pasting copies the contents of the clipboard to
+the current application.
 
 In Emacs, we take the homicidal approach and **kill** regions, adding
 them to do the **kill ring**. Don't you feel *braver* and *truer*
@@ -492,17 +501,33 @@ you well:
 | C-h k (keybinding) | Describes the function bound to the keybinding. To get this to work, you actually perform the key sequence after typing C-h k |
 | C-h f | Describe function |
 
-## More Resources
+The help text appears in a new "window", a concept we cover in the
+next chapter. For now, you can close help windows by pressing `C-x o
+q`.
 
-There's always more to learn about Emacs! These resources will help
-you as you continue you on your Emacs journey:
+## Continue Learning
 
+Emacs is one of the oldest editors still in use, and its adherents
+often approach the fanatical in their enthusiasm for it. It can be
+awkward to use at first, but stick with it and you will be amply
+rewarded over your lifetime.
+
+Personally, I feel inspired whenever I open Emacs. Like a craftsman
+entering his workshop, I feel a realm of possibility open before me. I
+feel the comfort of an environment that has evolved over time to fit
+me perfectly &mdash; an assortment of packages and keybindings which
+help me bring ideas to life day after day.
+
+These resources will help you as you continue you on your Emacs
+journey:
+
+* [The Emacs Manual](http://www.gnu.org/software/emacs/manual/html_node/emacs/index.html#Top),
+  excellent, comprehensive instructions. Download the PDF and read it
+  on the go! Spend some time with it every morning!
 * [Mastering Emacs](http://www.masteringemacs.org/reading-guide/) This
   is one of the best Emacs resources.
 * [Emacs Reference Card](http://www.ic.unicamp.br/~helio/disciplinas/MC102/Emacs_Reference_Card.pdf),
   a nice cheat sheet
-* [The Emacs Manual](http://www.gnu.org/software/emacs/manual/html_node/emacs/index.html#Top),
-  excellent, comprehensive instructions.
 * [How to Learn Emacs, a Visual One-pager](http://sachachua.com/blog/wp-content/uploads/2013/05/How-to-Learn-Emacs8.png)  
   for the more visually-minded folks
 * `C-h t`, the built-in tutorial
