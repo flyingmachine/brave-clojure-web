@@ -15,9 +15,11 @@ Functions and data are intertwined: functions are understood in terms
 of the data they operate on, and data is understood in terms of the
 functions that operate on it. We'll handle this pedagogical
 chicken-and-egg problem by briefly introducing the most common Clojure
-data structures. Then, we'll dive deep into functions. Finally, we'll
-bring the two together to explore the ways in which we can manipulate
-data with functions in order to hit hobbits with swords or whatever.
+data structures. Then, we'll dive deep into functions.
+
+All of this groundwork will allow us to write some super important
+code. In the last section, we'll create a model of a hobbit so that we
+can create a function to hit it in random spot. Super! Important!
 
 As you go through these examples, it's really important that you type
 them out and run them. Programming in a new language is a skill, and,
@@ -311,7 +313,7 @@ You're likely to see this error many times as you continue with
 Clojure. "x cannot be cast to clojure.lang.IFn" just means that you're
 trying something as a function when it's not.
 
-Function flexibility doesn't end with the function expression,
+Function flexibility doesn't end with the function expression!
 Syntactically, functions can take any expressions as arguments &mdash;
 including *other functions*.
 
@@ -547,7 +549,119 @@ come last:
 ```
 
 Finally, Clojure has a more sophisticated way of defining parameters
-called "destructuring".
+called "destructuring", which deserves its own subsection:
+
+#### Destructuring
+
+You don't have to use destructuring now. If you find it too
+complicated, feel free to skip ahead and come back to this section
+later. It will always be here for you!
+
+The basic idea behind destructuring is that it lets you concisely bind
+*symbols* to *values* within a *collection*. Let's look at a basic
+example:
+
+```clojure
+;; Return the first element of a collection
+(defn my-first
+  [[first-thing]] ; Notice that first-thing is within a vector
+  first-thing)
+
+(my-first ["oven" "bike" "waraxe"])
+; => "oven"
+
+;; Here's how you would accomplish the same thing without destructuring:
+(defn my-other-first
+  [collection]
+  (first collection))
+(my-other-first ["nickel" "hair"])
+; => "nickel"
+```
+
+As you can see, the `my-first` associates the symbol `first-thing`
+with the first element of the vector that was passed in as an
+argument. It does this by placing the symbol within a vector.
+
+That vector is like a huge sign held up to Clojure which says, "Hey!
+This function is going to receive a list or a vector as an argument.
+Make my life easier by taking apart the argument's structure for me
+and associating meaningful names with different parts of the
+argument!"
+
+When destructuring a vector or list, you can name as many elements as
+you want and also use rest params:
+
+```clojure
+(defn chooser
+  [[first-choice second-choice & unimportant-choices]]
+  (println (str "Your first choice is: " first-choice))
+  (println (str "Your second choice is: " second-choice))
+  (println (str "We're ignoring the rest of your choices. "
+                "Here they are in case you need to cry over them: "
+                (clojure.string/join ", " unimportant-choices))))
+(chooser ["Marmalade", "Handsome Jack", "Pigpen", "Aquaman"])
+; => 
+; Your first choice is: Marmalade
+; Your second choice is: Handsome Jack
+; We're ignoring the rest of your choices. Here they are in case \
+; you need to cry over them: Pigpen, Aquaman
+```
+
+You can also destructure maps. In the same way that you tell Clojure
+to destructure a vector or list by providing a vector as a parameter,
+you destucture maps by providing a map as a parameter:
+
+```clojure
+(defn announce-treasure-location
+  [{lat :lat lng :lng}]
+  (println (str "Treasure lat: " lat))
+  (println (str "Treasure lng: " lng)))
+(announce-treasure-location {:lat 28.22 :lng 81.33})
+; =>
+; Treasure lat: 100
+; Treasure lng: 50
+```
+
+Let's look more at this line:
+
+```
+[{lat :lat lng :lng}]
+```
+
+This is like telling Clojure, "Yo! Clojure! Do me a flava and
+associate the symbol `lat` with the value corresponding to the key
+`:lat`. Do the same thing with `lng` and `:lng`, ok?."
+
+We often want to just take keywords and "break them out" of a map, so
+there's a shorter syntax for that:
+
+```clojure
+;; Works the same as above.
+(defn announce-treasure-location
+  [{:keys [lat lng]}]
+  (println (str "Treasure lat: " lat))
+  (println (str "Treasure lng: " lng)))
+```
+
+If you want to have access to the original map argument, you can
+indicate that:
+
+```clojure
+;; Works the same as above.
+(defn announce-treasure-location
+  [{:keys [lat lng] :as treasure-location}]
+  (println (str "Treasure lat: " lat))
+  (println (str "Treasure lng: " lng))
+  
+  ;; One would assume that this would put in new coordinates for your ship
+  (steer-ship! treasure-location))
+```
+
+In general, you can think of destructuring as instructing Clojure how
+to associate symbols with values in a list, map, or vector.
+
+Now, on to the part of the function that actually does something: the
+function body!
 
 #### Function body
 
