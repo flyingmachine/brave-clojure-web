@@ -16,9 +16,13 @@ of the data they operate on, and data is understood in terms of the
 functions that operate on it. We'll handle this pedagogical
 chicken-and-egg problem by briefly introducing the most common Clojure
 data structures. Then, we'll dive deep into functions. Finally, we'll
-bring the two together to thoroughly explore the ways in which we can
-manipulate data with functions in order to hit hobbits with swords or
-whatever.
+bring the two together to explore the ways in which we can manipulate
+data with functions in order to hit hobbits with swords or whatever.
+
+As you go through these examples, it's really important that you type
+them out and run them. Programming in a new language is a skill, and,
+just like yodeling or synchronized swimming, you have to practice it
+to learn it.
 
 One final note before we start: in Clojure, the core data structures
 aren't mutable. For example, we'll be looking at the vector data
@@ -26,16 +30,26 @@ structure, which looks a lot like arrays in other languages:
 
 ```clojure
 (def failed-protagonist-names
-  ["Larry Potter" "Doreen the Explorer" "The Incredible Bulk"])
+  ["Larry Potter"
+   "Doreen the Explorer"
+   "The Incredible Bulk"])
 ```
 
 Most other languages would allow you to manipulate this array. In
-Ruby, for example:
+Ruby or Javascript, for example:
 
 ```ruby
-failed_protagonist_names = ["Larry Potter", "Doreen the Explorer", "The Incredible Bulk"]
+failed_protagonist_names = [
+  "Larry Potter",
+  "Doreen the Explorer",
+  "The Incredible Bulk"
+]
 failed_protagonist_names[0] = "Gary Potter"
-failed_protagonist_names # => ["Gary Potter", "Doreen the Explorer", "The Incredible Bulk"]
+failed_protagonist_names # => [
+  "Gary Potter",
+  "Doreen the Explorer",
+  "The Incredible Bulk"
+]
 ```
 
 In Clojure, there is no equivalent. We'll cover the implications of
@@ -48,9 +62,9 @@ used to in other programming languages.
 This section will briefly introduce you to core Clojure data
 structures. If you're curious about the functions used,
 [ClojureDocs](http://clojuredocs.org/) is a great reference for
-finding out more. You can also use `(doc functionname)` in the repl
-and `(source functionname)` in the REPL to see the documentation or
-source code for a function.
+finding out more. You can also use `(doc functionname)` and `(source
+functionname)` in the REPL to see the documentation or source code for
+a function.
 
 ### Numbers
 
@@ -131,6 +145,21 @@ keywords:
 :_?
 ```
 
+Keywords can be used as functions. For example:
+
+```clojure
+;; Look up :a in map
+(:a {:a 1 :b 2 :c 3})
+; => 1
+
+;; This is equivalent to:
+(get {:a 1 :b 2 :c 3} :a)
+; => 1
+```
+
+I think this is super cool and I do it all the time. You should do it,
+too!
+
 ### Vectors
 
 A vector is similar to an array in that it's a 0-indexed collection:
@@ -143,6 +172,8 @@ A vector is similar to an array in that it's a 0-indexed collection:
 (get [3 2 1] 0)
 ; => 3
 
+;; Another example of getting by index. Notice as well that vector
+;; elements can be of any type and you can mix types.
 (get ["a" {:name "Pugsley Winterbottom"} "c"] 1)
 ; => {:name "Pugsley Winterbottom"}
 ```
@@ -180,7 +211,9 @@ used to refer to something. Let's associate a value with a symbol:
 
 ```clojure
 (def failed-protagonist-names
-  ["Larry Potter" "Doreen the Explorer" "The Incredible Bulk"])
+  ["Larry Potter"
+   "Doreen the Explorer"
+   "The Incredible Bulk"])
 ```
 
 In this case, `def` associates the value
@@ -202,7 +235,7 @@ For now, though, it's OK to think "Big whoop!" and not be very
 impressed.
 
 Thus concludes our Clojure data structures primer. Now it's time to
-dig in to functions and see how these data structures and be used!
+dig in to functions and see how these data structures can be used!
 
 ## Functions
 
@@ -457,8 +490,8 @@ default values for arguments:
 (x-chop "Kanye West")
 ; => "I karate chop Kanye West! Take that!"
 
-(x-chop "Kanye East" "bear-wrestling")
-; => "I bear-wrestling chop Kanye East! Take that!"
+(x-chop "Kanye East" "slap")
+; => "I slap chop Kanye East! Take that!"
 ```
 
 You can also make each arity do something completely unrelated:
@@ -515,8 +548,6 @@ come last:
 
 Finally, Clojure has a more sophisticated way of defining parameters
 called "destructuring".
-[This blog post by Jay Fields](http://blog.jayfields.com/2010/07/clojure-destructuring.html)
-does a great job of explaining it.
 
 #### Function body
 
@@ -981,23 +1012,6 @@ Goodbye!
 
 As you can see, this is a little more verbose. Also, `loop` has much
 better performance.
-
-### Keywords as Functions
-
-Keywords can be used as functions. For example:
-
-```clojure
-;; Look up :a in map
-(:a {:a 1 :b 2 :c 3})
-; => 1
-
-;; This is equivalent to:
-(get {:a 1 :b 2 :c 3} :a)
-; => 1
-```
-
-I think this is super cool and I do it all the time. You should do it,
-too!
 
 ### Regular Expressions
 
