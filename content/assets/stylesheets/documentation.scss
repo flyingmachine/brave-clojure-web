@@ -309,7 +309,8 @@ footer {
   }
 
   h4 {
-    @include leader;
+    @include adjust-font-size-to(20px, 1);
+    @include leader(1, 20px);
     border-left: 2px solid $dark-teal;
     padding-left: 14px;
     margin-left: -16px;
