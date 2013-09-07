@@ -528,8 +528,7 @@ journey:
   is one of the best Emacs resources.
 * [Emacs Reference Card](http://www.ic.unicamp.br/~helio/disciplinas/MC102/Emacs_Reference_Card.pdf),
   a nice cheat sheet
-* [How to Learn Emacs, a Visual One-pager](http://sachachua.com/blog/wp-content/uploads/2013/05/How-to-Learn-Emacs8.png)  
-  for the more visually-minded folks
+* [How to Learn Emacs, a Visual One-pager](http://sachachua.com/blog/wp-content/uploads/2013/05/How-to-Learn-Emacs8.png) for the more visually-minded folks
 * `C-h t`, the built-in tutorial
 
 ## Summary
