@@ -227,7 +227,7 @@ immediately gets inserted.
 This is thanks to paredit-mode, a minor mode which turns Lisp's
 profusion of parentheses from a liability into an asset. Paredit
 ensures that all parentheses, double quotes, and brackets are closed,
-relieving you of that burden.
+relieving you of that odious burden.
 
 Paredit also offers key bindings to easily navigate and alter the
 structure created by all those parenthess. Below we'll go over the
@@ -240,8 +240,8 @@ You can always disable it with `M-x paredit-mode`, which toggles the
 mode on and off. However, I think it's more than worth your while to
 take some time to learn it.
 
-The following should show you the most useful key bindings. Point will
-be represented as a pipe, `|`.
+The following shows you the most useful key bindings. Point will be
+represented as a vertical pipe, `|`.
 
 ### Wrapping and Slurping
 
@@ -261,8 +261,8 @@ be represented as a pipe, `|`.
 ;; Add the asterisk and a space
 (+ 1 (* |2) 3 4)
 
-;; Now slurp in the remaining three:
-;; press C-→, or Control + the right arrow
+;; Now slurp in the "3":
+;; press C-→
 
 (+ 1 (* |2 3) 4)
 ```
@@ -297,12 +297,14 @@ Ta-da!
 Often when writing lisp you'll work with expressions like
 
 ```clojure
-(map (comp record first) (d/q '[:find ?post
-                                  :in $ ?search
-                                  :where
-                                  [(fulltext $ :post/content ?search) [[?post ?content]]]]
-                                (db/db)
-                                (:q params)))
+(map (comp record first)
+     (d/q '[:find ?post
+            :in $ ?search
+            :where
+            [(fulltext $ :post/content ?search)
+             [[?post ?content]]]]
+          (db/db)
+          (:q params)))
 ```
 
 It's useful to quickly jump from one sub-expression to the next. If
@@ -323,3 +325,6 @@ the closing paren. Similarly, if you're right after a closing paren,
 ## Chapter Summary
 
 Oh my god, you're using Emacs!
+
+Now that you've gotten your environment set up, let's start learning
+Clojure in earnest!
