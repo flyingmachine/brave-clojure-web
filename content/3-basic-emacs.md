@@ -507,10 +507,10 @@ q`.
 
 ## Continue Learning
 
-Emacs is one of the oldest editors still in use, and its adherents
-often approach the fanatical in their enthusiasm for it. It can be
-awkward to use at first, but stick with it and you will be amply
-rewarded over your lifetime.
+Emacs is one of the longest-lived editors, and its adherents often
+approach the fanatical in their enthusiasm for it. It can be awkward
+to use at first, but stick with it and you will be amply rewarded over
+your lifetime.
 
 Personally, I feel inspired whenever I open Emacs. Like a craftsman
 entering his workshop, I feel a realm of possibility open before me. I
