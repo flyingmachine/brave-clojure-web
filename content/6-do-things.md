@@ -872,8 +872,8 @@ body. Here's our hobbit model:
                              {:name "left-foot" :size 2}])
 ```
 
-This is a vector of maps. Each inner map has the name of the body part
-and relative size of the body part. Look, I know that only anime
+This is a vector of maps. Each map has the name of the body part and
+relative size of the body part. Look, I know that only anime
 characters have eyes 1/3 the size of their head, but just go with it,
 OK?
 
@@ -1140,8 +1140,8 @@ notation:
 And here's how regexes are used in our symmetrizer:
 
 ```clojure
-;; re-find returns true or false based on whether the regex
-;; matches the string
+;; re-find returns true or false based on whether the
+;; the part's name starts with the string "left-"
 (defn has-matching-part?
   [part]
   (re-find #"^left-" (:name part)))
@@ -1175,7 +1175,6 @@ And here's how regexes are used in our symmetrizer:
 (conj '(1) 2 3)
 ; => (3 2 1)
 ```
-
 
 ### Symmetrizer
 
@@ -1227,10 +1226,10 @@ the ocean, like `~~~1~~~`:
           (recur remaining final-body-parts))))))
 ```
 
-1. This function employs a general strategy which is common in Lisp
+1. This function employs a general strategy which is common in functional
    programming. Given a sequence (in this case, a vector of body parts
    and their sizes), continuously split the sequence into a "head" and
-   a "tail". Process the head, add it to a list of results, and then
+   a "tail". Process the head, add it to some result, and then
    use recursion to continue the process with the tail.
 2. Begin looping over the body parts. The "tail" of the sequence will be
    bound to `remaining-asym-parts`. Initially, it's bound to the full
@@ -1308,15 +1307,14 @@ hobbit gets hit:
 (defn hit
   [asym-body-parts]
   (let [sym-parts (better-symmetrize-body-parts asym-body-parts)
-        body-part-size-sum (reduce (fn [sum part] (+ sum  (:size part)))
-                                   0
-                                   sym-parts)
+        body-part-size-sum (reduce + 0 (map :size sym-parts))
         target (inc (rand body-part-size-sum))]
     (loop [[part & rest] sym-parts
            accumulated-size (:size part)]
       (if (> accumulated-size target)
         part
         (recur rest (+ accumulated-size (:size part)))))))
+```
 
 (hit asym-hobbit-body-parts)
 ; => {:name "right-upper-arm", :size 3}
@@ -1333,10 +1331,10 @@ Oh my god, that poor hobbit! You monster!
 ## What Now?
 
 By this point I *highly* recommend actually writing some code to
-solidify your Clojure knowledge. For example, write a REPL version of
-tic-tac-toe (you can use
-[my implementation](https://github.com/flyingmachine/minimax-tictactoe/tree/master/phase2/tictactoe)
-as a reference). Write a Twitter client. Write *anything*.
+solidify your Clojure knowledge if you haven't started already. One
+great place to start would be to refactor out the `loop` in the `hit`
+function. Or, write out some project Euler challenges. Write
+*anything*.
 
 In the next update, I'll include some project ideas and guidance. In
 the mean time, you can also check out
