@@ -19,7 +19,7 @@ data structures. Then, we'll dive deep into functions.
 
 All of this groundwork will allow us to write some super important
 code. In the last section, we'll create a model of a hobbit so that we
-can create a function to hit it in random spot. Super! Important!
+can create a function to hit it in a random spot. Super! Important!
 
 As you go through these examples, it's really important that you type
 them out and run them. Programming in a new language is a skill, and,
@@ -67,6 +67,10 @@ structures. If you're curious about the functions used,
 finding out more. You can also use `(doc functionname)` and `(source
 functionname)` in the REPL to see the documentation or source code for
 a function.
+
+In the next chapter we'll cover many of the built-in functions which
+operate on each data structure. If you can't wait until then, check
+out the [Clojure Cheatsheet](http://clojure.org/cheatsheet).
 
 ### Numbers
 
@@ -203,6 +207,27 @@ values. You can't access their elements in the same way, though:
 ;; don't care about right now
 (nth '(100 200 300 400) 3)
 ; => 400
+```
+
+### Sets
+
+Sets are collections of unique values:
+
+```clojure
+;; Literal notation
+#{"hannah montanna" "miley cyrus" 20 45}
+
+;; If you try to add :b to a set which already contains :b,
+;; the set still only has one :b
+(conj #{:a :b} :b)
+; => #{:a :b}
+
+;; You can check whether a value exists in a set
+(get #{:a :b} :a)
+; => :a
+
+(get #{:a :b} "hannah montanna")
+; => nil
 ```
 
 ### Symbols and Naming
