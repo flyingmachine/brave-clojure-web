@@ -1,7 +1,6 @@
 --- 
 title: Functional Programming
 link_title: Functional Programming
-kind: documentation
 ---
 
 # Functional Programming
@@ -25,7 +24,7 @@ have learned:
 The result of shoving all this knowledge into your brain matter is
 that you'll have an entirely new approach to problem solving!
 
-## Pure Functions
+## What Are Pure Functions? Why Do They Matter?
 
 With the exception of `println`, all the functions we've used up till
 now have been pure functions:
