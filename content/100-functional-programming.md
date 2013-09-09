@@ -1,6 +1,7 @@
 --- 
 title: Functional Programming
 link_title: Functional Programming
+kind: documentation
 ---
 
 # Functional Programming
@@ -359,7 +360,7 @@ class GlamourShotCaption
     clean!
   end
 
-  def save
+  def save!
     File.open("read_and_feel_giddy.txt", "w+"){ |f|
       f.puts text
     }
@@ -368,26 +369,53 @@ class GlamourShotCaption
   private
   def clean!
     text.trim!
+    text.gsub!(/lol/, "LOL")
   end
 end
 
-best = GlamourShotCaption.new("My boa constrictor is so
+best = GlamourShotCaption.new("My boa constrictor is so \
 sassy lol!  ")
-best.save
+best.save!
 ```
 
 GlamourShotCaption encapsulates the knowledge of how to clean and save
-a glamour shot caption. So far so good, right? Here's how we might do
-this in Clojure:
+a glamour shot caption. On creating a GlamourShotCaption object, you
+assign text to an instance variable and progressively mutate it. So
+far so good, right? Here's how we might do this in Clojure:
 
 ```clojure
+;; This uses the -> macro which we'll cover more in
+;; "Clojure Alchemy: Reading, Evaluation, and Macros"
+(defn clean
+  [text]
+  (-> text
+      s/trim
+      s/replace #"lol" "LOL"))
+
 (spit "read_and_feel_giddy.txt"
-      (-> "My boa constrictor is so sassy lol!  "
-          clojure.string/trim
-          (str "!!!")))
+      (clean "My boa constrictor is so sassy lol!  "))
 ```
 
-"But! But! But!" you might be sputtering. With
+Easy peasy. No mutation required. Instead of progressively mutating an
+object, you apply a chain of functions to an immutable value.
+
+This example also starts to show why Rich Hickey, Clojure's creator,
+has a low opinion of object oriented programming. In OOP, one of the
+main purposes of classes is to provide data hiding &mdash; something
+that isn't necessary with immutable data structures.
+
+You also have to tightly couple methods with classes, thus limiting
+the reusability of the methods. In the Ruby example, you have to do
+extra work to reuse the `clean!` method. In Clojure, `clean` will work
+on any string at all.
+
+If you think that this is a trivial example and not realistic, then
+consider all the times you've created very simple Ruby classes which
+essentially act as decorated hashes, but which aren't allowed to take
+part in the hash abstraction without work.
+
+Anyway, the takeaway here is that you can just use function
+composition instead of a succession of mutations.
 
 ## Pure Functions Give You Power
 
