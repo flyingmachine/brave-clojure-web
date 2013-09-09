@@ -1339,7 +1339,6 @@ hobbit gets hit:
       (if (> accumulated-size target)
         part
         (recur rest (+ accumulated-size (:size part)))))))
-```
 
 (hit asym-hobbit-body-parts)
 ; => {:name "right-upper-arm", :size 3}
