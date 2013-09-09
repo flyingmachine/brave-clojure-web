@@ -24,7 +24,7 @@ have learned:
 The result of shoving all this knowledge into your brain matter is
 that you'll have an entirely new approach to problem solving!
 
-## What Are Pure Functions? Why Do They Matter?
+## Pure Functions, What and Why
 
 With the exception of `println`, all the functions we've used up till
 now have been pure functions:
@@ -115,6 +115,14 @@ or if it's nested deeply in a chain of function calls. In both cases,
 you can rest easy knowing that changes to external conditions won't
 cause your code to break.
 
+Another way to think about this is that reality is largely idempotent.
+This is what lets you form habits. If reality weren't idempotent, you
+wouldn't be able to mindlessly plug your iPod into your bathroom
+speakers and play "The Final Countdown" by Europe every morning when
+you take a shower. Because each of these actions will have the same
+result pretty much every time you perform them, which lets you put
+them on autopilot.
+
 ### Pure Functions Have No Side Effects
 
 To perform a side effect is to change the association between a name
@@ -151,7 +159,7 @@ When you call a function which doesn't have side effects, you only
 have to consider the relationship between the input and the output.
 
 Functions which have side effects, however, place more of a burden on
-your short term memory: now you have to worry about how the world is
+your mind grapes: now you have to worry about how the world is
 affected when you call the function. Not only that, every function
 which calls a side-effecting function gets "infected". It's another
 component which requires extra care and thought as you build your
@@ -162,20 +170,224 @@ Javascript, you've probably run into this problem. As an object gets
 passed around, its attributes somehow get changed and you can't figure
 out why. Then you have to buy a new computer because you've chucked
 yours out the window. If you've read anything about object-oriented
-design, you'll notice that a lot of words have been devoted to
+design, you'll notice that a lot of writing has been devoted to
 strategies for managing state and reducing side effects for just this
 reason.
 
 Therefore, it's a good idea to look for ways to limit the use of side
-effects in your code. Clojure goes to great lengths to limit side
-effects &mdash; all of its core data structures are immutable. You
-cannot change them in place no matter how hard you try! We'll explore
-these mighty, indestructible data structures in greater detail later
-in this chapter.
+effects in your code. Think of yourself as an overeager bureaucrat,
+&mdash; let's call you Kafka Man &mdash; scrutinizing each side effect
+with your trusty BureauCorp clipboard in hand. Not only will this lead
+to better code, it's also sexy an dramatic!
 
-To sum things up, pure functions are idempotent and side-effect free.
-This makes them easy to reason about. Try to keep your dirty, impure
-functions to a minimum.
+Luckily for you, Clojure makes your job easier by going to great
+lengths to limit side effects &mdash; all of its core data structures
+are immutable. You cannot change them in place no matter how hard you
+try!
+
+If you're unfamiliar with immutable data structures, you might feel
+like your favorite tool has been taken from you. How can you *do*
+anything without side effects? Well, guess what! That's What the next
+sections all about! How about this segue, eh? Eh?
+
+## Living with Immutable Data Structures
+
+Immutable data structures ensure that your code won't have side
+effects. As you now know with all your heart, this is a good thing.
+But how do you get anything done without side effects?
+
+### Recursion instead of for/while
+
+Raise your hand if you've ever written something like this
+(javascript):
+
+```javascript
+var objects = getObjects();
+var sum = 0;
+var l = objects.length;
+// Side effect on i! Boo!
+for(var i=0; i < l; i++){
+  // Side effect on sum! Boo!
+  sum += objects[i].value;
+}
+```
+
+or this:
+
+```javascript
+var allPatients = getArkhamPatients();
+var analyzedPatients = [];
+var l = allPatients.length;
+// Side effect on i! Boo!
+for(var i=0; i < l; i++){
+  if(allPatients[i].analyzed){
+    // Side effect on analyzedPatients! Boo!
+    analyzedPatients.push(allPatients[i]);
+  }
+}
+```
+
+Using side effects in this way &mutation mutating variables &mdash; is
+pretty much harmless. You're creating some value to be used elsewhere,
+as opposed to changing an object you've received.
+
+But Clojure's core data structures don't even allow these harmless
+mutations. So what can you do?
+
+Let's ignore the fact that you can easily use `map` and `reduce` to
+accomplish the work done above. In these situations &mdash; iterating
+over some collection to build a result &mdash; the functional
+alternative to mutation is recursion.
+
+Let's look at the first example, building a sum. In Clojure, there is
+no assignment operator. You can't associate a new value with a name
+within the same scope:
+
+```clojure
+(defn no-mutation
+  [x]
+  ;; = is a boolean operation
+  (= x 3)
+  (println x)
+
+  ;; let creates a new scope
+  (let [x "Kafka Man"]
+    (println x))
+
+  ;; Exiting the let scope, x is the same
+  (println x))
+(no-mutation "Existential Angst Woman")
+; => 
+; Existential Angst Woman
+; Kafka Man
+; Existential Angst Woman
+
+```
+
+In Clojure, we can get around this apparent limitation through
+recursion:
+
+```clojure
+(defn sum
+  ([vals]
+     (sum vals 0))
+  ([vals acc]
+     (if (empty? vals)
+       acc
+       (sum (rest vals) (+ (first vals) acc)))))
+
+(sum [39 5])
+; => 44
+```
+
+Each recursive call to `sum` creates a new scope where `vals` and
+`acc` are bound to different values, all without needing to alter the
+values originally passed to the function or perform any internal
+mutation.
+
+Note, however, that you should generally use `loop` when doing
+recursion for performance reasons. This is because Clojure doesn't
+provide tail call optimization, a topic we will never bring up again!
+
+So here's how you'd do this with loop:
+
+```clojure
+(defn sum
+  ([vals]
+     (sum vals 0))
+  ([vals acc]
+     (loop [vals vals
+            acc acc]
+       (if (empty? vals)
+         acc
+         (recur (rest vals) (+ (first vals) acc))))))
+```
+
+This isn't too important if you're recursively operating on a small
+collection, but if your collection contains thousands or millions
+values then you will definitely need to whip out `loop`.
+
+Now let's try accumulation in Clojure. You'll notice that this is
+really similar to our hobbit symmetrizing code:
+
+```clojure
+(defn analyzed-patients
+  [patients]
+  (loop [remaining-patients patients
+         analyzed []]
+    (let [current-patient (first remaining-patients)]
+      (cond (empty? remaining-patients)
+            analyzed
+
+            ;; Note that conj produces a new value without mutating
+            ;; anything, unlike Javascript's array.push which alters
+            ;; the array
+            (analyzed? current-patient)
+            (recur (rest remaining-patients)
+                   (conj analyzed current-patient))
+
+            :else
+            (recur (rest remaining-patients)
+                   analyzed)))))
+```
+
+Hey check that out, we introduced a new form: `cond`. `cond` is like a
+multi-if, where you give it a series of if/then's and end it with an
+optional `:else`:
+
+* If there are no more remaining patients, return the
+  vector of analyzed patients.
+* If the current patient has been analyzed, recur. Bind
+  `remaining-patients` to a vector which consists of all patients
+  except the current one. Bind `analyzed` to a new vector which
+  includes the current vector of analyzed patients as well as the
+  current patient.
+* Otherwise recur. Bind `remaining-patients` same as above. Bind
+  `analyzed` to the existing vector of analyzed patients.
+
+As you can see, Clojure gets along fine without mutation.
+
+### Functional Composition instead of Attribute Mutation
+
+Here's another way we might use mutation:
+
+```ruby
+class GlamourShotCaption
+  attr_reader :text
+  def initialize(text)
+    @text = text
+    clean!
+  end
+
+  def save
+    File.open("read_and_feel_giddy.txt", "w+"){ |f|
+      f.puts text
+    }
+  end
+
+  private
+  def clean!
+    text.trim!
+  end
+end
+
+best = GlamourShotCaption.new("My boa constrictor is so
+sassy lol!  ")
+best.save
+```
+
+GlamourShotCaption encapsulates the knowledge of how to clean and save
+a glamour shot caption. So far so good, right? Here's how we might do
+this in Clojure:
+
+```clojure
+(spit "read_and_feel_giddy.txt"
+      (-> "My boa constrictor is so sassy lol!  "
+          clojure.string/trim
+          (str "!!!")))
+```
+
+"But! But! But!" you might be sputtering. With
 
 ## Pure Functions Give You Power
 
@@ -255,7 +467,12 @@ stored value:
 
 Pretty cool!
 
-## Living with Immutable Data Structures
+## Chapter Summary
+
+* Pure functions are idempotent and side-effect free. This makes them
+  easy to reason about. 
+* Try to keep your dirty, impure functions to a minimum.
+
 
 <!---
 pure functions ->
