@@ -16,10 +16,9 @@ your code as you write. That kind of tight feedback loop will be
 useful both when learning Clojure and, later, when writing real
 Clojure programs. Emacs is also great for working with any Lisp
 dialect; Emacs itself is written in a Lisp dialect called Emacs Lisp.
-
 If you don't follow the thorough Emacs instructions below, then it's
 still worthwhile to invest time in setting up your editor to work with
-a REPL!
+a REPL.
 
 By the end of this chapter, your Emacs setup will look something like
 this:
