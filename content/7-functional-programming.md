@@ -207,13 +207,13 @@ Raise your hand if you've ever written something like this
 (javascript):
 
 ```javascript
-var objects = getObjects();
-var sum = 0;
-var l = objects.length;
+var wrestlers = getAlligatorWrestlers();
+var totalBites = 0;
+var l = wrestlers.length;
 // Side effect on i! Boo!
 for(var i=0; i < l; i++){
   // Side effect on sum! Boo!
-  sum += objects[i].value;
+  totalBites += wrestlers[i].timesBitten;
 }
 ```
 
@@ -360,7 +360,7 @@ Very good question, eagle-eyed reader! The answer is no! This is
 because, behind the scenes, Clojure's immutable data structures are
 implemented using something called structural sharing, which is
 totally beyond the scope of this book. Just, uh, it's kind of like
-Git! I don't know, google it!
+git! I don't know, google it!
 
 ### Functional Composition instead of Attribute Mutation
 
