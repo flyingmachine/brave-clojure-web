@@ -4,6 +4,8 @@ link_title: Clojure Language Fundamentals Overview
 kind: documentation
 ---
 
+# Clojure Language Fundamentals Overview
+
 The goal of this section is to provide you with a solid foundation on
 which to continue learning Clojure.
 
