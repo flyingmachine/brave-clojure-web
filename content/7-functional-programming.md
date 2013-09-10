@@ -48,9 +48,9 @@ What makes them pure functions, and why does it matter?
 
 A function if pure if it meets two qualifications:
 
-1. It always returns the same result given the same argument. This is
-   call "idempotence" and you can add it to your list of five-dollar
-   programming words.
+1. It always returns the same result given the same arguments. This is
+   call "referential transparency" and you can add it to your list of
+   five-dollar programming terms.
 2. It doesn't cause any side effects, e.g. it doesn't "change the
    external world" by changing external mutable objects or outputting
    to i/o.
@@ -71,27 +71,28 @@ that you can confidently use as the foundation of your program.
 Let's look at idempotence and lack-of-side-effects in more detail so
 that know exactly what they are how they're helpful.
 
-### Pure Functions Are Idempotent
+### Pure Functions Are Referentially Transparent
 
-Idempotent functions only rely on 1) their own arguments and 2)
-immutable values to determine their return value. The result is that
-calling the same function multiple times with the same arguments
-always yields the same result:
+A referentially transparent functions always returns the same result
+when called with the same argument. In order to achieve this, they
+only rely on 1) their own arguments and 2) immutable values to
+determine their return value.
 
 ```clojure
-;; Mathematical functions are idempotent
+;; Mathematical functions are referentially transparent
 (+ 1 2)
 ; => 3
 
-;; If a function relies on an immutable value, it's idempotent.
-;; The string ", Daniel-san" is immutable, so the function is idempotent
+;; If a function relies on an immutable value, it's referentially
+;; transparent. The string ", Daniel-san" is immutable, so the
+;; function is referentially transparent
 (defn wisdom
   [words]
   (str words ", Daniel-san"))
 ```
 
 By contrast, these functions do not yield the same result with the
-same arguments and, therefore, are not idempotent:
+same arguments and, therefore, are not referentially transparent:
 
 ```clojure
 ;; Any function which relies on a random number generator
@@ -102,33 +103,33 @@ same arguments and, therefore, are not idempotent:
     (str judgee " is great!")
     (str judgee " is terrible :(")))
 
-;; If your functions reads from a file, it's not idempotent because
-;; the file's contents can change
+;; If your functions reads from a file, it's not referentially
+;; transparent because the file's contents can change
 (defn file-analyzer
   [filename]
   (let [contents (slurp filename)]
     (analyze-file contents))
-;; Note, however, that "analyze-file" could very well be idempotent -
-;; it could very well return the same result every time it's passed
-;; the same string.
+;; Note, however, that "analyze-file" could very well be referentially
+;; transparent - it could very well return the same result every time
+;; it's passed the same string.
 ```
 
-When using an idempotent function, you never have to consider what
-possible external conditions could affect the return value of the
-function.
+When using a referentially transparent function, you never have to
+consider what possible external conditions could affect the return
+value of the function.
 
 This is especially important if your function is used multiple places
 or if it's nested deeply in a chain of function calls. In both cases,
 you can rest easy knowing that changes to external conditions won't
 cause your code to break.
 
-Another way to think about this is that reality is largely idempotent.
-This is what lets you form habits. If reality weren't idempotent, you
-wouldn't be able to mindlessly plug your iPod into your bathroom
-speakers and play "The Final Countdown" by Europe every morning when
-you take a shower. Because each of these actions will have the same
-result pretty much every time you perform them, which lets you put
-them on autopilot.
+Another way to think about this is that reality is largely
+referentially transparent. This is what lets you form habits. If
+reality weren't idempotent, you wouldn't be able to mindlessly plug
+your iPod into your bathroom speakers and play "The Final Countdown"
+by Europe every morning when you take a shower. Because each of these
+actions will have the same result pretty much every time you perform
+them, which lets you put them on autopilot.
 
 ### Pure Functions Have No Side Effects
 
@@ -477,9 +478,8 @@ I encourage you to try this out! Also, try re-implementing Clojure's
 `comp` so that you can compose any number of functions.
 
 Another cool thing you can do with pure functions is memoize them.
-Pure functions are *referentially transparent*, which means that, for
-any given set of arguments, you can replace a function call with its
-return value. Example:
+You can do this because, as you learned above, pure functions are
+referentially transparent:
 
 ```clojure
 ;; + is referentially transparent. You can replace this...
