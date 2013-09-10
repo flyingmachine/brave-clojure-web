@@ -393,6 +393,9 @@ assign text to an instance variable and progressively mutate it. So
 far so good, right? Here's how we might do this in Clojure:
 
 ```clojure
+;; We'll go over require soon
+(require '[clojure.string :as s])
+
 ;; This uses the -> macro which we'll cover more in
 ;; "Clojure Alchemy: Reading, Evaluation, and Macros"
 (defn clean
