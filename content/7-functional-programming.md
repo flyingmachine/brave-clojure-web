@@ -6,9 +6,11 @@ kind: documentation
 
 # Functional Programming
 
+<!---
 If I were Mr. Miyagi and you were Daniel-san, the last chapter would
 be the equivalent of "wax on, wax off." Also, why haven't you cleaned
 my car!?!?
+-->
 
 In this chapter, you'll begin to take your concrete experience with
 functions and data structures and integrate it in a new mindset, the
