@@ -68,8 +68,8 @@ numbers? Pure functions are as stable and problem-free as arithmetic.
 They're like these stupendous, stable little bricks of functionality
 that you can confidently use as the foundation of your program.
 
-Let's look at idempotence and lack-of-side-effects in more detail so
-that know exactly what they are how they're helpful.
+Let's look at referential transparency and lack-of-side-effects in
+more detail so that know exactly what they are how they're helpful.
 
 ### Pure Functions Are Referentially Transparent
 
@@ -96,7 +96,7 @@ same arguments and, therefore, are not referentially transparent:
 
 ```clojure
 ;; Any function which relies on a random number generator
-;; cannot be idempotent
+;; cannot be referentially transparent
 (defn random-judgment
   [judgee]
   (if ((rand) > 0.5)
@@ -125,11 +125,11 @@ cause your code to break.
 
 Another way to think about this is that reality is largely
 referentially transparent. This is what lets you form habits. If
-reality weren't idempotent, you wouldn't be able to mindlessly plug
-your iPod into your bathroom speakers and play "The Final Countdown"
-by Europe every morning when you take a shower. Because each of these
-actions will have the same result pretty much every time you perform
-them, which lets you put them on autopilot.
+reality weren't referentially transparent, you wouldn't be able to
+mindlessly plug your iPod into your bathroom speakers and play "The
+Final Countdown" by Europe every morning when you take a shower.
+Because each of these actions will have the same result pretty much
+every time you perform them, which lets you put them on autopilot.
 
 ### Pure Functions Have No Side Effects
 
@@ -523,8 +523,8 @@ Pretty cool!
 
 ## Chapter Summary
 
-* Pure functions are idempotent and side-effect free. This makes them
-  easy to reason about. 
+* Pure functions are referentially transparent and side-effect free.
+  This makes them easy to reason about.
 * Try to keep your dirty, impure functions to a minimum.
 * In an immutable world, you use recursion instead of for/while and
   function composition instead of successions of mutations
