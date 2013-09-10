@@ -444,7 +444,7 @@ more confident because you won't have to worry about what dirty code
 might be getting its greasy pause on your precious, mutable variables.
 It'll be great!
 
-## Pure Functions Give You Power
+## Cool Things to do With Pure Functions
 
 Because you only need to worry about the input/output relationship in
 pure functions, it's safe to compose them. Indeed, you will often see
