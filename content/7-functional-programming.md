@@ -383,8 +383,7 @@ class GlamourShotCaption
   end
 end
 
-best = GlamourShotCaption.new("My boa constrictor is so \
-sassy lol!  ")
+best = GlamourShotCaption.new("My boa constrictor is so sassy lol!  ")
 best.save!
 ```
 
