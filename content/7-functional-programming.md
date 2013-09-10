@@ -425,7 +425,7 @@ the reusability of the methods. In the Ruby example, you have to do
 extra work to reuse the `clean!` method. In Clojure, `clean` will work
 on any string at all. By decoupling functions and data and
 programaming to a small set of abstractions we end up with more
-reusable, composable code.
+reusable, composable code. You gain power and lose nothing.
 
 If you think that this is a trivial example and not realistic, then
 consider all the times you've created very simple Ruby classes which
