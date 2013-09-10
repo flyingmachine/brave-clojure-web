@@ -290,7 +290,7 @@ Note, however, that you should generally use `loop` when doing
 recursion for performance reasons. This is because Clojure doesn't
 provide tail call optimization, a topic we will never bring up again!
 
-So here's how you'd do this with loop:
+So here's how you'd do this with `loop`:
 
 ```clojure
 (defn sum
@@ -349,7 +349,7 @@ optional `:else`:
 As you can see, Clojure gets along fine without mutation.
 
 One last thing! You might be thinking, "Wait a minute, what if I end
-up creating thousands of immediate values? Doesn't this cause the
+up creating thousands of intermediate values? Doesn't this cause the
 program to thrash because of garbage collection or whatever?
 
 Very good question, eagle-eyed reader! The answer is no! This is
