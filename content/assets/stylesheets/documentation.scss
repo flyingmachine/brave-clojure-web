@@ -119,6 +119,10 @@ code {
 
 
 .content {
+  ul {
+    @include trailer;
+  }
+  
   li {
     margin-left: 1.2em;
   }
