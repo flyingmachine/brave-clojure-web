@@ -38,7 +38,7 @@ now have been pure functions:
 ; => :chumbawumba
 
 (reduce + [1 10 5])
-; => 6
+; => 16
 
 (str "wax on " "wax off")
 ; => "wax on wax off"
