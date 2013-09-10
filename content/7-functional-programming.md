@@ -183,7 +183,7 @@ Therefore, it's a good idea to look for ways to limit the use of side
 effects in your code. Think of yourself as an overeager bureaucrat,
 &mdash; let's call you Kafka Man &mdash; scrutinizing each side effect
 with your trusty BureauCorp clipboard in hand. Not only will this lead
-to better code, it's also sexy an dramatic!
+to better code, it's also sexy and dramatic!
 
 Luckily for you, Clojure makes your job easier by going to great
 lengths to limit side effects &mdash; all of its core data structures
