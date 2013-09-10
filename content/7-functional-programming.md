@@ -59,8 +59,12 @@ they're completely isolated, concealing no dependencies on other parts
 of your system. When you use them, you don't have to ask yourself,
 "Ok, what could I break by calling this function?" You don't have to
 spend time hunting around your codebase and cramming additional
-information into your limited-capacity short-term memory. For example,
-w hen was the last time you fretted over adding two numbers?
+information into your limited-capacity short-term memory.
+
+For example, when was the last time you fretted over adding two
+numbers? Pure functions are as stable and problem-free as arithmetic.
+They're like these stupendous, stable little bricks of functionality
+that you can confidently use as the foundation of your program.
 
 Let's look at idempotence and lack-of-side-effects in more detail so
 that know exactly what they are how they're helpful.
