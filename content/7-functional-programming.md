@@ -228,9 +228,9 @@ for(var i=0; i < l; i++){
 }
 ```
 
-Using side effects in this way &mdash; mutating variables &mdash; is
-pretty much harmless. You're creating some value to be used elsewhere,
-as opposed to changing an object you've received.
+Using side effects in this way &mdash; mutating "internal" variables
+&mdash; is pretty much harmless. You're creating some value to be used
+elsewhere, as opposed to changing an object you've received.
 
 But Clojure's core data structures don't even allow these harmless
 mutations. So what can you do?
