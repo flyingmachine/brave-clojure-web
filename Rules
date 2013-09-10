@@ -63,7 +63,7 @@ route '/assets/stylesheets/*' do
   end
 end
 
-route '/1*' do
+route '/*home*' do
   "/index.html"
 end
 

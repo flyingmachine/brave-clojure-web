@@ -68,9 +68,9 @@ finding out more. You can also use `(doc functionname)` and `(source
 functionname)` in the REPL to see the documentation or source code for
 a function.
 
-In the next chapter we'll cover many of the built-in functions which
-operate on each data structure. If you can't wait until then, check
-out the [Clojure Cheatsheet](http://clojure.org/cheatsheet).
+We won't go over all the functions that can operate on each data
+structure, so I recommend you check out the
+[Clojure Cheatsheet](http://clojure.org/cheatsheet).
 
 ### Numbers
 

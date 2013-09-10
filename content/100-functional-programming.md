@@ -131,7 +131,7 @@ and its value within a given scope.
 
 For example, in Javscript:
 
-```ruby
+```javascript
 var haplessObject = {
   emotion: "Carefree!"
 };
@@ -228,7 +228,7 @@ for(var i=0; i < l; i++){
 }
 ```
 
-Using side effects in this way &mutation mutating variables &mdash; is
+Using side effects in this way &mdash; mutating variables &mdash; is
 pretty much harmless. You're creating some value to be used elsewhere,
 as opposed to changing an object you've received.
 
@@ -348,6 +348,16 @@ optional `:else`:
 
 As you can see, Clojure gets along fine without mutation.
 
+One last thing! You might be thinking, "Wait a minute, what if I end
+up creating thousands of immediate values? Doesn't this cause the
+program to thrash because of garbage collection or whatever?
+
+Very good question, eagle-eyed reader! The answer is no! This is
+because, behind the scenes, Clojure's immutable data structures are
+implemented using something called structural sharing, which is
+totally beyond the scope of this book. Just, uh, it's kind of like
+Git! I don't know, google it!
+
 ### Functional Composition instead of Attribute Mutation
 
 Here's another way we might use mutation:
@@ -416,6 +426,12 @@ part in the hash abstraction without work.
 
 Anyway, the takeaway here is that you can just use function
 composition instead of a succession of mutations.
+
+Once you start using immutable data structures you'll quickly feel
+confident in your ability to get stuff done. Then, you'll feel even
+more confident because you won't have to worry about what dirty code
+might be getting its greasy pause on your precious, mutable variables.
+It'll be great!
 
 ## Pure Functions Give You Power
 
@@ -500,18 +516,7 @@ Pretty cool!
 * Pure functions are idempotent and side-effect free. This makes them
   easy to reason about. 
 * Try to keep your dirty, impure functions to a minimum.
-
-
-<!---
-pure functions ->
-no side effects ->
-how to do things?
-
-data all the things ->
-why? ->
-isolation ->
-composability ->
-reusability ->
-minimize knowledge ->
-disentangling data and functions give you more power and flexibility ->
--->
+* In an immutable world, you use recursion instead of for/while and
+  function composition instead of successions of mutations
+* Pure functions allow powerful techniques like function composition
+  functions and memoization
