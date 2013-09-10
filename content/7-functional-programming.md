@@ -408,10 +408,10 @@ far so good, right? Here's how we might do this in Clojure:
 Easy peasy. No mutation required. Instead of progressively mutating an
 object, you apply a chain of functions to an immutable value.
 
-This example also starts to show why Rich Hickey, Clojure's creator,
-has a low opinion of object oriented programming. In OOP, one of the
-main purposes of classes is to provide data hiding &mdash; something
-that isn't necessary with immutable data structures.
+This example also starts to show the limitations of object-oriented
+programming. In OOP, one of the main purposes of classes is to provide
+data hiding &mdash; something that isn't necessary with immutable data
+structures.
 
 You also have to tightly couple methods with classes, thus limiting
 the reusability of the methods. In the Ruby example, you have to do
