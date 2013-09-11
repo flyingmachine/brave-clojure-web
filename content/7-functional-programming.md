@@ -278,6 +278,9 @@ recursion:
 
 ```clojure
 (defn sum
+  ;; Clojure allows overloading on arity. If you call sum with only
+  ;; one argument, it just calls the two-argument body with 0 as the
+  ;; second argument.
   ([vals]
      (sum vals 0))
   ([vals accumulating-total]
