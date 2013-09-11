@@ -99,7 +99,7 @@ same arguments and, therefore, are not referentially transparent:
 ;; cannot be referentially transparent
 (defn random-judgment
   [judgee]
-  (if ((rand) > 0.5)
+  (if (> (rand) 0.5)
     (str judgee " is great!")
     (str judgee " is terrible :(")))
 
