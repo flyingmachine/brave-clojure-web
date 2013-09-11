@@ -280,19 +280,34 @@ recursion:
 (defn sum
   ([vals]
      (sum vals 0))
-  ([vals acc]
+  ([vals accumulating-total]
+     ;; rest returns the "tail" of vals, e.g. (rest [0 1]) => [1]
+     ;; thus "vals is eventually empty and we return the accumulating
+     ;; total
      (if (empty? vals)
-       acc
-       (sum (rest vals) (+ (first vals) acc)))))
+       accumulating-total
+       ;; if vals isn't empty, i.e. we're still working our way
+       ;; through the sequence, then recur with the tail of vals
+       ;; and the sum of the first element of vals and the
+       ;; accumulating total.
+       (sum (rest vals) (+ (first vals) accumulating-total)))))
 
-(sum [39 5])
-; => 44
+(sum [39 5 1])
+; => 45
+
+;; This is what gets called recursively:
+(sum [39 5 1])
+(sum [39 5 1] 0)
+(sum [5 1] 39)
+(sum [1] 44)
+(sum [] 45)
+; => 45
 ```
 
 Each recursive call to `sum` creates a new scope where `vals` and
-`acc` are bound to different values, all without needing to alter the
-values originally passed to the function or perform any internal
-mutation.
+`accumulating-total` are bound to different values, all without
+needing to alter the values originally passed to the function or
+perform any internal mutation.
 
 Note, however, that you should generally use `loop` when doing
 recursion for performance reasons. This is because Clojure doesn't
@@ -304,12 +319,12 @@ So here's how you'd do this with `loop`:
 (defn sum
   ([vals]
      (sum vals 0))
-  ([vals acc]
+  ([vals accumulating-total]
      (loop [vals vals
-            acc acc]
+            accumulating-total accumulating-total]
        (if (empty? vals)
-         acc
-         (recur (rest vals) (+ (first vals) acc))))))
+         accumulating-total
+         (recur (rest vals) (+ (first vals) accumulating-total))))))
 ```
 
 This isn't too important if you're recursively operating on a small
