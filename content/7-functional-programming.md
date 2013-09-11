@@ -127,9 +127,9 @@ Another way to think about this is that reality is largely
 referentially transparent. This is what lets you form habits. If
 reality weren't referentially transparent, you wouldn't be able to
 mindlessly plug your iPod into your bathroom speakers and play "The
-Final Countdown" by Europe every morning when you take a shower.
-Because each of these actions will have the same result pretty much
-every time you perform them, which lets you put them on autopilot.
+Final Countdown" by Europe every morning when you take a shower. Each
+of these actions will have the same result pretty much every time you
+perform them, which lets you put them on autopilot.
 
 ### Pure Functions Have No Side Effects
 
