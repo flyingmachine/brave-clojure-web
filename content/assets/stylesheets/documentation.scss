@@ -149,7 +149,7 @@ header {
   border-top: 2px solid #f26f53;
   color: #f26f53;
   border-bottom: 1px solid #eee;
-  .name {    
+  .title {    
     @include adjust-font-size-to(62px);
     text-align: center;
     font-family: 'Open Sans', sans-serif;
@@ -170,6 +170,15 @@ header {
         color: black;
       }
     }
+    
+  }
+  .subtitle {
+    @include adjust-font-size-to(30px);
+    text-align: center;
+    font-family: 'Gentium Book Basic', serif;
+    font-style: italic;
+    font-weight: 200;
+    color: black;
   }
 }
 
@@ -363,6 +372,14 @@ table {
   @include clearfix;
   border-top: 1px dotted #eee;
   border-bottom: 1px dotted #eee;
+  &.top{
+    border-top:none;
+    @include leader(-1);
+    @include trailer;
+    margin-left: -1em;
+    margin-right: -1em;
+    padding: 0 1em;
+  }
   .prev {
     float: left;
   }

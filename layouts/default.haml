@@ -11,14 +11,15 @@
     %link{:href => 'http://fonts.googleapis.com/css?family=Gentium+Book+Basic:400,400italic|Open+Sans:400,800', :rel => 'stylesheet', :type => 'text/css'}/
   %body{"data-spy" => "scroll", "data-target" => "nav"}
     %header{:role => "banner"}
-      .name
+      .title
         %a{:href => "/"}
           Clojure
           %span for the
           Brave
           %span and
           True
-    
+      .subtitle
+        ( a Book for Beginners )
     .announcement
       .signup
         %form#mc-embedded-subscribe-form.validate{:action => "http://flyingmachinestudios.us1.list-manage.com/subscribe/post?u=60763b0c4890c24bd055f32e6&amp;id=0b40ffd1e1", :method => "post", :name => "mc-embedded-subscribe-form", :novalidate => "", :target => "_blank"}
@@ -28,8 +29,23 @@
         %p Can't bear to be without CFTBAT? <a href="https://leanpub.com/clojure-for-the-brave-and-true">Get the DRM-free PDF, epub, and mobi! for 50% off!</a>
     .page
       .content
+        // .pagenav.top
+        //   - count = @items.size
+        //   - index = @items.select{|i| i[:kind] == "documentation"}.sort{|a, b| a.identifier <=> b.identifier}.index(@item)
+        //   - if index
+        //     - if index != 0
+        //       - i = @items[index - 1]
+        //       .prev
+        //         %a{:href => relative_path_to(i)}
+        //           &larr;
+        //           = i[:link_title]
+        //     - if i = @items[index + 1]
+        //       .next
+        //         %a{:href => relative_path_to(i)}
+        //           = i[:link_title]
+        //           &rarr;
         = find_and_preserve(yield)
-        .pagenav
+        .pagenav.bottom
           - count = @items.size
           - index = @items.select{|i| i[:kind] == "documentation"}.sort{|a, b| a.identifier <=> b.identifier}.index(@item)
           - if index
