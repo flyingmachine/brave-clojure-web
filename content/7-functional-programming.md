@@ -300,6 +300,7 @@ recursion:
 
 ;; This is what gets called recursively:
 (sum [39 5 1])
+; single-arity body calls 2-arity body
 (sum [39 5 1] 0)
 (sum [5 1] 39)
 (sum [1] 44)
