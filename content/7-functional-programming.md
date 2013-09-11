@@ -74,7 +74,7 @@ helpful.
 
 ### Pure Functions Are Referentially Transparent
 
-A referentially transparent functions always returns the same result
+Referentially transparent functions always returns the same result
 when called with the same argument. In order to achieve this, they
 only rely on 1) their own arguments and 2) immutable values to
 determine their return value.
