@@ -69,7 +69,8 @@ They're like these stupendous, stable little bricks of functionality
 that you can confidently use as the foundation of your program.
 
 Let's look at referential transparency and lack-of-side-effects in
-more detail so that know exactly what they are how they're helpful.
+more detail so that we'll know exactly what they are how they're
+helpful.
 
 ### Pure Functions Are Referentially Transparent
 
