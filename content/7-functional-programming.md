@@ -46,7 +46,7 @@ now have been pure functions:
 
 What makes them pure functions, and why does it matter?
 
-A function if pure if it meets two qualifications:
+A function is pure if it meets two qualifications:
 
 1. It always returns the same result given the same arguments. This is
    call "referential transparency" and you can add it to your list of
@@ -409,7 +409,7 @@ far so good, right? Here's how we might do this in Clojure:
   [text]
   (-> text
       s/trim
-      s/replace #"lol" "LOL"))
+      (s/replace #"lol" "LOL")))
 
 (spit "read_and_feel_giddy.txt"
       (clean "My boa constrictor is so sassy lol!  "))
