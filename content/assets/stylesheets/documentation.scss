@@ -194,7 +194,71 @@ header {
   // }
 }
 
-nav {
+.announcement, footer {
+  @include container;
+  @include padding-leader;
+  text-align: center;
+  .signup {
+    @include push(2);
+    @include span-columns(8, 12);
+  }
+}
+
+.announcement {
+  border-bottom: 1px solid #eee;
+}
+
+footer {
+  @include padding-trailer;
+}
+
+.page {
+  // page acts as a container for our grid.
+  @include container;
+  @include padding-trailer;
+  
+  border-bottom: 1px solid #eee;
+  background: white;
+
+  h2 {
+    @include adjust-font-size-to(32px, 2);
+    @include leader(1, 32px);
+    @include trailer(1, 32px);
+    border-bottom: 1px solid #eee;
+    // border-left: 8px solid $purple;
+    // padding-left: 8px;
+    // margin-left: -16px;
+  }
+
+  h3 {
+    @include adjust-font-size-to(24px, 1);
+    @include leader(1, 24px);
+    @include trailer(1, 24px);
+    border-left: 4px solid $dark-teal;
+    padding-left: 12px;
+    margin-left: -16px;
+  }
+
+  h4 {
+    @include adjust-font-size-to(20px, 1);
+    @include leader(1, 20px);
+    border-left: 2px solid $dark-teal;
+    padding-left: 14px;
+    margin-left: -16px;
+  }
+  
+  .content {
+    @include at-breakpoint($M) {
+      @include span-columns(9, 12);
+      padding-right: 1em;
+      border-right: 1px solid #eee;
+    }
+    
+    @include padding-leader;
+  }
+}
+
+.page nav {
   @include at-breakpoint($M) {
     @include span-columns(3 omega,12);
     @include padding-leader;
@@ -208,7 +272,11 @@ nav {
   @include padding-trailer(2);
 
   h2 {
-    @include adjust-font-size-to(21px, 1);
+    @include adjust-font-size-to(26px, 1);
+    @include leader(1, 26px);
+    margin-bottom: 0;
+    font-weight: normal;
+    color: #333;
   }
 
   a:hover {
@@ -273,70 +341,6 @@ nav {
       @include serif-family;
       width: 95%;
     }
-  }
-}
-
-.announcement, footer {
-  @include container;
-  @include padding-leader;
-  text-align: center;
-  .signup {
-    @include push(2);
-    @include span-columns(8, 12);
-  }
-}
-
-.announcement {
-  border-bottom: 1px solid #eee;
-}
-
-footer {
-  @include padding-trailer;
-}
-
-.page {
-  // page acts as a container for our grid.
-  @include container;
-  @include padding-trailer;
-  
-  border-bottom: 1px solid #eee;
-  background: white;
-
-  h2 {
-    @include adjust-font-size-to(32px, 2);
-    @include leader(1, 32px);
-    @include trailer(1, 32px);
-    border-bottom: 1px solid #eee;
-    // border-left: 8px solid $purple;
-    // padding-left: 8px;
-    // margin-left: -16px;
-  }
-
-  h3 {
-    @include adjust-font-size-to(24px, 1);
-    @include leader(1, 24px);
-    @include trailer(1, 24px);
-    border-left: 4px solid $dark-teal;
-    padding-left: 12px;
-    margin-left: -16px;
-  }
-
-  h4 {
-    @include adjust-font-size-to(20px, 1);
-    @include leader(1, 20px);
-    border-left: 2px solid $dark-teal;
-    padding-left: 14px;
-    margin-left: -16px;
-  }
-  
-  .content {
-    @include at-breakpoint($M) {
-      @include span-columns(9, 12);
-      padding-right: 1em;
-      border-right: 1px solid #eee;
-    }
-    
-    @include padding-leader;
   }
 }
 
