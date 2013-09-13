@@ -214,9 +214,7 @@ footer {
 
 .page {
   // page acts as a container for our grid.
-  @include container;
-  @include padding-trailer;
-  
+  @include container;  
   border-bottom: 1px solid #eee;
   background: white;
 
@@ -284,23 +282,24 @@ footer {
   }
 
   #toc > ol {
-    margin-left:-1em;
-
     li {
       display:block;
       a {
-        padding: 0 18px;
         @include adjust-font-size-to(18px, 1);
         @include padding-trailer(.5, 18px);
         @include padding-leader(.5, 18px);
         display: block;
+        color: #444;
+        &:hover, &:visited {
+          color: #444;
+        }
       }
     }
     
-    > li.active-section > a, > li > a:hover {
-      border-left: 2px solid #ccc;
-      margin-left: -2px;
-      // background: $light-teal;
+    // > li.active-section > a,
+    > li > a:hover {
+      border-bottom: 1px solid #f26f53;
+      margin-bottom: -1px;
     }
 
     >li li a {
@@ -314,9 +313,13 @@ footer {
     // Sub navigation, e.g. 2.3 Susy
     ol {
       a:hover, li.active > a {
-        border-left: 2px solid #999;
-        margin-left: -2px;
-        //background:#d7f5e6;
+        &:before {
+          content: "→ ";
+          color: #f26f53;
+          font-weight: bold;
+          vertical-align: middle;
+          text-indent: -1em;
+        }
       }
 
       ol {
@@ -399,4 +402,10 @@ table {
   .ad {
     text-align: center;
   }
+}
+
+.is-sticky .sticky {
+  @include padding-leader;
+  bottom: 0;
+  overflow-y: auto;
 }

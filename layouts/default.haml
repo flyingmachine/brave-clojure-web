@@ -75,20 +75,21 @@
 
     
       %nav
-        %a{:href => "https://twitter.com/share", :class => "twitter-share-button", "data-via" => "nonrecursive"}tweet bravely and truly
-        :javascript
-          !function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs')
+        .sticky
+          %a{:href => "https://twitter.com/share", :class => "twitter-share-button", "data-via" => "nonrecursive"}tweet bravely and truly
+          :javascript
+            !function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs')
 
-        %iframe{:src => "http://ghbtns.com/github-btn.html?user=flyingmachine&repo=brave-clojure-web&type=fork", :width => "62", :height => "20"}
-          
-        %form#search{:action => "/search/"}
-          %input#tipue_search_input{:name => "q", :type => "search", :placeholder => "Search"}
-        %h2 Table of Contents
-        #toc.nav
-          %ol
-            - @items.select{|i| i[:kind] == "documentation"}.sort{|a, b| a.identifier <=> b.identifier}.each do |i|
-              %li{:class => (i == @item ? "active-section" : "")}
-                = link_to i[:link_title] || i[:title], relative_path_to(i), :class => (i == @item ? "active" : "")
+          %iframe{:src => "http://ghbtns.com/github-btn.html?user=flyingmachine&repo=brave-clojure-web&type=fork", :width => "62", :height => "20"}
+
+          %form#search{:action => "/search/"}
+            %input#tipue_search_input{:name => "q", :type => "search", :placeholder => "Search"}
+          %h2 Table of Contents
+          #toc.nav
+            %ol
+              - @items.select{|i| i[:kind] == "documentation"}.sort{|a, b| a.identifier <=> b.identifier}.each do |i|
+                %li{:class => (i == @item ? "active-section" : "")}
+                  = link_to i[:link_title] || i[:title], relative_path_to(i), :class => (i == @item ? "active" : "")
     %footer
       .signup
         %form#mc-embedded-subscribe-form.validate{:action => "http://flyingmachinestudios.us1.list-manage.com/subscribe/post?u=60763b0c4890c24bd055f32e6&amp;id=0b40ffd1e1", :method => "post", :name => "mc-embedded-subscribe-form", :novalidate => "", :target => "_blank"}
