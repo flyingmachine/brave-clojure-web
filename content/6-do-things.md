@@ -871,9 +871,9 @@ Fun!
 
 ### The Shire's Next Top Model
 
-For our hobbit model, we'll eschew such characteristics as
-"joviality" and "mischievousnes" and focus only on the hobbit's tiny
-body. Here's our hobbit model:
+For our hobbit model, we'll eschew such characteristics as "joviality"
+and "mischievousness" and focus only on the hobbit's tiny body. Here's
+our hobbit model:
 
 ```clojure
 (def asym-hobbit-body-parts [{:name "head" :size 3}
