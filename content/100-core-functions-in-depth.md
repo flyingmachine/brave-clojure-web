@@ -260,4 +260,21 @@ vampires trying to retain their humanity.
 
 ### Seq Functions Sometimes Return Lazy Seqs
 
+Why do `map` and other functions return what looks like a list?
+
+```clojure
+(map identity {:name "Van Helsing" :occupation "Living angry guy"})
+; => ([:name "Van Helsing"] [:occupation "Living angry guy"])
+```
+
+As we saw in the last section, `map` first calls `seq` on the
+collection you pass to it. So that's part of the answer &mdash; the
+functions which operate on seqs call `seq` on their arguments and
+don't bother to convert them back.
+
+### About Those Puns
+
+He's a vampire, dammit! Why can't you see that!?!?
+
+## The Collection Abstraction
 
