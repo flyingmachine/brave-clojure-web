@@ -272,6 +272,118 @@ collection you pass to it. So that's part of the answer &mdash; the
 functions which operate on seqs call `seq` on their arguments and
 don't bother to convert them back.
 
+But that's not the whole story. Some functions, like `map`, return
+a "lazy seq". A lazy seq is a seq whose members aren't computed until
+you try to access them. Computing a seq's members is called
+"realizing" the seq.
+
+There are two reasons for lazy seqs. First, they're more efficient
+because they don't do unnecessary computations. For example, pretend
+that you're part of a modern-day task force whose purpose is to
+identify vampires. You know that there is a single vampire out a group
+of one million suspects. Your boss gives you a list of one million
+social security numbers and shouts, "Get it done, McFishwich!"
+
+Here's one way that you could do that:
+
+```clojure
+(defn vampire?
+  "Returns boolean"
+  [record]
+  (instant-computation record))
+
+(defn vampire-related-details
+  "Looks up vampire related details in super sophisticated database"
+  [social-security-number]
+  (ten-second-computation social-security-number))
+
+
+;; To understand the function below, you need to understand
+;; drop-while:
+(drop-while neg? [-1 -2 0 1 2])
+; => (-1 -2)
+
+;; The strategy here is to keep dropping members of a sequence if
+;; we know they're not a vampire. Then the first member of the
+;; remaining sequence is a vampire
+(defn identify-vampire
+  [social-security-numbers]
+  (first (drop-while #(not (vampire? %))
+                     (map vampire-related-details
+                          social-security-numbers))))
+```
+
+As you can see, it takes 10 seconds to pull up each potential
+vampire's details. A non-lazy implementation of this would apply
+`vampire-related-details` to every social security number before
+passing the result to `drop-while`. This would take 116 days (10
+million seconds), and half your city could be dead by then!
+
+Instead, since `map` returns a lazy seq, `vampire-related-details`
+doesn't get called until it's actually needed. At least, it's useful
+to think of it that way. Sometimes lazy seqs are chunked, meaning that
+they realize 32 members at a time:
+
+```clojure
+(def identities
+  [{:alias "Batman" :real "Bruce Wayne"}
+   {:alias "Spiderman" :real "Peter Parker"}
+   {:alias "Santa" :real "Your mom"}
+   {:alias "Easter Bunny" :real "Your dad"}
+   {:alias "alias 5", :real "real 5"}
+   ; ... Just pretend that there are actually maps here for 6-30
+   {:alias "alias 31", :real "real 31"}
+   {:alias "alias 32", :real "real 32"}
+   {:alias "alias 33", :real "real 33"}
+   {:alias "alias 33", :real "real 34"}])
+
+(defn snitch
+  "Announce real identity to the world"
+  [identity]
+  (println (:real identity))
+  (:real identity))
+
+(map snitch [{:alias "Batman" :real "Bruce Wayne}])
+
+(def revealed-identities)
+(first revealed-identities)
+;; The following gets printed
+Bruce Wayne
+Peter Parker
+Your mom
+Your dad
+real 5
+... (real 6-30 would actually be printed)
+real 31
+real 32
+```
+
+Notice that `real 33` and `real 34` were *not* printed &mdash; only 32
+lines were printed. Clojure doesn't realize a lazy list until you try
+to read a value from it, and then it usually realizes 32 members at a
+time. This is done for the sake of efficiency.
+
+Note, also, that Clojure caches the values of the lazy seq. It doesn't
+have to re-compute them when you try to access them again. Continuing
+where we left off from the previous example:
+
+```clojure
+;; Since the lazy seq has already realized the first member, it
+;; doesn't run the snitch function again and nothing gets printed
+(first revealed-identities)
+; => "Bruce Wayne"
+```
+
+Sometimes you need to realize the entire seq without bothering with
+trying to take every member. Usually the only reason you'd want to do
+this if you want to produce side effects &mdash; for example, if you
+want to print every single real identity in the example above. In that
+case, you use `doall` on the seq. The purpose of `doall` is to realize
+the seq.
+
+And that covers lazy seqs! Now you'll know what the heck is going on
+next time you call `map` on a map!
+
 ### About Those Puns
 
 He's a vampire, dammit! Why can't you see that!?!?
