@@ -119,9 +119,6 @@ code {
 
 
 .content {
-  ul {
-    @include trailer;
-  }
   
   li {
     margin-left: 1.2em;
@@ -377,6 +374,7 @@ table {
 
 .pagenav {
   @include clearfix;
+  @include leader;
   border-top: 1px dotted #eee;
   border-bottom: 1px dotted #eee;
   &.top{
