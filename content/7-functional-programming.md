@@ -49,7 +49,7 @@ What makes them pure functions, and why does it matter?
 A function is pure if it meets two qualifications:
 
 1. It always returns the same result given the same arguments. This is
-   call "referential transparency" and you can add it to your list of
+   called "referential transparency" and you can add it to your list of
    five-dollar programming terms.
 2. It doesn't cause any side effects, e.g. it doesn't "change the
    external world" by changing external mutable objects or outputting
