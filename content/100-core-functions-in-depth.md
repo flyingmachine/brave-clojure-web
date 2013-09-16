@@ -384,9 +384,8 @@ the seq.
 And that covers lazy seqs! Now you'll know what the heck is going on
 next time you call `map` on a map!
 
-### About Those Puns
+### About Those Creepy Puns
 
 He's a vampire, dammit! Why can't you see that!?!?
 
 ## The Collection Abstraction
-
