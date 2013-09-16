@@ -27,10 +27,16 @@ of the functions you'll be reaching for the most. By the end, you'll
 understand:
 
 * Programming to abstractions
-* The sequence abstraction
-* Lazy sequences
-* The collection abstraction
+    * The sequence abstraction
+    * Lazy sequences
+    * The collection abstraction
 * Often-used functions
+    * map
+    * into
+    * conj
+    * apply
+    * partial
+* How to parse and validate a CSV of vampire data
 
 ## Programming to Abstractions
 
@@ -358,9 +364,9 @@ real 31
 real 32
 ```
 
-Notice that `real 33` and `real 34` were *not* printed &mdash; only 32
-lines were printed. Clojure doesn't realize a lazy list until you try
-to read a value from it, and then it usually realizes 32 members at a
+Notice that `real 33` and `real 34` were *not* printed. Only 32 lines
+were printed. Clojure doesn't realize a lazy list until you try to
+read a value from it, and then it usually realizes 32 members at a
 time. This is done for the sake of efficiency.
 
 Note, also, that Clojure caches the values of the lazy seq. It doesn't
@@ -389,3 +395,212 @@ next time you call `map` on a map!
 He's a vampire, dammit! Why can't you see that!?!?
 
 ## The Collection Abstraction
+
+The collection abstraction is closely related to the sequence
+abstraction. All of Clojure's core data structures &mdash; vectors,
+maps, lists and sets &mdash; take part in both abstractions. This
+makes complete sense when you think about it. (Think about it! Now!)
+
+They differ in that the sequence abstraction is "about" operating on
+members individually while the collection abstraction is "about" the
+data structure as a whole. For example, the collection functions
+`count`, `empty?`, and `every?` aren't about any individual
+element; they're about the whole.
+
+```clojure
+(empty? [])
+; => true
+
+(empty? ["no!"])
+; => false
+```
+
+Practically speaking, you'll rarely consciously think "OK, self!
+You're working with the collection as a whole now. Think in terms of
+the collection abstraction!" Nevertheless, it's useful to know the
+concepts which underly the functions and data structures you're using.
+
+Now we'll examine two common collection functions whose similarities
+can be a bit confusing.
+
+### Into
+
+One of the most import collection functions is `into`. As you now
+know, many seq functions return a seq rather than the original data
+structure. You'll probably want to convert the return value back into
+the original value, and `into` lets you do that:
+
+```clojure
+(map identity {:sunlight-reaction "Glitter!"})
+; => ([:sunlight-reaction "Glitter!"])
+
+(into {} (map identity {:sunlight-reaction "Glitter!"}))
+```
+
+This will work with other data structures as well:
+
+```clojure
+;; convert back to vector
+(map identity [:garlic :sesame-oil :fried-eggs])
+; map returns a seq
+; => (:garlic :sesame-oil :fried-eggs)
+
+(into [] (map identity [:garlic :sesame-oil :fried-eggs]))
+; => [:garlic :sesame-oil :fried-eggs]
+
+;; convert back to set
+(map identity [:garlic-clove :garlic-clove])
+; => (:garlic-clove :garlic-clove)
+
+;; sets only contain unique values
+(into #{} (map identity [:garlic-clove :garlic-clove]))
+; => #{:garlic-clove}
+```
+
+The first argument of `into` doesn't have to be empty:
+
+```clojure
+(into {:favorite-emotion "gloomy"} [[:sunlight-reaction "Glitter!"]])
+; => {:favorite-emotion "gloomy" :sunlight-reaction "Glitter!"}
+
+(into ["cherry"] '("pine" "spruce"))
+```
+
+And of course, both arguments can be the same type:
+
+```clojure
+(into {:favorite-animal "kitty"} {:least-favorite-smell "dog"
+                                  :relationship-with-teenager "creepy"})
+; =>
+; {:favorite-animal "kitty"
+;  :relationship-with-teenager "creepy"
+;  :least-favorite-smell "dog"}
+```
+
+If `into` were asked to describe its strengths at a job interview, it
+would say "I'm great at taking two collections and adding all the
+elements from the second to the first."
+
+### Conj
+
+Conj also adds elements to a collection, but it does it in a
+slightly different way:
+
+```clojure
+(conj [0] [1])
+; => [0 [1]]
+;; Whoopsie! Looks like it added the entire vector [1] onto [0].
+;; Compare to into:
+
+(into [0] [1])
+; => [0 1]
+
+;; Here's what we want:
+(conj [0] 1)
+; => [0 1]
+
+;; We can supply as many elements to add as we want:
+(conj [0] 1 2 3 4)
+; => [0 1 2 3 4]
+
+;; We can also add to maps:
+(conj {:time "midnight"} [:place "ye olde cemetarium"])
+; => {:place "ye olde cemetarium" :time "midnight"}
+```
+
+The two are so similar, you could even define `conj` in terms of
+`into`:
+
+```clojure
+(defn my-conj
+  [target & additions]
+  (into target additions))
+
+(my-conj [0] 1 2 3)
+; => [0 1 2 3]
+```
+
+This kind of pattern isn't that uncommon. You'll see two functions
+which do the same thing, it's just that one takes a rest-param (`conj`)
+and one takes a seqable data structure (`into`).
+
+## Function Functions
+
+Learning to take advantage of Clojure's ability to accept functions as
+arguments and return functions as values is really fun, even if it
+takes some getting used to.
+
+Two of Clojure's functions, `apply` and `partial` might seem
+especially weird because they both accept *and* return functions.
+So let's unweird them.
+
+### apply
+
+Remember how we defined `conj` in terms of `into` above? Well, we can
+also define `into` in terms of `conj` by using `apply`:
+
+```clojure
+(defn my-into
+  [target additions]
+  (apply conj target additions))
+
+(my-into [0] [1 2 3])
+; => [0 1 2 3]
+
+;; the above call to my-into is equivalient to calling:
+(conj [0] 1 2 3)
+```
+
+`apply` "explodes" a seqable data structure so that it can be passed
+to a function which expects a rest-param.
+
+```clojure
+;; Max takes a rest-param, comparing all the arguments passed to it.
+;; We pass only one argument and max returns it:
+(max [0 1 2])
+; => [0 1 2]
+
+;; Let's "explode" the argument:
+(apply max [0 1 2])
+; => 2
+```
+
+Ta-da!
+
+### partial
+
+Let's look at some examples of `partial` before describing what it
+does:
+
+```clojure
+(def add10 (partial + 10))
+(add10 3) ;=> 13
+(add10 5) ;=> 15
+
+(def add-missing-element
+  (partial conj ["water" "earth" "air"]))
+
+(add-missing-elements "unobtainium" "adamantium")
+; => ["water" "earth" "air" "unobtainium" "adamantium"]
+```
+
+So, `partial` takes a function and any number of arguments. It then
+returns a new function. When you call the returned function, it calls the
+original function with the original arguments you supplied it along
+with the new arguments. Ugh that is an inelegant description. Here's
+how you might define `partial`:
+
+```clojure
+(defn my-partial
+  [partialized-fn & args]
+  (fn [& more-args]
+    (apply partialized-fn (into args more-args))))
+
+(def add20 (my-partial + 20))
+(add20 3) ; => 23
+```
+
+Ta-da!
+
+## Forks, WA Police Department
+
