@@ -22,10 +22,10 @@ existential terror of being a seventeen-year-old for eternity.)
 
 In this chapter, you'll learn about Clojure's deep, dark,
 bloodthirsty, supernatur&ndash; \**cough*\* I mean, in this chapter,
-you'll learn a couple of Clojure's underlying concepts. This will give
-you the footing you need to read the documentation for functions you
-haven't used before and to understand what's happening when you give
-them a try.
+you'll learn about a couple of Clojure's underlying concepts. This
+will give you the grounding you need to read the documentation for
+functions you haven't used before and to understand what's happening
+when you give them a try.
 
 You'll also see usage examples of the functions you'll be reaching for
 the most. This will give you a solid foundation for writing your own
@@ -193,7 +193,7 @@ map(list, function (val) { return val + " mapped!"})
 // => ["Transylvania mapped!", "Forks, WA mapped!"]
 ```
 
-So, if you can implement `first`, `rest`, and `cons`, then you get
+Thus, if you can implement `first`, `rest`, and `cons` then you get
 `map` for free, along with the aforementioned oodles of other
 functions.
 
