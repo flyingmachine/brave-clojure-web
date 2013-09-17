@@ -1,6 +1,7 @@
 --- 
 title: Core Functions in Depth
 link_title: Core Functions in Depth
+kind: documentation
 ---
 
 # Core Functions in Depth
@@ -775,7 +776,7 @@ Good luck, McFishwich!
 
 In this chapter, you learned:
 
-* Clojure emphasizes programming to abstractions
+* Clojure emphasizes programming to abstractions.
 * The sequence abstraction deals with operating on the individual
   elements of a sequence. Seq functions often convert their arguments
   to a seq and return a lazy seq.
