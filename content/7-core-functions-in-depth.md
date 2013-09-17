@@ -17,7 +17,7 @@ You might be asking yourself similar questions if you've started
 playing with Clojure's core functions. "Why did `map` return what
 looks like a list when I gave it a vector?" and "How come `reduce`
 treats my map like a list of vectors?" and so on. (With Clojure,
-though, you at least don't have to contemplate the profound
+though, you're at least spared from contemplating the profound
 existential terror of being a seventeen-year-old for eternity.)
 
 In this chapter, you'll learn about Clojure's deep, dark,
