@@ -602,5 +602,184 @@ how you might define `partial`:
 
 Ta-da!
 
-## Forks, WA Police Department
+## FWPD
 
+To pull everything together, let's write the beginnings of a
+sophisticated vampire data analysis program for the Forks, Washington
+Police Department (FWPD).
+
+The FWPD has a sophisticated new database technology called CSV
+(comma-separated values). Our job is to parse this fancy-schmancy
+"csv" and analyze it for potential vampires. We'll do that by
+filtering on each suspect's "glitter index", a 0-10 prediction of the
+suspect's vampireness invented by Larry Page and Sergey Brin. Let's
+create a new leiningen project for our tool:
+
+```
+lein new app fwpd
+```
+
+Under the new `fwpd` directory, create a file named `suspects.csv` and
+enter contents like the following:
+
+```
+Name,Glitter Index
+Edward Cullen,10
+Bella Swan,0
+Charlie Swan,0
+Jacob Black,3
+Carlisle Cullen,6
+```
+
+Now it's time to get our hands dirty. Make your file
+`fwpd/src/fwpd/core.clj` look like this:
+
+```clojure
+;; In ns below, notice that "gen-class" was removed
+(ns fwpd.core
+  ;; We haven't gone over require but we will.
+  (:require [clojure.string :as s]))
+
+(def filename "suspects.csv")
+
+;; Later on we're going to be converting each row in the CSV into a
+;; map, like {:name "Edward Cullen" :glitter-index 10}.
+;; Since CSV can't store Clojure keywords, we need to associate the
+;; textual header from the CSV with the correct keyword.
+(def headers->keywords {"Name" :name
+                        "Glitter Index" :glitter-index})
+
+(defn str->int
+  "If argument is a string, convert it to an integer"
+  [str]
+  (if (string? str)
+    (read-string (re-find #"^-?\d+$" str))
+    str))
+
+;; CSV is all text, but we're storing numeric data. We want to convert
+;; it back to actual numbers.
+(def conversions {:name identity
+                  :glitter-index str->int})
+
+(defn parse
+  "Convert a csv into rows of columns"
+  [string]
+  (map #(s/split % #",")
+       (s/split string #"\n")))
+
+(defn mapify
+  "Return a seq of maps like {:name \"Edward Cullen\" :glitter-index 10}"
+  [rows]
+  (let [;; headers becomes the seq (:name :glitter-index)
+        headers (map #(get headers->keywords %) (first rows))
+        ;; unmapped-rows becomes the seq
+        ;; (["Edward Cullen" "10"] ["Bella Swan" "0"] ...)
+        unmapped-rows (rest rows)]
+    ;; Now let's return a seq of {:name "X" :glitter-index 10}
+    (map (fn [unmapped-row]
+           ;; We're going to use map to associate each header with its
+           ;; column. Since map returns a seq, we use into to convert
+           ;; it into a map.
+           (into {}
+                 ;; map can actually take multiple seq arguments. In
+                 ;; this case, we're passing a seq of headers and a
+                 ;; seq of cells. map applies the anonymous function
+                 ;; to headers[0], unmapped-row[0], then headers[1],
+                 ;; unmapped-row[1] and so forth
+                 (map (fn [header column]
+                        ;; associate the header with the converted column
+                        [header ((get conversions header) column)])
+                      headers
+                      unmapped-row)))
+         unmapped-rows)))
+
+(defn glitter-filter
+  [minimum-glitter records]
+  (filter #(>= (:glitter-index %) minimum-glitter) records))
+```
+
+Notice that we took out the `-main` function. This is because, for
+right now, we only care about running the above code in the REPL. Try
+this out in your REPL:
+
+```clojure
+;; slup reads a file
+(mapify (parse (slurp filename)))
+```
+
+`mapify` is the most complicated function of the bunch, and I
+recommend going through it to really figure out what's going on. One
+place to start might be the inner `map`:
+
+```clojure
+(map (fn [header column]
+       ;; associate the header with the converted column
+       [header ((get conversions header) column)])
+     headers
+     unmapped-row)
+```
+
+You could try breaking that out into a separate function and passing
+it arguments to understand what it does:
+
+```clojure
+(defn mapify-row
+  [headers unmapped-row]
+  (map (fn [header column]
+       ;; associate the header with the converted column
+       [header ((get conversions header) column)])
+     headers
+     unmapped-row))
+
+(mapify-row [:name] ["Joe"])
+; => ([:name "Joe"])
+```
+
+That's a strategy that's generally useful in figuring out someone
+else's code: figure out what data is being passed to some nested
+function call, then extract that nested function call and pass it the
+same kind of data and see what happens.
+
+Now you know how to get mapified records, you can filter on their
+glitter index:
+
+```clojure
+(glitter-filter 3 (mapify (parse (slurp filename))))
+({:name "Edward Cullen", :glitter-index 10}
+ {:name "Jacob Black", :glitter-index 3}
+ {:name "Carlisle Cullen", :glitter-index 6})
+```
+
+You better go round up those sketchy characters!
+
+### Vampire Analysis 2.0
+
+The vampire analysis program you now have is already decades ahead of
+anything else on the market. But how could you make it better? I
+suggest trying the following:
+
+* Turn the result of your glitter filter into a list of names
+* Write a function, `append`, which will append a new suspect to your
+  list of suspects
+* Write a function, `validate`, which will check that `:name` and
+  `:glitter-index` are present when you `append`. Validate should
+  accept two arguments: a map of keywords to validating functions,
+  similar to `conversions`, and the record to be validated
+* Write a function which will take your list of maps and convert it
+  back to a CSV string. You'll need to use the `clojure.string/join`
+  function.
+
+Good luck, McFishwich!
+
+## Chapter Summary
+
+In this chapter, you learned:
+
+* Clojure emphasizes programming to abstractions
+* The sequence abstraction deals with operating on the individual
+  elements of a sequence. Seq functions often convert their arguments
+  to a seq and return a lazy seq.
+* Lazy evaluation improves performance by delaying computations until
+  they're needed.
+* The collection abstraction deals with data structures as a whole.
+* Never trust someone who sparkles in the sun.
