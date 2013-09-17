@@ -60,3 +60,23 @@
    {:alias "alias 33", :real "real 33"}])
 
 (map snitch identities)
+
+(into {:favorite-animal "kitty"} {:least-favorite-smell "dog"
+                                  :relationship-with-teenager "creepy"})
+
+(defn my-conj
+  [target & additions]
+  (into target additions))
+
+(defn my-into
+  [target additions]
+  (apply conj target additions))
+
+
+(def add-missing-elements
+  (partial conj ["water" "earth" "air"]))
+
+(defn my-partial
+  [partialized-fn & args]
+  (fn [& more-args]
+    (apply partialized-fn (into args more-args))))

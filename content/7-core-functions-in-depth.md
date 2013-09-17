@@ -197,11 +197,12 @@ So, if you can implement `first`, `rest`, and `cons`, then you get
 `map` for free, along with the aforementioned oodles of other
 functions.
 
-The takeaway here is that it's more powerful to focus on what we can
-*do* with a data structure than on how it's implemented. Those
-implementations rarely matter in and of themselves. They're only a
-means to an end. We ultimately only care about what we do with them,
-and by programming to abstractions we're able to do more with them.
+The takeaway here is that it's powerful to focus on what we can *do*
+with a data structure and to ignore, as much as possible, its
+implementation. Implementations rarely matter in and of themselves.
+They're only a means to an end. We ultimately only care about what we
+do with them, and by programming to abstractions we're able to re-use
+libraries and thus do more with them.
 
 By the way: Javascript doesn't provide an easy means of defining
 different implementations of a function based on the type(s) of
