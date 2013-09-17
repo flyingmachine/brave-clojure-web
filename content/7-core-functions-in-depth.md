@@ -15,17 +15,23 @@ when I nicked my finger?" and so on.
 
 You might be asking yourself similar questions if you've started
 playing with Clojure's core functions. "Why did `map` return what
-looks like a list when I gave it a vector?" and "How come my map got
-turned into a list of vectors?" and so on. (With Clojure, though, you
-at least don't have to contemplate the profound existential terror of
-being a seventeen-year-old for eternity.)
+looks like a list when I gave it a vector?" and "How come `reduce`
+treats my map like a list of vectors?" and so on. (With Clojure,
+though, you at least don't have to contemplate the profound
+existential terror of being a seventeen-year-old for eternity.)
 
 In this chapter, you'll learn about Clojure's deep, dark,
-bloodthirsty, supernatur&ndash; \**cough*\* I mean, in this
-chapter, you'll learn a couple underlying concepts which are key to
-understanding Clojure's core functions. You'll also see usage examples
-of the functions you'll be reaching for the most. By the end, you'll
-understand:
+bloodthirsty, supernatur&ndash; \**cough*\* I mean, in this chapter,
+you'll learn a couple of Clojure's underlying concepts. This will give
+you the footing you need to read the documentation for functions you
+haven't used before and to understand what's happening when you give
+them a try.
+
+You'll also see usage examples of the functions you'll be reaching for
+the most. This will give you a solid foundation for writing your own
+code and reading and learning from others' projects.
+
+By the end, you'll understand:
 
 * Programming to abstractions
     * The sequence abstraction
