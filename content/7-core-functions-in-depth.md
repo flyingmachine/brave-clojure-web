@@ -315,7 +315,7 @@ Here's one way that you could do that:
 ;; To understand the function below, you need to understand
 ;; drop-while:
 (drop-while neg? [-1 -2 0 1 2])
-; => (-1 -2)
+; => (0 1 2)
 
 ;; The strategy here is to keep dropping members of a sequence if
 ;; we know they're not a vampire. Then the first member of the
