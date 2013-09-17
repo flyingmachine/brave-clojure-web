@@ -540,7 +540,7 @@ takes some getting used to.
 
 Two of Clojure's functions, `apply` and `partial` might seem
 especially weird because they both accept *and* return functions.
-So let's unweird them.
+Let's unweird them.
 
 ### apply
 
@@ -617,7 +617,7 @@ sophisticated vampire data analysis program for the Forks, Washington
 Police Department (FWPD).
 
 The FWPD has a sophisticated new database technology called CSV
-(comma-separated values). Our job is to parse this fancy-schmancy
+(comma-separated values). Our job is to parse this state-of-the-art
 "csv" and analyze it for potential vampires. We'll do that by
 filtering on each suspect's "glitter index", a 0-10 prediction of the
 suspect's vampireness invented by Larry Page and Sergey Brin. Let's
@@ -748,7 +748,7 @@ else's code: figure out what data is being passed to some nested
 function call, then extract that nested function call and pass it the
 same kind of data and see what happens.
 
-Now you know how to get mapified records, you can filter on their
+Now that you know how to get mapified records, you can filter on their
 glitter index:
 
 ```clojure
