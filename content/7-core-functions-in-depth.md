@@ -43,7 +43,7 @@ By the end, you'll understand:
     * conj
     * apply
     * partial
-* How to parse and validate a CSV of vampire data
+* How to parse and query a CSV of vampire data
 
 ## Programming to Abstractions
 
@@ -790,4 +790,4 @@ In this chapter, you learned:
 * Lazy evaluation improves performance by delaying computations until
   they're needed.
 * The collection abstraction deals with data structures as a whole.
-* Never trust someone who sparkles in the sun.
+* Never trust someone who sparkles in sunlight.
