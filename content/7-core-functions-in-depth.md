@@ -610,6 +610,61 @@ how you might define `partial`:
 
 Ta-da!
 
+### Bonus Function: complement
+
+Here's one more function to demonstrate the usefulness and versatility
+of higher-order functions. Remember the `identify-vampire` function
+above? Here it is again so that you don't have to overexert your
+scrolling finger:
+
+```clojure
+(defn identify-vampire
+  [social-security-numbers]
+  (first (drop-while #(not (vampire? %))
+                     (map vampire-related-details
+                          social-security-numbers))))
+```
+
+Look at the first argument to `drop-while`, `#(not (vampire? %))`.
+It's so common to want the *complement* (the negation) of a boolean
+function that there's a function for that:
+
+```clojure
+;; define complement
+(def not-vampire? (complement vampire?))
+
+;; change identify-vampire to use complement
+(defn identify-vampire
+  [social-security-numbers]
+  (first (drop-while not-vampire?
+                     (map vampire-related-details
+                          social-security-numbers))))
+```
+
+Here's how you might implement `complement`:
+
+```clojure
+(defn my-complement
+  [fun]
+  (fn [& args]
+    (not (apply fun args))))
+
+(def my-pos? (complement neg?))
+(my-pos? 1)  ; => true
+(my-pos? -1) ; => false
+```
+
+As you can see, `complement` is a fairly humble function. It does one
+little thing, and does it well. This isn't going to map reduce
+terabytes of data for your or something like that.
+
+But it does demonstrate the power of higher-order functions. They
+allow you build up libraries of utility functions in a way which is
+impossible in most other languages. In aggregate, these utility
+functions make your life a lot easier.
+
+Ta-da!
+
 ## FWPD
 
 To pull everything together, let's write the beginnings of a
