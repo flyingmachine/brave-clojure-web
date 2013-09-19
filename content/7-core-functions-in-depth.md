@@ -359,7 +359,7 @@ they realize 32 members at a time:
 
 (map snitch [{:alias "Batman" :real "Bruce Wayne}])
 
-(def revealed-identities)
+(def revealed-identities (map snitch identities))
 (first revealed-identities)
 ;; The following gets printed
 Bruce Wayne
