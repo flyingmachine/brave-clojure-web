@@ -633,7 +633,7 @@ function that there's a function for that:
 ;; define complement
 (def not-vampire? (complement vampire?))
 
-;; change identify-vampire to use complement
+;; change identify-vampire to use complemented function
 (defn identify-vampire
   [social-security-numbers]
   (first (drop-while not-vampire?
