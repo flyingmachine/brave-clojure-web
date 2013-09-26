@@ -1023,7 +1023,7 @@ In our symmetrizer above, we saw the following:
 All this does is bind the names on the left to the values on the
 right. You can think of `let` as short for "let it be", which is also
 a beautiful Beatles song (in case you didn't know (in which case, wtf
-man)). For example, "Let `final-body-pats` be `(conj final-body-parts
+man)). For example, "Let `final-body-parts` be `(conj final-body-parts
 part)`."
 
 Here are some simpler examples:
