@@ -1170,9 +1170,9 @@ And here's how regexes are used in our symmetrizer:
 (defn has-matching-part?
   [part]
   (re-find #"^left-" (:name part)))
-(has-matching-part? "left-eye")
+(has-matching-part? {:name "left-eye" :size 1})
 ; => true
-(has-matching-part? "neckbeard")
+(has-matching-part? {:name "neckbeard" :size 2})
 ; => false
 
 ;; Use a regex tp replace "left-" with "right-"
