@@ -80,3 +80,8 @@
   [partialized-fn & args]
   (fn [& more-args]
     (apply partialized-fn (into args more-args))))
+
+(defn my-complement
+  [fun]
+  (fn [& args]
+    (not (apply fun args))))
