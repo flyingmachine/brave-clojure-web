@@ -9,9 +9,9 @@ draft: true
 
 When I was 18 I got a job as a night auditor at a hotel in Santa Fe,
 New Mexico. Four nights a week from 11pm till 7am I would dutifully
-check people in and out, fold laundry, and play my Playstation in the
-back room. All in all it was a good job for me at that time, providing
-8 hours of pay for 2 hours of work.
+check people in and out, fold laundry, and play my Playstation 2 in
+the back room. All in all it was a decent job, providing 8 hours of
+pay for 2 hours of work.
 
 After a few months of this schedule, though, I had become a different
 person. My emotions in particular had taken on a life of their own.
@@ -30,8 +30,11 @@ circadian rhythms. The ultimate solution would be some kind of potion
 for too long.
 
 Just as a potion would allow me to temporarily alter my fundamental
-nature, macros allow you alter Clojure to bend it more toward your
-liking. In this chapter we'll thoroughly explore the art of writing
+nature, macros allow you to modify Clojure in ways that just aren't
+possible with other languages. With macros, you can extend Clojure to
+suit your problem space, building up the language itself.
+
+In this chapter we'll thoroughly explore the art of writing
 macros. By the end, you'll understand:
 
 * The tools used to write macros
@@ -45,7 +48,9 @@ macros. By the end, you'll understand:
     * variable capture
 * Why use macros at all
 
-## Dr. Jekyll and Richard Simmons
+## Potion Crafting
+
+Because we're big dorks who love metaphors, 
 
 Here's where we're going:
 
