@@ -34,9 +34,15 @@ nature, macros allow you to modify Clojure in ways that just aren't
 possible with other languages. With macros, you can extend Clojure to
 suit your problem space, building up the language itself.
 
-In this chapter we'll thoroughly explore the art of writing
-macros. By the end, you'll understand:
+Which is exactly what we'll do in this chapter. After donning our
+make-believe caps, we'll pretend that we run an online potion store.
+We'll use macros to validate customer orders and perform data
+transformations.
 
+We'll thoroughly explore the art of writing macros in the process. By
+the end, you'll understand:
+
+* What macros are
 * The tools used to write macros
     * quote
     * syntax quote
@@ -46,52 +52,87 @@ macros. By the end, you'll understand:
 * Gotchas
     * double eval
     * variable capture
-* Why use macros at all
+* Why you'd want to use macros
 
-## Potion Crafting
+## What Macros Are
 
-Because we're big dorks who love metaphors, 
+In the last chapter we covered how
+[Clojure evaluates data structures](/read-and-eval/#3__Evaluation).
 
-Here's where we're going:
+Macros are a tool for allowing you to transform an arbitrary data
+structure into one which can be evaluated by Clojure, effectively
+allowing you to introduce new syntax. The result is that you can write
+code which is more concise and meaningful.
 
-```clojure
-;; Example of if-valid usage
-;; Example of not using if-valid
-;; macros to look at
-;; * when
-;; * infix
-;; * reverse
+Recall the `->` threading macro:
 
 ```clojure
-(defn error-messages-for
-  "return a vector of error messages or nil if no errors
-validation-check-groups is a seq of alternating messages and
-validation checks"
-  [value validation-check-groups]
-  (for [[error-message validation] (partition 2 validation-check-groups)
-        :when (not (validation value))]
-    error-message))
+;; vanilla Clojure
+(defn read-resource
+  "Read a resource into a string"
+  [path]
+  (read-string (slurp (io/resource path))))
 
-(defn validate
-  "returns a map of errors"
-  [to-validate validations]
-  (let [validations (vec validations)]
-    (loop [errors {} v validations]
-      (if-let [validation (first v)]
-        (let [[fieldname validation-check-groups] validation
-              value (get to-validate fieldname)
-              error-messages (error-messages-for value validation-check-groups)]
-          (if (empty? error-messages)
-            (recur errors (rest v))
-            (recur (assoc errors fieldname error-messages) (rest v))))
-        errors))))
-
-(defmacro if-valid
-  [to-validate validations errors-name & then-else]
-  `(let [to-validate# ~to-validate
-         validations# ~validations
-         ~errors-name (validate to-validate# validations#)]
-     (if (empty? ~errors-name)
-       ~(first then-else)
-       ~(second then-else))))
+;; using the threading macro
+(defn read-resource
+  [path]
+  (-> path
+      io/resource
+      slurp
+      read-string))
 ```
+
+In this case, the `->` threading macro is a widely-applicable utility.
+It makes your code more concise by allowing you to forego parentheses.
+It makes your code more meaningful by communicating instantly that
+you've created a function pipeline. And it's plain that it introduces
+new syntax &mdash; you're expressing function application without all
+those parentheses.
+
+Macros allow Clojure to derive a lot of its "built-in" functionality
+from a tiny core of functions and special forms. Take `when`, for
+example. `when` has the general form:
+
+```clojure
+(when boolean-expression
+  expression-1
+  expression-2
+  expression-3
+  ...
+  expression-x)
+```
+
+You might think that `when` is a special form like `if`. No one would
+blame you for thinking this. In most other languages, conditional
+expressions are built into the language itself and you can't add your
+own. However, `when` is actually a macro:
+
+```clojure
+;; macroexpand takes a macro and returns the list which ends up being
+;; evaluated by Clojure
+(macroexpand '(when boolean-expression
+                expression-1
+                expression-2
+                expression-3))
+; =>
+(if boolean-expression
+  (do expression-1
+      expression-2
+      expression-3))
+
+```
+
+This shows that macros are an integral part of Clojure development
+&mdash; they're even used to provide fundamental operations. Macros
+are not some esoteric tool you pull out when you feel like being
+awesome. There's no distinction between the "core" language and
+operations which are provided by macros. As you learn to write your
+own macros, you'll see how they allow you to extend the language even
+further so that it fits the shape of your particular problem domain.
+
+## Tools for Writing Macros
+
+* list
+* quote
+* unquote
+* explode

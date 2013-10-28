@@ -377,8 +377,8 @@ You can see why - they don't get evaluated in the same way as
 functions.
 
 So, when Clojure evaluates a list data structure, it calls a function
-or a special form. It can also call macros &nbsp; which we're now
-ready to learn about!
+or a special form. It can also call macros, which we're now ready to
+learn about!
 
 ## Macros
 
