@@ -48,6 +48,8 @@ the end, you'll understand:
     * syntax quote
     * unqoute
     * unwrapping
+    * gensym
+    * autogensym
     * macroexpand
 * Gotchas
     * double eval
@@ -108,8 +110,8 @@ expressions are built into the language itself and you can't add your
 own. However, `when` is actually a macro:
 
 ```clojure
-;; macroexpand takes a macro and returns the list which ends up being
-;; evaluated by Clojure
+;; macroexpand takes a macro application and returns the list which
+;; ends up being evaluated by Clojure
 (macroexpand '(when boolean-expression
                 expression-1
                 expression-2
@@ -119,7 +121,6 @@ own. However, `when` is actually a macro:
   (do expression-1
       expression-2
       expression-3))
-
 ```
 
 This shows that macros are an integral part of Clojure development
@@ -137,6 +138,7 @@ Macro definitions look much like function definitions. They have a
 name, an optional document string, an argument list, and a body. The
 body will almost always return a list (remember that function calls,
 special form calls, and macro calls are all represented as lists).
+
 Here's a simple example:
 
 ```clojure
@@ -158,18 +160,40 @@ You call macros just like you would a function or special form:
 ; => 2
 ```
 
-You can use argument destructuring, just like you can with functions:
+One key difference between functions and macros is that function
+arguments are fully evaluated before they're passed to the function,
+whereas macros receive arguments as unevaluated data structures.
+
+We can see this in the above example. If you tried evaluating `(1 1
++)`, you would get an exception. However, since you're making a macro
+call, the unevaluated list `(1 1 +)` is passed to `postfix-notation`.
+We can thus use `conj`, `butlast`, and `last` functions to rearrange
+the list so that it's something Clojure can evaluate:
+
+```clojure
+(macroexpand '(postfix-notation (1 1 +)))
+; => (+ 1 1)
+```
+
+Continuing with our anatomical adventures, macro definitions can use
+argument destructuring, just like you can with functions:
 
 ```clojure
 (defmacro code-critic
   "phrases are courtesy Hermes Conrad from Futurama"
   [{:keys [good bad]}]
-  (list
-   'do
-   (list 'println "Great squid of Madrid, this is bad code:" (list 'quote bad))
-   (list 'println "Sweet gorilla of Manila, this is good code:" (list 'quote good))))
+  (list 'do
+        (list 'println
+              "Great squid of Madrid, this is bad code:"
+              (list 'quote bad))
+        (list 'println
+              "Sweet gorilla of Manila, this is good code:"
+              (list 'quote good))))
 
 (code-critic {:good (+ 1 1) :bad (1 + 1)})
+; =>
+Great squid of Madrid, this is bad code: (1 + 1)
+Sweet gorilla of Manila, this is good code: (+ 1 1)
 ```
 
 You can also create multiple-arity macros, though I've never seen one
@@ -192,11 +216,136 @@ Now that you're comfortable with the anatomy of macros and are well on
 your way to self-actualization, let's strap ourselves to our thinking
 masts Odysseus-style and look at how to write macro bodies. 
 
-## Writing Tools
+## Building Lists for Evaluation
 
-* It's about returning lists
-* example: defnot
-* example: bunch of infix
-* writing "list" all the time is tedious
-* examples
-* when to use "do"
+Macro-writing is all about building a list to be evaluated by Clojure
+and it requires a kind of inversion to your thinking normal way of
+thinking. In particular, you'll need to be extra careful about the
+difference between a *symbol* and its *value*.
+
+### Be Careful about Distinguishing Symbols and Values
+
+Let's take the `postfix-notation` example:
+
+```clojure
+(defmacro postfix-notation
+  [expression]
+  (conj (butlast expression) (last expression)))
+
+(macroexpand '(postfix-notation (1 1 +)))
+; => (+ 1 2)
+
+(postfix-notation (1 1 +))
+; => 2
+```
+
+When you pass the argument `(1 1 +)` to the `postfix-notation` macro,
+the value of `expression` within the macro body is a list comprised of
+three elements: the number one, the number one, and the symbol `+`.
+Note that the *symbol* `+` is distinct from its *value*, which is the
+addition function.
+
+The `postfix-notation` macro returns a new list comprised of the `+`
+symbol, `1`, and `1`. This list is then evaluated and the result is
+returned.
+
+###  Simple Quoting
+
+You'll almost always use quoting within your macros. This is so that
+you can obtain an unevaluated symbol. Here's a brief refresher on
+quoting:
+
+```clojure
+;; No quoting
+(+ 1 2)
+; => 3
+
+;; Quoting returns unevaluated data structure
+;; + is a symbol in the returned list
+(quote (+ 1 2))
+; => (+ 1 2) 
+
+;; again, a symbol
+(quote +)
+; => + 
+
+;; quoting returns a symbol regardless of whether the symbol
+;; has a value associated with it
+(quote a)
+; => a 
+
+;; The single quote character is a shorthand for (quote x)
+;; This example works just like (quote (+ 1 2))
+'(+ 1 2)
+; => (+ 1 2)
+```
+
+We can see quoting at work in the `when` macro:
+
+```clojure
+;; This is when's actual source
+(defmacro when
+  "Evaluates test. If logical true, evaluates body in an implicit do."
+  {:added "1.0"}
+  [test & body]
+  (list 'if test (cons 'do body)))
+
+(macroexpand '(when (the-cows-come :home)
+                (call me :pappy)
+                (slap me :silly)))
+; =>
+(if (the-cows-come :home)
+  (do (call me :pappy)
+      (slap me :silly)))
+```
+
+Notice that both `if` and `do` are quoted. That's because we want
+these symbols to be in the final list returned for evaluation by
+`when`.
+
+Here's another example:
+
+```clojure
+(defmacro unless
+  "Inverted 'if'"
+  [test & branches]
+  (conj (reverse branches) test 'if))
+
+(macroexpand '(unless (done-been slapped? me)
+                      (slap me :silly)
+                      (say "I reckon that'll learn me")))
+; =>
+(if (done-been slapped? me)
+  (say "I reckon that'll learn me")
+  (slap me :silly))
+```
+
+Again, we have to quote `if` because we want the unevaluated symbol to
+be placed in the resulting list.
+
+### Syntax Quoting
+
+So far we've built up our lists by using `'` (quote) and functions
+which operate on lists (`conj`, `butlast`, `first`, etc), and by using
+the `list` function to create a list. Indeed, you could write your
+macros that way until the cows come home. Sometimes, though, it leads
+to tedious and verbose code. Take the `code-critic` example we
+introduced above:
+
+```clojure
+(defmacro code-critic
+  "phrases are courtesy Hermes Conrad from Futurama"
+  [{:keys [good bad]}]
+  (list 'do
+        (list 'println
+              "Great squid of Madrid, this is bad code:"
+              (list 'quote bad))
+        (list 'println
+              "Sweet gorilla of Manila, this is good code:"
+              (list 'quote good))))
+```
+
+How tedious! I feel like I'm falling asleep from the tedium. Somebody
+slap me awake already! Luckily, Clojure has a handy mechanism for
+solving this problem: the syntax quote!
+
