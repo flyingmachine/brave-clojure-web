@@ -125,14 +125,78 @@ own. However, `when` is actually a macro:
 This shows that macros are an integral part of Clojure development
 &mdash; they're even used to provide fundamental operations. Macros
 are not some esoteric tool you pull out when you feel like being
-awesome. There's no distinction between the "core" language and
-operations which are provided by macros. As you learn to write your
-own macros, you'll see how they allow you to extend the language even
-further so that it fits the shape of your particular problem domain.
+awesome. There's no technical distinction between the "core" language
+and operations which are provided by macros. As you learn to write
+your own macros, you'll see how they allow you to extend the language
+even further so that it fits the shape of your particular problem
+domain.
 
-## Tools for Writing Macros
+## Anatomy of a Macro
 
-* list
-* quote
-* unquote
-* explode
+Macro definitions look much like function definitions. They have a
+name, an optional document string, an argument list, and a body. The
+body will almost always return a list (remember that function calls,
+special form calls, and macro calls are all represented as lists).
+Here's a simple example:
+
+```clojure
+(defmacro postfix-notation
+  "I'm too indie for prefix notation"
+  [expression]
+  (conj (butlast expression) (last expression)))
+```
+
+Notice that you have *full access to Clojure* within the macro's body.
+You can use any function, macro, or special form within the macro
+body. Let that simmer a bit: you have the full power of Clojure at
+your disposal to extend Clojure. That's really cool!
+
+You call macros just like you would a function or special form:
+
+```clojure
+(postfix-notation (1 1 +))
+; => 2
+```
+
+You can use argument destructuring, just like you can with functions:
+
+```clojure
+(defmacro code-critic
+  "phrases are courtesy Hermes Conrad from Futurama"
+  [{:keys [good bad]}]
+  (list
+   'do
+   (list 'println "Great squid of Madrid, this is bad code:" (list 'quote bad))
+   (list 'println "Sweet gorilla of Manila, this is good code:" (list 'quote good))))
+
+(code-critic {:good (+ 1 1) :bad (1 + 1)})
+```
+
+You can also create multiple-arity macros, though I've never seen one
+and most likely you shouldn't do it:
+
+```clojure
+(defmacro mutiple-arity
+  ;; Notice that each arity's argument list and body is wrapped in parens
+  ([single-arg]
+     "Don't do this")
+     
+  ([arg1 arg2]
+     "Seriously, don't do it :(")
+     
+  ([arg1 arg2 arg 3]
+     "Nah, just kidding. Do whatever you want! Self-actualize!"))
+```
+
+Now that you're comfortable with the anatomy of macros and are well on
+your way to self-actualization, let's strap ourselves to our thinking
+masts Odysseus-style and look at how to write macro bodies. 
+
+## Writing Tools
+
+* It's about returning lists
+* example: defnot
+* example: bunch of infix
+* writing "list" all the time is tedious
+* examples
+* when to use "do"
