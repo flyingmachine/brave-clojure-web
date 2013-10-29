@@ -347,5 +347,82 @@ introduced above:
 
 How tedious! I feel like I'm falling asleep from the tedium. Somebody
 slap me awake already! Luckily, Clojure has a handy mechanism for
-solving this problem: the syntax quote!
+solving this problem: the syntax quote! Here's how we would rewrite
+`code-critic` using syntax quote:
+
+```clojure
+(defmacro code-critic
+  "phrases are courtesy Hermes Conrad from Futurama"
+  [{:keys [good bad]}]
+  ;; Notice the backtick - that's the syntax quote
+  `(do (println "Great squid of Madrid, this is bad code:"
+                (quote ~bad))
+        (println "Sweet gorilla of Manila, this is good code:"
+                 (quote ~good))))
+```
+
+There's a lot going on here, though, so let's take a step back and
+break down the syntax quote.
+
+First, syntax quoting can return unevaluated data structure similarly
+to quoting. There's one important difference, though: syntax quoting
+will return the *fully qualified* symbols so that the symbol includes
+its namespace:
+
+```clojure
+;; Quoting does not include a namespace unless your code includes a namespace
+'+
+; => +
+
+;; Write out the namespace and it'll be returned
+'clojure.core/+
+; => clojure.core/+
+
+;; Syntax quoting will always include the symbol's full namespace
+`+
+; => clojure.core/+
+
+;; Quoting a list
+'(+ 1 2)
+; => (+ 1 2)
+
+;; Syntax-quoting a list
+`(+ 1 2)
+; => (clojure.core/+ 1 2)
+```
+
+We'll dive into the implications of this later. For now, just don't be
+surprised when you see fully qualified symbols.
+
+The other difference between quoting and syntax-quoting is that the
+latter allows you to *unquote* forms. Unquoting a form evaluates it.
+Compare the following:
+
+```clojure
+;; The tilde (~) unquotes the form "(inc 1)"
+`(+ 1 ~(inc 1))
+; => (clojure.core/+ 1 2)
+
+;; Without the unquote, syntax quote returns the unevaluated form with
+;; fully qualified symbols
+; => (clojure.core/+ 1 (clojure.core/inc 1))
+```
+
+Syntax-quoting and unquoting allow us to create lists more concisely.
+Consider:
+
+```clojure
+;; Building a list with the list function
+(list '+ 1 (inc 1))
+; => (+ 1 2)
+
+;; Building a list from a quoted list - super awkward
+(concat '(+ 1) (list (inc 1)))
+
+;; Building a list with unquoting - notice the tilde
+`(+ 1 ~(inc 1))
+; => (clojure.core/+ 1 2)
+```
+
+As you can see, the syntax-quote version is the most concise.
 

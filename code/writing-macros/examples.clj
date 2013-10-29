@@ -22,12 +22,24 @@
 (defmacro code-critic
   "phrases are courtesy Hermes Conrad from Futurama"
   [{:keys [good bad]}]
-  (list
-   'do
-   (list 'println "Great squid of Madrid, this is bad code:" (list 'quote bad))
-   (list 'println "Sweet gorilla of Manila, this is good code:" (list 'quote good))))
+  (list 'do
+        (list 'println
+              "Great squid of Madrid, this is bad code:"
+              (list 'quote bad))
+        (list 'println
+              "Sweet gorilla of Manila, this is good code:"
+              (list 'quote good))))
 
 (code-critic {:good (+ 1 1) :bad (1 + 1)})
+
+;; syntax quoted
+(defmacro code-critic
+  "phrases are courtesy Hermes Conrad from Futurama"
+  [{:keys [good bad]}]
+  `(do (println "Great squid of Madrid, this is bad code:"
+                (quote ~bad))
+        (println "Sweet gorilla of Manila, this is good code:"
+                 (quote ~good))))
 
 (defmacro my-when
   [arguments]
@@ -56,3 +68,9 @@
 (macroexpand '(unless (done-been slapped? me)
                       (slap me :silly)
                       (say "I reckon that'll learn me")))
+
+
+;; simple syntax quote
+(let [x 1 y 2]
+  `(+ ~x ~y))
+(clojure.core/+ 1 2)
