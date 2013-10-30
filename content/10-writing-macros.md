@@ -354,11 +354,10 @@ solving this problem: the syntax quote! Here's how we would rewrite
 (defmacro code-critic
   "phrases are courtesy Hermes Conrad from Futurama"
   [{:keys [good bad]}]
-  ;; Notice the backtick - that's the syntax quote
   `(do (println "Great squid of Madrid, this is bad code:"
                 (quote ~bad))
-        (println "Sweet gorilla of Manila, this is good code:"
-                 (quote ~good))))
+       (println "Sweet gorilla of Manila, this is good code:"
+                (quote ~good))))
 ```
 
 There's a lot going on here, though, so let's take a step back and
@@ -395,8 +394,8 @@ We'll dive into the implications of this later. For now, just don't be
 surprised when you see fully qualified symbols.
 
 The other difference between quoting and syntax-quoting is that the
-latter allows you to *unquote* forms. Unquoting a form evaluates it.
-Compare the following:
+latter allows you to *unquote* forms with the tilde, `~`. Unquoting a
+form evaluates it. Compare the following:
 
 ```clojure
 ;; The tilde (~) unquotes the form "(inc 1)"
@@ -408,8 +407,22 @@ Compare the following:
 ; => (clojure.core/+ 1 (clojure.core/inc 1))
 ```
 
-Syntax-quoting and unquoting allow us to create lists more concisely.
-Consider:
+If you're familiar with string interpolation, then you can think of
+syntax-quote/unquote similarly. For example, in Ruby you can write:
+
+```ruby
+name = "Jebediah"
+
+# You can create a new string through concatenation:
+"Churn your butter, " + name + "!"
+
+# Or through interpolation:
+"Churn your butter, #{name}!"
+```
+
+In the same way that string interpolation leads to clearer and more
+concise code, syntax-quoting and unquoting allow us to create lists
+more clearly and concisely. Consider:
 
 ```clojure
 ;; Building a list with the list function
@@ -419,10 +432,38 @@ Consider:
 ;; Building a list from a quoted list - super awkward
 (concat '(+ 1) (list (inc 1)))
 
-;; Building a list with unquoting - notice the tilde
+;; Building a list with unquoting
 `(+ 1 ~(inc 1))
 ; => (clojure.core/+ 1 2)
 ```
 
-As you can see, the syntax-quote version is the most concise.
+As you can see, the syntax-quote version is the most concise. Also,
+its visual form is closest to the final form of the list, making it
+the easiest to understand.
 
+## Applying Your Knowledge to a Macro
+
+Now that we have a good handle on how syntax quoting works, let's take
+a closer look at how it's employed in the `code-critic` macro. Here's
+the macro again:
+
+```clojure
+(defmacro code-critic
+  "phrases are courtesy Hermes Conrad from Futurama"
+  [{:keys [good bad]}]
+  ;; Notice the backtick - that's the syntax quote
+  `(do (println "Great squid of Madrid, this is bad code:"
+                (quote ~bad))
+       (println "Sweet gorilla of Manila, this is good code:"
+                (quote ~good))))
+```
+
+To make things easier on ourselves, let's focus on a subset of the
+macro. In order to spare our tender feelings, we'll look at the part
+of the macro that praises our code:
+
+```clojure
+
+```
+
+## Refactoring a Macro

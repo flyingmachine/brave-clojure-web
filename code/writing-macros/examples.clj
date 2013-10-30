@@ -38,8 +38,8 @@
   [{:keys [good bad]}]
   `(do (println "Great squid of Madrid, this is bad code:"
                 (quote ~bad))
-        (println "Sweet gorilla of Manila, this is good code:"
-                 (quote ~good))))
+       (println "Sweet gorilla of Manila, this is good code:"
+                (quote ~good))))
 
 (defmacro my-when
   [arguments]
@@ -74,3 +74,8 @@
 (let [x 1 y 2]
   `(+ ~x ~y))
 (clojure.core/+ 1 2)
+
+;;
+(defmacro code-praiser
+  [code]
+  )
