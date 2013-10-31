@@ -551,27 +551,47 @@ turn our attention back to the full macro:
 (defmacro code-critic
   "phrases are courtesy Hermes Conrad from Futurama"
   [{:keys [good bad]}]
-  ;; Notice the backtick - that's the syntax quote
   `(do (println "Great squid of Madrid, this is bad code:"
                 (quote ~bad))
        (println "Sweet gorilla of Manila, this is good code:"
                 (quote ~good))))
 ```
 
-Here, the principles are exactly the same. The only real difference is
-that we're now dealing with two variables within the syntax-quoted
+Here, the principles are exactly the same. We're using syntax-quote
+because it lets us write things out more concisely and we're unquoting
+the bits that we want evaluated. There are two differences, however.
+
+First, we're now dealing with two variables within the syntax-quoted
 list: `good` and `bad`. These variables are introduced by
 destructuring the argument passed to `code-critic`, a map containing
-`:good` and `:bad` keys:
+`:good` and `:bad` keys. This isn't macro-specific; as we mentioned
+above, functions and `let` bindings both allow destructuring.
+
+Second, we have to wrap our two `println` expressions in a `do`
+expression. Why are we *do*ing that? (Ha ha!) Consider the following:
 
 ```clojure
-(code-critic {:good (+ 1 1) :bad (1 + 1)})
+(defmacro code-makeover
+  [code]
+  `(println "Before: " (quote ~code))
+  `(println "After: " (quote ~(reverse code))))
+
+(code-makeover (1 2 +))
+; => After:  (+ 2 1)
 ```
 
-However, we're still building up a syntax-quoted list using the same
-principles.
+Why wasn't the "before" version printed? The macro only returned its
+last expression, in this case
 
-Thus concludes our introduction to the mechanics of writing a macro.
+```clojure
+`(println "After: " (quote ~(reverse code)))
+```
+
+`do` lets you wrap up multiple expressions into one expression in
+situations like this.
+
+And thus concludes our introduction to the mechanics of writing a
+macro! Sweet sacred boa of Western and Eastern Samoa, that was a lot!
 To sum up:
 
 * Macros receive unevaluated, arbitrary data structures as arguments.
@@ -586,6 +606,147 @@ To sum up:
   by using syntax-quote
 * Syntax quoting usually leads to code that's clearer and more concise
 * You can unquote forms when using syntax quoting
+* Use `do` to wrap up many forms to be evaluated
 
-## Refactoring a Macro
+## Refactoring a Macro & Unquote Splicing
+
+That `code-critic` macro isn't actually very good. Look at the
+duplication! There are two `println` calls which are nearly identical.
+Let's clean that up. First, let's create a function to generate those
+`println` lists:
+
+```clojure
+(defn criticize-code
+  [criticism code]
+  `(println ~criticism (quote ~code)))
+
+(defmacro code-critic
+  [{:keys [good bad]}]
+  `(do ~(criticize-code "Cursed bacteria of Liberia, this is bad code:" bad)
+       ~(criticize-code "Sweet sacred boa of Western and Eastern Samoa, this is good code:" good)))
+```
+
+Notice how the `criticize-code` function returns a syntax-quoted list.
+This is how we build up the list that the macro will return.
+
+There's still room for improvement, though. We still have multiple,
+nearly-identical calls to a function. In a situation like this it
+makes sense to use a seq function &mdash; `map` will do.
+
+```clojure
+(defmacro code-critic
+  [{:keys [good bad]}]
+  `(do ~(map #(apply criticize-code %)
+             [["Great squid of Madrid, this is bad code:" bad]
+              ["Sweet gorilla of Manila, this is good code:" good]])))
+```
+
+This is looking a little better. We're mapping over each
+criticism/code pair and applying the `criticize-code` function to the
+pair. Let's try to run the code:
+
+```clojure
+(code-critic {:good (+ 1 1) :bad (1 + 1)})
+; => NullPointerException
+```
+
+Oh no! That didn't work at all! What happened? Let's expand the macro
+to see what we're trying to get Clojure to evaluate:
+
+```clojure
+(clojure.pprint/pprint (macroexpand '(code-critic {:good (+ 1 1) :bad (1 + 1)})))
+; =>
+(do
+ ((clojure.core/println
+   "Great squid of Madrid, this is bad code:"
+   '(1 + 1))
+  (clojure.core/println
+   "Sweet gorilla of Manila, this is good code:"
+   '(+ 1 1))))
+```
+
+It looks like we're trying to evaluate the result of a `println`
+function call. We can see this more clearly if we simplify the macro
+expansion a bit:
+
+```clojure
+(do
+ ((clojure.core/println "criticism" '(1 + 1))
+  (clojure.core/println "criticism" '(+ 1 1))))
+```
+
+Here's how this would evaluate:
+
+```clojure
+;; After evaluating first println call:
+(do
+ (nil
+  (clojure.core/println "criticism" '(+ 1 1))))
+
+;; After evaluating second println call:
+(do
+ (nil nil))
+```
+
+This is the cause of the exception. `println` evaluates to nil, so we
+end up with something like `(nil nil)`. `nil` isn't callable, and we
+get a NullPointerException.
+
+We ended up with this code because `map` returns a list. In this case,
+it returned a list of `println` expressions. Unquote splicing was
+invented exactly for this reason. Unquote splicing is represented by
+`~@`. Here are some examples:
+
+```clojure
+;; Without unquote splicing
+`(+ ~(list 1 2 3))
+; => (clojure.core/+ (1 2 3))
+
+;; With unquote splicing
+`(+ ~@(1 2 3))
+; => (clojure.core/+ 1 2 3)
+```
+
+I think of unquote splicing as unwrapping a seqable data structure,
+placing its contents directly within the enclosing syntax-quoted data
+structure. It's like the `~@` is a sledgehammer and whatever follows
+it is a pinata and the result is the most terrifying and awesome party
+you've ever been to.
+
+Anyway, if we use unquote splicing in our code critic, then everything
+will work great:
+
+```clojure
+(defmacro code-critic
+  [{:keys [good bad]}]
+  `(do ~@(map #(apply criticize-code %)
+              [["Sweet lion of Zion, this is bad code:" bad]
+               ["Great cow of Moscow, this is good code:" good]])))
+(code-critic {:good (+ 1 1) :bad (1 + 1)})
+; =>
+Sweet lion of Zion, this is bad code: (1 + 1)
+Great cow of Moscow, this is good code: (+ 1 1)
+```
+
+Woohoo!
+
+We can still clean this up, though. Check this out:
+
+```clojure
+(def criticisms {:good "Sweet manatee of Galilee, this is good code:"
+                 :bad "Sweet giant anteater of Santa Anita, this is bad code:"})
+
+(defn criticize-code
+  [[criticism-key code]]
+  `(println (~criticism-key criticisms) (quote ~code)))
+
+(defmacro code-critic
+  [code-evaluations]
+  `(do ~@(map criticize-code code-evaluations)))
+
+(code-critic {:good (+ 1 1) :bad (1 + 1)})
+; =>
+Sweet manatee of Galilee, this is good code: (+ 1 1)
+Sweet giant anteater of Santa Anita, this is bad code: (1 + 1)
+```
 

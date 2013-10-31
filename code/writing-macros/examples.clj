@@ -87,3 +87,39 @@
   `(println
     "Sweet gorilla of Manila, this is good code:"
     (quote ~code)))
+
+(defmacro code-makeover
+  [code]
+  `(println "Before: " (quote ~code))
+  `(println "After: " (quote ~(reverse code))))
+
+
+;; first step
+(defn criticize-code
+  [criticism code]
+  `(println ~criticism (quote ~code)))
+
+(defmacro code-critic
+  [{:keys [good bad]}]
+  `(do ~(criticize-code "Great squid of Madrid, this is bad code:" bad)
+       ~(criticize-code "Sweet gorilla of Manila, this is good code:" good)))
+
+;; second step
+
+(defmacro code-critic
+  [{:keys [good bad]}]
+  `(do ~(map #(apply criticize-code %)
+             [["Great squid of Madrid, this is bad code:" bad]
+              ["Sweet gorilla of Manila, this is good code:" good]])))
+
+;; Final
+(def criticisms {:good "Sweet gorilla of Manila, this is good code:"
+                 :bad "Great squid of Madrid, this is bad code:"})
+
+(defn criticize-code
+  [[criticism-key code]]
+  `(println (~criticism-key criticisms) (quote ~code)))
+
+(defmacro code-critic
+  [code-evaluations]
+  `(do ~@(map criticize-code code-evaluations)))
