@@ -34,27 +34,27 @@ nature, macros allow you to modify Clojure in ways that just aren't
 possible with other languages. With macros, you can extend Clojure to
 suit your problem space, building up the language itself.
 
-Which is exactly what we'll do in this chapter. After donning our
-make-believe caps, we'll pretend that we run an online potion store.
-We'll use macros to validate customer orders and perform data
+Which is exactly what we'll do in this chapter. First, we'll
+thoroughly examine how to write macros starting with basic examples
+and moving up in complexity. We'll close by donnig our make-believe
+caps, pretending that we run an online potion store and using
+non-trivial macros to validate customer orders and perform data
 transformations.
 
-We'll thoroughly explore the art of writing macros in the process. By
-the end, you'll understand:
+By the end of the chapter, you'll understand:
 
 * What macros are
 * The tools used to write macros
     * quote
     * syntax quote
     * unqoute
-    * unwrapping
+    * unquote-splicing / the pinata tool
     * gensym
     * autogensym
     * macroexpand
 * Gotchas
     * double evaluation
     * variable capture
-* Why you'd want to use macros
 
 ## What Macros Are
 
@@ -120,10 +120,11 @@ example. `when` has the general form:
   expression-x)
 ```
 
-You might think that `when` is a special form like `if`. No one would
-blame you for thinking this. In most other languages, conditional
-expressions are built into the language itself and you can't add your
-own. However, `when` is actually a macro:
+You might think that `when` is a special form like `if`. Well guess
+what: it's not! Don't worry, no will blame you for thinking it is. In
+most other languages, conditional expressions are built into the
+language itself and you can't add your own. However, `when` is
+actually a macro:
 
 ```clojure
 ;; macroexpand takes a macro application and returns the list which
@@ -169,7 +170,8 @@ Here's a simple example of a macro definition:
 Notice that you have *full access to Clojure* within the macro's body.
 You can use any function, macro, or special form within the macro
 body. Let that simmer a bit: you have the full power of Clojure at
-your disposal to extend Clojure. That's really cool!
+your disposal to extend Clojure. Can you feel your power as a
+programmer growing? Can you? Can you? <small>Can you?</small>
 
 You call macros just like you would a function or special form:
 
@@ -283,19 +285,30 @@ quoting:
 (quote (+ 1 2))
 ; => (+ 1 2) 
 
-;; again, a symbol
+;; Evaluating the plus symbol yields the plus function
++
+; => #<core$_PLUS_ clojure.core$_PLUS_@47b36583>
+
+;; Quoting the plus symbol yields the plus symbol
 (quote +)
-; => + 
+; => +
+
+;; Evaluating an unbound symbol raises an exception
+sweating-to-the-80s
+; => Unable to resolve symbol: sweating-to-the-80s in this context
 
 ;; quoting returns a symbol regardless of whether the symbol
 ;; has a value associated with it
-(quote a)
-; => a 
+(quote sweating-to-the-80s)
+; => sweating-to-the-80s
 
 ;; The single quote character is a shorthand for (quote x)
 ;; This example works just like (quote (+ 1 2))
 '(+ 1 2)
 ; => (+ 1 2)
+
+'dr-jekyll-and-richad-simmons
+; => dr-jekyll-and-richad-simmons
 ```
 
 We can see quoting at work in the `when` macro:
