@@ -137,9 +137,48 @@
 (code-critic {:good (+ 1 1) :bad (1 + 1)})
 
 ;; Variable capture
-(defmacro 
-  [])
+(def message "Good job!")
+(defmacro with-mischief
+  [& stuff-to-do]
+  (concat (list 'let ['message "Oh, big deal!"])
+          stuff-to-do))
+(with-mischief
+  (println "Here's how I feel about that thing you did: " message))
+
+(defmacro with-mischief
+  [& stuff-to-do]
+  `(let [message "Oh, big deal!"]
+     ~@stuff-to-do))
+
+(defmacro without-mischief
+  [& stuff-to-do]
+  (let [macro-message (gensym 'message)]
+    `(let [~macro-message "Oh, big deal!"]
+       ~@stuff-to-do
+       (println "I still need to say: " ~macro-message))))
+
+(defmacro without-mischief
+  [& stuff-to-do]
+  `(let [macro-message# "Oh, big deal!"]
+     ~@stuff-to-do
+     (println "I still need to say: " macro-message#)))
+
+(defmacro gensym-example
+  []
+  `(let [name# "Larry Potter"] name#))
 
 ;; double eval
-(defmacro
-  [])
+(defmacro report
+  [to-try]
+  `(if ~to-try
+     (println ~to-try "was truthy!")
+     (println ~to-try "was falsey!")))
+
+(report (Thread/sleep 1000))
+
+(defmacro report
+  [to-try]
+  `(let [result# ~to-try]
+     (if result#
+       (println result# "was successful!")
+       (println result# "was not successful!"))))

@@ -766,15 +766,114 @@ Macros have a couple unobvious "gotchas" that you should be aware of:
 Consider the following:
 
 ```clojure
-
+(def message "Good job!")
+(defmacro with-mischief
+  [& stuff-to-do]
+  (concat (list 'let ['message "Oh, big deal!"])
+          stuff-to-do))
+(with-mischief
+  (println "Here's how I feel about that thing you did: " message))
+; =>
+Here's how I feel about that thing you did:  Oh, big deal!
 ```
+
+The `println` call references the symbol `message` which we think is
+bound to the string `"Good job!"`. However, the `with-mischief` macro
+has created a new binding for message.
+
+Notice that we didn't use syntax-quote in our macro. Doing so would
+actually result in an exception:
+
+```clojure
+(def message "Good job!")
+(defmacro with-mischief
+  [& stuff-to-do]
+  (concat (list 'let ['message "Oh, big deal!"])
+          stuff-to-do))
+(with-mischief
+  (println "Here's how I feel about that thing you did: " message))
+; =>
+Exception: Can't let qualified name: user/message
+```
+
+Syntax-quoting is designd to prevent you from making this kind of
+mistake with macros. In the case where you do want to introduce let
+bindings in your macro, you can use something called a "gensym". The
+`gensym` function produces unique symbols on each successive call:
+
+```clojure
+;; Notice that a unique integer is appended with each call
+(gensym 'message)
+; => message4760
+
+(gensym 'message)
+; => message4763
+```
+
+Here's how we could re-write `with-mischief` to be less mischievous:
+
+```clojure
+(defmacro without-mischief
+  [& stuff-to-do]
+  (let [macro-message (gensym 'message)]
+    `(let [~macro-message "Oh, big deal!"]
+       ~@stuff-to-do
+       (println "I still need to say: " ~macro-message))))
+(without-mischief
+  (println "Here's how I feel about that thing you did: " message))
+; =>
+Here's how I feel about that thing you did:  Good job!
+I still need to say:  Oh, big deal!
+```
+
+Because this is such a common pattern, we can use something called an
+auto-gensym. Here's an example:
+
+```clojure
+(defmacro gensym-example
+  []
+  `(let [name# "Larry Potter"] name#))
+(gensym-example)
+; => "Larry Potter"
+
+(macroexpand '(gensym-example))
+(let* [name__4947__auto__ "Larry Potter"]
+  name__4947__auto__)
+```
+
+Notice how both instance of `name#` is replaced with the same gensym'd
+symbol. `gensym` and auto-gensym are both used all the time when
+writing macros and they allow you avoid variable capture.
 
 ### Double Evaluation
 
 Consider the following:
 
 ```clojure
-()
+(defmacro report
+  [& to-try]
+  `(if to-try
+     (println ~@to-try "was successful!")
+     (println ~@to-try "was not successful!")))
+     
+;; Thread/sleep takes a number of milliseconds to sleep for
+(report (Thread/sleep 1000) (+ 1 1))
 ```
 
-### Variable Capture
+In this case, we would actually sleep for 2 seconds because
+`(Thread/sleep 1000)` actually gets evaluated twice. Here's how we
+could avoid this problem:
+
+```clojure
+(defmacro report
+  [to-try]
+  `(let [result# ~to-try]
+     (if result#
+       (println result# "was successful!")
+       (println result# "was not successful!"))))
+```
+
+By binding the macro's argument to a gensym, we only need to evaluate
+it once.
+
+
