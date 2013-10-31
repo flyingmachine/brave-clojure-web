@@ -112,9 +112,19 @@
              [["Great squid of Madrid, this is bad code:" bad]
               ["Sweet gorilla of Manila, this is good code:" good]])))
 
+(do
+ ((clojure.core/println "criticism" '(1 + 1))
+  (clojure.core/println "criticism" '(+ 1 1))))
+
+(defmacro code-critic
+  [{:keys [good bad]}]
+  `(do ~@(map #(apply criticize-code %)
+              [["Sweet lion of Zion, this is bad code:" bad]
+               ["Great cow of Moscow, this is good code:" good]])))
+
 ;; Final
-(def criticisms {:good "Sweet gorilla of Manila, this is good code:"
-                 :bad "Great squid of Madrid, this is bad code:"})
+(def criticisms {:good "Sweet manatee of Galilee, this is good code:"
+                 :bad "Sweet giant anteater of Santa Anita, this is bad code:"})
 
 (defn criticize-code
   [[criticism-key code]]
@@ -123,3 +133,13 @@
 (defmacro code-critic
   [code-evaluations]
   `(do ~@(map criticize-code code-evaluations)))
+
+(code-critic {:good (+ 1 1) :bad (1 + 1)})
+
+;; Variable capture
+(defmacro 
+  [])
+
+;; double eval
+(defmacro
+  [])

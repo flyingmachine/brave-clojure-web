@@ -52,7 +52,7 @@ the end, you'll understand:
     * autogensym
     * macroexpand
 * Gotchas
-    * double eval
+    * double evaluation
     * variable capture
 * Why you'd want to use macros
 
@@ -750,3 +750,31 @@ Sweet manatee of Galilee, this is good code: (+ 1 1)
 Sweet giant anteater of Santa Anita, this is bad code: (1 + 1)
 ```
 
+We won't break down this further refactoring because we have a bit
+more ground to cover yet, but I encourage you to play around with it
+until it makes sense.
+
+## Macro Gotchas
+
+Macros have a couple unobvious "gotchas" that you should be aware of:
+
+* variable capture
+* double evaluation
+
+### Variable Capture
+
+Consider the following:
+
+```clojure
+
+```
+
+### Double Evaluation
+
+Consider the following:
+
+```clojure
+()
+```
+
+### Variable Capture
