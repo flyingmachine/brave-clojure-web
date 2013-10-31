@@ -75,7 +75,15 @@
   `(+ ~x ~y))
 (clojure.core/+ 1 2)
 
+(defmacro code-praiser
+  [code]
+  (list 'println
+        "Sweet gorilla of Manila, this is good code:"
+        (list 'quote code)))
+
 ;;
 (defmacro code-praiser
   [code]
-  )
+  `(println
+    "Sweet gorilla of Manila, this is good code:"
+    (quote ~code)))

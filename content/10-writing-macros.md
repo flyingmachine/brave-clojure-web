@@ -60,11 +60,27 @@ the end, you'll understand:
 
 In the last chapter we covered how
 [Clojure evaluates data structures](/read-and-eval/#3__Evaluation).
+Briefly:
 
-Macros are a tool for allowing you to transform an arbitrary data
-structure into one which can be evaluated by Clojure, effectively
-allowing you to introduce new syntax. The result is that you can write
-code which is more concise and meaningful.
+* Strings, numbers, characters, `true`, `false`, `nil` and keywords evaluate
+  to themselves
+* Clojure resolves symbols by:
+    1. Looking up whether the symbol names a special form. If it doesn't...
+    2. Trying to find a local binding. If it doesn't...
+    3. Trying to find a mapping introduced by `def`. If it doesn't...
+    4. Throwing an exception
+* Lists result in calls:
+    * When performing a function call, each operand is fully evaluated
+      and then passed to the function as an argument.
+    * Special form calls like `if`, `quote`, follow "special"
+      evaluation rules which implement core Clojure behavior
+    * Macros take unevaluated data structures as arguments and return
+      a data structure which is then evaluated using the rules above
+
+So, a macro is a tool for transforming an arbitrary data structure
+into one which can be evaluated by Clojure. This allows you to
+introduce new syntax. The result is that you can write code which is
+more concise and meaningful.
 
 Recall the `->` threading macro:
 
@@ -111,7 +127,8 @@ own. However, `when` is actually a macro:
 
 ```clojure
 ;; macroexpand takes a macro application and returns the list which
-;; ends up being evaluated by Clojure
+;; ends up being evaluated by Clojure. Note the single quote preceding
+;; the when expression. Quoting is discussed at length below
 (macroexpand '(when boolean-expression
                 expression-1
                 expression-2
@@ -136,10 +153,11 @@ domain.
 
 Macro definitions look much like function definitions. They have a
 name, an optional document string, an argument list, and a body. The
-body will almost always return a list (remember that function calls,
-special form calls, and macro calls are all represented as lists).
+body will almost always return a list. This makes sense &mdash;
+remember that function calls, special form calls, and macro calls are
+all represented as lists.
 
-Here's a simple example:
+Here's a simple example of a macro definition:
 
 ```clojure
 (defmacro postfix-notation
@@ -460,10 +478,114 @@ the macro again:
 
 To make things easier on ourselves, let's focus on a subset of the
 macro. In order to spare our tender feelings, we'll look at the part
-of the macro that praises our code:
+of the macro that praises our code. Here's how a code-praiser would
+look without syntax-quote and with it:
 
 ```clojure
+;; Without syntax-quote
+(defmacro code-praiser
+  [code]
+  (list 'println
+        "Sweet gorilla of Manila, this is good code:"
+        (list 'quote code)))
+(macroexpand '(code-praiser (+ 1 1)))
+; =>
+(println "Sweet gorilla of Manila, this is good code:" (quote (+ 1 1)))
 
+;; With syntax-quote
+(defmacro code-praiser
+  [code]
+  `(println
+    "Sweet gorilla of Manila, this is good code:"
+    (quote ~code)))
 ```
 
+Here are the differences:
+
+1. Without syntax-quote, we need to use the `list` function. Remember
+   that we want to return a list which will then be evaluated,
+   resulting in the function `println` being applied.
+
+   The `list` function isn't necessary when we use syntax-quote,
+   however, because a syntax-quoted list evaluates to a list, not to a
+   function call, special form call, or macro call.
+2. Without syntax-quote, we need to quote the symbol `println`. This
+   is because we want the resulting list to include the symbol
+   `println`, not the function which `println` evaluates to.
+
+   By comparison, symbols within a syntax-quoted list are not
+   evaluated; a fully-qualified symbol is returned. `println` thus
+   doesn't need to be preceded by a single quote.
+3. The string is treated the same in both versions.
+4. Without syntax quote, we need to build up another list with the
+   `list` function and the `quote` symbol quoted. This might make your
+   head hurt. Look at the macro expansion &mdash; we want to call
+   `quote` on the data structure which was passed to the macro.
+
+   With syntax quote, we can continue to build a list more concisely.
+5. Finally, in the syntax-quoted version we have to unquote `code` so
+   that it will be evaluated. Otherwise, the symbol `code` would be
+   included in the macro expansion instead of its value, `(+ 1 1)`:
+
+```
+;; This is what happens if we don't unquote "code" in the macro
+;; definition:
+(defmacro code-praiser
+  [code]
+  `(println
+    "Sweet gorilla of Manila, this is good code:"
+    (quote code)))
+(macroexpand '(code-praiser (+ 1 1)))
+
+; =>
+(clojure.core/println
+  "Sweet gorilla of Manila, this is good code:"
+  (quote user/code))
+```
+
+Sweet gorilla of Manila, you've come a long way. With this smaller
+portion of the `code-critic` macro thoroughly dissected, we can now
+turn our attention back to the full macro:
+
+```clojure
+(defmacro code-critic
+  "phrases are courtesy Hermes Conrad from Futurama"
+  [{:keys [good bad]}]
+  ;; Notice the backtick - that's the syntax quote
+  `(do (println "Great squid of Madrid, this is bad code:"
+                (quote ~bad))
+       (println "Sweet gorilla of Manila, this is good code:"
+                (quote ~good))))
+```
+
+Here, the principles are exactly the same. The only real difference is
+that we're now dealing with two variables within the syntax-quoted
+list: `good` and `bad`. These variables are introduced by
+destructuring the argument passed to `code-critic`, a map containing
+`:good` and `:bad` keys:
+
+```clojure
+(code-critic {:good (+ 1 1) :bad (1 + 1)})
+```
+
+However, we're still building up a syntax-quoted list using the same
+principles.
+
+Thus concludes our introduction to the mechanics of writing a macro.
+To sum up:
+
+* Macros receive unevaluated, arbitrary data structures as arguments.
+  You can use argument destructuring just like you can with functions
+  and `let` bindings
+* Macros should return data structures which can be evaluated by
+  Clojure
+* Most of the time, macros will return lists
+* It's important to be clear on the distinction between a symbol and
+  the value it evaluates to when building up your list
+* You can build up the list to be returned by using list functions or
+  by using syntax-quote
+* Syntax quoting usually leads to code that's clearer and more concise
+* You can unquote forms when using syntax quoting
+
 ## Refactoring a Macro
+
