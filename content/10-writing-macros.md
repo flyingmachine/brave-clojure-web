@@ -354,6 +354,10 @@ Here's another example:
 Again, we have to quote `if` because we want the unevaluated symbol to
 be placed in the resulting list.
 
+There are many cases where you'll use simple quoting like this when
+writing macros, but most often you'll use the more powerful syntax
+quote.
+
 ### Syntax Quoting
 
 So far we've built up our lists by using `'` (quote) and functions
@@ -421,8 +425,8 @@ its namespace:
 ; => (clojure.core/+ 1 2)
 ```
 
-We'll dive into the implications of this later. For now, just don't be
-surprised when you see fully qualified symbols.
+This helps you avoid name collisions, a topic we'll go over later. For
+now, just don't be surprised when you see fully qualified symbols.
 
 The other difference between quoting and syntax-quoting is that the
 latter allows you to *unquote* forms with the tilde, `~`. Unquoting a
@@ -874,8 +878,10 @@ Consider the following:
 ```
 
 In this case, we would actually sleep for 2 seconds because
-`(Thread/sleep 1000)` actually gets evaluated twice. Here's how we
-could avoid this problem:
+`(Thread/sleep 1000)` actually gets evaluated twice. "Big deal!" your
+inner example critic says. Well, if our code did something like
+transfer money between bank accounts, this would be a very big deal.
+Here's how we could avoid this problem:
 
 ```clojure
 (defmacro report
@@ -887,6 +893,24 @@ could avoid this problem:
 ```
 
 By binding the macro's argument to a gensym, we only need to evaluate
-it once.
+it once. 
+
+We've now covered all the mechanics of writing a macro. Pat yourself
+on the back! It's a pretty big deal!
+
+To close things out, it's finally time to put on our pretending caps
+and work on that online potion store we talked about at the very
+beginning of the chapter.
+
+## Brews for the Brave and True
+
+When you began this chapter, I revealed a dream: to find some kind of
+drinkable that, once ingested, would temporarily give me the power and
+temperament of Richard Simmons. To keep such a magical liquid to
+myself, however, would be pure selfishness. I'm sure that someone,
+somewhere will invent such a thing so we might as get to work on a
+system for selling this mythical potion. For the sake of this example,
+let's call this hypothetical concoction the "Brave and True Ale." The
+name just came to me for no reason whatsoever.
 
 
