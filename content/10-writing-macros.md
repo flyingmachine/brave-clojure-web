@@ -906,7 +906,8 @@ beginning of the chapter.
 
 When you began this chapter, I revealed a dream: to find some kind of
 drinkable that, once ingested, would temporarily give me the power and
-temperament of Richard Simmons. To keep such a magical liquid to
+temperament of Richard Simmons, freeing me from the prison of
+inhibition and self-awareness. To keep such a magical liquid to
 myself, however, would be pure selfishness. I'm sure that someone,
 somewhere will invent such a thing so we might as get to work on a
 system for selling this mythical potion. For the sake of this example,
