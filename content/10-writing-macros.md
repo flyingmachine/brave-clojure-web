@@ -909,9 +909,178 @@ drinkable that, once ingested, would temporarily give me the power and
 temperament of an 80's fitness guru, freeing me from the prison of
 inhibition and self-awareness. To keep such a magical liquid to
 myself, however, would be pure selfishness. I'm sure that someone,
-somewhere will invent such a thing so we might as get to work on a
-system for selling this mythical potion. For the sake of this example,
-let's call this hypothetical concoction the "Brave and True Ale." The
-name just came to me for no reason whatsoever.
+somewhere will invent such a thing so we might as well get to work on
+a system for selling this mythical potion. For the sake of this
+example, let's call this hypothetical concoction the "Brave and True
+Ale." The name just came to me for no reason whatsoever.
 
+Before the orders come "pouring" in (pun! high five!), we'll need to
+have some validation in place. These orders will get converted to
+Clojure maps before we validate them. What I'm thinking is we want
+something like this:
 
+```clojure
+;; The shipping details of an order will be represented as a map.
+;; There are a couple invalid fields in this one.
+(def shipping-details
+  {:name "Mitchard Blimmons"
+   :address "134 Wonderment Ln"
+   :city ""
+   :state "FL"
+   :postal-code "32501"
+   :email "mitchard.blimmonsgmail.com"})
+
+;; Validations are comprise of a key which corresponds to the
+;; map to be validated and a vector of error message / validating
+;; function pairs. For example, :name has one validating function,
+;; not-empty, and if that validation fails we should get the "Please
+;; enter a name" error message
+(def shipping-details-validation
+  {:name
+   ["Please enter a name" not-empty]
+
+   :address
+   ["Please enter an address" not-empty]
+
+   :city
+   ["Please enter a city" not-empty]
+
+   :postal-code
+   ["Please enter a postal code" not-empty
+    
+    "Please enter a postal code that looks like a US postal code"
+    #(or (empty? %)
+         (not (re-seq #"[^0-9-]" %)))]
+
+   :email
+   ["Please enter an email address" not-empty
+
+    "Your email address doesn't look like an email address"
+    (or (empty? %)
+        #(re-seq #"@" %))]})
+
+;; Here's a hypothetical validation function applied to our data
+(validate shipping-details)
+; =>
+{:email ["Your email address doesn't look like an email address."]
+ :city ["Please enter a city"]}
+```
+
+So far so good, right? Now we just need to actually write out the
+`validate` function. After that we'll write a macro to aid with
+validation.
+
+The `validate` function can be decomposed into two functions, one to
+get apply validations to a single validation and return error messages
+and another to accumulate those error messages into a final map of
+error messages like the one we see above.
+
+Here's a function for applying validations to a single value:
+
+```clojure
+(defn error-messages-for
+  "return a seq of error messages
+   validation-check-groups is a seq of alternating messages and
+   validation checks"
+  [value validation-check-groups]
+  ;; Filter will return all validation check pairs that fail
+  ;; Then we map first over the resulting list, getting a seq
+  ;; of error messages
+  (map first (filter #(not ((second %) value))
+                     (partition 2 validation-check-groups))))
+
+(error-messages-for "" ["Please enter a city" not-empty])
+; => ("Please enter a city")
+
+(error-messages-for "SHINE ON"
+                    ["Please enter a postal code" not-empty
+                     "Please enter a postal code that looks like a US postal code"
+                     #(or (empty? %)
+                          (not (re-seq #"[^0-9-]" %)))])
+; => ("Please enter a postal code that looks like a US postal code")
+```
+
+Now we need to accumulate these error messages in a map:
+
+```clojure
+(defn validate
+  "returns a map with a vec of errors for each key"
+  [to-validate validations]
+  (reduce (fn [errors validation]
+            (let [[fieldname validation-check-groups] validation
+                  value (get to-validate fieldname)
+                  error-messages (error-messages-for value validation-check-groups)]
+              (if (empty? error-messages)
+                errors
+                (assoc errors fieldname error-messages))))
+          {}
+          validations))
+
+(validate shipping-details shipping-details-validation)
+; =>
+{:email ("Your email address doesn't look like an email address")
+ :city ("Please enter a city")}
+```
+
+Success!
+
+With our validation code in place, we can now validate records to our
+heart's content! Most often, validation will look something like this:
+
+```clojure
+(let [errors (validate shipping-details shipping-details-validation)]
+  (if (empty? errors)
+    (render :success)
+    (render :failure errors)))
+
+(let [errors (validate shipping-details shipping-details-validation)]
+  (if (empty? errors)
+    (do (save-shipping-details shipping-details)
+        (redirect-to (url-for :order-confirmation)))
+    (render "shipping-details" {:errors errors})))
+```
+
+Here's where we can an introduce a macro to clean things up a bit.
+Notice the pattern? It's:
+
+1. Validate a record and bind result to `errors`
+2. Check whether there were any errors
+3. If there were, do the success thing
+4. Otherwise do the failure thing
+
+I think that we can clean this up by introducing a macro called
+`if-valid`. It will meet the rationale for creating a macro in that it
+will allow us to write code that's both more concise and more
+meaningful. Here's how we'll use it:
+
+```clojure
+(if-valid shipping-details shipping-details-validation errors
+ (render :success)
+ (render :failure errors))
+
+(if-valid shipping-details shipping-details-validation errors
+ (do (save-shipping-details shipping-details)
+     (redirect-to (url-for :order-confirmation)))
+ (render "shipping-details" {:errors errors}))
+```
+
+Not a *huge* difference, but it expresses our intention more
+succinctly. It's like asking someone to give you the bottle opener
+instead of saying "please give me the manual device for removing the
+temporary sealant from a glass liquid container." Here's the
+implementation:
+
+```clojure
+(defmacro if-valid
+  "Handle validation more concisely"
+  [to-validate validations errors-name & then-else]
+  `(let [~errors-name (validate ~to-validate ~validations)]
+     (if (empty? ~errors-name)
+       ~@then-else)))
+```
+
+That's actually pretty simple! After all this talk about macros and
+going through their mechanics in such detail, I bet you were expecting
+something more complicated. Sorry, friend. If you're having a hard
+time coping with your disappointment, I know of a certain drink that
+will help.
