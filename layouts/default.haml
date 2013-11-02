@@ -72,7 +72,7 @@
           %h2 Table of Contents
           #toc.nav
             %ol
-              - @items.select{|i| i[:kind] == "documentation"}.sort{|a, b| a.identifier <=> b.identifier}.each do |i|
+              - @items.each do |i|
                 %li{:class => (i == @item ? "active-section" : "")}
                   = link_to i[:link_title] || i[:title], relative_path_to(i), :class => (i == @item ? "active" : "")
     %footer
