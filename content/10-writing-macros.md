@@ -1072,7 +1072,7 @@ meaningful. Here's how we'll use it:
 Not a *huge* difference, but it expresses our intention more
 succinctly. It's like asking someone to give you the bottle opener
 instead of saying "please give me the manual device for removing the
-temporary sealant from a glass liquid container." Here's the
+temporary sealant from a glass container of liquid." Here's the
 implementation:
 
 ```clojure
