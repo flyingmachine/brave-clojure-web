@@ -49,9 +49,10 @@ By the end of the chapter, you'll understand:
     * gensym
     * autogensym
     * macroexpand
-* Gotchas
+* Things to watch out for
     * double evaluation
     * variable capture
+    * macros all the way down
 
 ## What Macros Are
 
@@ -769,12 +770,13 @@ We won't break down this further refactoring because we have a bit
 more ground to cover yet, but I encourage you to play around with it
 until it makes sense.
 
-## Macro Gotchas
+## Things to Watch Out For
 
 Macros have a couple unobvious "gotchas" that you should be aware of:
 
 * variable capture
 * double evaluation
+* macros all the way down
 
 ### Variable Capture
 
@@ -873,10 +875,10 @@ Consider the following:
 
 ```clojure
 (defmacro report
-  [& to-try]
-  `(if to-try
-     (println ~@to-try "was successful!")
-     (println ~@to-try "was not successful!")))
+  [to-try]
+  `(if ~to-try
+     (println (quote ~to-try) "was successful:" ~to-try)
+     (println (quote ~to-try) "was not successful:" ~to-try)))
      
 ;; Thread/sleep takes a number of milliseconds to sleep for
 (report (Thread/sleep 1000) (+ 1 1))
@@ -893,12 +895,69 @@ Here's how we could avoid this problem:
   [to-try]
   `(let [result# ~to-try]
      (if result#
-       (println result# "was successful!")
-       (println result# "was not successful!"))))
+       (println (quote ~to-try) "was successful:" result#)
+       (println (quote ~to-try) "was not successful:" result#))))
 ```
 
 By binding the macro's argument to a gensym, we only need to evaluate
-it once. 
+it once.
+
+### Macros all the way down
+
+One subtler pitfall of using macros is that you can end up having to
+write more and more of them to get anything done. This happens because
+macros don't exist at runtime and because their arguments are not
+evaluated. For example, let's say we wanted to `doseq` using our
+`report` macro:
+
+```clojure
+;; Instead of multiple calls to report...
+(report (= 1 1))
+; => (= 1 1) was successful: true
+
+(report (= 1 2))
+(= 1 2) was not successful: false
+
+;; Let's iterate
+(doseq [code ['(= 1 1) '(= 1 2)]]
+  (report code))
+; =>
+code was successful: (= 1 1)
+code was successful: (= 1 2)
+```
+
+This isn't what we want at all. Here's what a macroexpansion for one
+of the `doseq` iterations would look like:
+
+```clojure
+(if
+ code
+ (clojure.core/println 'code "was successful:" code)
+ (clojure.core/println 'code "was not successful:" code))
+```
+
+As you can see, `report` receives the unevaluated symbol `code` in each
+iteration, whereas we want it to receive whatever `code` is bound to
+at runtime. `report` just can't do that, though. It's like it has
+t-rex arms, with runtime values forever out of its reach.
+
+To resolve this situation we might write another macro, like:
+
+```clojure
+(defmacro doseq-macro
+  [macroname & args]
+  `(do
+     ~@(map (fn [arg] (list macroname arg)) args)))
+
+(doseq-macro report (= 1 1) (= 1 2))
+; =>
+(= 1 1) was successful: true
+(= 1 2) was not successful: false
+```
+
+If you ever find yourself in this situation, take some time to
+re-think your approach. There's likely a less confusing way to
+accomplish what you want using functions.
 
 We've now covered all the mechanics of writing a macro. Pat yourself
 on the back! It's a pretty big deal!
@@ -1073,14 +1132,17 @@ Not a *huge* difference, but it expresses our intention more
 succinctly. It's like asking someone to give you the bottle opener
 instead of saying "please give me the manual device for removing the
 temporary sealant from a glass container of liquid." Here's the
-implementation:
+implementation. Note points are floating in the ocean, like `~~~1~~~`:
 
 ```clojure
 (defmacro if-valid
   "Handle validation more concisely"
+  ;; ~~~1~~~
   [to-validate validations errors-name & then-else]
+  ;; ~~~2~~~
   `(let [~errors-name (validate ~to-validate ~validations)]
      (if (empty? ~errors-name)
+       ;; ~~~3~~~
        ~@then-else)))
 ```
 
@@ -1089,3 +1151,31 @@ going through their mechanics in such detail, I bet you were expecting
 something more complicated. Sorry, friend. If you're having a hard
 time coping with your disappointment, I know of a certain drink that
 will help.
+
+Let's break the macro down:
+
+1. It takes four arguments: `to-validate`, `validations`,
+   `errors-name`, and the rest-arg `then-else`. Using `errors-name`
+   like this is a new strategy. We want to have access to the errors
+   within the `then-else` statements, but we need to avoid variable
+   capture. Giving the macro the name that the errors should be bound
+   to allows us to get around this problem.
+
+2. The syntax quote abstracts the general form of the let/validate/if
+   pattern we saw above.
+
+3. We use unquote-splicing to unpack the `if` branches which were
+   packed into the `then-else` rest arg.
+
+## Some Final Advice
+
+Macros are really fun tools that allow you to code with fewer
+inhibitions. Using macros, you have a degree of freedom and
+expressivity that other languages simply don't allow.
+
+Throughout your Clojure journey you'll probably hear people cautioning
+you against their use, saying things like "macros are evil" and "you
+should never use macros." Don't listen to these prudes. At least, not
+at first! Go out there and have a good time. That's the only way
+you'll learn the situations when it's appropriate to use macros.
+You'll come out the other side knowing how to use macros responsibly.

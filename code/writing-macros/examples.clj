@@ -171,8 +171,8 @@
 (defmacro report
   [to-try]
   `(if ~to-try
-     (println ~to-try "was truthy!")
-     (println ~to-try "was falsey!")))
+     (println (quote ~to-try) "was successful:" ~to-try)
+     (println (quote ~to-try) "was not successful:" ~to-try)))
 
 (report (Thread/sleep 1000))
 
@@ -180,8 +180,16 @@
   [to-try]
   `(let [result# ~to-try]
      (if result#
-       (println result# "was successful!")
-       (println result# "was not successful!"))))
+       (println (quote ~to-try) "was successful:" result#)
+       (println (quote ~to-try) "was not successful:" result#))))
+
+(doseq [code ['(= 1 1) '(= 1 2)]]
+  (report code))
+
+(defmacro doseq-macro
+  [macroname & args]
+  `(do
+     ~@(map (fn [arg] (list macroname arg)) args)))
 
 ;; validation
 
