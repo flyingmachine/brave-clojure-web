@@ -23,21 +23,20 @@ hopeless!"
 
 Throughout the intervening years I've found myself wondering if I
 could somehow recreate the emotional abandon and appreciation for life
-induced by chronic sleep deprivation and waging war against my
-circadian rhythms. The ultimate solution would be some kind of potion
-&mdash; a couple quaffs to unleash my inner Richard Simmons, but not
-for too long.
+induced by chronic sleep deprivation. The ultimate solution would be
+some kind of potion &mdash; a couple quaffs to unleash my inner
+Richard Simmons, but not for too long.
 
 Just as a potion would allow me to temporarily alter my fundamental
 nature, macros allow you to modify Clojure in ways that just aren't
 possible with other languages. With macros, you can extend Clojure to
 suit your problem space, building up the language itself.
 
-Which is exactly what we'll do in this chapter. First, we'll
-thoroughly examine how to write macros starting with basic examples
-and moving up in complexity. We'll close by donnig our make-believe
-caps, pretending that we run an online potion store and using
-macros to validate customer orders.
+Which is exactly what we'll do in this chapter. We'll thoroughly
+examine how to write macros starting with basic examples and moving up
+in complexity. We'll close by donnig our make-believe caps, pretending
+that we run an online potion store and using macros to validate
+customer orders.
 
 By the end of the chapter, you'll understand:
 
@@ -436,7 +435,8 @@ form evaluates it. Compare the following:
 ; => (clojure.core/+ 1 2)
 
 ;; Without the unquote, syntax quote returns the unevaluated form with
-;; fully qualified symbols
+;; fully qualified symbols:
+`(+ 1 (inc 1))
 ; => (clojure.core/+ 1 (clojure.core/inc 1))
 ```
 
@@ -522,8 +522,8 @@ Here are the differences:
    resulting in the function `println` being applied.
 
    The `list` function isn't necessary when we use syntax-quote,
-   however, because a syntax-quoted list evaluates to a list, not to a
-   function call, special form call, or macro call.
+   however, because a syntax-quoted list evaluates to a list &mdash;
+   not to a function call, special form call, or macro call.
 2. Without syntax-quote, we need to quote the symbol `println`. This
    is because we want the resulting list to include the symbol
    `println`, not the function which `println` evaluates to.
@@ -542,7 +542,7 @@ Here are the differences:
    that it will be evaluated. Otherwise, the symbol `code` would be
    included in the macro expansion instead of its value, `(+ 1 1)`:
 
-```
+```clojure
 ;; This is what happens if we don't unquote "code" in the macro
 ;; definition:
 (defmacro code-praiser
@@ -558,7 +558,7 @@ Here are the differences:
   (quote user/code))
 ```
 
-Sweet gorilla of Manila, you've come a long way. With this smaller
+Sweet gorilla of Manila, you've come a long way! With this smaller
 portion of the `code-critic` macro thoroughly dissected, we can now
 turn our attention back to the full macro:
 
@@ -811,13 +811,20 @@ actually result in an exception:
 Exception: Can't let qualified name: user/message
 ```
 
-Syntax-quoting is designd to prevent you from making this kind of
+Syntax-quoting is designed to prevent you from making this kind of
 mistake with macros. In the case where you do want to introduce let
 bindings in your macro, you can use something called a "gensym". The
 `gensym` function produces unique symbols on each successive call:
 
 ```clojure
 ;; Notice that a unique integer is appended with each call
+(gensym)
+; => G__655
+
+(gensym)
+; => G__658
+
+;; We can also pass a symbol prefix
 (gensym 'message)
 ; => message4760
 
