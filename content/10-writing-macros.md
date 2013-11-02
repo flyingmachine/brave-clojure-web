@@ -1167,6 +1167,8 @@ Let's break the macro down:
 3. We use unquote-splicing to unpack the `if` branches which were
    packed into the `then-else` rest arg.
 
+Woohoo!
+
 ## Some Final Advice
 
 Macros are really fun tools that allow you to code with fewer
