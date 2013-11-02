@@ -2,7 +2,6 @@
 title: "Writing Macros"
 link_title: "Writing Macros"
 kind: documentation
-draft: true
 ---
 
 # Writing Macros
@@ -38,8 +37,7 @@ Which is exactly what we'll do in this chapter. First, we'll
 thoroughly examine how to write macros starting with basic examples
 and moving up in complexity. We'll close by donnig our make-believe
 caps, pretending that we run an online potion store and using
-non-trivial macros to validate customer orders and perform data
-transformations.
+macros to validate customer orders.
 
 By the end of the chapter, you'll understand:
 
