@@ -32,7 +32,7 @@
         = find_and_preserve(yield)
         .pagenav.bottom
           - count = @items.size
-          - index = @items.select{|i| i[:kind] == "documentation" && !i[:draft]}.sort{|a, b| a.identifier <=> b.identifier}.index(@item)
+          - index = @items.index(@item)
           - if index
             - if index != 0
               - i = @items[index - 1]
@@ -72,7 +72,7 @@
           %h2 Table of Contents
           #toc.nav
             %ol
-              - @items.each do |i|
+              - chapters.each do |i|
                 %li{:class => (i == @item ? "active-section" : "")}
                   = link_to i[:link_title] || i[:title], relative_path_to(i), :class => (i == @item ? "active" : "")
     %footer

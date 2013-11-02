@@ -1,7 +1,7 @@
 include Nanoc::Helpers::LinkTo
 
 def chapters
-  @items.select{|i| i[:kind] == 'documentation' && !i[:draft]}.sort{ |a, b|
-    a.identifier[/^\d+/].to_i <=> b.identifier[/^\d+/].to_i 
+  @chapters ||= @items.select{|i| i[:kind] == 'documentation' && !i[:draft]}.sort{ |a, b|
+    /\d+/.match(a.identifier)[0].to_i <=> /\d+/.match(b.identifier)[0].to_i
   }
 end
