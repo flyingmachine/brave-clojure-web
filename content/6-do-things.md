@@ -439,12 +439,12 @@ value. For example:
 
 ```clojure
 ;; Here's the function call. It kicks off the evaluation process
-(+ (inc 12) (/ (- 20 2) 100))
+(+ (inc 12) (/ (- 20 2) 100.0))
 
 ;; All sub-forms are evaluated before applying the "+" function
-(+ 13 (/ (- 20 2) 100)) ; evaluated "(inc 12)"
-(+ 13 (/ 18 100)) ; evaluated (-20 2)
-(+ 13 0.18) ; evaluated (/ 18 100)
+(+ 13 (/ (- 20 2) 100.0)) ; evaluated "(inc 12)"
+(+ 13 (/ 18 100.0)) ; evaluated (-20 2)
+(+ 13 0.18) ; evaluated (/ 18 100.0)
 13.18 ; final evaluation
 ```
 
