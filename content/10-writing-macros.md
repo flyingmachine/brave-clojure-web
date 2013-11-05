@@ -805,8 +805,8 @@ actually result in an exception:
 (def message "Good job!")
 (defmacro with-mischief
   [& stuff-to-do]
-  (concat (list 'let ['message "Oh, big deal!"])
-          stuff-to-do))
+  `(let [message "Oh, big deal!"]
+     ~@stuff-to-do))
 (with-mischief
   (println "Here's how I feel about that thing you did: " message))
 ; =>
