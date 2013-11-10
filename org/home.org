@@ -1,9 +1,6 @@
 #+Title: Clojure for the Brave and True, an Online Book for Beginners
-#+HTML_EXTENSION: ""
 #+OPTIONS: toc:nil
-#+OPTIONS: html-extension:""
-#+OPTIONS: base-directory:"/"
-#+OPTIONS: mdh-link-title:Introduction
+#+MDH_LINK_TITLE: Introduction
 #+MDH_PREAMBLE: cbt-preamble
 
 * Introduction
@@ -75,8 +72,8 @@ Having a quick feedback loop for learning is so important that we
 cover Emacs from the ground up so that you're guaranteed to have an
 efficient Emacs/Clojure workflow.
 
-[[/basic-emacs/][Read "Start Using Emacs"]]
-[[/using-emacs-with-clojure/][Read "Using Emacs with Clojure"]]
+[[file:basic-emacs.org][Read "Start Using Emacs"]]
+[[file:using-emacs-with-clojure.org][Read "Using Emacs with Clojure"]]
 
 ** Part 2: Language Fundamentals
 
@@ -85,7 +82,7 @@ which to continue learning Clojure. You'll start by learning how to
 actually do things, and then take a step back to understand the
 underlying concepts.
 
-[[/language-fundamentals-overview/][Read "Clojure Language Fundamentals Overview"]]
+[[file:language-fundamentals-overview.org][Read "Clojure Language Fundamentals Overview"]]
 
 *** Do Things
 
@@ -94,7 +91,7 @@ support and other stupendous features, Clojure's most salient
 characteristic is that it is a Lisp. We're going to explore this Lisp
 core. And this core is comprised of two parts: functions and data.
 
-[[/do-things/][Read "Do Things"]]
+[[file:do-things.org][Read "Do Things"]]
 
 *** Clojure Alchemy: Reading, Evaluation, and Macros
 
@@ -104,4 +101,4 @@ truly understand how Clojure works and how it's different from other,
 non-lisp languages. With this structure in place, we'll introduce the
 macro, one of the most powerful tools in existence.
 
-[[/read-and-eval/][Read "Clojure Alchemy: Reading, Evaluation, and Macros"]]
+[[file:read-and-eval.org][Read "Clojure Alchemy: Reading, Evaluation, and Macros"]]
