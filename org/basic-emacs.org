@@ -2,6 +2,7 @@
 #+OPTIONS: toc:nil
 #+MDH_LINK_TITLE: Start Using Emacs
 #+MDH_PREAMBLE: cbt-preamble
+#+MDH_UNSEPARATED_ELEMENT_TYPES: item
 
 * Start Using Emacs
 
@@ -100,7 +101,8 @@ All editing happens in an Emacs **buffer**. When you first start Emacs,
 a buffer named \**scratch*\* is open. Emacs will always show you the
 name of the current buffer, as shown here:
 
-![Buffer name](/images/basic-emacs/emacs-buffer-name.png)
+#+CAPTION: Buffer name
+[[./images/basic-emacs/emacs-buffer-name.png]]
 
 By default, the scratch buffer behaves in a way that's optimal for
 Lisp development. Let's go ahead and create a fresh buffer so that we
@@ -525,7 +527,7 @@ journey:
   folks
 - =C-h t=, the built-in tutorial
 
-## Summary
+** Summary
 
 Whew! We covered a lot of ground:
 

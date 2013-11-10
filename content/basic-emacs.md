@@ -28,21 +28,17 @@ this:
 To get there, we'll do the following:
 
 -   Install Emacs
-
 -   Install a new-person-friendly Emacs configuration
 
 After we're done installing and setting up Emacs, we'll cover:
 
 -   Opening, editing, and saving files
-
 -   Basic Emacs concepts
-
 -   Essential Emacs key bindings
 
 In the next chapter, we'll cover:
 
 -   Editing Clojure code
-
 -   Interacting with the REPL
 
 ## Installation
@@ -54,9 +50,7 @@ You should use the latest major version of Emacs, Emacs 24.
     they're problematic in the long run because they're set up so
     differently from standard Emacs that it's difficult to use the Emacs
     manual or follow along with tutorials
-
 -   **Ubuntu**: Follow [these instructions](https://launchpad.net/~cassou/+archive/emacs)
-
 -   **Windows**: You can find a binary [at the bottom of this page](http://ftp.gnu.org/gnu/emacs/windows/). I'd
     love to find some better Windows instructions.
 
@@ -73,15 +67,11 @@ I've created a [github repo](https://github.com/flyingmachine/emacs-for-clojure)
 get started. Just do the following:
 
 1.  Close Emacs
-
 2.  Delete `~/.emacs` or `~/.emacs.d` if they exist
-
 3.  Run `git clone
        https://github.com/flyingmachine/emacs-for-clojure.git ~/.emacs.d`
-
 4.  (Optional) delete the `.emacs.d/.git` directory. You'll probably
     want to create your own git repo for `.emacs.d`
-
 5.  Open Emacs
 
 When you open Emacs you should see a lot of activity. This is because
@@ -108,7 +98,7 @@ All editing happens in an Emacs ****buffer****. When you first start Emacs,
 a buffer named \\\*\*scratch\*\\\* is open. Emacs will always show you the
 name of the current buffer, as shown here:
 
-\\![Buffer name](/images/basic-emacs/emacs-buffer-name.png)
+![Buffer name](/images/basic-emacs/emacs-buffer-name.png)
 
 By default, the scratch buffer behaves in a way that's optimal for
 Lisp development. Let's go ahead and create a fresh buffer so that we
@@ -116,9 +106,7 @@ can play around without having unexpected things happen. To create a
 buffer, do this:
 
 -   Hold down Control and press x
-
 -   Release Control
-
 -   Press b
 
 Since that is very wordy, let's express the same sequence in a compact
@@ -143,9 +131,7 @@ typing stuff. You should find that keys mostly work the way you'd
 expect:
 
 -   Characters show up as you type them
-
 -   The up, down, left and right arrow keys move you as you'd expect
-
 -   Enter creates a new line
 
 You'll also notice that you're not sporting a bushy Unix beard or
@@ -231,16 +217,11 @@ will create a file with the buffer's contents at the path you entered.
 Let's recap:
 
 1.  In Emacs, editing takes place in *buffers*
-
 2.  To switch to a buffer, do `C-x b` and enter the buffer name in the
        *minibuffer*
-
 3.  To create a new buffer, do `C-x b` and enter a new buffer name
-
 4.  To open a file, do `C-x C-f` and navigate to the file
-
 5.  To save a buffer to a file, do `C-x C-s`.
-
 6.  To create a new file, do `C-x C-f` and enter the new file's path.
     When you save the buffer, Emacs will create the file on the file
     system.
@@ -352,12 +333,9 @@ If all you want to do is use Emacs like Notepad, then you can skip
 this section entirely! But you'll be missing out on some great stuff:
 
 -   Key Emacs terms
-
 -   How to select text, cut it, copy it, and paste it
-
 -   How to select text, cut it, copy it, and paste it (see what I did
     there? Ha ha ha!)
-
 -   How to move through a buffer efficiently
 
 To get started, open up a new buffer in Emacs and name it
@@ -424,12 +402,9 @@ very similar to shift-selecting text for basic purposes. For example,
 do the following in your Jack Handy quotes buffer:
 
 1.  Go to the beginning of the file
-
 2.  Do `C-spc`
-
 3.  Do `M-f` twice. You should see a highlighted region encompassing
     "If you".
-
 4.  Press backspace. That should delete "If you".
 
 One cool thing about using mark instead of shift-selecting text is
@@ -442,7 +417,6 @@ strain your pinky holding down the shift key.
 Regions also let you operate within limited areas of the buffer:
 
 1.  Create a region encompassing "The face of a child can say it all"
-
 2.  Do `M-x replace-string` and replace "face" with "head"
 
 This will perform the replacement only in the current region rather
@@ -473,16 +447,11 @@ kill ring to retrieve text you killed a long time ago. Let's see this
 in action:
 
 1.  Create a region over the word "Treasure" in the first line.
-
 2.  Do `M-w`, which is bound to the `kill-ring-save` command.
-
 3.  Move point to the word "choreograpahy" on the last line.
-
 4.  Do `M-d`, which is bound to the `kill-word` command
-
 5.  Do `C-y`. This will insert the text you just killed,
     "choreograpahy"
-
 6.  Do `M-y`. This will remove "choreograpahy" and insert "Treasure"
 
 So what just happened here? First, you added "Treasure" to the kill
@@ -544,59 +513,36 @@ journey:
 -   [The Emacs Manual](http://www.gnu.org/software/emacs/manual/html_node/emacs/index.html#Top), excellent, comprehensive instructions. Download
     the PDF and read it on the go! Spend some time with it every
     morning!
-
 -   <http://www.masteringemacs.org/reading-guide/> This is one of the best
     Emacs resources.
-
 -   [Emacs Reference Card](http://www.ic.unicamp.br/~helio/disciplinas/MC102/Emacs_Reference_Card.pdf), a nice cheat sheet
-
 -   [How to Learn Emacs, a Visual One-pager](http://sachachua.com/blog/wp-content/uploads/2013/05/How-to-Learn-Emacs8.png) for the more visually-minded
     folks
-
 -   `C-h t`, the built-in tutorial
 
-\## Summary
+## Summary
 
 Whew! We covered a lot of ground:
 
 -   Installing and configuring Emacs
-
 -   Quitting Emacs commands with `C-g`
-
 -   How to switch and create bufferse with `C-x b`
-
 -   Killing buffers with `C-x k`
-
 -   Opening files with `C-x C-f`
-
 -   Saving files with `C-x C-s`
-
 -   How Emacs is a Lisp interpreter
-
 -   How key bindings are related to commands
-
 -   How to run commands with `M-x {{command-name}}`
-
 -   How to install packages with `M-x package-install`
-
 -   Modes are collections of key bindings and functions
-
 -   There are major and minor modes
-
 -   Key Emacs terms
-    
     -   Point
-    
     -   Mark
-    
     -   Region
-    
     -   Killing
-    
     -   The kill ring
-    
     -   Yanking
-
 -   Moving point
 
 With all of this hard-won Emacs knowledge under our belt, let's start
