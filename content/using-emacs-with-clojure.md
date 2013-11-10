@@ -148,8 +148,8 @@ Now let's create a new function and run it. At the bottom of
 
 ```clojure
 (defn train
-[]
-(println "Choo choo!"))
+  []
+  (println "Choo choo!"))
 ```
 
 When you're done, save your file and do `C-c C-k`. This compiles your
@@ -259,7 +259,6 @@ represented as a vertical pipe, `|`.
 
 ;; Now slurp in the "3":
 ;; press C-→
-
 (+ 1 (* |2 3) 4)
 ```
 
