@@ -1,7 +1,6 @@
 #+Title: Clojure for the Brave and True, an Online Book for Beginners
 #+OPTIONS: toc:nil
 #+MDH_LINK_TITLE: Introduction
-#+MDH_PREAMBLE: cbt-preamble
 
 * Introduction
 

@@ -1,7 +1,6 @@
 #+Title: Building, Running, and The REPL
 #+OPTIONS: toc:nil
 #+MDH_LINK_TITLE: Building, Running, and The REPL
-#+MDH_PREAMBLE: cbt-preamble
 
 * Building, Running, and The REPL
 

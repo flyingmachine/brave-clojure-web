@@ -1,7 +1,6 @@
 #+Title: About the Author
 #+OPTIONS: toc:nil
 #+MDH_LINK_TITLE: About
-#+MDH_PREAMBLE: cbt-preamble
 
 * About the Author
 

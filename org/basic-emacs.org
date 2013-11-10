@@ -1,8 +1,6 @@
 #+Title: Start Using Emacs
 #+OPTIONS: toc:nil
 #+MDH_LINK_TITLE: Start Using Emacs
-#+MDH_PREAMBLE: cbt-preamble
-#+MDH_UNSEPARATED_ELEMENT_TYPES: item
 
 * Start Using Emacs
 
