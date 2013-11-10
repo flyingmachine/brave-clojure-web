@@ -1,24 +1,14 @@
 #+Title: Clojure for the Brave and True, an Online Book for Beginners
 #+HTML_EXTENSION: ""
-
-#+OPTIONS: link_title: Introduction
 #+OPTIONS: toc:nil
-#+OPTIONS: html-extension: ""
-#+OPTIONS: base-directory: "/"
-
-~---~
-title: Clojure for the Brave and True, an Online Book for Beginners
-~link_title: Introduction~
-kind: documentation
-~---~
+#+OPTIONS: html-extension:""
+#+OPTIONS: base-directory:"/"
+#+OPTIONS: mdh-link-title:Introduction
+#+MDH_PREAMBLE: cbt-preamble
 
 * Introduction
 
 \star /Clojure!/ \star
-
-#+begin_example
-blah-blah
-#+end_example
 
 For weeks, /months/ &mdash; no! /from the very moment you were born/
 &mdash; you've felt it calling to you. Every time you've held your
