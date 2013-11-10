@@ -9,3 +9,4 @@ Guardfile
 .lein-env
 target
 repl-port
+org/*.md
