@@ -295,14 +295,14 @@ Ta-da!
 Often when writing lisp you'll work with expressions like
 
 #+BEGIN_SRC clojure
-(map (comp record first)
-(d/q '[:find ?post
-:in $ ?search
-:where
-[(fulltext $ :post/content ?search)
-[[?post ?content]]]]
-(db/db)
-(:q params)))
+  (map (comp record first)
+       (d/q '[:find ?post
+              :in $ ?search
+              :where
+              [(fulltext $ :post/content ?search)
+               [[?post ?content]]]]
+            (db/db)
+            (:q params)))
 #+END_SRC
 
 It's useful to quickly jump from one sub-expression to the next. If

@@ -294,13 +294,13 @@ Often when writing lisp you'll work with expressions like
 
 ```clojure
 (map (comp record first)
-(d/q '[:find ?post
-:in $ ?search
-:where
-[(fulltext $ :post/content ?search)
-[[?post ?content]]]]
-(db/db)
-(:q params)))
+     (d/q '[:find ?post
+            :in $ ?search
+            :where
+            [(fulltext $ :post/content ?search)
+             [[?post ?content]]]]
+          (db/db)
+          (:q params)))
 ```
 
 It's useful to quickly jump from one sub-expression to the next. If
