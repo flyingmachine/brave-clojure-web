@@ -554,4 +554,3 @@ Whew! We covered a lot of ground:
 
 With all of this hard-won Emacs knowledge under our belt, let's start
 using Emacs with Clojure!
-
