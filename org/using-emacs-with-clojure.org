@@ -297,7 +297,7 @@ Often when writing lisp you'll work with expressions like
   (map (comp record first)
        (d/q '[:find ?post
               :in $ ?search
-              :where
+              :wohere
               [(fulltext $ :post/content ?search)
                [[?post ?content]]]]
             (db/db)
