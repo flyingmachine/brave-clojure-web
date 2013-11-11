@@ -1,10 +1,8 @@
----
-title: Writing Macros
-link_title: Writing Macros
-kind: documentation
----
+#+Title: Writing Macros
+#+MDH_LINK_TITLE: Writing Macros
+#+OPTIONS: toc:nil
 
-# Writing Macros
+* Writing Macros
 
 When I was 18 I got a job as a night auditor at a hotel in Santa Fe,
 New Mexico. Four nights a week from 11pm till 7am I would dutifully
@@ -40,48 +38,48 @@ customer orders.
 
 By the end of the chapter, you'll understand:
 
--   What macros are
--   The tools used to write macros
-    -   quote
-    -   syntax quote
-    -   unqoute
-    -   unquote-splicing / the pinata tool
-    -   gensym
-    -   autogensym
-    -   macroexpand
--   Things to watch out for
-    -   double evaluation
-    -   variable capture
-    -   macros all the way down
+- What macros are
+- The tools used to write macros
+    - quote
+    - syntax quote
+    - unqoute
+    - unquote-splicing / the pinata tool
+    - gensym
+    - autogensym
+    - macroexpand
+- Things to watch out for
+    - double evaluation
+    - variable capture
+    - macros all the way down
 
-## What Macros Are
+** What Macros Are
 
-In the last chapter we covered how [Clojure evaluates data structures](/read-and-eval/)
+In the last chapter we covered how [[file:read-and-eval.org][Clojure evaluates data structures]]
 Briefly:
 
--   Strings, numbers, characters, `true`, `false`, `nil` and keywords evaluate
-    to themselves
--   Clojure resolves symbols by:
-    1.  Looking up whether the symbol names a special form. If it doesn't&#x2026;
-    2.  Trying to find a local binding. If it doesn't&#x2026;
-    3.  Trying to find a mapping introduced by `def`. If it doesn't&#x2026;
-    4.  Throwing an exception
--   Lists result in calls:
-    -   When performing a function call, each operand is fully evaluated
-        and then passed to the function as an argument.
-    -   Special form calls like `if`, `quote`, follow "special"
-        evaluation rules which implement core Clojure behavior
-    -   Macros take unevaluated data structures as arguments and return
-        a data structure which is then evaluated using the rules above
+- Strings, numbers, characters, =true=, =false=, =nil= and keywords evaluate
+  to themselves
+- Clojure resolves symbols by:
+    1. Looking up whether the symbol names a special form. If it doesn't...
+    2. Trying to find a local binding. If it doesn't...
+    3. Trying to find a mapping introduced by =def=. If it doesn't...
+    4. Throwing an exception
+- Lists result in calls:
+    - When performing a function call, each operand is fully evaluated
+      and then passed to the function as an argument.
+    - Special form calls like =if=, =quote=, follow "special"
+      evaluation rules which implement core Clojure behavior
+    - Macros take unevaluated data structures as arguments and return
+      a data structure which is then evaluated using the rules above
 
 So, a macro is a tool for transforming an arbitrary data structure
 into one which can be evaluated by Clojure. This allows you to
 introduce new syntax. The result is that you can write code which is
 more concise and meaningful.
 
-Recall the `->` threading macro:
+Recall the =->= threading macro:
 
-```clojure
+#+BEGIN_SRC clojure
 ;; vanilla Clojure
 (defn read-resource
   "Read a resource into a string"
@@ -95,9 +93,9 @@ Recall the `->` threading macro:
       io/resource
       slurp
       read-string))
-```
+#+END_SRC
 
-In this case, the `->` threading macro is a widely-applicable utility.
+In this case, the =->= threading macro is a widely-applicable utility.
 It makes your code more concise by allowing you to forego parentheses.
 It makes your code more meaningful by communicating instantly that
 you've created a function pipeline. And it's plain that it introduces
@@ -105,25 +103,25 @@ new syntax &mdash; you're expressing function application without all
 those parentheses.
 
 Macros allow Clojure to derive a lot of its "built-in" functionality
-from a tiny core of functions and special forms. Take `when`, for
-example. `when` has the general form:
+from a tiny core of functions and special forms. Take =when=, for
+example. =when= has the general form:
 
-```clojure
+#+BEGIN_SRC clojure
 (when boolean-expression
   expression-1
   expression-2
   expression-3
   ...
   expression-x)
-```
+#+END_SRC
 
-You might think that `when` is a special form like `if`. Well guess
+You might think that =when= is a special form like =if=. Well guess
 what: it's not! Don't worry, no will blame you for thinking it is. In
 most other languages, conditional expressions are built into the
-language itself and you can't add your own. However, `when` is
+language itself and you can't add your own. However, =when= is
 actually a macro:
 
-```clojure
+#+BEGIN_SRC clojure
 ;; macroexpand takes a macro application and returns the list which
 ;; ends up being evaluated by Clojure. Note the single quote preceding
 ;; the when expression. Quoting is discussed at length below
@@ -136,7 +134,7 @@ actually a macro:
   (do expression-1
       expression-2
       expression-3))
-```
+#+END_SRC
 
 This shows that macros are an integral part of Clojure development
 &mdash; they're even used to provide fundamental operations. Macros
@@ -147,7 +145,7 @@ your own macros, you'll see how they allow you to extend the language
 even further so that it fits the shape of your particular problem
 domain.
 
-## Anatomy of a Macro
+** Anatomy of a Macro
 
 Macro definitions look much like function definitions. They have a
 name, an optional document string, an argument list, and a body. The
@@ -157,14 +155,14 @@ all represented as lists.
 
 Here's a simple example of a macro definition:
 
-```clojure
+#+BEGIN_SRC clojure
 (defmacro postfix-notation
   "I'm too indie for prefix notation"
   [expression]
   (conj (butlast expression) (last expression)))
-```
+#+END_SRC
 
-Notice that you have *full access to Clojure* within the macro's body.
+Notice that you have /full access to Clojure/ within the macro's body.
 You can use any function, macro, or special form within the macro
 body. Let that simmer a bit: you have the full power of Clojure at
 your disposal to extend Clojure. Can you feel your power as a
@@ -172,30 +170,30 @@ programmer growing? Can you? Can you? <small>Can you?</small>
 
 You call macros just like you would a function or special form:
 
-```clojure
+#+BEGIN_SRC clojure
 (postfix-notation (1 1 +))
 ; => 2
-```
+#+END_SRC
 
 One key difference between functions and macros is that function
 arguments are fully evaluated before they're passed to the function,
 whereas macros receive arguments as unevaluated data structures.
 
-We can see this in the above example. If you tried evaluating \`(1 1
+We can see this in the above example. If you tried evaluating `(1 1
 +)=, you would get an exception. However, since you're making a macro
-call, the unevaluated list \`(1 1 +)= is passed to `postfix-notation`.
-We can thus use `conj`, `butlast`, and `last` functions to rearrange
+call, the unevaluated list `(1 1 +)= is passed to =postfix-notation=.
+We can thus use =conj=, =butlast=, and =last= functions to rearrange
 the list so that it's something Clojure can evaluate:
 
-```clojure
+#+BEGIN_SRC clojure
 (macroexpand '(postfix-notation (1 1 +)))
 ; => (+ 1 1)
-```
+#+END_SRC
 
 Continuing with our anatomical adventures, macro definitions can use
 argument destructuring, just like you can with functions:
 
-```clojure
+#+BEGIN_SRC clojure
 (defmacro code-critic
   "phrases are courtesy Hermes Conrad from Futurama"
   [{:keys [good bad]}]
@@ -211,40 +209,40 @@ argument destructuring, just like you can with functions:
 ; =>
 Great squid of Madrid, this is bad code: (1 + 1)
 Sweet gorilla of Manila, this is good code: (+ 1 1)
-```
+#+END_SRC
 
 You can also create multiple-arity macros, though I've never seen one
 and most likely you shouldn't do it:
 
-```clojure
+#+BEGIN_SRC clojure
 (defmacro mutiple-arity
   ;; Notice that each arity's argument list and body is wrapped in parens
   ([single-arg]
      "Don't do this")
-
+     
   ([arg1 arg2]
      "Seriously, don't do it :(")
-
+     
   ([arg1 arg2 arg 3]
      "Nah, just kidding. Do whatever you want! Self-actualize!"))
-```
+#+END_SRC
 
 Now that you're comfortable with the anatomy of macros and are well on
 your way to self-actualization, let's strap ourselves to our thinking
 masts Odysseus-style and look at how to write macro bodies. 
 
-## Building Lists for Evaluation
+** Building Lists for Evaluation
 
 Macro-writing is all about building a list to be evaluated by Clojure
 and it requires a kind of inversion to your thinking normal way of
 thinking. In particular, you'll need to be extra careful about the
-difference between a *symbol* and its *value*.
+difference between a /symbol/ and its /value/.
 
-### Be Careful about Distinguishing Symbols and Values
+*** Be Careful about Distinguishing Symbols and Values
 
-Let's take the `postfix-notation` example:
+Let's take the =postfix-notation= example:
 
-```clojure
+#+BEGIN_SRC clojure
 (defmacro postfix-notation
   [expression]
   (conj (butlast expression) (last expression)))
@@ -254,25 +252,25 @@ Let's take the `postfix-notation` example:
 
 (postfix-notation (1 1 +))
 ; => 2
-```
+#+END_SRC
 
-When you pass the argument \`(1 1 +)= to the `postfix-notation` macro,
-the value of `expression` within the macro body is a list comprised of
-three elements: the number one, the number one, and the symbol `+`.
-Note that the **symbol** `+` is distinct from its **value**, which is the
+When you pass the argument `(1 1 +)= to the =postfix-notation= macro,
+the value of =expression= within the macro body is a list comprised of
+three elements: the number one, the number one, and the symbol =+=.
+Note that the *symbol* =+= is distinct from its *value*, which is the
 addition function.
 
-The `postfix-notation` macro returns a new list comprised of the `+`
-symbol, `1`, and `1`. This list is then evaluated and the result is
+The =postfix-notation= macro returns a new list comprised of the =+=
+symbol, =1=, and =1=. This list is then evaluated and the result is
 returned.
 
-### Simple Quoting
+***  Simple Quoting
 
 You'll almost always use quoting within your macros. This is so that
 you can obtain an unevaluated symbol. Here's a brief refresher on
 quoting:
 
-```clojure
+#+BEGIN_SRC clojure
 ;; No quoting
 (+ 1 2)
 ; => 3
@@ -306,11 +304,11 @@ sweating-to-the-80s
 
 'dr-jekyll-and-richad-simmons
 ; => dr-jekyll-and-richad-simmons
-```
+#+END_SRC
 
-We can see quoting at work in the `when` macro:
+We can see quoting at work in the =when= macro:
 
-```clojure
+#+BEGIN_SRC clojure
 ;; This is when's actual source
 (defmacro when
   "Evaluates test. If logical true, evaluates body in an implicit do."
@@ -325,15 +323,15 @@ We can see quoting at work in the `when` macro:
 (if (the-cows-come :home)
   (do (call me :pappy)
       (slap me :silly)))
-```
+#+END_SRC
 
-Notice that both `if` and `do` are quoted. That's because we want
+Notice that both =if= and =do= are quoted. That's because we want
 these symbols to be in the final list returned for evaluation by
-`when`.
+=when=.
 
 Here's another example:
 
-```clojure
+#+BEGIN_SRC clojure
 (defmacro unless
   "Inverted 'if'"
   [test & branches]
@@ -346,25 +344,25 @@ Here's another example:
 (if (done-been slapped? me)
   (say "I reckon that'll learn me")
   (slap me :silly))
-```
+#+END_SRC
 
-Again, we have to quote `if` because we want the unevaluated symbol to
+Again, we have to quote =if= because we want the unevaluated symbol to
 be placed in the resulting list.
 
 There are many cases where you'll use simple quoting like this when
 writing macros, but most often you'll use the more powerful syntax
 quote.
 
-### Syntax Quoting
+*** Syntax Quoting
 
 So far we've built up our lists by using ='= (quote) and functions
-which operate on lists (`conj`, `butlast`, `first`, etc), and by using
-the `list` function to create a list. Indeed, you could write your
+which operate on lists (=conj=, =butlast=, =first=, etc), and by using
+the =list= function to create a list. Indeed, you could write your
 macros that way until the cows come home. Sometimes, though, it leads
-to tedious and verbose code. Take the `code-critic` example we
+to tedious and verbose code. Take the =code-critic= example we
 introduced above:
 
-```clojure
+#+BEGIN_SRC clojure
 (defmacro code-critic
   "phrases are courtesy Hermes Conrad from Futurama"
   [{:keys [good bad]}]
@@ -375,32 +373,32 @@ introduced above:
         (list 'println
               "Sweet gorilla of Manila, this is good code:"
               (list 'quote good))))
-```
+#+END_SRC
 
 How tedious! I feel like I'm falling asleep from the tedium. Somebody
 slap me awake already! Luckily, Clojure has a handy mechanism for
 solving this problem: the syntax quote! Here's how we would rewrite
-`code-critic` using syntax quote:
+=code-critic= using syntax quote:
 
-```clojure
-(defmacro code-critic
-  "phrases are courtesy Hermes Conrad from Futurama"
-  [{:keys [good bad]}]
-  `(do (println "Great squid of Madrid, this is bad code:"
-                (quote ~bad))
-       (println "Sweet gorilla of Manila, this is good code:"
-                (quote ~good))))
-```
+#+BEGIN_SRC clojure
+  (defmacro code-critic
+    "phrases are courtesy Hermes Conrad from Futurama"
+    [{:keys [good bad]}]
+    `(do (println "Great squid of Madrid, this is bad code:"
+                  (quote ~bad))
+         (println "Sweet gorilla of Manila, this is good code:"
+                  (quote ~good))))
+#+END_SRC
 
 There's a lot going on here, though, so let's take a step back and
 break down the syntax quote.
 
 First, syntax quoting can return unevaluated data structure similarly
 to quoting. There's one important difference, though: syntax quoting
-will return the *fully qualified* symbols so that the symbol includes
+will return the /fully qualified/ symbols so that the symbol includes
 its namespace:
 
-```clojure
+#+BEGIN_SRC clojure
 ;; Quoting does not include a namespace unless your code includes a namespace
 '+
 ; => +
@@ -420,16 +418,16 @@ its namespace:
 ;; Syntax-quoting a list
 `(+ 1 2)
 ; => (clojure.core/+ 1 2)
-```
+#+END_SRC
 
 This helps you avoid name collisions, a topic we'll go over later. For
 now, just don't be surprised when you see fully qualified symbols.
 
 The other difference between quoting and syntax-quoting is that the
-latter allows you to *unquote* forms with the tilde, `~`. Unquoting a
+latter allows you to /unquote/ forms with the tilde, =~=. Unquoting a
 form evaluates it. Compare the following:
 
-```clojure
+#+BEGIN_SRC clojure
 ;; The tilde (~) unquotes the form "(inc 1)"
 `(+ 1 ~(inc 1))
 ; => (clojure.core/+ 1 2)
@@ -438,12 +436,12 @@ form evaluates it. Compare the following:
 ;; fully qualified symbols:
 `(+ 1 (inc 1))
 ; => (clojure.core/+ 1 (clojure.core/inc 1))
-```
+#+END_SRC
 
 If you're familiar with string interpolation, then you can think of
 syntax-quote/unquote similarly. For example, in Ruby you can write:
 
-```ruby
+#+BEGIN_SRC ruby
 name = "Jebediah"
 
 # You can create a new string through concatenation:
@@ -451,13 +449,13 @@ name = "Jebediah"
 
 # Or through interpolation:
 "Churn your butter, #{name}!"
-```
+#+END_SRC
 
 In the same way that string interpolation leads to clearer and more
 concise code, syntax-quoting and unquoting allow us to create lists
 more clearly and concisely. Consider:
 
-```clojure
+#+BEGIN_SRC clojure
 ;; Building a list with the list function
 (list '+ 1 (inc 1))
 ; => (+ 1 2)
@@ -468,19 +466,19 @@ more clearly and concisely. Consider:
 ;; Building a list with unquoting
 `(+ 1 ~(inc 1))
 ; => (clojure.core/+ 1 2)
-```
+#+END_SRC
 
 As you can see, the syntax-quote version is the most concise. Also,
 its visual form is closest to the final form of the list, making it
 the easiest to understand.
 
-## Applying Your Knowledge to a Macro
+** Applying Your Knowledge to a Macro
 
 Now that we have a good handle on how syntax quoting works, let's take
-a closer look at how it's employed in the `code-critic` macro. Here's
+a closer look at how it's employed in the =code-critic= macro. Here's
 the macro again:
 
-```clojure
+#+BEGIN_SRC clojure
 (defmacro code-critic
   "phrases are courtesy Hermes Conrad from Futurama"
   [{:keys [good bad]}]
@@ -489,14 +487,14 @@ the macro again:
                 (quote ~bad))
        (println "Sweet gorilla of Manila, this is good code:"
                 (quote ~good))))
-```
+#+END_SRC
 
 To make things easier on ourselves, let's focus on a subset of the
 macro. In order to spare our tender feelings, we'll look at the part
 of the macro that praises our code. Here's how a code-praiser would
 look without syntax-quote and with it:
 
-```clojure
+#+BEGIN_SRC clojure
 ;; Without syntax-quote
 (defmacro code-praiser
   [code]
@@ -513,40 +511,40 @@ look without syntax-quote and with it:
   `(println
     "Sweet gorilla of Manila, this is good code:"
     (quote ~code)))
-```
+#+END_SRC
 
 Here are the differences:
 
-1.  Without syntax-quote, we need to use the `list` function. Remember
-    that we want to return a list which will then be evaluated,
-    resulting in the function `println` being applied.
-    
-    The `list` function isn't necessary when we use syntax-quote,
-    however, because a syntax-quoted list evaluates to a list &mdash;
-    not to a function call, special form call, or macro call.
+1. Without syntax-quote, we need to use the =list= function. Remember
+   that we want to return a list which will then be evaluated,
+   resulting in the function =println= being applied.
 
-2.  Without syntax-quote, we need to quote the symbol `println`. This
-    is because we want the resulting list to include the symbol
-    `println`, not the function which `println` evaluates to.
-    
-    By comparison, symbols within a syntax-quoted list are not
-    evaluated; a fully-qualified symbol is returned. `println` thus
-    doesn't need to be preceded by a single quote.
+   The =list= function isn't necessary when we use syntax-quote,
+   however, because a syntax-quoted list evaluates to a list &mdash;
+   not to a function call, special form call, or macro call.
+   
+2. Without syntax-quote, we need to quote the symbol =println=. This
+   is because we want the resulting list to include the symbol
+   =println=, not the function which =println= evaluates to.
 
-3.  The string is treated the same in both versions.
+   By comparison, symbols within a syntax-quoted list are not
+   evaluated; a fully-qualified symbol is returned. =println= thus
+   doesn't need to be preceded by a single quote.
+   
+3. The string is treated the same in both versions.
+   
+4. Without syntax quote, we need to build up another list with the
+   =list= function and the =quote= symbol quoted. This might make your
+   head hurt. Look at the macro expansion &mdash; we want to call
+   =quote= on the data structure which was passed to the macro.
 
-4.  Without syntax quote, we need to build up another list with the
-    `list` function and the `quote` symbol quoted. This might make your
-    head hurt. Look at the macro expansion &mdash; we want to call
-    `quote` on the data structure which was passed to the macro.
-    
-    With syntax quote, we can continue to build a list more concisely.
+   With syntax quote, we can continue to build a list more concisely.
+   
+5. Finally, in the syntax-quoted version we have to unquote =code= so
+   that it will be evaluated. Otherwise, the symbol =code= would be
+   included in the macro expansion instead of its value, `(+ 1 1)=:
 
-5.  Finally, in the syntax-quoted version we have to unquote `code` so
-    that it will be evaluated. Otherwise, the symbol `code` would be
-    included in the macro expansion instead of its value, \`(+ 1 1)=:
-
-```clojure
+#+BEGIN_SRC clojure
 ;; This is what happens if we don't unquote "code" in the macro
 ;; definition:
 (defmacro code-praiser
@@ -560,13 +558,13 @@ Here are the differences:
 (clojure.core/println
   "Sweet gorilla of Manila, this is good code:"
   (quote user/code))
-```
+#+END_SRC
 
 Sweet gorilla of Manila, you've come a long way! With this smaller
-portion of the `code-critic` macro thoroughly dissected, we can now
+portion of the =code-critic= macro thoroughly dissected, we can now
 turn our attention back to the full macro:
 
-```clojure
+#+BEGIN_SRC clojure
 (defmacro code-critic
   "phrases are courtesy Hermes Conrad from Futurama"
   [{:keys [good bad]}]
@@ -574,22 +572,22 @@ turn our attention back to the full macro:
                 (quote ~bad))
        (println "Sweet gorilla of Manila, this is good code:"
                 (quote ~good))))
-```
+#+END_SRC
 
 Here, the principles are exactly the same. We're using syntax-quote
 because it lets us write things out more concisely and we're unquoting
 the bits that we want evaluated. There are two differences, however.
 
 First, we're now dealing with two variables within the syntax-quoted
-list: `good` and `bad`. These variables are introduced by
-destructuring the argument passed to `code-critic`, a map containing
-`:good` and `:bad` keys. This isn't macro-specific; as we mentioned
-above, functions and `let` bindings both allow destructuring.
+list: =good= and =bad=. These variables are introduced by
+destructuring the argument passed to =code-critic=, a map containing
+=:good= and =:bad= keys. This isn't macro-specific; as we mentioned
+above, functions and =let= bindings both allow destructuring.
 
-Second, we have to wrap our two `println` expressions in a `do`
-expression. Why are we \*do\*ing that? (Ha ha!) Consider the following:
+Second, we have to wrap our two =println= expressions in a =do=
+expression. Why are we *do*ing that? (Ha ha!) Consider the following:
 
-```clojure
+#+BEGIN_SRC clojure
 (defmacro code-makeover
   [code]
   `(println "Before: " (quote ~code))
@@ -597,44 +595,44 @@ expression. Why are we \*do\*ing that? (Ha ha!) Consider the following:
 
 (code-makeover (1 2 +))
 ; => After:  (+ 2 1)
-```
+#+END_SRC
 
 Why wasn't the "before" version printed? The macro only returned its
 last expression, in this case
 
-```clojure
+#+BEGIN_SRC clojure
 `(println "After: " (quote ~(reverse code)))
-```
+#+END_SRC
 
-`do` lets you wrap up multiple expressions into one expression in
+=do= lets you wrap up multiple expressions into one expression in
 situations like this.
 
 And thus concludes our introduction to the mechanics of writing a
 macro! Sweet sacred boa of Western and Eastern Samoa, that was a lot!
 To sum up:
 
--   Macros receive unevaluated, arbitrary data structures as arguments.
-    You can use argument destructuring just like you can with functions
-    and `let` bindings
--   Macros should return data structures which can be evaluated by
-    Clojure
--   Most of the time, macros will return lists
--   It's important to be clear on the distinction between a symbol and
-    the value it evaluates to when building up your list
--   You can build up the list to be returned by using list functions or
-    by using syntax-quote
--   Syntax quoting usually leads to code that's clearer and more concise
--   You can unquote forms when using syntax quoting
--   Use `do` to wrap up many forms to be evaluated
+- Macros receive unevaluated, arbitrary data structures as arguments.
+  You can use argument destructuring just like you can with functions
+  and =let= bindings
+- Macros should return data structures which can be evaluated by
+  Clojure
+- Most of the time, macros will return lists
+- It's important to be clear on the distinction between a symbol and
+  the value it evaluates to when building up your list
+- You can build up the list to be returned by using list functions or
+  by using syntax-quote
+- Syntax quoting usually leads to code that's clearer and more concise
+- You can unquote forms when using syntax quoting
+- Use =do= to wrap up many forms to be evaluated
 
-## Refactoring a Macro & Unquote Splicing
+** Refactoring a Macro & Unquote Splicing
 
-That `code-critic` macro isn't actually very good. Look at the
-duplication! There are two `println` calls which are nearly identical.
+That =code-critic= macro isn't actually very good. Look at the
+duplication! There are two =println= calls which are nearly identical.
 Let's clean that up. First, let's create a function to generate those
-`println` lists:
+=println= lists:
 
-```clojure
+#+BEGIN_SRC clojure
 (defn criticize-code
   [criticism code]
   `(println ~criticism (quote ~code)))
@@ -643,36 +641,36 @@ Let's clean that up. First, let's create a function to generate those
   [{:keys [good bad]}]
   `(do ~(criticize-code "Cursed bacteria of Liberia, this is bad code:" bad)
        ~(criticize-code "Sweet sacred boa of Western and Eastern Samoa, this is good code:" good)))
-```
+#+END_SRC
 
-Notice how the `criticize-code` function returns a syntax-quoted list.
+Notice how the =criticize-code= function returns a syntax-quoted list.
 This is how we build up the list that the macro will return.
 
 There's still room for improvement, though. We still have multiple,
 nearly-identical calls to a function. In a situation like this it
-makes sense to use a seq function &mdash; `map` will do.
+makes sense to use a seq function &mdash; =map= will do.
 
-```clojure
+#+BEGIN_SRC clojure
 (defmacro code-critic
   [{:keys [good bad]}]
   `(do ~(map #(apply criticize-code %)
              [["Great squid of Madrid, this is bad code:" bad]
               ["Sweet gorilla of Manila, this is good code:" good]])))
-```
+#+END_SRC
 
 This is looking a little better. We're mapping over each
-criticism/code pair and applying the `criticize-code` function to the
+criticism/code pair and applying the =criticize-code= function to the
 pair. Let's try to run the code:
 
-```clojure
+#+BEGIN_SRC clojure
 (code-critic {:good (+ 1 1) :bad (1 + 1)})
 ; => NullPointerException
-```
+#+END_SRC
 
 Oh no! That didn't work at all! What happened? Let's expand the macro
 to see what we're trying to get Clojure to evaluate:
 
-```clojure
+#+BEGIN_SRC clojure
 (clojure.pprint/pprint (macroexpand '(code-critic {:good (+ 1 1) :bad (1 + 1)})))
 ; =>
 (do
@@ -682,21 +680,21 @@ to see what we're trying to get Clojure to evaluate:
   (clojure.core/println
    "Sweet gorilla of Manila, this is good code:"
    '(+ 1 1))))
-```
+#+END_SRC
 
-It looks like we're trying to evaluate the result of a `println`
+It looks like we're trying to evaluate the result of a =println=
 function call. We can see this more clearly if we simplify the macro
 expansion a bit:
 
-```clojure
+#+BEGIN_SRC clojure
 (do
  ((clojure.core/println "criticism" '(1 + 1))
   (clojure.core/println "criticism" '(+ 1 1))))
-```
+#+END_SRC
 
 Here's how this would evaluate:
 
-```clojure
+#+BEGIN_SRC clojure
 ;; After evaluating first println call:
 (do
  (nil
@@ -705,18 +703,18 @@ Here's how this would evaluate:
 ;; After evaluating second println call:
 (do
  (nil nil))
-```
+#+END_SRC
 
-This is the cause of the exception. `println` evaluates to nil, so we
-end up with something like \`(nil nil)=. `nil` isn't callable, and we
+This is the cause of the exception. =println= evaluates to nil, so we
+end up with something like `(nil nil)=. =nil= isn't callable, and we
 get a NullPointerException.
 
-We ended up with this code because `map` returns a list. In this case,
-it returned a list of `println` expressions. Unquote splicing was
+We ended up with this code because =map= returns a list. In this case,
+it returned a list of =println= expressions. Unquote splicing was
 invented exactly for this reason. Unquote splicing is represented by
-`~@`. Here are some examples:
+=~@=. Here are some examples:
 
-```clojure
+#+BEGIN_SRC clojure
 ;; Without unquote splicing
 `(+ ~(list 1 2 3))
 ; => (clojure.core/+ (1 2 3))
@@ -724,18 +722,18 @@ invented exactly for this reason. Unquote splicing is represented by
 ;; With unquote splicing
 `(+ ~@(1 2 3))
 ; => (clojure.core/+ 1 2 3)
-```
+#+END_SRC
 
 I think of unquote splicing as unwrapping a seqable data structure,
 placing its contents directly within the enclosing syntax-quoted data
-structure. It's like the `~@` is a sledgehammer and whatever follows
+structure. It's like the =~@= is a sledgehammer and whatever follows
 it is a pinata and the result is the most terrifying and awesome party
 you've ever been to.
 
 Anyway, if we use unquote splicing in our code critic, then everything
 will work great:
 
-```clojure
+#+BEGIN_SRC clojure
 (defmacro code-critic
   [{:keys [good bad]}]
   `(do ~@(map #(apply criticize-code %)
@@ -745,13 +743,13 @@ will work great:
 ; =>
 Sweet lion of Zion, this is bad code: (1 + 1)
 Great cow of Moscow, this is good code: (+ 1 1)
-```
+#+END_SRC
 
 Woohoo!
 
 We can still clean this up, though. Check this out:
 
-```clojure
+#+BEGIN_SRC clojure
 (def criticisms {:good "Sweet manatee of Galilee, this is good code:"
                  :bad "Sweet giant anteater of Santa Anita, this is bad code:"})
 
@@ -767,25 +765,25 @@ We can still clean this up, though. Check this out:
 ; =>
 Sweet manatee of Galilee, this is good code: (+ 1 1)
 Sweet giant anteater of Santa Anita, this is bad code: (1 + 1)
-```
+#+END_SRC
 
 We won't break down this further refactoring because we have a bit
 more ground to cover yet, but I encourage you to play around with it
 until it makes sense.
 
-## Things to Watch Out For
+** Things to Watch Out For
 
 Macros have a couple unobvious "gotchas" that you should be aware of:
 
--   variable capture
--   double evaluation
--   macros all the way down
+- variable capture
+- double evaluation
+- macros all the way down
 
-### Variable Capture
+*** Variable Capture
 
 Consider the following:
 
-```clojure
+#+BEGIN_SRC clojure
 (def message "Good job!")
 (defmacro with-mischief
   [& stuff-to-do]
@@ -795,16 +793,16 @@ Consider the following:
   (println "Here's how I feel about that thing you did: " message))
 ; =>
 Here's how I feel about that thing you did:  Oh, big deal!
-```
+#+END_SRC
 
-The `println` call references the symbol `message` which we think is
-bound to the string ="Good job!"`. However, the =with-mischief` macro
+The =println= call references the symbol =message= which we think is
+bound to the string ="Good job!"=. However, the =with-mischief= macro
 has created a new binding for message.
 
 Notice that we didn't use syntax-quote in our macro. Doing so would
 actually result in an exception:
 
-```clojure
+#+BEGIN_SRC clojure
 (def message "Good job!")
 (defmacro with-mischief
   [& stuff-to-do]
@@ -814,14 +812,14 @@ actually result in an exception:
   (println "Here's how I feel about that thing you did: " message))
 ; =>
 Exception: Can't let qualified name: user/message
-```
+#+END_SRC
 
 Syntax-quoting is designed to prevent you from making this kind of
 mistake with macros. In the case where you do want to introduce let
 bindings in your macro, you can use something called a "gensym". The
-`gensym` function produces unique symbols on each successive call:
+=gensym= function produces unique symbols on each successive call:
 
-```clojure
+#+BEGIN_SRC clojure
 ;; Notice that a unique integer is appended with each call
 (gensym)
 ; => G__655
@@ -835,11 +833,11 @@ bindings in your macro, you can use something called a "gensym". The
 
 (gensym 'message)
 ; => message4763
-```
+#+END_SRC
 
-Here's how we could re-write `with-mischief` to be less mischievous:
+Here's how we could re-write =with-mischief= to be less mischievous:
 
-```clojure
+#+BEGIN_SRC clojure
 (defmacro without-mischief
   [& stuff-to-do]
   (let [macro-message (gensym 'message)]
@@ -851,12 +849,12 @@ Here's how we could re-write `with-mischief` to be less mischievous:
 ; =>
 Here's how I feel about that thing you did:  Good job!
 I still need to say:  Oh, big deal!
-```
+#+END_SRC
 
 Because this is such a common pattern, we can use something called an
 auto-gensym. Here's an example:
 
-```clojure
+#+BEGIN_SRC clojure
 (defmacro gensym-example
   []
   `(let [name# "Larry Potter"] name#))
@@ -866,54 +864,54 @@ auto-gensym. Here's an example:
 (macroexpand '(gensym-example))
 (let* [name__4947__auto__ "Larry Potter"]
   name__4947__auto__)
-```
+#+END_SRC
 
-Notice how both instance of `name#` is replaced with the same gensym'd
-symbol. `gensym` and auto-gensym are both used all the time when
+Notice how both instance of =name#= is replaced with the same gensym'd
+symbol. =gensym= and auto-gensym are both used all the time when
 writing macros and they allow you avoid variable capture.
 
-\### Double Evaluation
+### Double Evaluation
 
 Consider the following:
 
-```clojure
+#+BEGIN_SRC clojure
 (defmacro report
   [to-try]
   `(if ~to-try
      (println (quote ~to-try) "was successful:" ~to-try)
      (println (quote ~to-try) "was not successful:" ~to-try)))
-
+     
 ;; Thread/sleep takes a number of milliseconds to sleep for
 (report (Thread/sleep 1000) (+ 1 1))
-```
+#+END_SRC
 
 In this case, we would actually sleep for 2 seconds because
-\`(Thread/sleep 1000)= actually gets evaluated twice. "Big deal!" your
+`(Thread/sleep 1000)= actually gets evaluated twice. "Big deal!" your
 inner example critic says. Well, if our code did something like
 transfer money between bank accounts, this would be a very big deal.
 Here's how we could avoid this problem:
 
-```clojure
+#+BEGIN_SRC clojure
 (defmacro report
   [to-try]
   `(let [result# ~to-try]
      (if result#
        (println (quote ~to-try) "was successful:" result#)
        (println (quote ~to-try) "was not successful:" result#))))
-```
+#+END_SRC
 
 By binding the macro's argument to a gensym, we only need to evaluate
 it once.
 
-### Macros all the way down
+*** Macros all the way down
 
 One subtler pitfall of using macros is that you can end up having to
 write more and more of them to get anything done. This happens because
 macros don't exist at runtime and because their arguments are not
-evaluated. For example, let's say we wanted to `doseq` using our
-`report` macro:
+evaluated. For example, let's say we wanted to =doseq= using our
+=report= macro:
 
-```clojure
+#+BEGIN_SRC clojure
 ;; Instead of multiple calls to report...
 (report (= 1 1))
 ; => (= 1 1) was successful: true
@@ -927,26 +925,26 @@ evaluated. For example, let's say we wanted to `doseq` using our
 ; =>
 code was successful: (= 1 1)
 code was successful: (= 1 2)
-```
+#+END_SRC
 
 This isn't what we want at all. Here's what a macroexpansion for one
-of the `doseq` iterations would look like:
+of the =doseq= iterations would look like:
 
-```clojure
+#+BEGIN_SRC clojure
 (if
  code
  (clojure.core/println 'code "was successful:" code)
  (clojure.core/println 'code "was not successful:" code))
-```
+#+END_SRC
 
-As you can see, `report` receives the unevaluated symbol `code` in each
-iteration, whereas we want it to receive whatever `code` is bound to
-at runtime. `report` just can't do that, though. It's like it has
+As you can see, =report= receives the unevaluated symbol =code= in each
+iteration, whereas we want it to receive whatever =code= is bound to
+at runtime. =report= just can't do that, though. It's like it has
 t-rex arms, with runtime values forever out of its reach.
 
 To resolve this situation we might write another macro, like:
 
-```clojure
+#+BEGIN_SRC clojure
 (defmacro doseq-macro
   [macroname & args]
   `(do
@@ -956,7 +954,7 @@ To resolve this situation we might write another macro, like:
 ; =>
 (= 1 1) was successful: true
 (= 1 2) was not successful: false
-```
+#+END_SRC
 
 If you ever find yourself in this situation, take some time to
 re-think your approach. There's likely a less confusing way to
@@ -969,7 +967,7 @@ To close things out, it's finally time to put on our pretending caps
 and work on that online potion store we talked about at the very
 beginning of the chapter.
 
-## Brews for the Brave and True
+** Brews for the Brave and True
 
 When you began this chapter, I revealed a dream: to find some kind of
 drinkable that, once ingested, would temporarily give me the power and
@@ -986,7 +984,7 @@ have some validation in place. These orders will get converted to
 Clojure maps before we validate them. What I'm thinking is we want
 something like this:
 
-```clojure
+#+BEGIN_SRC clojure
 ;; The shipping details of an order will be represented as a map.
 ;; There are a couple invalid fields in this one.
 (def shipping-details
@@ -1014,7 +1012,7 @@ something like this:
 
    :postal-code
    ["Please enter a postal code" not-empty
-
+    
     "Please enter a postal code that looks like a US postal code"
     #(or (empty? %)
          (not (re-seq #"[^0-9-]" %)))]
@@ -1031,20 +1029,20 @@ something like this:
 ; =>
 {:email ["Your email address doesn't look like an email address."]
  :city ["Please enter a city"]}
-```
+#+END_SRC
 
 So far so good, right? Now we just need to actually write out the
-`validate` function. After that we'll write a macro to aid with
+=validate= function. After that we'll write a macro to aid with
 validation.
 
-The `validate` function can be decomposed into two functions, one to
+The =validate= function can be decomposed into two functions, one to
 get apply validations to a single validation and return error messages
 and another to accumulate those error messages into a final map of
 error messages like the one we see above.
 
 Here's a function for applying validations to a single value:
 
-```clojure
+#+BEGIN_SRC clojure
 (defn error-messages-for
   "return a seq of error messages
    validation-check-groups is a seq of alternating messages and
@@ -1065,11 +1063,11 @@ Here's a function for applying validations to a single value:
                      #(or (empty? %)
                           (not (re-seq #"[^0-9-]" %)))])
 ; => ("Please enter a postal code that looks like a US postal code")
-```
+#+END_SRC
 
 Now we need to accumulate these error messages in a map:
 
-```clojure
+#+BEGIN_SRC clojure
 (defn validate
   "returns a map with a vec of errors for each key"
   [to-validate validations]
@@ -1087,14 +1085,14 @@ Now we need to accumulate these error messages in a map:
 ; =>
 {:email ("Your email address doesn't look like an email address")
  :city ("Please enter a city")}
-```
+#+END_SRC
 
 Success!
 
 With our validation code in place, we can now validate records to our
 heart's content! Most often, validation will look something like this:
 
-```clojure
+#+BEGIN_SRC clojure
 (let [errors (validate shipping-details shipping-details-validation)]
   (if (empty? errors)
     (render :success)
@@ -1105,22 +1103,22 @@ heart's content! Most often, validation will look something like this:
     (do (save-shipping-details shipping-details)
         (redirect-to (url-for :order-confirmation)))
     (render "shipping-details" {:errors errors})))
-```
+#+END_SRC
 
 Here's where we can an introduce a macro to clean things up a bit.
 Notice the pattern? It's:
 
-1.  Validate a record and bind result to `errors`
-2.  Check whether there were any errors
-3.  If there were, do the success thing
-4.  Otherwise do the failure thing
+1. Validate a record and bind result to =errors=
+2. Check whether there were any errors
+3. If there were, do the success thing
+4. Otherwise do the failure thing
 
 I think that we can clean this up by introducing a macro called
-`if-valid`. It will meet the rationale for creating a macro in that it
+=if-valid=. It will meet the rationale for creating a macro in that it
 will allow us to write code that's both more concise and more
 meaningful. Here's how we'll use it:
 
-```clojure
+#+BEGIN_SRC clojure
 (if-valid shipping-details shipping-details-validation errors
  (render :success)
  (render :failure errors))
@@ -1129,15 +1127,15 @@ meaningful. Here's how we'll use it:
  (do (save-shipping-details shipping-details)
      (redirect-to (url-for :order-confirmation)))
  (render "shipping-details" {:errors errors}))
-```
+#+END_SRC
 
-Not a *huge* difference, but it expresses our intention more
+Not a /huge/ difference, but it expresses our intention more
 succinctly. It's like asking someone to give you the bottle opener
 instead of saying "please give me the manual device for removing the
 temporary sealant from a glass container of liquid." Here's the
-implementation. Note points are floating in the ocean, like `~~~1~~~`:
+implementation. Note points are floating in the ocean, like =~~~1~~~=:
 
-```clojure
+#+BEGIN_SRC clojure
 (defmacro if-valid
   "Handle validation more concisely"
   ;; ~~~1~~~
@@ -1147,7 +1145,7 @@ implementation. Note points are floating in the ocean, like `~~~1~~~`:
      (if (empty? ~errors-name)
        ;; ~~~3~~~
        ~@then-else)))
-```
+#+END_SRC
 
 That's actually pretty simple! After all this talk about macros and
 going through their mechanics in such detail, I bet you were expecting
@@ -1157,22 +1155,22 @@ will help.
 
 Let's break the macro down:
 
-1.  It takes four arguments: `to-validate`, `validations`,
-    `errors-name`, and the rest-arg `then-else`. Using `errors-name`
-    like this is a new strategy. We want to have access to the errors
-    within the `then-else` statements, but we need to avoid variable
-    capture. Giving the macro the name that the errors should be bound
-    to allows us to get around this problem.
+1. It takes four arguments: =to-validate=, =validations=,
+   =errors-name=, and the rest-arg =then-else=. Using =errors-name=
+   like this is a new strategy. We want to have access to the errors
+   within the =then-else= statements, but we need to avoid variable
+   capture. Giving the macro the name that the errors should be bound
+   to allows us to get around this problem.
 
-2.  The syntax quote abstracts the general form of the let/validate/if
-    pattern we saw above.
+2. The syntax quote abstracts the general form of the let/validate/if
+   pattern we saw above.
 
-3.  We use unquote-splicing to unpack the `if` branches which were
-    packed into the `then-else` rest arg.
+3. We use unquote-splicing to unpack the =if= branches which were
+   packed into the =then-else= rest arg.
 
 Woohoo!
 
-## Some Final Advice
+** Some Final Advice
 
 Macros are really fun tools that allow you to code with fewer
 inhibitions. Using macros, you have a degree of freedom and
