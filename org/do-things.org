@@ -1,10 +1,8 @@
----
-title: Do Things
-link_title: Do Things
-kind: documentation
----
+#+Title: Do Things
+#+MDH_LINK_TITLE: Do Things
+#+OPTIONS: toc:nil
 
-# Do Things
+* Do Things
 
 While you've undoubtedly heard of Clojure's awesome concurrency
 support and other stupendous features, Clojure's most salient
@@ -30,17 +28,17 @@ One final note before we start: in Clojure, the core data structures
 aren't mutable. For example, we'll be looking at the vector data
 structure, which looks a lot like arrays in other languages:
 
-```clojure
+#+BEGIN_SRC clojure
 (def failed-protagonist-names
   ["Larry Potter"
    "Doreen the Explorer"
    "The Incredible Bulk"])
-```
+#+END_SRC
 
 Most other languages would allow you to manipulate this array. In
 Ruby or Javascript, for example:
 
-```ruby
+#+BEGIN_SRC ruby
 failed_protagonist_names = [
   "Larry Potter",
   "Doreen the Explorer",
@@ -52,61 +50,61 @@ failed_protagonist_names # => [
   "Doreen the Explorer",
   "The Incredible Bulk"
 ]
-```
+#+END_SRC
 
 In Clojure, there is no equivalent. We'll cover the implications of
 immutability in more detail later on, but for now keep in mind that
 immutability distinguishes these data structures from the ones you're
 used to in other programming languages.
 
-## Just Enough Data Structures
+** Just Enough Data Structures
 
 This section will briefly introduce you to core Clojure data
-structures. If you're curious about the functions used, [ClojureDocs](http://clojuredocs.org/) is
-a great reference for finding out more. You can also use `(doc
-functionname)` and `(source functionname)` in the REPL to see the
+structures. If you're curious about the functions used, [[http://clojuredocs.org/][ClojureDocs]] is
+a great reference for finding out more. You can also use =(doc
+functionname)= and =(source functionname)= in the REPL to see the
 documentation or source code for a function.
 
 We won't go over all the functions that can operate on each data
-structure, so I recommend you check out the [Clojure Cheatsheet](http://clojure.org/cheatsheet).
+structure, so I recommend you check out the [[http://clojure.org/cheatsheet][Clojure Cheatsheet]].
 
-### Numbers
+*** Numbers
 
 We're only going to work with integers and floats for awhile, though
-[Clojure's treatment of numbers](http://clojure.org/data_structures#Data-Structures-Numbers) is more sophisticated than that. Examples:
+[[http://clojure.org/data_structures#Data-Structures-Numbers][Clojure's treatment of numbers]] is more sophisticated than that. Examples:
 
-```clojure
+#+BEGIN_SRC clojure
 93
 1.2
-```
+#+END_SRC
 
-### Strings
+*** Strings
 
 Here are some string examples:
 
-```clojure
+#+BEGIN_SRC clojure
 (println "Lord Voldemort")
 (println "\"He who must not be named\"")
 (println "\"Great cow of Moscow!\" - Hermes Conrad")
-```
+#+END_SRC
 
 Notice that Clojure only allows double quotes to delineate strings.
 ='Lord Voldemort'=, for example, is not a valid string. Also notice
 that Clojure doesn't have string interpolation. It only allows
-concatenation via the `str` function:
+concatenation via the =str= function:
 
-```clojure
+#+BEGIN_SRC clojure
 (def name "Chewbacca")
 (println (str "\"Uggllglglglglglglglll\" - " name))
 ; => "Uggllglglglglglglglll" - Chewbacca
-```
+#+END_SRC
 
-### Maps
+*** Maps
 
 Maps are similar to dictionaries or hashes in other languages. They're
 a way of associating some value with some other value. Examples:
 
-```clojure
+#+BEGIN_SRC clojure
 ;; ":a" is a keyword and we'll cover it in the next section
 {:a 1
  :b "boring example"
@@ -117,11 +115,11 @@ a way of associating some value with some other value. Examples:
 
 ;; Maps can be nested
 {:name {:first "John" :middle "Jacob" :last "Jingleheimerschmidt"}}
-```
+#+END_SRC
 
 You can look up values in maps:
 
-```clojure
+#+BEGIN_SRC clojure
 (get {:a 0} :a)
 ; => 0
 
@@ -130,27 +128,27 @@ You can look up values in maps:
 
 (get {:a 0 :b {:c "ho hum"}} :b)
 ; => {:c "ho hum"}
-```
+#+END_SRC
 
 Notice that we didn't need to use commas. In Clojure, commas are
 considered whitespace.
 
-### Keywords
+*** Keywords
 
 Clojure keywords are best understood by the way they're used. They're
 primarily used as keys in maps, as you can see above. Examples of
 keywords:
 
-```clojure
+#+BEGIN_SRC clojure
 :a
 :rumplestiltsken
 :34
 :_?
-```
+#+END_SRC
 
 Keywords can be used as functions. For example:
 
-```clojure
+#+BEGIN_SRC clojure
 ;; Look up :a in map
 (:a {:a 1 :b 2 :c 3})
 ; => 1
@@ -158,16 +156,16 @@ Keywords can be used as functions. For example:
 ;; This is equivalent to:
 (get {:a 1 :b 2 :c 3} :a)
 ; => 1
-```
+#+END_SRC
 
 I think this is super cool and I do it all the time. You should do it,
 too!
 
-### Vectors
+*** Vectors
 
 A vector is similar to an array in that it's a 0-indexed collection:
 
-```clojure
+#+BEGIN_SRC clojure
 ;; Here's a vector
 [3 2 1]
 
@@ -179,17 +177,17 @@ A vector is similar to an array in that it's a 0-indexed collection:
 ;; elements can be of any type and you can mix types.
 (get ["a" {:name "Pugsley Winterbottom"} "c"] 1)
 ; => {:name "Pugsley Winterbottom"}
-```
+#+END_SRC
 
 Vectors do differ from arrays in important ways, and we'll go over
 those differences later.
 
-### Lists
+*** Lists
 
 Lists are similar to vectors in that they're linear collections of
 values. You can't access their elements in the same way, though:
 
-```clojure
+#+BEGIN_SRC clojure
 ;; Here's a list - note the preceding single quote
 '(1 2 3 4)
 ; => (1 2 3 4)
@@ -204,13 +202,13 @@ values. You can't access their elements in the same way, though:
 ;; don't care about right now
 (nth '(100 200 300 400) 3)
 ; => 400
-```
+#+END_SRC
 
-### Sets
+*** Sets
 
 Sets are collections of unique values:
 
-```clojure
+#+BEGIN_SRC clojure
 ;; Literal notation
 #{"hannah montanna" "miley cyrus" 20 45}
 
@@ -225,23 +223,23 @@ Sets are collections of unique values:
 
 (get #{:a :b} "hannah montanna")
 ; => nil
-```
+#+END_SRC
 
-### Symbols and Naming
+*** Symbols and Naming
 
 Symbols are identifiers that are normally used to refer to something.
 Let's associate a value with a symbol:
 
-```clojure
+#+BEGIN_SRC clojure
 (def failed-protagonist-names
   ["Larry Potter"
    "Doreen the Explorer"
    "The Incredible Bulk"])
-```
+#+END_SRC
 
-In this case, `def` associates the value
-`["Larry Potter" "Doreen the Explorer" "The Incredible Bulk"]` with
-the symbol `failed-protagonist-names`.
+In this case, =def= associates the value
+=["Larry Potter" "Doreen the Explorer" "The Incredible Bulk"]= with
+the symbol =failed-protagonist-names=.
 
 You might be thinking, "So what? Every other programming language lets
 me associate a name with a value. Big whoop!" Lisps, however, allow
@@ -249,10 +247,10 @@ you to manipulate symbols as data, something we'll see a lot of when
 we start working with macros. Functions can return symbols and take
 them as arguments:
 
-```clojure
+#+BEGIN_SRC clojure
 (identity 'test)
 ; => test
-```
+#+END_SRC
 
 For now, though, it's OK to think "Big whoop!" and not be very
 impressed.
@@ -260,7 +258,7 @@ impressed.
 Thus concludes our Clojure data structures primer. Now it's time to
 dig in to functions and see how these data structures can be used!
 
-## Functions
+** Functions
 
 One of the reasons people go nuts over Lisps is that they allow you to
 build programs which behave in complex ways, yet the primary building
@@ -268,39 +266,39 @@ block &mdash; the function &mdash; is so simple. This section will
 initiate you in the beauty and elegance of Lisp functions by
 explaining:
 
--   Calling functions
--   Defining functions
--   Anonymous functions
--   Returning functions
+- Calling functions
+- Defining functions
+- Anonymous functions
+- Returning functions
 
-### Calling Functions
+*** Calling Functions
 
 By now you've evaluated many function calls in the REPL:
 
-```clojure
+#+BEGIN_SRC clojure
 (+ 1 2 3 4)
 (* 1 2 3 4)
 (first [1 2 3 4])
-```
+#+END_SRC
 
 You've probably been able to deduce that a function call returns a
 value. You've also probably deduced that function calls take the
 general form of:
 
-```
+#+BEGIN_SRC
 <function-call> ::= (<function-expression> [<arg>*])
-```
+#+END_SRC
 
-(If you're not familiar with [Backus-Naur Form](https://en.wikipedia.org/wiki/Backus–Naur_Form), this basically says "A
+(If you're not familiar with [[https://en.wikipedia.org/wiki/Backus%E2%80%93Naur_Form][Backus-Naur Form]], this basically says "A
 function call is denoted by an opening parenthesis, followed by a
 function expression, followed by one or more optional arguments.)
 
 What you might not know, however, is how flexible this structure is.
-For example, a `function expression` can be any expression which
+For example, a =function expression= can be any expression which
 evaluates to a function. The following are all valid function calls
-which evaluate to `6`:
+which evaluate to =6=:
 
-```clojure
+#+BEGIN_SRC clojure
 ;; Return value of "or" is first truthy value, and + is truthy
 ((or + -) 1 2 3)
 
@@ -309,24 +307,24 @@ which evaluate to `6`:
 
 ;; Return value of "first" is the first element in a sequence
 ((first [+ 0]) 1 2 3)
-```
+#+END_SRC
 
 However, these aren't valid function calls:
 
-```clojure
+#+BEGIN_SRC clojure
 ;; Numbers aren't functions
 (1 2 3 4)
 
 ;; Neither are strings
 ("test" 1 2 3)
-```
+#+END_SRC
 
 If you run these in your REPL you'll get something like
 
-```
+#+BEGIN_SRC
 ClassCastException java.lang.String cannot be cast to clojure.lang.IFn
 user/eval728 (NO_SOURCE_FILE:1)
-```
+#+END_SRC
 
 You're likely to see this error many times as you continue with
 Clojure. "x cannot be cast to clojure.lang.IFn" just means that you're
@@ -334,12 +332,12 @@ trying something as a function when it's not.
 
 Function flexibility doesn't end with the function expression!
 Syntactically, functions can take any expressions as arguments &mdash;
-including *other functions*.
+including /other functions/.
 
-Take the function `map` (not to be confused with the map data
+Take the function =map= (not to be confused with the map data
 structure), which can be understood by example:
 
-```clojure
+#+BEGIN_SRC clojure
 ;; The "inc" function increments a number by 1
 (inc 1)
 ; => 2
@@ -362,60 +360,60 @@ structure), which can be understood by example:
 
 (map dec [0 1 2 3])
 ; => (-1 0 1 2)
-```
+#+END_SRC
 
 Indeed, Clojure's ability to receive functions as arguments allows you
 to build more powerful abstractions. Those unfamiliar with this kind
 of programming think of functions as allowing you to generalize over
-data instances. For example, the `+` function abstracts addition over
+data instances. For example, the =+= function abstracts addition over
 any specific numbers.
 
 By contrast, Clojure (and all Lisps) allows you to create functions
-which generalize over processes. `map` allows you to generalize the
+which generalize over processes. =map= allows you to generalize the
 process of transforming a collection by applying a function &mdash; any
 function &mdash; over any collection.
 
-### Clarifying Terminology
+*** Clarifying Terminology
 
 In the above discussion, we make use of terms which might not be
 clear:
 
--   expression
--   evaluate
--   function call
--   apply a function
+- expression
+- evaluate
+- function call
+- apply a function
 
-An **expression** is anything which Clojure can **evaluate** to a value. I
+An *expression* is anything which Clojure can *evaluate* to a value. I
 have to be honest here, though &mdash; I've been using the term
 "expression" because it's more familiar, but in Lisp we call them
-**forms**. For example, the following are all forms:
+*forms*. For example, the following are all forms:
 
-```clojure
+#+BEGIN_SRC clojure
 2
 [1 2 3]
 (inc 1)
 (map inc [1 3 (inc 5)])
 ((or + -) 1 2 3)
-```
+#+END_SRC
 
 But these are not valid forms:
 
-```clojure
+#+BEGIN_SRC clojure
 ;; No closing paren
 (+ 1 2
 
 ;; No opening paren
 + 1 2)
-```
+#+END_SRC
 
 We'll go into more detail about how Clojure evaluates forms later in
 the chapter, but for now you can just think of it as a black box.
 Clojure encounters a form and magically evaluates it! Yay, magic!
 
-A **function call** is a form which is enclosed in parentheses where
+A *function call* is a form which is enclosed in parentheses where
 the first element in the parentheses is a function. Example:
 
-```clojure
+#+BEGIN_SRC clojure
 ;; Not a function call. If "if" isn't a function, then what is it?
 ;; Find out in section 3.2 below
 (if true 1 2)
@@ -424,14 +422,14 @@ the first element in the parentheses is a function. Example:
 ;; A proper function call
 (+ 1 2)
 3
-```
+#+END_SRC
 
 When Clojure encounters a function call, it continues the evaluation
 process by first evaluating all sub-forms recursively. Once the
 sub-forms are evaluated, the function is applied and it returns a
 value. For example:
 
-```clojure
+#+BEGIN_SRC clojure
 ;; Here's the function call. It kicks off the evaluation process
 (+ (inc 12) (/ (- 20 2) 100.0))
 
@@ -440,106 +438,106 @@ value. For example:
 (+ 13 (/ 18 100.0)) ; evaluated (-20 2)
 (+ 13 0.18) ; evaluated (/ 18 100.0)
 13.18 ; final evaluation
-```
+#+END_SRC
 
 And that's how you call a function! Now let's learn how to define
 these crazy puppies!
 
-### Defining Functions
+*** Defining Functions
 
 Function definitions are comprised of five main parts:
 
--   `defn`
--   A name
--   (Optional) a docstring
--   Parameters
--   The function body
+- =defn=
+- A name
+- (Optional) a docstring
+- Parameters
+- The function body
 
 Here's an example of a function definition and calling the function:
 
-```clojure
+#+BEGIN_SRC clojure
 (defn too-enthusiastic
   "Return a cheer that might be a bit too enthusiastic"
   [name]
   (str "OH. MY. GOD! " name " YOU ARE MOST DEFINITELY LIKE THE BEST "
   "MAN SLASH WOMAN EVER I LOVE YOU AND WE SHOULD RUN AWAY TO SOMEWHERE"))
-
+  
 (too-enthusiastic "Zelda")
 ; => "OH. MY. GOD! Zelda YOU ARE MOST DEFINITELY LIKE THE BEST MAN SLASH WOMAN EVER I LOVE YOU AND WE SHOULD RUN AWAY TO SOMEWHERE"
-```
+#+END_SRC
 
 Let's dive deeper into the docstring, parameters, and function
 body.
 
-\*\*\*# The Docstring
+***# The Docstring
 
 The docstring is really cool. You can view the docstring for a
-function in the REPL with `(doc fn-name)`, e.g. `(doc map)`.
+function in the REPL with =(doc fn-name)=, e.g. =(doc map)=.
 
-\*\*\*# Parameters
+***# Parameters
 
 Clojure functions can be defined with zero or more parameters:
 
-```clojure
+#+BEGIN_SRC clojure
 (defn no-params
   []
   "I take no parameters!")
-
+  
 (defn one-param
   [x]
   (str "I take one param: " x " It'd better be a string!")
-
+  
 (defn two-params
   [x y]
   (str "Two parameters! That's nothing! Pah! I will smoosh them "
   "together to spite you! " x y))
-```
+#+END_SRC
 
 Functions can also be overloaded by arity. This means that a different
 function body will run depending on the number of arguments passed to
 a function. Here's how you'd define a multi-arity function:
 
-```clojure
-;; Here's the general form of a multiple-arity function definition.
-;; Notice that each arity definition is enclosed in parentheses
-;; and has an argument list
-(defn multi-arity
-  ;; 3-arity arguments and body
-  ([first-arg second-arg third-arg]
-     (do-stuff first-arg second-arg third-arg))
-  ;; 2-arity arguments and body
-  ([first-arg second-arg]
-     (do-stuff first-arg second-arg))
-  ;; 1-arity arguments and body
-  ([first-arg]
-     (do-stuff first-arg)))
-```
+#+BEGIN_SRC clojure
+  ;; Here's the general form of a multiple-arity function definition.
+  ;; Notice that each arity definition is enclosed in parentheses
+  ;; and has an argument list
+  (defn multi-arity
+    ;; 3-arity arguments and body
+    ([first-arg second-arg third-arg]
+       (do-stuff first-arg second-arg third-arg))
+    ;; 2-arity arguments and body
+    ([first-arg second-arg]
+       (do-stuff first-arg second-arg))
+    ;; 1-arity arguments and body
+    ([first-arg]
+       (do-stuff first-arg)))
+#+END_SRC
 
 Overloading by arity is one way to provide default values for arguments:
 
-```clojure
-;; Here's an actual function
-(defn x-chop
-  "Describe the kind of chop you're inflicting on someone"
-  ;; 2-arity defintion
-  ([name chop-type]
-     (str "I " chop-type " chop " name "! Take that!"))
-  ;; 1-arity definition
-  ([name]
-     (x-chop name "karate")))
-;; In this case, "karate" is the default argument for the chop-type
-;; param
+#+BEGIN_SRC clojure
+  ;; Here's an actual function
+  (defn x-chop
+    "Describe the kind of chop you're inflicting on someone"
+    ;; 2-arity defintion
+    ([name chop-type]
+       (str "I " chop-type " chop " name "! Take that!"))
+    ;; 1-arity definition
+    ([name]
+       (x-chop name "karate")))
+  ;; In this case, "karate" is the default argument for the chop-type
+  ;; param
 
-(x-chop "Kanye West")
-; => "I karate chop Kanye West! Take that!"
-
-(x-chop "Kanye East" "slap")
-; => "I slap chop Kanye East! Take that!"
-```
+  (x-chop "Kanye West")
+  ; => "I karate chop Kanye West! Take that!"
+  
+  (x-chop "Kanye East" "slap")
+  ; => "I slap chop Kanye East! Take that!"
+#+END_SRC
 
 You can also make each arity do something completely unrelated:
 
-```clojure
+#+BEGIN_SRC clojure
 (defn weird-arity
   ([]
      "Destiny dressed you this morning my friend, and now Fear is
@@ -548,7 +546,7 @@ You can also make each arity do something completely unrelated:
      at your dangling unmentionables! - the Tick")
   ([number]
      (inc number)))
-```
+#+END_SRC
 
 But most likely, you don't want to do that.
 
@@ -556,7 +554,7 @@ Clojure also allows you to define variable-arity functions by
 including a "rest-param", as in "put the rest of these arguments in a
 list with the following name":
 
-```clojure
+#+BEGIN_SRC clojure
 (defn codger-communication
   [whippersnapper]
   (str "Get off my lawn, " whippersnapper "!!!"))
@@ -571,7 +569,7 @@ list with the following name":
 ;  "Get off my lawn, Henry!!!"
 ;  "Get off my lawn, Anne-Marie!!!"
 ;  "Get off my lawn, The Incredible Bulk!!!")
-```
+#+END_SRC
 
 As you can see, when you provide arguments to a variable-arity
 functions, the arguments get treated as a list.
@@ -579,7 +577,7 @@ functions, the arguments get treated as a list.
 You can mix rest-params with normal params, but the rest-param has to
 come last:
 
-```clojure
+#+BEGIN_SRC clojure
 (defn favorite-things
   [name & things]
   (str "Hi, " name ", here are my favorite things: "
@@ -587,182 +585,182 @@ come last:
 
 (favorite-things "Doreen" "gum" "shoes" "berries")
 ; => "Hi, Doreen, here are my favorite things: gum, shoes, berries"
-```
+#+END_SRC
 
 Finally, Clojure has a more sophisticated way of defining parameters
 called "destructuring", which deserves its own subsection:
 
-1.  Destructuring
+**** Destructuring
 
-    You don't have to use destructuring now. If you find it too
-    complicated, feel free to skip ahead and come back to this section
-    later. It will always be here for you!
-    
-    The basic idea behind destructuring is that it lets you concisely bind
-    *symbols* to *values* within a *collection*. Let's look at a basic
-    example:
-    
-    ```clojure
-    ;; Return the first element of a collection
-    (defn my-first
-      [[first-thing]] ; Notice that first-thing is within a vector
-      first-thing)
-    
-    (my-first ["oven" "bike" "waraxe"])
-    ; => "oven"
-    
-    ;; Here's how you would accomplish the same thing without destructuring:
-    (defn my-other-first
-      [collection]
-      (first collection))
-    (my-other-first ["nickel" "hair"])
-    ; => "nickel"
-    ```
-    
-    As you can see, the `my-first` associates the symbol `first-thing`
-    with the first element of the vector that was passed in as an
-    argument. It does this by placing the symbol within a vector.
-    
-    That vector is like a huge sign held up to Clojure which says, "Hey!
-    This function is going to receive a list or a vector as an argument.
-    Make my life easier by taking apart the argument's structure for me
-    and associating meaningful names with different parts of the
-    argument!"
-    
-    When destructuring a vector or list, you can name as many elements as
-    you want and also use rest params:
-    
-    ```clojure
-    (defn chooser
-      [[first-choice second-choice & unimportant-choices]]
-      (println (str "Your first choice is: " first-choice))
-      (println (str "Your second choice is: " second-choice))
-      (println (str "We're ignoring the rest of your choices. "
-                    "Here they are in case you need to cry over them: "
-                    (clojure.string/join ", " unimportant-choices))))
-    (chooser ["Marmalade", "Handsome Jack", "Pigpen", "Aquaman"])
-    ; => 
-    ; Your first choice is: Marmalade
-    ; Your second choice is: Handsome Jack
-    ; We're ignoring the rest of your choices. Here they are in case \
-    ; you need to cry over them: Pigpen, Aquaman
-    ```
-    
-    You can also destructure maps. In the same way that you tell Clojure
-    to destructure a vector or list by providing a vector as a parameter,
-    you destucture maps by providing a map as a parameter:
-    
-    ```clojure
-    (defn announce-treasure-location
-      [{lat :lat lng :lng}]
-      (println (str "Treasure lat: " lat))
-      (println (str "Treasure lng: " lng)))
-    (announce-treasure-location {:lat 28.22 :lng 81.33})
-    ; =>
-    ; Treasure lat: 100
-    ; Treasure lng: 50
-    ```
-    
-    Let's look more at this line:
-    
-    ```clojure
-    [{lat :lat lng :lng}]
-    ```
-    
-    This is like telling Clojure, "Yo! Clojure! Do me a flava and
-    associate the symbol `lat` with the value corresponding to the key
-    `:lat`. Do the same thing with `lng` and `:lng`, ok?."
-    
-    We often want to just take keywords and "break them out" of a map, so
-    there's a shorter syntax for that:
-    
-    ```clojure
-    ;; Works the same as above.
-    (defn announce-treasure-location
-      [{:keys [lat lng]}]
-      (println (str "Treasure lat: " lat))
-      (println (str "Treasure lng: " lng)))
-    ```
-    
-    If you want to have access to the original map argument, you can
-    indicate that:
-    
-    ```clojure
-    ;; Works the same as above.
-    (defn announce-treasure-location
-      [{:keys [lat lng] :as treasure-location}]
-      (println (str "Treasure lat: " lat))
-      (println (str "Treasure lng: " lng))
-    
-      ;; One would assume that this would put in new coordinates for your ship
-      (steer-ship! treasure-location))
-    ```
-    
-    In general, you can think of destructuring as instructing Clojure how
-    to associate symbols with values in a list, map, or vector.
-    
-    Now, on to the part of the function that actually does something: the
-    function body!
+You don't have to use destructuring now. If you find it too
+complicated, feel free to skip ahead and come back to this section
+later. It will always be here for you!
 
-2.  Function body
+The basic idea behind destructuring is that it lets you concisely bind
+/symbols/ to /values/ within a /collection/. Let's look at a basic
+example:
 
-    Your function body can contain any forms. Clojure automatically
-    returns the last form evaluated:
-    
-    ```clojure
-    (defn illustrative-function
-      []
-      (+ 1 304)
-      30
-      "joe")
-    (illustrative-function)
-    ; => "joe"
-    
-    (defn number-comment
-      [x]
-      (if (> x 6)
-        "Oh my gosh! What a big number!"
-        "That number's OK, I guess"))
-    
-    (number-comment 5)
-    ; => "That number's OK, I guess"
-    
-    (number-comment 7)
-    ; => "Oh my gosh! What a big number!"
-    ```
+#+BEGIN_SRC clojure
+;; Return the first element of a collection
+(defn my-first
+  [[first-thing]] ; Notice that first-thing is within a vector
+  first-thing)
 
-3.  All Functions are Created Equal
+(my-first ["oven" "bike" "waraxe"])
+; => "oven"
 
-    One final note: in Clojure, there are no privileged functions. `+` is
-    just a function, `-` is just a function, `inc` and `map` are just
-    functions. They're no better than your functions! So don't let them
-    give you any lip.
-    
-    More importantly, this fact helps to demonstrate Clojure's underlying
-    simplicity. In a way, Clojure is very dumb. When you make a function
-    call, Clojure just says, "map? Sure, whatever! I'll just apply this
-    and move on." It doesn't care what the function is or where it came
-    from, it treats all functions the same. At its core, Clojure doesn't
-    give two burger flips about addition, multiplication, or mapping. It
-    just cares about applying functions.
-    
-    As you program in with Clojure more, you'll see that this simplicity
-    is great. You don't have to worry about special rules or syntax for
-    working with functions. They all work the same!
+;; Here's how you would accomplish the same thing without destructuring:
+(defn my-other-first
+  [collection]
+  (first collection))
+(my-other-first ["nickel" "hair"])
+; => "nickel"
+#+END_SRC
 
-### Anonymous Functions
+As you can see, the =my-first= associates the symbol =first-thing=
+with the first element of the vector that was passed in as an
+argument. It does this by placing the symbol within a vector.
+
+That vector is like a huge sign held up to Clojure which says, "Hey!
+This function is going to receive a list or a vector as an argument.
+Make my life easier by taking apart the argument's structure for me
+and associating meaningful names with different parts of the
+argument!"
+
+When destructuring a vector or list, you can name as many elements as
+you want and also use rest params:
+
+#+BEGIN_SRC clojure
+(defn chooser
+  [[first-choice second-choice & unimportant-choices]]
+  (println (str "Your first choice is: " first-choice))
+  (println (str "Your second choice is: " second-choice))
+  (println (str "We're ignoring the rest of your choices. "
+                "Here they are in case you need to cry over them: "
+                (clojure.string/join ", " unimportant-choices))))
+(chooser ["Marmalade", "Handsome Jack", "Pigpen", "Aquaman"])
+; => 
+; Your first choice is: Marmalade
+; Your second choice is: Handsome Jack
+; We're ignoring the rest of your choices. Here they are in case \
+; you need to cry over them: Pigpen, Aquaman
+#+END_SRC
+
+You can also destructure maps. In the same way that you tell Clojure
+to destructure a vector or list by providing a vector as a parameter,
+you destucture maps by providing a map as a parameter:
+
+#+BEGIN_SRC clojure
+(defn announce-treasure-location
+  [{lat :lat lng :lng}]
+  (println (str "Treasure lat: " lat))
+  (println (str "Treasure lng: " lng)))
+(announce-treasure-location {:lat 28.22 :lng 81.33})
+; =>
+; Treasure lat: 100
+; Treasure lng: 50
+#+END_SRC
+
+Let's look more at this line:
+
+#+BEGIN_SRC clojure
+[{lat :lat lng :lng}]
+#+END_SRC
+
+This is like telling Clojure, "Yo! Clojure! Do me a flava and
+associate the symbol =lat= with the value corresponding to the key
+=:lat=. Do the same thing with =lng= and =:lng=, ok?."
+
+We often want to just take keywords and "break them out" of a map, so
+there's a shorter syntax for that:
+
+#+BEGIN_SRC clojure
+;; Works the same as above.
+(defn announce-treasure-location
+  [{:keys [lat lng]}]
+  (println (str "Treasure lat: " lat))
+  (println (str "Treasure lng: " lng)))
+#+END_SRC
+
+If you want to have access to the original map argument, you can
+indicate that:
+
+#+BEGIN_SRC clojure
+;; Works the same as above.
+(defn announce-treasure-location
+  [{:keys [lat lng] :as treasure-location}]
+  (println (str "Treasure lat: " lat))
+  (println (str "Treasure lng: " lng))
+  
+  ;; One would assume that this would put in new coordinates for your ship
+  (steer-ship! treasure-location))
+#+END_SRC
+
+In general, you can think of destructuring as instructing Clojure how
+to associate symbols with values in a list, map, or vector.
+
+Now, on to the part of the function that actually does something: the
+function body!
+
+**** Function body
+
+Your function body can contain any forms. Clojure automatically
+returns the last form evaluated:
+
+#+BEGIN_SRC clojure
+(defn illustrative-function
+  []
+  (+ 1 304)
+  30
+  "joe")
+(illustrative-function)
+; => "joe"
+
+(defn number-comment
+  [x]
+  (if (> x 6)
+    "Oh my gosh! What a big number!"
+    "That number's OK, I guess"))
+
+(number-comment 5)
+; => "That number's OK, I guess"
+
+(number-comment 7)
+; => "Oh my gosh! What a big number!"
+#+END_SRC
+
+**** All Functions are Created Equal
+
+One final note: in Clojure, there are no privileged functions. =+= is
+just a function, =-= is just a function, =inc= and =map= are just
+functions. They're no better than your functions! So don't let them
+give you any lip.
+
+More importantly, this fact helps to demonstrate Clojure's underlying
+simplicity. In a way, Clojure is very dumb. When you make a function
+call, Clojure just says, "map? Sure, whatever! I'll just apply this
+and move on." It doesn't care what the function is or where it came
+from, it treats all functions the same. At its core, Clojure doesn't
+give two burger flips about addition, multiplication, or mapping. It
+just cares about applying functions.
+
+As you program in with Clojure more, you'll see that this simplicity
+is great. You don't have to worry about special rules or syntax for
+working with functions. They all work the same!
+
+*** Anonymous Functions
 
 In Clojure, your functions don't have to have names. In fact, you'll
 find yourself using anonymous functions all the time.
 
 There are two ways to create anonymous functions. The first is to use
-the `fn` form:
+the =fn= form:
 
-```clojure
+#+BEGIN_SRC clojure
 ;; This looks a lot like defn, doesn't it?
 (fn [param-list]
   function body)
-
+  
 ;; Example
 (map (fn [name]
        (str "Hi, " name))
@@ -772,26 +770,26 @@ the `fn` form:
 ;; Another example
 ((fn [x] (* x 3)) 8)
 ; => 24
-```
+#+END_SRC
 
-You can treat `fn` nearly identically to the way you treat `defn`.
+You can treat =fn= nearly identically to the way you treat =defn=.
 The parameter lists and function bodies work exactly the same. You can
 use argument destructuring, rest-params, and so on.
 
 You could even associate your anonymous function with a name, which
 shouldn't come as a surprise:
 
-```clojure
+#+BEGIN_SRC clojure
 (def my-special-multiplier (fn [x] (* x 3)))
 (my-special-multiplier 12)
 ; => 36
-```
+#+END_SRC
 
-(If it does come as a surprise, then&#x2026; Surprise!)
+(If it does come as a surprise, then... Surprise!)
 
 There's another, more compact way to create anonymous functions:
 
-```clojure
+#+BEGIN_SRC clojure
 ;; Whoa this looks weird.
 #(* % 3)
 
@@ -803,47 +801,47 @@ There's another, more compact way to create anonymous functions:
 (map #(str "Hi, " %)
      ["Darth Vader" "Mr. Magoo"])
 ; => ("Hi, Darth Vader" "Hi, Mr. Magoo")
-```
+#+END_SRC
 
 You can see that it's definitely more compact, but it's probably also
 confusing. Let's break it down.
 
 This kind of anonymous function looks a lot like a function call,
-except that it's preceded by a pound sign, `#`:
+except that it's preceded by a pound sign, =#=:
 
-```clojure
+#+BEGIN_SRC clojure
 ;; Function expression
 (* 8 3)
 
 ;; Anonymous function
 #(* % 3)
-```
+#+END_SRC
 
 This similarity allows you to more quickly see what will happen when
 this anonymous function gets applied. "Oh," you can say to yourself,
 "this is going to multiply its argument by 3".
 
-As you may have guessed by now, the percent sign, `%`, indicates the
+As you may have guessed by now, the percent sign, =%=, indicates the
 argument passed to the function. If your anonymous function takes
-multiple arguments, you can distinguish them like this: `%1`, `%2`,
-`%3`, etc. `%` is equivalent to `%1`:
+multiple arguments, you can distinguish them like this: =%1=, =%2=,
+=%3=, etc. =%= is equivalent to =%1=:
 
-```clojure
+#+BEGIN_SRC clojure
 (#(str %1 " and " %2) "corn bread" "butter beans")
 ; => "corn bread and butter beans"
-```
+#+END_SRC
 
 You can also pass a rest param:
 
-```clojure
+#+BEGIN_SRC clojure
 (#(identity %&) 1 "blarg" :yip)
 ; => (1 "blarg" :yip)
-```
+#+END_SRC
 
-The main difference between this form and `fn` is that this form can
+The main difference between this form and =fn= is that this form can
 easily become unreadable and is best used for very short functions.
 
-### Returning Functions
+*** Returning Functions
 
 Functions can return other functions. The returned functions are
 closures, which means that they can access all the variables that were
@@ -851,7 +849,7 @@ in scope when the function was created.
 
 Here's a standard example:
 
-```clojure
+#+BEGIN_SRC clojure
 ;; inc-by is in scope, so the returned function has access to it even
 ;; when the returned function is used outside inc-maker
 (defn inc-maker
@@ -863,11 +861,11 @@ Here's a standard example:
 
 (inc3 7)
 ; => 10
-```
+#+END_SRC
 
 Woohoo!
 
-## Pulling It All Together
+** Pulling It All Together
 
 OK! Let's pull all this together and use our knowledge for a noble
 purpose: smacking around hobbits!
@@ -885,13 +883,13 @@ and randomly chooses the one hit.
 
 Fun!
 
-### The Shire's Next Top Model
+*** The Shire's Next Top Model
 
 For our hobbit model, we'll eschew such characteristics as "joviality"
 and "mischievousness" and focus only on the hobbit's tiny body. Here's
 our hobbit model:
 
-```clojure
+#+BEGIN_SRC clojure
 (def asym-hobbit-body-parts [{:name "head" :size 3}
                              {:name "left-eye" :size 1}
                              {:name "left-ear" :size 1}
@@ -911,7 +909,7 @@ our hobbit model:
                              {:name "left-lower-leg" :size 3}
                              {:name "left-achilles" :size 1}
                              {:name "left-foot" :size 2}])
-```
+#+END_SRC
 
 This is a vector of maps. Each map has the name of the body part and
 relative size of the body part. Look, I know that only anime
@@ -920,7 +918,7 @@ OK?
 
 Conspicuously missing is the hobbit's right side. Let's fix that:
 
-```clojure
+#+BEGIN_SRC clojure
 (defn has-matching-part?
   [part]
   (re-find #"^left-" (:name part)))
@@ -976,113 +974,113 @@ Conspicuously missing is the hobbit's right side. Let's fix that:
  {:name "right-achilles", :size 1}
  {:name "left-foot", :size 2}
  {:name "right-foot", :size 2}]
-```
+#+END_SRC
 
 Holy shipmates! This has a lot going on that we haven't discussed yet.
 So let's discuss it!
 
-### if
+*** if
 
-Clojure's `if` form is very simple
+Clojure's =if= form is very simple
 
-```clojure
+#+BEGIN_SRC clojure
 (if boolean-form
   then-form
   optional-else-form)
-```
-
+#+END_SRC
+  
 You could describe this as, if the boolean form returns true then
-evaluate and return `then-form`. Otherwise evaluate and return
-`optional-else-form` if it's there.
+evaluate and return =then-form=. Otherwise evaluate and return
+=optional-else-form= if it's there.
 
-If you have eagle eyes, you may have noticed something *different*
-about `if`: the `then` and `else` forms *are never both evaluated*.
-The rationale is clear. Imagine you had an `if` statement like this:
+If you have eagle eyes, you may have noticed something /different/
+about =if=: the =then= and =else= forms /are never both evaluated/.
+The rationale is clear. Imagine you had an =if= statement like this:
 
-```clojure
+#+BEGIN_SRC clojure
 (if good-mood
   (adjust-salary! 10000 all-employees)
   (adjust-salary! -20000 all-employees))
-```
+#+END_SRC
 
 If we evaluated both forms, like we do with function calls, then those
 poor employees would lose no matter what.
 
 Contrast this with a function call:
 
-```clojure
+#+BEGIN_SRC clojure
 (oh-my-god-a-function (+ 1 3) (+ 3 4))
-```
+#+END_SRC
 
 As we discussed in section 2.2 above, when you call a function, all of
-the sub-forms are evaluated before the function is applied. `(+ 1 3)`
-and `(+ 3 4)` are both evaluated before `oh-my-god-a-function` is
+the sub-forms are evaluated before the function is applied. =(+ 1 3)=
+and =(+ 3 4)= are both evaluated before =oh-my-god-a-function= is
 applied.
 
-This means that `if` is not a function. So what is it?
+This means that =if= is not a function. So what is it?
 
-In Lisp, there are a handful of **special forms** which do not follow
-the default evaluation rules. `if` is a special form, as are `def` and
-`defn`. We'll talk about special forms a bit in the next chapter. For
-now, you can feel special every time you use `if`.
+In Lisp, there are a handful of *special forms* which do not follow
+the default evaluation rules. =if= is a special form, as are =def= and
+=defn=. We'll talk about special forms a bit in the next chapter. For
+now, you can feel special every time you use =if=.
 
-### let
+*** let
 
 In our symmetrizer above, we saw the following:
 
-```clojure
+#+BEGIN_SRC clojure
 (let [[part & remaining] remaining-asym-parts
       final-body-parts (conj final-body-parts part)]
   some-stuff)
-```
+#+END_SRC
 
 All this does is bind the names on the left to the values on the
-right. You can think of `let` as short for "let it be", which is also
+right. You can think of =let= as short for "let it be", which is also
 a beautiful Beatles song (in case you didn't know (in which case, wtf
-man)). For example, "Let `final-body-parts` be `(conj final-body-parts
-part)`."
+man)). For example, "Let =final-body-parts= be =(conj final-body-parts
+part)=."
 
 Here are some simpler examples:
 
-```clojure
-(let [x 3]
-  x)
-; => 3
+#+BEGIN_SRC clojure
+  (let [x 3]
+    x)
+  ; => 3
+  
+  
+  (def dalmatian-list
+    ["Pongo" "Missis" "Puppy 1" "Puppy 2"]) ; and 97 more...
+  (let [dalmatians (take 2 dalmatian-list)]
+    dalmatians)
+  ; => ("Pongo" "Missis")
+  
+  ;; Notice the rest-param - it works just like rest-params
+  ;; in functions
+  (let [[pongo & dalmatians] dalmatian-list]
+    [pongo dalmatians])
+  ; => ["Pongo" ("Missis" "Puppy 1" "Puppy 2")]  
+#+END_SRC
 
+Notice that the value of a =let= form is the last form in its body
+which gets evaluated. Also, =let= forms are special forms, just like
+=if=. Special!
 
-(def dalmatian-list
-  ["Pongo" "Missis" "Puppy 1" "Puppy 2"]) ; and 97 more...
-(let [dalmatians (take 2 dalmatian-list)]
-  dalmatians)
-; => ("Pongo" "Missis")
-
-;; Notice the rest-param - it works just like rest-params
-;; in functions
-(let [[pongo & dalmatians] dalmatian-list]
-  [pongo dalmatians])
-; => ["Pongo" ("Missis" "Puppy 1" "Puppy 2")]  
-```
-
-Notice that the value of a `let` form is the last form in its body
-which gets evaluated. Also, `let` forms are special forms, just like
-`if`. Special!
-
-`let` forms follow all the destructuring rules which we introduced in
+=let= forms follow all the destructuring rules which we introduced in
 "Calling a Function" above.
 
-One way to think about `let` forms is that they provide parameters and
-their arguments side-by-side. `let` forms have two main uses:
+One way to think about =let= forms is that they provide parameters and
+their arguments side-by-side. =let= forms have two main uses:
 
--   They provide clarity by allowing you to name things
--   They allow you to evaluate an expression only once and re-use the
-    result. This is especially important when you need to re-use the
-    result of an expensive function call, like a network API call. It's
-    also important when the expression has side effects.
+- They provide clarity by allowing you to name things
+- They allow you to evaluate an expression only once and re-use the
+  result. This is especially important when you need to re-use the
+  result of an expensive function call, like a network API call. It's
+  also important when the expression has side effects.
 
-Let's have another look at the `let` form in our symmetrizing function
+Let's have another look at the =let= form in our symmetrizing function
 so we can understand exactly what's going on:
 
-```clojure
+#+BEGIN_SRC clojure
 ;; Associate "part" with the first element of "remaining-asym-parts"
 ;; Associate "remaining" with the rest of the elements in "remaining-asym-parts"
 ;; Associate "final-body-parts" with the result of (conj final-body-parts part)
@@ -1091,15 +1089,15 @@ so we can understand exactly what's going on:
   (if (has-matching-part? part)
     (recur remaining (conj final-body-parts (matching-part part)))
     (recur remaining final-body-parts)))
-```
+#+END_SRC
 
 
-Notice that `part`, `remaining`, and `final-body-parts` each gets used
-multiple times in the body of the `let`. If, instead of using the
-names `part`, `remaining`, and `final-body-parts` we used the original
+Notice that =part=, =remaining=, and =final-body-parts= each gets used
+multiple times in the body of the =let=. If, instead of using the
+names =part=, =remaining=, and =final-body-parts= we used the original
 expressions, it would be a mess! For example:
 
-```clojure
+#+BEGIN_SRC clojure
 (let [[part & remaining] remaining-asym-parts
       final-body-parts (conj final-body-parts part)]
   (if (has-matching-part? (first remaining-asym-parts))
@@ -1108,16 +1106,16 @@ expressions, it would be a mess! For example:
                  (matching-part (first remaining-asym-parts))))
     (recur (rest remaining-asym-parts)
            (conj final-body-parts (first remaining-asym-parts)))))
-```
+#+END_SRC
 
-So, `let` is a handy way to introduce names for values.
+So, =let= is a handy way to introduce names for values.
 
-### loop
+*** loop
 
-`loop` provides an efficient way to do recursion in Clojure. Let's
+=loop= provides an efficient way to do recursion in Clojure. Let's
 look at a simple example:
 
-```clojure
+#+BEGIN_SRC clojure
 (loop [iteration 0]
   (println (str "Iteration " iteration))
   (if (> iteration 3)
@@ -1130,23 +1128,23 @@ Iteration 2
 Iteration 3
 Iteration 4
 Goodbye!
-```
+#+END_SRC
 
-The first line, `loop [iteration 0]` begins the loop and introduces a
+The first line, =loop [iteration 0]= begins the loop and introduces a
 binding with an initial value. This is almost like calling an
 anonymous function with a default value. On the first pass through the
-loop, `iteration` has a value of 0.
+loop, =iteration= has a value of 0.
 
 Next, we print a super interesting little message.
 
-Then, we check the value of `iteration` - if it's greater than 3 then
-it's time to say goodbye. Otherwise, we `recur`. This is like calling
-the anonymous function created by `loop`, but this time we pass it an
-argument, `(inc iteration)`.
+Then, we check the value of =iteration= - if it's greater than 3 then
+it's time to say goodbye. Otherwise, we =recur=. This is like calling
+the anonymous function created by =loop=, but this time we pass it an
+argument, =(inc iteration)=.
 
 We could in fact accomplish the same thing just using functions:
 
-```clojure
+#+BEGIN_SRC clojure
 (defn recursive-printer
   ([]
      (recursive-printer 0))
@@ -1163,24 +1161,24 @@ Iteration 2
 Iteration 3
 Iteration 4
 Goodbye!
-```
+#+END_SRC
 
-As you can see, this is a little more verbose. Also, `loop` has much
+As you can see, this is a little more verbose. Also, =loop= has much
 better performance.
 
-### Regular Expressions
+*** Regular Expressions
 
 I won't go into how regular expressions work, but here's their literal
 notation:
 
-```clojure
+#+BEGIN_SRC clojure
 ;; pound, open quote, close quote
 #"regular-expression"
-```
+#+END_SRC
 
 And here's how regexes are used in our symmetrizer:
 
-```clojure
+#+BEGIN_SRC clojure
 ;; re-find returns true or false based on whether the
 ;; the part's name starts with the string "left-"
 (defn has-matching-part?
@@ -1198,13 +1196,13 @@ And here's how regexes are used in our symmetrizer:
    :size (:size part)})
 (matching-part {:name "left-eye" :size 1})
 ; => {:name "right-eye" :size 1}]
-```
+#+END_SRC
 
-### conj
+*** conj
 
-`conj` adds elements to a sequence:
+=conj= adds elements to a sequence:
 
-```clojure
+#+BEGIN_SRC clojure
 (conj [] 1)
 ; => [1]
 
@@ -1215,14 +1213,14 @@ And here's how regexes are used in our symmetrizer:
 ;; But it adds elements to *beginning* of a list
 (conj '(1) 2 3)
 ; => (3 2 1)
-```
+#+END_SRC
 
-### Symmetrizer
+*** Symmetrizer
 
 Now let's analyze the symmetrizer fully. Note points are floating in
-the ocean, like `~~~1~~~`:
+the ocean, like =~~~1~~~=:
 
-```clojure
+#+BEGIN_SRC clojure
 (def asym-hobbit-body-parts [{:name "head" :size 3}
                              {:name "left-eye" :size 1}
                              {:name "left-ear" :size 1}
@@ -1265,49 +1263,49 @@ the ocean, like `~~~1~~~`:
         (if (has-matching-part? part) ; ~~~5~~~
           (recur remaining (conj final-body-parts (matching-part part))) ; ~~~6~~~
           (recur remaining final-body-parts))))))
-```
+#+END_SRC
 
-1.  This function employs a general strategy which is common in functional
-    programming. Given a sequence (in this case, a vector of body parts
-    and their sizes), continuously split the sequence into a "head" and
-    a "tail". Process the head, add it to some result, and then
-    use recursion to continue the process with the tail.
-2.  Begin looping over the body parts. The "tail" of the sequence will be
-    bound to `remaining-asym-parts`. Initially, it's bound to the full
-    sequence passed to the function, `asym-body-parts`. Create a result
-    sequence, `final-body-parts`; its initial value is an empty vector.
-3.  If `remaining-asym-parts` is empty, that means we've processed the
-    entire sequence and can return the result, `final-body-parts`.
-4.  Otherwise, split the list into a head, `part`, and tail,
-    `remaining`. Also, add `part` to `final-body-parts` and re-bind the
-    result to the name `final-body-parts`. This might seem weird, and
-    it's worthwhile to figure out why it works.
-5.  Our growing sequence of `final-body-parts` already includes the
-    body part we're currently examining, `part`. Here, we decide
-    whether we need to add the matching body part to the list.
-6.  If so, then add the `matching-part` to `final-body-parts` and
-    recur. Otherwise, just recur.
+1. This function employs a general strategy which is common in functional
+   programming. Given a sequence (in this case, a vector of body parts
+   and their sizes), continuously split the sequence into a "head" and
+   a "tail". Process the head, add it to some result, and then
+   use recursion to continue the process with the tail.
+2. Begin looping over the body parts. The "tail" of the sequence will be
+   bound to =remaining-asym-parts=. Initially, it's bound to the full
+   sequence passed to the function, =asym-body-parts=. Create a result
+   sequence, =final-body-parts=; its initial value is an empty vector.
+3. If =remaining-asym-parts= is empty, that means we've processed the
+   entire sequence and can return the result, =final-body-parts=.
+4. Otherwise, split the list into a head, =part=, and tail,
+   =remaining=. Also, add =part= to =final-body-parts= and re-bind the
+   result to the name =final-body-parts=. This might seem weird, and
+   it's worthwhile to figure out why it works.
+5. Our growing sequence of =final-body-parts= already includes the
+   body part we're currently examining, =part=. Here, we decide
+   whether we need to add the matching body part to the list.
+6. If so, then add the =matching-part= to =final-body-parts= and
+   recur. Otherwise, just recur.
 
 If you're new to this kind of programming, this might take some time
 to puzzle out. Stick with it! Once you understand what's happening,
 you'll feel like a million bucks!
 
-### Shorter Symmetrizer with Reduce
+*** Shorter Symmetrizer with Reduce
 
 The pattern of "process each element in a sequence and build a result"
-is so common that there's a function for it: `reduce`.
+is so common that there's a function for it: =reduce=.
 
 Here's a simple example:
 
-```clojure
+#+BEGIN_SRC clojure
 ;; sum with reduce
 (reduce + [1 2 3 4])
 ; => 10
-```
+#+END_SRC
 
 Reduce could be implemented like this:
 
-```clojure
+#+BEGIN_SRC clojure
 (defn my-reduce
   ([f initial coll]
      (loop [result initial
@@ -1318,11 +1316,11 @@ Reduce could be implemented like this:
            (recur (f result current) rest)))))
   ([f [head & tail]]
      (my-reduce f (f head (first tail)) (rest tail))))
-```
+#+END_SRC
 
 We could re-implement symmetrize as follows:
 
-```clojure
+#+BEGIN_SRC clojure
 (defn better-symmetrize-body-parts
   "Expects a seq of maps which have a :name and :size"
   [asym-body-parts]
@@ -1333,18 +1331,18 @@ We could re-implement symmetrize as follows:
                 final-body-parts)))
           []
           asym-body-parts))
-```
+#+END_SRC
 
 Groovy!
 
-### Hobbit Violence
+*** Hobbit Violence
 
 My word, this is truly Clojure for the Brave and True!
 
 Now, let's create a function that will determine which part of the
 hobbit gets hit:
 
-```clojure
+#+BEGIN_SRC clojure
 (defn hit
   [asym-body-parts]
   (let [sym-parts (better-symmetrize-body-parts asym-body-parts)
@@ -1364,19 +1362,19 @@ hobbit gets hit:
 
 (hit asym-hobbit-body-parts)
 ; => {:name "left-eye", :size 1}
-```
+#+END_SRC
 
 Oh my god, that poor hobbit! You monster!
 
-## What Now?
+** What Now?
 
-By this point I *highly* recommend actually writing some code to
+By this point I /highly/ recommend actually writing some code to
 solidify your Clojure knowledge if you haven't started already. One
-great place to start would be to refactor out the `loop` in the `hit`
+great place to start would be to refactor out the =loop= in the =hit=
 function. Or, write out some project Euler challenges. Write
-*anything*.
+/anything/.
 
 In the next update, I'll include some project ideas and guidance. In
 the mean time, you can also check out
-[4Clojure](<http://www.4clojure.com/problems>), an online set of Clojure
+[4Clojure](http://www.4clojure.com/problems), an online set of Clojure
 problems designed to test your knowledge.
