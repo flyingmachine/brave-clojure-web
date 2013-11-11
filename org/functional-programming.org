@@ -1,32 +1,30 @@
----
-title: Functional Programming
-link_title: Functional Programming
-kind: documentation
----
+#+Title: Functional Programming
+#+MDH_LINK_TITLE: Functional Programming
+#+OPTIONS: toc:nil
 
-# Functional Programming
+* Functional Programming
 
 In this chapter, you'll begin to take your concrete experience with
 functions and data structures and integrate it in a new mindset, the
 functional programming mindset. By the end of this chapter, you'll
 have learned:
 
--   What pure functions are and why they're important
--   Why immutability matters
--   How to transform immutable values
--   How disentangling data and functions gives you more power and
-    flexibility
--   Why it's powerful to program to a small set of data abstractions
+- What pure functions are and why they're important
+- Why immutability matters
+- How to transform immutable values
+- How disentangling data and functions gives you more power and
+  flexibility
+- Why it's powerful to program to a small set of data abstractions
 
 The result of shoving all this knowledge into your brain matter is
 that you'll have an entirely new approach to problem solving!
 
-## Pure Functions, What and Why
+** Pure Functions, What and Why
 
-With the exception of `println`, all the functions we've used up till
+With the exception of =println=, all the functions we've used up till
 now have been pure functions:
 
-```clojure
+#+BEGIN_SRC clojure
 ;; Pure functions:
 (get [:chumbawumba] 0)
 ; => :chumbawumba
@@ -36,18 +34,18 @@ now have been pure functions:
 
 (str "wax on " "wax off")
 ; => "wax on wax off"
-```
+#+END_SRC
 
 What makes them pure functions, and why does it matter?
 
 A function is pure if it meets two qualifications:
 
-1.  It always returns the same result given the same arguments. This is
-    called "referential transparency" and you can add it to your list of
-    five-dollar programming terms.
-2.  It doesn't cause any side effects, e.g. it doesn't "change the
-    external world" by changing external mutable objects or outputting
-    to i/o.
+1. It always returns the same result given the same arguments. This is
+   called "referential transparency" and you can add it to your list of
+   five-dollar programming terms.
+2. It doesn't cause any side effects, e.g. it doesn't "change the
+   external world" by changing external mutable objects or outputting
+   to i/o.
 
 These qualities matter because they make it easier for us to reason
 about our programs. Pure functions are easier to reason about because
@@ -66,14 +64,14 @@ Let's look at referential transparency and lack-of-side-effects in
 more detail so that we'll know exactly what they are how they're
 helpful.
 
-### Pure Functions Are Referentially Transparent
+*** Pure Functions Are Referentially Transparent
 
 Referentially transparent functions always returns the same result
 when called with the same argument. In order to achieve this, they
 only rely on 1) their own arguments and 2) immutable values to
 determine their return value.
 
-```clojure
+#+BEGIN_SRC clojure
 ;; Mathematical functions are referentially transparent
 (+ 1 2)
 ; => 3
@@ -84,12 +82,12 @@ determine their return value.
 (defn wisdom
   [words]
   (str words ", Daniel-san"))
-```
+#+END_SRC
 
 By contrast, these functions do not yield the same result with the
 same arguments and, therefore, are not referentially transparent:
 
-```clojure
+#+BEGIN_SRC clojure
 ;; Any function which relies on a random number generator
 ;; cannot be referentially transparent
 (defn random-judgment
@@ -107,7 +105,7 @@ same arguments and, therefore, are not referentially transparent:
 ;; Note, however, that "analyze-file" could very well be referentially
 ;; transparent - it could very well return the same result every time
 ;; it's passed the same string.
-```
+#+END_SRC
 
 When using a referentially transparent function, you never have to
 consider what possible external conditions could affect the return
@@ -126,14 +124,14 @@ Final Countdown" by Europe every morning when you take a shower. Each
 of these actions will have the same result pretty much every time you
 perform them, which lets you put them on autopilot.
 
-### Pure Functions Have No Side Effects
+*** Pure Functions Have No Side Effects
 
 To perform a side effect is to change the association between a name
 and its value within a given scope.
 
 For example, in Javscript:
 
-```javascript
+#+BEGIN_SRC javascript
 var haplessObject = {
   emotion: "Carefree!"
 };
@@ -145,7 +143,7 @@ var evilMutator = function(object){
 evilMutator(haplessObject);
 haplessObject.emotion
 // => "So emo :("
-```
+#+END_SRC
 
 Of course, your program has to have some side effects; it writes to a
 disk, which is changing the association between a filename and a
@@ -189,22 +187,22 @@ are immutable. You cannot change them in place no matter how hard you
 try!
 
 If you're unfamiliar with immutable data structures, you might feel
-like your favorite tool has been taken from you. How can you *do*
+like your favorite tool has been taken from you. How can you /do/
 anything without side effects? Well, guess what! That's What the next
 sections all about! How about this segue, eh? Eh?
 
-## Living with Immutable Data Structures
+** Living with Immutable Data Structures
 
 Immutable data structures ensure that your code won't have side
 effects. As you now know with all your heart, this is a good thing.
 But how do you get anything done without side effects?
 
-### Recursion instead of for/while
+*** Recursion instead of for/while
 
 Raise your hand if you've ever written something like this
 (javascript):
 
-```javascript
+#+BEGIN_SRC javascript
 var wrestlers = getAlligatorWrestlers();
 var totalBites = 0;
 var l = wrestlers.length;
@@ -213,11 +211,11 @@ for(var i=0; i < l; i++){
   // Side effect on sum! Boo!
   totalBites += wrestlers[i].timesBitten;
 }
-```
+#+END_SRC
 
 or this:
 
-```javascript
+#+BEGIN_SRC javascript
 var allPatients = getArkhamPatients();
 var analyzedPatients = [];
 var l = allPatients.length;
@@ -228,7 +226,7 @@ for(var i=0; i < l; i++){
     analyzedPatients.push(allPatients[i]);
   }
 }
-```
+#+END_SRC
 
 Using side effects in this way &mdash; mutating "internal" variables
 &mdash; is pretty much harmless. You're creating some value to be used
@@ -237,7 +235,7 @@ elsewhere, as opposed to changing an object you've received.
 But Clojure's core data structures don't even allow these harmless
 mutations. So what can you do?
 
-Let's ignore the fact that you can easily use `map` and `reduce` to
+Let's ignore the fact that you can easily use =map= and =reduce= to
 accomplish the work done above. In these situations &mdash; iterating
 over some collection to build a result &mdash; the functional
 alternative to mutation is recursion.
@@ -246,7 +244,7 @@ Let's look at the first example, building a sum. In Clojure, there is
 no assignment operator. You can't associate a new value with a name
 within the same scope:
 
-```clojure
+#+BEGIN_SRC clojure
 (defn no-mutation
   [x]
   ;; = is a boolean operation
@@ -264,12 +262,12 @@ within the same scope:
 ; Existential Angst Woman
 ; Kafka Man
 ; Existential Angst Woman
-```
+#+END_SRC
 
 In Clojure, we can get around this apparent limitation through
 recursion:
 
-```clojure
+#+BEGIN_SRC clojure
 (defn sum
   ;; Clojure allows overloading on arity. If you call sum with only
   ;; one argument, it just calls the two-argument body with 0 as the
@@ -299,20 +297,20 @@ recursion:
 (sum [1] 44)
 (sum [] 45)
 ; => 45
-```
+#+END_SRC
 
-Each recursive call to `sum` creates a new scope where `vals` and
-`accumulating-total` are bound to different values, all without
+Each recursive call to =sum= creates a new scope where =vals= and
+=accumulating-total= are bound to different values, all without
 needing to alter the values originally passed to the function or
 perform any internal mutation.
 
-Note, however, that you should generally use `loop` when doing
+Note, however, that you should generally use =loop= when doing
 recursion for performance reasons. This is because Clojure doesn't
 provide tail call optimization, a topic we will never bring up again!
 
-So here's how you'd do this with `loop`:
+So here's how you'd do this with =loop=:
 
-```clojure
+#+BEGIN_SRC clojure
 (defn sum
   ([vals]
      (sum vals 0))
@@ -322,16 +320,16 @@ So here's how you'd do this with `loop`:
        (if (empty? vals)
          accumulating-total
          (recur (rest vals) (+ (first vals) accumulating-total))))))
-```
+#+END_SRC
 
 This isn't too important if you're recursively operating on a small
 collection, but if your collection contains thousands or millions
-values then you will definitely need to whip out `loop`.
+values then you will definitely need to whip out =loop=.
 
 Now let's try accumulation in Clojure. You'll notice that this is
 really similar to our hobbit symmetrizing code:
 
-```clojure
+#+BEGIN_SRC clojure
 (defn analyzed-patients
   [patients]
   (loop [remaining-patients patients
@@ -350,21 +348,21 @@ really similar to our hobbit symmetrizing code:
             :else
             (recur (rest remaining-patients)
                    analyzed)))))
-```
+#+END_SRC
 
-Hey check that out, we introduced a new form: `cond`. `cond` is like a
+Hey check that out, we introduced a new form: =cond=. =cond= is like a
 multi-if, where you give it a series of if/then's and end it with an
-optional `:else`:
+optional =:else=:
 
--   If there are no more remaining patients, return the
-    vector of analyzed patients.
--   If the current patient has been analyzed, recur. Bind
-    `remaining-patients` to a vector which consists of all patients
-    except the current one. Bind `analyzed` to a new vector which
-    includes the current vector of analyzed patients as well as the
-    current patient.
--   Otherwise recur. Bind `remaining-patients` same as above. Bind
-      `analyzed` to the existing vector of analyzed patients.
+- If there are no more remaining patients, return the
+  vector of analyzed patients.
+- If the current patient has been analyzed, recur. Bind
+  =remaining-patients= to a vector which consists of all patients
+  except the current one. Bind =analyzed= to a new vector which
+  includes the current vector of analyzed patients as well as the
+  current patient.
+- Otherwise recur. Bind =remaining-patients= same as above. Bind
+  =analyzed= to the existing vector of analyzed patients.
 
 As you can see, Clojure gets along fine without mutation.
 
@@ -378,11 +376,11 @@ implemented using something called structural sharing, which is
 totally beyond the scope of this book. Just, uh, it's kind of like
 git! I don't know, google it!
 
-### Functional Composition instead of Attribute Mutation
+*** Functional Composition instead of Attribute Mutation
 
 Here's another way we might use mutation:
 
-```ruby
+#+BEGIN_SRC ruby
 class GlamourShotCaption
   attr_reader :text
   def initialize(text)
@@ -405,14 +403,14 @@ end
 
 best = GlamourShotCaption.new("My boa constrictor is so sassy lol!  ")
 best.save!
-```
+#+END_SRC
 
-`GlamourShotCaption` encapsulates the knowledge of how to clean and save
-a glamour shot caption. On creating a `GlamourShotCaption` object, you
+=GlamourShotCaption= encapsulates the knowledge of how to clean and save
+a glamour shot caption. On creating a =GlamourShotCaption= object, you
 assign text to an instance variable and progressively mutate it. So
 far so good, right? Here's how we might do this in Clojure:
 
-```clojure
+#+BEGIN_SRC clojure
 ;; We'll go over require soon
 (require '[clojure.string :as s])
 
@@ -426,7 +424,7 @@ far so good, right? Here's how we might do this in Clojure:
 
 (spit "read_and_feel_giddy.txt"
       (clean "My boa constrictor is so sassy lol!  "))
-```
+#+END_SRC
 
 Easy peasy. No mutation required. Instead of progressively mutating an
 object, you apply a chain of functions to an immutable value.
@@ -438,7 +436,7 @@ structures.
 
 You also have to tightly couple methods with classes, thus limiting
 the reusability of the methods. In the Ruby example, you have to do
-extra work to reuse the `clean!` method. In Clojure, `clean` will work
+extra work to reuse the =clean!= method. In Clojure, =clean= will work
 on any string at all. By decoupling functions and data and
 programaming to a small set of abstractions we end up with more
 reusable, composable code. You gain power and lose nothing.
@@ -457,44 +455,44 @@ more confident because you won't have to worry about what dirty code
 might be getting its greasy paws on your precious, mutable variables.
 It'll be great!
 
-## Cool Things to do With Pure Functions
+** Cool Things to do With Pure Functions
 
 Because you only need to worry about the input/output relationship in
 pure functions, it's safe to compose them. Indeed, you will often see
 code that looks something like this:
 
-```clojure
+#+BEGIN_SRC clojure
 (defn dirty-html->clean-md
   [dirty-html]
   (html->md (tidy (clean-chars dirty-html))))
-```
+#+END_SRC
 
 This practice is so common, in fact, that there's a function for
-composing functions, `comp`:
+composing functions, =comp=:
 
-```clojure
+#+BEGIN_SRC clojure
 ((comp clojure.string/lower-case clojure.string/trim) " Unclean string ")
 ; => "unclean string"
-```
+#+END_SRC
 
 The Clojure implementation of this function can compose any number of
 functions. Here's an implementation which composes just two functions:
 
-```clojure
+#+BEGIN_SRC clojure
 (defn two-comp
   [f g]
   (fn [& args]
     (f (apply g args))))
-```
+#+END_SRC
 
 I encourage you to try this out! Also, try re-implementing Clojure's
-`comp` so that you can compose any number of functions.
+=comp= so that you can compose any number of functions.
 
 Another cool thing you can do with pure functions is memoize them.
 You can do this because, as you learned above, pure functions are
 referentially transparent:
 
-```clojure
+#+BEGIN_SRC clojure
 ;; + is referentially transparent. You can replace this...
 (+ 3 (+ 5 8))
 
@@ -505,14 +503,14 @@ referentially transparent:
 16
 
 ;; and the program will have the same behavior
-```
+#+END_SRC
 
 Memoization lets you take advantage of referential transparency by
 storing the arguments passed to a function and the return value of the
 function. Every subsequent call to the memoized function returns the
 stored value:
 
-```clojure
+#+BEGIN_SRC clojure
 (defn sleepy-identity
   "Returns the given value after 1 second"
   [x]
@@ -530,16 +528,16 @@ stored value:
 ; => "Mr. Fantastico" after 1 second
 (memo-sleepy-identity "Mr. Fantastico")
 ; => "Mr. Fantastico" immediately
-```
+#+END_SRC
 
 Pretty cool!
 
-## Chapter Summary
+** Chapter Summary
 
--   Pure functions are referentially transparent and side-effect free.
-    This makes them easy to reason about.
--   Try to keep your dirty, impure functions to a minimum.
--   In an immutable world, you use recursion instead of for/while and
-    function composition instead of successions of mutations
--   Pure functions allow powerful techniques like function composition
-    functions and memoization
+- Pure functions are referentially transparent and side-effect free.
+  This makes them easy to reason about.
+- Try to keep your dirty, impure functions to a minimum.
+- In an immutable world, you use recursion instead of for/while and
+  function composition instead of successions of mutations
+- Pure functions allow powerful techniques like function composition
+  functions and memoization
