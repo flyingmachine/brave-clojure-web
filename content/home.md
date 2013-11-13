@@ -6,7 +6,7 @@ kind: documentation
 
 # Introduction
 
-* *Clojure!* *
+*Clojure!*
 
 For weeks, *months* &mdash; no! *from the very moment you were born*
 &mdash; you've felt it calling to you. Every time you've held your
