@@ -1,6 +1,6 @@
 #+Title: Using Emacs with Clojure
 #+MDH_LINK_TITLE: Using Emacs with Clojure
-#+OPTIONS: toc:nil
+#+OPTIONS: toc:nil num:nil creator:nil author:nil
 
 * Using Emacs with Clojure
 

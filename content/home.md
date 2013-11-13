@@ -1,8 +1,3 @@
----
-title: Clojure for the Brave and True, an Online Book for Beginners
-link_title: Introduction
-kind: documentation
----
 
 # Introduction
 
@@ -34,13 +29,10 @@ new language:
 -   **The Cave of Artifacts.** In its depths you'll learn to build, run,
     and distribute your own programs and use the libraries of others.
     You'll learn Clojure's relationship to the JVM.
-
 -   **The Forest of Tooling.** It's paramount to set up your environment
     so that you can quickly try things out and learn from them .
-
 -   **The Mountain of Language.** As you ascend, you'll gain knowledge
     of Clojure's syntax, semantics, and data structures.
-
 -   **The Cloud Castle of Mindset.** In its rarified air you will come
     to know the why and how of lisp, functional programming, and
     immutability.

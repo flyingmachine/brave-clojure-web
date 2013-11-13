@@ -1,8 +1,3 @@
----
-title: Functional Programming
-link_title: Functional Programming
-kind: documentation
----
 
 # Functional Programming
 

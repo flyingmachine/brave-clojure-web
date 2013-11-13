@@ -1,8 +1,3 @@
----
-title: Using Emacs with Clojure
-link_title: Using Emacs with Clojure
-kind: documentation
----
 
 # Using Emacs with Clojure
 
@@ -45,7 +40,7 @@ starts a Clojure process with nrepl running and connects Emacs to it.
 After a short wait (it should be less than a minute), you should see
 something like this:
 
-![nrepl-jack-in](/images/using-emacs-with-clojure/nrepl-jack-in.png)
+![nrepl-jack-in](images/using-emacs-with-clojure/nrepl-jack-in.png)
 
 If you've never seen Emacs split into two halves like this, don't
 worry! We'll cover that in a second.
@@ -76,7 +71,7 @@ Emacs was invented in like, 1802 or something, so it uses terminology
 slightly different from what you're used to. When you ran
 `nrepl-jack-in` above, Emacs split its **frame** into two **windows**:
 
-![Frame and windows](/images/using-emacs-with-clojure/emacs-windows.png)
+![Frame and windows](images/using-emacs-with-clojure/emacs-windows.png)
 
 Here are a bunch of key bindings for working with windows:
 
@@ -200,7 +195,7 @@ At the prompt, type this and hit enter:
 
 You should see something like this:
 
-![nrepl error](/images/using-emacs-with-clojure/nrepl-error.png)
+![nrepl error](images/using-emacs-with-clojure/nrepl-error.png)
 
 To get rid of the stack trace in the left window, do
 
@@ -295,7 +290,7 @@ Often when writing lisp you'll work with expressions like
 (map (comp record first)
      (d/q '[:find ?post
             :in $ ?search
-            :where
+            :wohere
             [(fulltext $ :post/content ?search)
              [[?post ?content]]]]
           (db/db)

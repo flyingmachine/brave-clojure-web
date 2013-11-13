@@ -1,8 +1,3 @@
----
-title: Writing Macros
-link_title: Writing Macros
-kind: documentation
----
 
 # Writing Macros
 

@@ -357,7 +357,7 @@ they realize 32 members at a time:
   (println (:real identity))
   (:real identity))
 
-(map snitch [{:alias "Batman" :real "Bruce Wayne}])
+(map snitch [{:alias "Batman" :real "Bruce Wayne"}])
 
 (def revealed-identities (map snitch identities))
 (first revealed-identities)

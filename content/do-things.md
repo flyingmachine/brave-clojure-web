@@ -47,11 +47,12 @@ failed_protagonist_names = [
   "The Incredible Bulk"
 ]
 failed_protagonist_names[0] = "Gary Potter"
-failed_protagonist_names # => [
-  "Gary Potter",
-  "Doreen the Explorer",
-  "The Incredible Bulk"
-]
+failed_protagonist_names
+# => [
+#   "Gary Potter",
+#   "Doreen the Explorer",
+#   "The Incredible Bulk"
+# ]
 ```
 
 In Clojure, there is no equivalent. We'll cover the implications of
@@ -471,128 +472,128 @@ Here's an example of a function definition and calling the function:
 Let's dive deeper into the docstring, parameters, and function
 body.
 
-\*\*\*# The Docstring
+1.  The Docstring
 
-The docstring is really cool. You can view the docstring for a
-function in the REPL with `(doc fn-name)`, e.g. `(doc map)`.
+    The docstring is really cool. You can view the docstring for a
+    function in the REPL with `(doc fn-name)`, e.g. `(doc map)`.
 
-\*\*\*# Parameters
+2.  Parameters
 
-Clojure functions can be defined with zero or more parameters:
+    Clojure functions can be defined with zero or more parameters:
+    
+    ```clojure
+    (defn no-params
+      []
+      "I take no parameters!")
+    
+    (defn one-param
+      [x]
+      (str "I take one param: " x " It'd better be a string!"))
+    
+    (defn two-params
+      [x y]
+      (str "Two parameters! That's nothing! Pah! I will smoosh them "
+      "together to spite you! " x y))
+    ```
+    
+    Functions can also be overloaded by arity. This means that a different
+    function body will run depending on the number of arguments passed to
+    a function. Here's how you'd define a multi-arity function:
+    
+    ```clojure
+    ;; Here's the general form of a multiple-arity function definition.
+    ;; Notice that each arity definition is enclosed in parentheses
+    ;; and has an argument list
+    (defn multi-arity
+      ;; 3-arity arguments and body
+      ([first-arg second-arg third-arg]
+         (do-stuff first-arg second-arg third-arg))
+      ;; 2-arity arguments and body
+      ([first-arg second-arg]
+         (do-stuff first-arg second-arg))
+      ;; 1-arity arguments and body
+      ([first-arg]
+         (do-stuff first-arg)))
+    ```
+    
+    Overloading by arity is one way to provide default values for arguments:
+    
+    ```clojure
+    ;; Here's an actual function
+    (defn x-chop
+      "Describe the kind of chop you're inflicting on someone"
+      ;; 2-arity defintion
+      ([name chop-type]
+         (str "I " chop-type " chop " name "! Take that!"))
+      ;; 1-arity definition
+      ([name]
+         (x-chop name "karate")))
+    ;; In this case, "karate" is the default argument for the chop-type
+    ;; param
+    
+    (x-chop "Kanye West")
+    ; => "I karate chop Kanye West! Take that!"
+    
+    (x-chop "Kanye East" "slap")
+    ; => "I slap chop Kanye East! Take that!"
+    ```
+    
+    You can also make each arity do something completely unrelated:
+    
+    ```clojure
+    (defn weird-arity
+      ([]
+         "Destiny dressed you this morning my friend, and now Fear is
+         trying to pull off your pants. If you give up, if you give in,
+         you're gonna end up naked with Fear just standing there laughing
+         at your dangling unmentionables! - the Tick")
+      ([number]
+         (inc number)))
+    ```
+    
+    But most likely, you don't want to do that.
+    
+    Clojure also allows you to define variable-arity functions by
+    including a "rest-param", as in "put the rest of these arguments in a
+    list with the following name":
+    
+    ```clojure
+    (defn codger-communication
+      [whippersnapper]
+      (str "Get off my lawn, " whippersnapper "!!!"))
+    
+    (defn codger
+      [& whippersnappers] ;; the ampersand indicates the "rest-param"
+      (map codger-communication whippersnappers))
+    
+    (codger "Billy" "Henry" "Anne-Marie" "The Incredible Bulk")
+    ; =>
+    ; ("Get off my lawn, Billy!!!"
+    ;  "Get off my lawn, Henry!!!"
+    ;  "Get off my lawn, Anne-Marie!!!"
+    ;  "Get off my lawn, The Incredible Bulk!!!")
+    ```
+    
+    As you can see, when you provide arguments to a variable-arity
+    functions, the arguments get treated as a list.
+    
+    You can mix rest-params with normal params, but the rest-param has to
+    come last:
+    
+    ```clojure
+    (defn favorite-things
+      [name & things]
+      (str "Hi, " name ", here are my favorite things: "
+           (clojure.string/join ", " things)))
+    
+    (favorite-things "Doreen" "gum" "shoes" "berries")
+    ; => "Hi, Doreen, here are my favorite things: gum, shoes, berries"
+    ```
+    
+    Finally, Clojure has a more sophisticated way of defining parameters
+    called "destructuring", which deserves its own subsection:
 
-```clojure
-(defn no-params
-  []
-  "I take no parameters!")
-
-(defn one-param
-  [x]
-  (str "I take one param: " x " It'd better be a string!")
-
-(defn two-params
-  [x y]
-  (str "Two parameters! That's nothing! Pah! I will smoosh them "
-  "together to spite you! " x y))
-```
-
-Functions can also be overloaded by arity. This means that a different
-function body will run depending on the number of arguments passed to
-a function. Here's how you'd define a multi-arity function:
-
-```clojure
-;; Here's the general form of a multiple-arity function definition.
-;; Notice that each arity definition is enclosed in parentheses
-;; and has an argument list
-(defn multi-arity
-  ;; 3-arity arguments and body
-  ([first-arg second-arg third-arg]
-     (do-stuff first-arg second-arg third-arg))
-  ;; 2-arity arguments and body
-  ([first-arg second-arg]
-     (do-stuff first-arg second-arg))
-  ;; 1-arity arguments and body
-  ([first-arg]
-     (do-stuff first-arg)))
-```
-
-Overloading by arity is one way to provide default values for arguments:
-
-```clojure
-;; Here's an actual function
-(defn x-chop
-  "Describe the kind of chop you're inflicting on someone"
-  ;; 2-arity defintion
-  ([name chop-type]
-     (str "I " chop-type " chop " name "! Take that!"))
-  ;; 1-arity definition
-  ([name]
-     (x-chop name "karate")))
-;; In this case, "karate" is the default argument for the chop-type
-;; param
-
-(x-chop "Kanye West")
-; => "I karate chop Kanye West! Take that!"
-
-(x-chop "Kanye East" "slap")
-; => "I slap chop Kanye East! Take that!"
-```
-
-You can also make each arity do something completely unrelated:
-
-```clojure
-(defn weird-arity
-  ([]
-     "Destiny dressed you this morning my friend, and now Fear is
-     trying to pull off your pants. If you give up, if you give in,
-     you're gonna end up naked with Fear just standing there laughing
-     at your dangling unmentionables! - the Tick")
-  ([number]
-     (inc number)))
-```
-
-But most likely, you don't want to do that.
-
-Clojure also allows you to define variable-arity functions by
-including a "rest-param", as in "put the rest of these arguments in a
-list with the following name":
-
-```clojure
-(defn codger-communication
-  [whippersnapper]
-  (str "Get off my lawn, " whippersnapper "!!!"))
-
-(defn codger
-  [& whippersnappers] ;; the ampersand indicates the "rest-param"
-  (map codger-communication whippersnappers))
-
-(codger "Billy" "Henry" "Anne-Marie" "The Incredible Bulk")
-; =>
-; ("Get off my lawn, Billy!!!"
-;  "Get off my lawn, Henry!!!"
-;  "Get off my lawn, Anne-Marie!!!"
-;  "Get off my lawn, The Incredible Bulk!!!")
-```
-
-As you can see, when you provide arguments to a variable-arity
-functions, the arguments get treated as a list.
-
-You can mix rest-params with normal params, but the rest-param has to
-come last:
-
-```clojure
-(defn favorite-things
-  [name & things]
-  (str "Hi, " name ", here are my favorite things: "
-       (clojure.string/join ", " things)))
-
-(favorite-things "Doreen" "gum" "shoes" "berries")
-; => "Hi, Doreen, here are my favorite things: gum, shoes, berries"
-```
-
-Finally, Clojure has a more sophisticated way of defining parameters
-called "destructuring", which deserves its own subsection:
-
-1.  Destructuring
+3.  Destructuring
 
     You don't have to use destructuring now. If you find it too
     complicated, feel free to skip ahead and come back to this section
@@ -704,7 +705,7 @@ called "destructuring", which deserves its own subsection:
     Now, on to the part of the function that actually does something: the
     function body!
 
-2.  Function body
+4.  Function body
 
     Your function body can contain any forms. Clojure automatically
     returns the last form evaluated:
@@ -731,7 +732,7 @@ called "destructuring", which deserves its own subsection:
     ; => "Oh my gosh! What a big number!"
     ```
 
-3.  All Functions are Created Equal
+5.  All Functions are Created Equal
 
     One final note: in Clojure, there are no privileged functions. `+` is
     just a function, `-` is just a function, `inc` and `map` are just

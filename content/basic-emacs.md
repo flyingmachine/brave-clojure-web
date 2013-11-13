@@ -1,8 +1,3 @@
----
-title: Start Using Emacs
-link_title: Start Using Emacs
-kind: documentation
----
 
 # Start Using Emacs
 
@@ -23,7 +18,7 @@ a REPL.
 By the end of this chapter, your Emacs setup will look something like
 this:
 
-![Final look](/images/basic-emacs/emacs-final.png)
+![Final look](images/basic-emacs/emacs-final.png)
 
 To get there, we'll do the following:
 
@@ -57,7 +52,7 @@ You should use the latest major version of Emacs, Emacs 24.
 After you're done installing Emacs, open it up. You should see
 something like this:
 
-![Fresh Emacs installation](/images/basic-emacs/emacs-fresh.png)
+![Fresh Emacs installation](images/basic-emacs/emacs-fresh.png)
 
 Welcome to the Cult of Emacs! You've made Richard Stallman proud!
 
@@ -79,7 +74,7 @@ Emacs is downloading a bunch of packages which will be useful for
 Clojure development. Once the activity stops, go ahead and just quit
 Emacs and open it again. After you do so you should see this:
 
-![Emacs configged](/images/basic-emacs/emacs-configged.png)
+![Emacs configged](images/basic-emacs/emacs-configged.png)
 
 Feel free to resize it however you please. Now that we've got
 everything set up, let's actually start doing some editing!
@@ -98,7 +93,7 @@ All editing happens in an Emacs ****buffer****. When you first start Emacs,
 a buffer named \\\*\*scratch\*\\\* is open. Emacs will always show you the
 name of the current buffer, as shown here:
 
-![Buffer name](/images/basic-emacs/emacs-buffer-name.png)
+![Buffer name](images/basic-emacs/emacs-buffer-name.png)
 
 By default, the scratch buffer behaves in a way that's optimal for
 Lisp development. Let's go ahead and create a fresh buffer so that we
@@ -119,7 +114,7 @@ C-x b
 Once you perform the above key sequence, you'll see a prompt at the
 bottom of the application:
 
-![Minibuffer](/images/basic-emacs/emacs-buffer-prompt.png)
+![Minibuffer](images/basic-emacs/emacs-buffer-prompt.png)
 
 This area is called the **minibuffer** and it's where Emacs prompts
 you for input. Right now it's prompting us for a buffer name. You can
@@ -202,7 +197,7 @@ work, but if it doesn't that's no big deal!
 After saving the file, go ahead and quit Emacs and start it again. I
 bet it's really tiny!
 
-![Tinemacs](/images/basic-emacs/emacs-20-20.png)
+![Tinemacs](images/basic-emacs/emacs-20-20.png)
 
 Go through that same process a couple times until Emacs starts at a
 size that you like. Or just comment those lines out again and be done
@@ -307,7 +302,7 @@ have multiple minor modes active at the same time.
 
 You can see which modes are active on the **mode line**:
 
-![Emacs mode line](/images/basic-emacs/emacs-mode-line.png)
+![Emacs mode line](images/basic-emacs/emacs-mode-line.png)
 
 If you open a file and Emacs doesn't load a major mode for it, chances
 are that one exists. You'll just need to download its package&#x2026;
