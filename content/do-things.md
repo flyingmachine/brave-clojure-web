@@ -472,12 +472,12 @@ Here's an example of a function definition and calling the function:
 Let's dive deeper into the docstring, parameters, and function
 body.
 
-1.  The Docstring
+-   The Docstring
 
     The docstring is really cool. You can view the docstring for a
     function in the REPL with `(doc fn-name)`, e.g. `(doc map)`.
 
-2.  Parameters
+-   Parameters
 
     Clojure functions can be defined with zero or more parameters:
     
@@ -593,7 +593,7 @@ body.
     Finally, Clojure has a more sophisticated way of defining parameters
     called "destructuring", which deserves its own subsection:
 
-3.  Destructuring
+-   Destructuring
 
     You don't have to use destructuring now. If you find it too
     complicated, feel free to skip ahead and come back to this section
@@ -705,7 +705,7 @@ body.
     Now, on to the part of the function that actually does something: the
     function body!
 
-4.  Function body
+-   Function body
 
     Your function body can contain any forms. Clojure automatically
     returns the last form evaluated:
@@ -732,7 +732,7 @@ body.
     ; => "Oh my gosh! What a big number!"
     ```
 
-5.  All Functions are Created Equal
+-   All Functions are Created Equal
 
     One final note: in Clojure, there are no privileged functions. `+` is
     just a function, `-` is just a function, `inc` and `map` are just

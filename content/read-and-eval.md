@@ -57,7 +57,7 @@ structure that's then **evaluated**. This makes Clojure **homoiconic**:
 Clojure programs are represented by Clojure data structures. Overall,
 the read/eval process looks something like this:
 
-![read-eval](./images/read-eval/read-eval.png)
+![read-eval](/images/read-eval/read-eval.png)
 
 To fully understand how what's going on here, we'll explore the
 reader and how it parses text to produce data structures. Then we'll
@@ -309,7 +309,7 @@ If the data structure is an empty list, it evaluates to an empty list:
 
 Otherwise, it is a *call* to the first element of the list.
 
-1.  Function Calls
+-   Function Calls
 
     We're familiar with function calls:
     
@@ -323,7 +323,7 @@ Otherwise, it is a *call* to the first element of the list.
     When performing a function call, each operand is fully evaluated
     and then passed to the function as an argument.
 
-2.  Special Forms
+-   Special Forms
 
     You can also call *special forms*. For example:
     

@@ -1,3 +1,8 @@
+---
+title: About the Author
+link_title: About
+kind: documentation
+---
 
 # About the Author
 

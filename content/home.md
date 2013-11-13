@@ -1,3 +1,8 @@
+---
+title: Clojure for the Brave and True, an Online Book for Beginners
+link_title: Introduction
+kind: documentation
+---
 
 # Introduction
 

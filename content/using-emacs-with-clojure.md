@@ -1,3 +1,8 @@
+---
+title: Using Emacs with Clojure
+link_title: Using Emacs with Clojure
+kind: documentation
+---
 
 # Using Emacs with Clojure
 
@@ -40,7 +45,7 @@ starts a Clojure process with nrepl running and connects Emacs to it.
 After a short wait (it should be less than a minute), you should see
 something like this:
 
-![nrepl-jack-in](images/using-emacs-with-clojure/nrepl-jack-in.png)
+![nrepl-jack-in](/images/using-emacs-with-clojure/nrepl-jack-in.png)
 
 If you've never seen Emacs split into two halves like this, don't
 worry! We'll cover that in a second.
@@ -71,18 +76,9 @@ Emacs was invented in like, 1802 or something, so it uses terminology
 slightly different from what you're used to. When you ran
 `nrepl-jack-in` above, Emacs split its **frame** into two **windows**:
 
-![Frame and windows](images/using-emacs-with-clojure/emacs-windows.png)
+![Frame and windows](/images/using-emacs-with-clojure/emacs-windows.png)
 
 Here are a bunch of key bindings for working with windows:
-
-| Keys  | Description                                                                                                                      |
-|-------+----------------------------------------------------------------------------------------------------------------------------------|
-| C-x o | Switch cursor to another window. Go ahead and try this now to switch between your Clojure file and the REPL                      |
-| C-x 1 | Delete all other windows. This doesn't close your buffers and it won't cause you to lose any work. It just un-splits your frame. |
-| C-x 2 | Split window, above and below                                                                                                    |
-| C-x 3 | Split window, side by side                                                                                                       |
-| C-x 0 | Delete current window                                                                                                            |
-
 
 I encourage you to try these out. For example, put your cursor in the
 left window, the one with the Clojure file, and do `C-x 1`. This
@@ -168,18 +164,7 @@ we just went over:
 
 ### Clojure Buffer Key Bindings
 
-| Keys    | Description                                         |
-|---------+-----------------------------------------------------|
-| C-c M-n | Switch to namespace of the current buffer           |
-| C-x C-e | Evaluate the expression immediately preceding point |
-| C-c C-k | Compile current buffer                              |
-
 ### nrepl Buffer Key Bindings
-
-| Keys               | Description                    |
-|--------------------+--------------------------------|
-| C-&uarr;, C-&darr; | Cycle through nrepl history    |
-| C-&crarr;          | Close parentheses and evaluate |
 
 ## How to Handle Errors
 
@@ -195,7 +180,7 @@ At the prompt, type this and hit enter:
 
 You should see something like this:
 
-![nrepl error](images/using-emacs-with-clojure/nrepl-error.png)
+![nrepl error](/images/using-emacs-with-clojure/nrepl-error.png)
 
 To get rid of the stack trace in the left window, do
 
@@ -303,14 +288,6 @@ the closing paren. Similarly, if you're right after a closing paren,
 `C-M-b` will take you to the opening paren.
 
 ### Summary
-
-| Keys             | Description                                                             |
-|------------------+-------------------------------------------------------------------------|
-| M-x paredit-mode | Toggle paredit mode                                                     |
-| M-(              | paredit-wrap-round, surround expression after point in parentheses      |
-| C-&rarr;         | Slurp; move closing parenthesis to the right to include next expression |
-| C-&larr;         | Barf; move closing parenthesis to the left to exclude last expression   |
-| C-M-f, C-M-b     | Move to the opening/closing parenthesis                                 |
 
 ## Chapter Summary
 

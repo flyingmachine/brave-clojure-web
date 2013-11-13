@@ -1,3 +1,8 @@
+---
+title: Functional Programming
+link_title: Functional Programming
+kind: documentation
+---
 
 # Functional Programming
 
@@ -98,7 +103,7 @@ same arguments and, therefore, are not referentially transparent:
 (defn file-analyzer
   [filename]
   (let [contents (slurp filename)]
-    (analyze-file contents))
+    (analyze-file contents)))
 ;; Note, however, that "analyze-file" could very well be referentially
 ;; transparent - it could very well return the same result every time
 ;; it's passed the same string.
@@ -138,7 +143,7 @@ var evilMutator = function(object){
 }
 
 evilMutator(haplessObject);
-haplessObject.emotion
+haplessObject.emotion;
 // => "So emo :("
 ```
 
