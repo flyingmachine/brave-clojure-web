@@ -95,8 +95,8 @@ any work; it'll just cancel your current action.
 
 ** Emacs Buffers
 
-All editing happens in an Emacs **buffer**. When you first start Emacs,
-a buffer named \**scratch*\* is open. Emacs will always show you the
+All editing happens in an Emacs *buffer*. When you first start Emacs,
+a buffer named =*scratch*= is open. Emacs will always show you the
 name of the current buffer, as shown here:
 
 #+CAPTION: Buffer name
@@ -151,7 +151,7 @@ Sidenote: it might come as a surprise, but Emacs is actually quite
 violent, making ample use of the term "kill."
 
 Now that you've killed the "emacs-fun-times" buffer, you should be
-back in the "\*scratch\*" buffer. In general, you can create as many
+back in the =*scratch*= buffer. In general, you can create as many
 new buffers as you want with =C-x b=. You can also quickly switch
 between buffers using the same command.
 

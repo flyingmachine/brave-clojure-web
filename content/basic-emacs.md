@@ -94,8 +94,8 @@ any work; it'll just cancel your current action.
 
 ## Emacs Buffers
 
-All editing happens in an Emacs ****buffer****. When you first start Emacs,
-a buffer named \\\*\*scratch\*\\\* is open. Emacs will always show you the
+All editing happens in an Emacs **buffer**. When you first start Emacs,
+a buffer named `*scratch*` is open. Emacs will always show you the
 name of the current buffer, as shown here:
 
 ![Buffer name](/images/basic-emacs/emacs-buffer-name.png)
@@ -148,7 +148,7 @@ Sidenote: it might come as a surprise, but Emacs is actually quite
 violent, making ample use of the term "kill."
 
 Now that you've killed the "emacs-fun-times" buffer, you should be
-back in the "\\\*scratch\\\*" buffer. In general, you can create as many
+back in the `*scratch*` buffer. In general, you can create as many
 new buffers as you want with `C-x b`. You can also quickly switch
 between buffers using the same command.
 
@@ -376,6 +376,21 @@ You can use your arrow keys to move point just like in any GUI text
 editor, but there are many key bindings which will allow you to move
 more efficiently:
 
+| Keys   | Description                                                                                         |
+|--------+-----------------------------------------------------------------------------------------------------|
+| C-a    | Move to beginning of line                                                                           |
+| M-m    | Move to the first non-whitespace character on the line                                              |
+| C-e    | Move to end of line                                                                                 |
+| C-f    | Move forward one character                                                                          |
+| C-b    | Move backward one character                                                                         |
+| M-f    | Move forward one word (I use this a lot)                                                            |
+| M-b    | Move backward one word (I use this a lot, too)                                                      |
+| C-s    | Regex search for text in the current buffer and move to it. Hit C-s again to move to the next match |
+| C-r    | Same as above, but search in reverse                                                                |
+| M-&lt; | Move to beginning of buffer                                                                         |
+| M-&gt; | Move to end of buffer                                                                               |
+| M-g g  | Go to line                                                                                          |
+
 Go ahead and try these out in your Jack Handy quotes buffer!
 
 ### Selection / Regions
@@ -446,12 +461,34 @@ last yank, "choreograpahy", with the previous kill, "Treasure".
 
 Here's a summary of key bindings: 
 
+| Keys | Description                           |
+|------+---------------------------------------|
+| C-w  | Kill region                           |
+| M-w  | Copy region to kill ring              |
+| C-y  | Yank                                  |
+| M-y  | Cycle through kill ring after yanking |
+| M-d  | Kill word                             |
+| C-k  | Kill line                             |
+
 ### Editing and Help
 
 Here are some editing keybindings you should know about:
 
+| Keys | Description                                                                |
+|------+----------------------------------------------------------------------------|
+| Tab  | Indent line                                                                |
+| C-j  | New line and indent, equivalent to "enter" followed by "tab"               |
+| M-/  | Hippie expand, cycles through possible expansions of the text before point |
+| M-\\ | Delete all spaces and tabs around point. I use this one a lot              |
+
+
 Emacs has excellent built-in help. These two keybindings will serve
 you well:
+
+| Keys               | Description                                                                                                                   |
+|--------------------+-------------------------------------------------------------------------------------------------------------------------------|
+| C-h k (keybinding) | Describes the function bound to the keybinding. To get this to work, you actually perform the key sequence after typing C-h k |
+| C-h f              | Describe function                                                                                                             |
 
 The help text appears in a new "window", a concept we cover in the
 next chapter. For now, you can close help windows by pressing `C-x o

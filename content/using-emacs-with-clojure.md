@@ -80,6 +80,15 @@ slightly different from what you're used to. When you ran
 
 Here are a bunch of key bindings for working with windows:
 
+| Keys  | Description                                                                                                                      |
+|-------+----------------------------------------------------------------------------------------------------------------------------------|
+| C-x o | Switch cursor to another window. Go ahead and try this now to switch between your Clojure file and the REPL                      |
+| C-x 1 | Delete all other windows. This doesn't close your buffers and it won't cause you to lose any work. It just un-splits your frame. |
+| C-x 2 | Split window, above and below                                                                                                    |
+| C-x 3 | Split window, side by side                                                                                                       |
+| C-x 0 | Delete current window                                                                                                            |
+
+
 I encourage you to try these out. For example, put your cursor in the
 left window, the one with the Clojure file, and do `C-x 1`. This
 should un-split your frame and you should only see the Clojure code.
@@ -113,7 +122,7 @@ Then do the following:
 Once you do this, you should see the text `Cleanliness is next to
 godliness` appear in the nrepl buffer:
 
-./images/using-emacs-with-clojure/nrepl-eval-last-expression.png]]
+![keep it clean](/images/using-emacs-with-clojure/nrepl-eval-last-expression.png)
 
 The key binding `C-x C-e` runs the command
 `nrepl-eval-last-expression`. As the command suggests, this makes
@@ -164,7 +173,18 @@ we just went over:
 
 ### Clojure Buffer Key Bindings
 
+| Keys    | Description                                         |
+|---------+-----------------------------------------------------|
+| C-c M-n | Switch to namespace of the current buffer           |
+| C-x C-e | Evaluate the expression immediately preceding point |
+| C-c C-k | Compile current buffer                              |
+
 ### nrepl Buffer Key Bindings
+
+| Keys               | Description                    |
+|--------------------+--------------------------------|
+| C-&uarr;, C-&darr; | Cycle through nrepl history    |
+| C-&crarr;          | Close parentheses and evaluate |
 
 ## How to Handle Errors
 
@@ -288,6 +308,14 @@ the closing paren. Similarly, if you're right after a closing paren,
 `C-M-b` will take you to the opening paren.
 
 ### Summary
+
+| Keys             | Description                                                             |
+|------------------+-------------------------------------------------------------------------|
+| M-x paredit-mode | Toggle paredit mode                                                     |
+| M-(              | paredit-wrap-round, surround expression after point in parentheses      |
+| C-&rarr;         | Slurp; move closing parenthesis to the right to include next expression |
+| C-&larr;         | Barf; move closing parenthesis to the left to exclude last expression   |
+| C-M-f, C-M-b     | Move to the opening/closing parenthesis                                 |
 
 ## Chapter Summary
 

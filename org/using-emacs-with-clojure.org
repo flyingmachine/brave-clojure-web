@@ -123,7 +123,7 @@ Once you do this, you should see the text =Cleanliness is next to
 godliness= appear in the nrepl buffer:
 
 #+CAPTION: keep it clean
-./images/using-emacs-with-clojure/nrepl-eval-last-expression.png]]
+[[./images/using-emacs-with-clojure/nrepl-eval-last-expression.png]]
 
 The key binding =C-x C-e= runs the command
 =nrepl-eval-last-expression=. As the command suggests, this makes
