@@ -57,7 +57,7 @@ structure that's then **evaluated**. This makes Clojure **homoiconic**:
 Clojure programs are represented by Clojure data structures. Overall,
 the read/eval process looks something like this:
 
-![read-eval](./content/images/read-eval/read-eval.png)
+![read-eval](./images/read-eval/read-eval.png)
 
 To fully understand how what's going on here, we'll explore the
 reader and how it parses text to produce data structures. Then we'll
