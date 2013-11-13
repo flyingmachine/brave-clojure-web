@@ -113,7 +113,7 @@ example. `when` has the general form:
 ```
 
 You might think that `when` is a special form like `if`. Well guess
-what: it's not! Don't worry, no will blame you for thinking it is. In
+what: it's not! Don't worry, no one will blame you for thinking it is. In
 most other languages, conditional expressions are built into the
 language itself and you can't add your own. However, `when` is
 actually a macro:
