@@ -10,3 +10,4 @@ Guardfile
 target
 repl-port
 org/*.md
+org/*.odt
