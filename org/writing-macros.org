@@ -1,6 +1,6 @@
 #+Title: Writing Macros
 #+MDH_LINK_TITLE: Writing Macros
-#+OPTIONS: toc:nil
+#+OPTIONS: toc:nil num:nil creator:nil author:nil
 
 * Writing Macros
 

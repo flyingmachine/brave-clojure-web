@@ -1,6 +1,6 @@
 #+Title: Functional Programming
 #+MDH_LINK_TITLE: Functional Programming
-#+OPTIONS: toc:nil
+#+OPTIONS: toc:nil num:nil creator:nil author:nil
 
 * Functional Programming
 
@@ -25,15 +25,15 @@ With the exception of =println=, all the functions we've used up till
 now have been pure functions:
 
 #+BEGIN_SRC clojure
-;; Pure functions:
-(get [:chumbawumba] 0)
-; => :chumbawumba
-
-(reduce + [1 10 5])
-; => 16
-
-(str "wax on " "wax off")
-; => "wax on wax off"
+  ;; Pure functions:
+  (get [:chumbawumba] 0)
+  ; => :chumbawumba
+  
+  (reduce + [1 10 5])
+  ; => 16
+  
+  (str "wax on " "wax off")
+  ; => "wax on wax off"
 #+END_SRC
 
 What makes them pure functions, and why does it matter?
@@ -72,39 +72,39 @@ only rely on 1) their own arguments and 2) immutable values to
 determine their return value.
 
 #+BEGIN_SRC clojure
-;; Mathematical functions are referentially transparent
-(+ 1 2)
-; => 3
-
-;; If a function relies on an immutable value, it's referentially
-;; transparent. The string ", Daniel-san" is immutable, so the
-;; function is referentially transparent
-(defn wisdom
-  [words]
-  (str words ", Daniel-san"))
+  ;; Mathematical functions are referentially transparent
+  (+ 1 2)
+  ; => 3
+  
+  ;; If a function relies on an immutable value, it's referentially
+  ;; transparent. The string ", Daniel-san" is immutable, so the
+  ;; function is referentially transparent
+  (defn wisdom
+    [words]
+    (str words ", Daniel-san"))
 #+END_SRC
 
 By contrast, these functions do not yield the same result with the
 same arguments and, therefore, are not referentially transparent:
 
 #+BEGIN_SRC clojure
-;; Any function which relies on a random number generator
-;; cannot be referentially transparent
-(defn random-judgment
-  [judgee]
-  (if (> (rand) 0.5)
-    (str judgee " is great!")
-    (str judgee " is terrible :(")))
-
-;; If your functions reads from a file, it's not referentially
-;; transparent because the file's contents can change
-(defn file-analyzer
-  [filename]
-  (let [contents (slurp filename)]
-    (analyze-file contents))
-;; Note, however, that "analyze-file" could very well be referentially
-;; transparent - it could very well return the same result every time
-;; it's passed the same string.
+  ;; Any function which relies on a random number generator
+  ;; cannot be referentially transparent
+  (defn random-judgment
+    [judgee]
+    (if (> (rand) 0.5)
+      (str judgee " is great!")
+      (str judgee " is terrible :(")))
+  
+  ;; If your functions reads from a file, it's not referentially
+  ;; transparent because the file's contents can change
+  (defn file-analyzer
+    [filename]
+    (let [contents (slurp filename)]
+      (analyze-file contents)))
+  ;; Note, however, that "analyze-file" could very well be referentially
+  ;; transparent - it could very well return the same result every time
+  ;; it's passed the same string.
 #+END_SRC
 
 When using a referentially transparent function, you never have to
@@ -132,17 +132,17 @@ and its value within a given scope.
 For example, in Javscript:
 
 #+BEGIN_SRC javascript
-var haplessObject = {
-  emotion: "Carefree!"
-};
-
-var evilMutator = function(object){
-  object.emotion = "So emo :(";
-}
-
-evilMutator(haplessObject);
-haplessObject.emotion
-// => "So emo :("
+  var haplessObject = {
+    emotion: "Carefree!"
+  };
+  
+  var evilMutator = function(object){
+    object.emotion = "So emo :(";
+  }
+  
+  evilMutator(haplessObject);
+  haplessObject.emotion;
+  // => "So emo :("
 #+END_SRC
 
 Of course, your program has to have some side effects; it writes to a

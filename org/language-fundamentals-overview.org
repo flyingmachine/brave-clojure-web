@@ -1,6 +1,6 @@
 #+Title: Clojure Language Fundamentals Overview
 #+MDH_LINK_TITLE: Clojure Language Fundamentals Overview
-#+OPTIONS: toc:nil
+#+OPTIONS: toc:nil num:nil creator:nil author:nil
 
 * Clojure Language Fundamentals Overview
 

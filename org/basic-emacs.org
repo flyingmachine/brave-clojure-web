@@ -1,5 +1,5 @@
 #+Title: Start Using Emacs
-#+OPTIONS: toc:nil
+#+OPTIONS: toc:nil num:nil creator:nil author:nil
 #+MDH_LINK_TITLE: Start Using Emacs
 
 * Start Using Emacs

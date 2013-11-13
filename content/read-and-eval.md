@@ -122,7 +122,7 @@ in the REPL:
 ; => (+ 8 3)
 ```
 
-\### Reader Macros
+## Reader Macros
 
 So far, we've seen a one-to-one mapping between reader forms and their
 corresponding data structures:
@@ -309,7 +309,7 @@ If the data structure is an empty list, it evaluates to an empty list:
 
 Otherwise, it is a *call* to the first element of the list.
 
-1.  Function Calls
+-   Function Calls
 
     We're familiar with function calls:
     
@@ -323,7 +323,7 @@ Otherwise, it is a *call* to the first element of the list.
     When performing a function call, each operand is fully evaluated
     and then passed to the function as an argument.
 
-2.  Special Forms
+-   Special Forms
 
     You can also call *special forms*. For example:
     

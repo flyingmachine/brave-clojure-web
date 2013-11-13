@@ -1,5 +1,5 @@
 #+Title: Clojure for the Brave and True, an Online Book for Beginners
-#+OPTIONS: toc:nil
+#+OPTIONS: toc:nil num:nil creator:nil author:nil
 #+MDH_LINK_TITLE: Introduction
 
 * Introduction

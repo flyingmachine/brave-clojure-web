@@ -1,6 +1,6 @@
 #+Title: "Clojure Alchemy: Reading, Evaluation, and Macros"
 #+MDH_LINK_TITLE: "Clojure Alchemy: Reading, Evaluation and Macros"
-#+OPTIONS: toc:nil
+#+OPTIONS: toc:nil num:nil creator:nil author:nil
 
 * Clojure Alchemy: Reading, Evaluation, and Macros
 
@@ -121,7 +121,7 @@ in the REPL:
 ; => (+ 8 3)
 #+END_SRC
 
-### Reader Macros
+** Reader Macros
 
 So far, we've seen a one-to-one mapping between reader forms and their
 corresponding data structures:

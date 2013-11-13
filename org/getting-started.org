@@ -1,5 +1,5 @@
 #+Title: Building, Running, and The REPL
-#+OPTIONS: toc:nil
+#+OPTIONS: toc:nil num:nil creator:nil author:nil
 #+MDH_LINK_TITLE: Building, Running, and The REPL
 
 * Building, Running, and The REPL

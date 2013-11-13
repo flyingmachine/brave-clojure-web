@@ -1,6 +1,6 @@
 #+Title: Core Functions in Depth
 #+MDH_LINK_TITLE: Core Functions in Depth
-#+OPTIONS: toc:nil
+#+OPTIONS: toc:nil num:nil creator:nil author:nil
 
 * Core Functions in Depth
 
@@ -339,37 +339,37 @@ to think of it that way. Sometimes lazy seqs are chunked, meaning that
 they realize 32 members at a time:
 
 #+BEGIN_SRC clojure
-(def identities
-  [{:alias "Batman" :real "Bruce Wayne"}
-   {:alias "Spiderman" :real "Peter Parker"}
-   {:alias "Santa" :real "Your mom"}
-   {:alias "Easter Bunny" :real "Your dad"}
-   {:alias "alias 5", :real "real 5"}
-   ; ... Just pretend that there are actually maps here for 6-30
-   {:alias "alias 31", :real "real 31"}
-   {:alias "alias 32", :real "real 32"}
-   {:alias "alias 33", :real "real 33"}
-   {:alias "alias 33", :real "real 34"}])
-
-(defn snitch
-  "Announce real identity to the world"
-  [identity]
-  (println (:real identity))
-  (:real identity))
-
-(map snitch [{:alias "Batman" :real "Bruce Wayne}])
-
-(def revealed-identities (map snitch identities))
-(first revealed-identities)
-;; The following gets printed
-Bruce Wayne
-Peter Parker
-Your mom
-Your dad
-real 5
-... (real 6-30 would actually be printed)
-real 31
-real 32
+  (def identities
+    [{:alias "Batman" :real "Bruce Wayne"}
+     {:alias "Spiderman" :real "Peter Parker"}
+     {:alias "Santa" :real "Your mom"}
+     {:alias "Easter Bunny" :real "Your dad"}
+     {:alias "alias 5", :real "real 5"}
+     ; ... Just pretend that there are actually maps here for 6-30
+     {:alias "alias 31", :real "real 31"}
+     {:alias "alias 32", :real "real 32"}
+     {:alias "alias 33", :real "real 33"}
+     {:alias "alias 33", :real "real 34"}])
+  
+  (defn snitch
+    "Announce real identity to the world"
+    [identity]
+    (println (:real identity))
+    (:real identity))
+  
+  (map snitch [{:alias "Batman" :real "Bruce Wayne"}])
+  
+  (def revealed-identities (map snitch identities))
+  (first revealed-identities)
+  ;; The following gets printed
+  Bruce Wayne
+  Peter Parker
+  Your mom
+  Your dad
+  real 5
+  ... (real 6-30 would actually be printed)
+  real 31
+  real 32
 #+END_SRC
 
 Notice that =real 33= and =real 34= were /not/ printed. Only 32 lines

@@ -1,6 +1,6 @@
 #+Title: Do Things
 #+MDH_LINK_TITLE: Do Things
-#+OPTIONS: toc:nil
+#+OPTIONS: toc:nil num:nil creator:nil author:nil
 
 * Do Things
 
@@ -45,11 +45,12 @@ failed_protagonist_names = [
   "The Incredible Bulk"
 ]
 failed_protagonist_names[0] = "Gary Potter"
-failed_protagonist_names # => [
-  "Gary Potter",
-  "Doreen the Explorer",
-  "The Incredible Bulk"
-]
+failed_protagonist_names
+# => [
+#   "Gary Potter",
+#   "Doreen the Explorer",
+#   "The Incredible Bulk"
+# ]
 #+END_SRC
 
 In Clojure, there is no equivalent. We'll cover the implications of
@@ -469,12 +470,12 @@ Here's an example of a function definition and calling the function:
 Let's dive deeper into the docstring, parameters, and function
 body.
 
-***# The Docstring
+**** The Docstring
 
 The docstring is really cool. You can view the docstring for a
 function in the REPL with =(doc fn-name)=, e.g. =(doc map)=.
 
-***# Parameters
+**** Parameters
 
 Clojure functions can be defined with zero or more parameters:
 
@@ -485,7 +486,7 @@ Clojure functions can be defined with zero or more parameters:
   
 (defn one-param
   [x]
-  (str "I take one param: " x " It'd better be a string!")
+  (str "I take one param: " x " It'd better be a string!"))
   
 (defn two-params
   [x y]
