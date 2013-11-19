@@ -1,6 +1,6 @@
----
-title: Writing Macros
-link_title: Writing Macros
+--- 
+title: "Writing Macros"
+link_title: "Writing Macros"
 kind: documentation
 ---
 
@@ -40,39 +40,40 @@ customer orders.
 
 By the end of the chapter, you'll understand:
 
--   What macros are
--   The tools used to write macros
-    -   quote
-    -   syntax quote
-    -   unqoute
-    -   unquote-splicing / the pinata tool
-    -   gensym
-    -   autogensym
-    -   macroexpand
--   Things to watch out for
-    -   double evaluation
-    -   variable capture
-    -   macros all the way down
+* What macros are
+* The tools used to write macros
+    * quote
+    * syntax quote
+    * unqoute
+    * unquote-splicing / the pinata tool
+    * gensym
+    * autogensym
+    * macroexpand
+* Things to watch out for
+    * double evaluation
+    * variable capture
+    * macros all the way down
 
 ## What Macros Are
 
-In the last chapter we covered how [Clojure evaluates data structures](/read-and-eval/)
+In the last chapter we covered how
+[Clojure evaluates data structures](/read-and-eval/#3__Evaluation).
 Briefly:
 
--   Strings, numbers, characters, `true`, `false`, `nil` and keywords evaluate
-    to themselves
--   Clojure resolves symbols by:
-    1.  Looking up whether the symbol names a special form. If it doesn't&#x2026;
-    2.  Trying to find a local binding. If it doesn't&#x2026;
-    3.  Trying to find a mapping introduced by `def`. If it doesn't&#x2026;
-    4.  Throwing an exception
--   Lists result in calls:
-    -   When performing a function call, each operand is fully evaluated
-        and then passed to the function as an argument.
-    -   Special form calls like `if`, `quote`, follow "special"
-        evaluation rules which implement core Clojure behavior
-    -   Macros take unevaluated data structures as arguments and return
-        a data structure which is then evaluated using the rules above
+* Strings, numbers, characters, `true`, `false`, `nil` and keywords evaluate
+  to themselves
+* Clojure resolves symbols by:
+    1. Looking up whether the symbol names a special form. If it doesn't...
+    2. Trying to find a local binding. If it doesn't...
+    3. Trying to find a mapping introduced by `def`. If it doesn't...
+    4. Throwing an exception
+* Lists result in calls:
+    * When performing a function call, each operand is fully evaluated
+      and then passed to the function as an argument.
+    * Special form calls like `if`, `quote`, follow "special"
+      evaluation rules which implement core Clojure behavior
+    * Macros take unevaluated data structures as arguments and return
+      a data structure which is then evaluated using the rules above
 
 So, a macro is a tool for transforming an arbitrary data structure
 into one which can be evaluated by Clojure. This allows you to
@@ -181,9 +182,9 @@ One key difference between functions and macros is that function
 arguments are fully evaluated before they're passed to the function,
 whereas macros receive arguments as unevaluated data structures.
 
-We can see this in the above example. If you tried evaluating \`(1 1
-+)=, you would get an exception. However, since you're making a macro
-call, the unevaluated list \`(1 1 +)= is passed to `postfix-notation`.
+We can see this in the above example. If you tried evaluating `(1 1
++)`, you would get an exception. However, since you're making a macro
+call, the unevaluated list `(1 1 +)` is passed to `postfix-notation`.
 We can thus use `conj`, `butlast`, and `last` functions to rearrange
 the list so that it's something Clojure can evaluate:
 
@@ -221,10 +222,10 @@ and most likely you shouldn't do it:
   ;; Notice that each arity's argument list and body is wrapped in parens
   ([single-arg]
      "Don't do this")
-
+     
   ([arg1 arg2]
      "Seriously, don't do it :(")
-
+     
   ([arg1 arg2 arg 3]
      "Nah, just kidding. Do whatever you want! Self-actualize!"))
 ```
@@ -256,17 +257,17 @@ Let's take the `postfix-notation` example:
 ; => 2
 ```
 
-When you pass the argument \`(1 1 +)= to the `postfix-notation` macro,
+When you pass the argument `(1 1 +)` to the `postfix-notation` macro,
 the value of `expression` within the macro body is a list comprised of
 three elements: the number one, the number one, and the symbol `+`.
-Note that the **symbol** `+` is distinct from its **value**, which is the
+Note that the *symbol* `+` is distinct from its *value*, which is the
 addition function.
 
 The `postfix-notation` macro returns a new list comprised of the `+`
 symbol, `1`, and `1`. This list is then evaluated and the result is
 returned.
 
-### Simple Quoting
+###  Simple Quoting
 
 You'll almost always use quoting within your macros. This is so that
 you can obtain an unevaluated symbol. Here's a brief refresher on
@@ -357,7 +358,7 @@ quote.
 
 ### Syntax Quoting
 
-So far we've built up our lists by using ='= (quote) and functions
+So far we've built up our lists by using `'` (quote) and functions
 which operate on lists (`conj`, `butlast`, `first`, etc), and by using
 the `list` function to create a list. Indeed, you could write your
 macros that way until the cows come home. Sometimes, though, it leads
@@ -517,34 +518,30 @@ look without syntax-quote and with it:
 
 Here are the differences:
 
-1.  Without syntax-quote, we need to use the `list` function. Remember
-    that we want to return a list which will then be evaluated,
-    resulting in the function `println` being applied.
-    
-    The `list` function isn't necessary when we use syntax-quote,
-    however, because a syntax-quoted list evaluates to a list &mdash;
-    not to a function call, special form call, or macro call.
+1. Without syntax-quote, we need to use the `list` function. Remember
+   that we want to return a list which will then be evaluated,
+   resulting in the function `println` being applied.
 
-2.  Without syntax-quote, we need to quote the symbol `println`. This
-    is because we want the resulting list to include the symbol
-    `println`, not the function which `println` evaluates to.
-    
-    By comparison, symbols within a syntax-quoted list are not
-    evaluated; a fully-qualified symbol is returned. `println` thus
-    doesn't need to be preceded by a single quote.
+   The `list` function isn't necessary when we use syntax-quote,
+   however, because a syntax-quoted list evaluates to a list &mdash;
+   not to a function call, special form call, or macro call.
+2. Without syntax-quote, we need to quote the symbol `println`. This
+   is because we want the resulting list to include the symbol
+   `println`, not the function which `println` evaluates to.
 
-3.  The string is treated the same in both versions.
+   By comparison, symbols within a syntax-quoted list are not
+   evaluated; a fully-qualified symbol is returned. `println` thus
+   doesn't need to be preceded by a single quote.
+3. The string is treated the same in both versions.
+4. Without syntax quote, we need to build up another list with the
+   `list` function and the `quote` symbol quoted. This might make your
+   head hurt. Look at the macro expansion &mdash; we want to call
+   `quote` on the data structure which was passed to the macro.
 
-4.  Without syntax quote, we need to build up another list with the
-    `list` function and the `quote` symbol quoted. This might make your
-    head hurt. Look at the macro expansion &mdash; we want to call
-    `quote` on the data structure which was passed to the macro.
-    
-    With syntax quote, we can continue to build a list more concisely.
-
-5.  Finally, in the syntax-quoted version we have to unquote `code` so
-    that it will be evaluated. Otherwise, the symbol `code` would be
-    included in the macro expansion instead of its value, \`(+ 1 1)=:
+   With syntax quote, we can continue to build a list more concisely.
+5. Finally, in the syntax-quoted version we have to unquote `code` so
+   that it will be evaluated. Otherwise, the symbol `code` would be
+   included in the macro expansion instead of its value, `(+ 1 1)`:
 
 ```clojure
 ;; This is what happens if we don't unquote "code" in the macro
@@ -587,7 +584,7 @@ destructuring the argument passed to `code-critic`, a map containing
 above, functions and `let` bindings both allow destructuring.
 
 Second, we have to wrap our two `println` expressions in a `do`
-expression. Why are we \*do\*ing that? (Ha ha!) Consider the following:
+expression. Why are we *do*ing that? (Ha ha!) Consider the following:
 
 ```clojure
 (defmacro code-makeover
@@ -613,19 +610,19 @@ And thus concludes our introduction to the mechanics of writing a
 macro! Sweet sacred boa of Western and Eastern Samoa, that was a lot!
 To sum up:
 
--   Macros receive unevaluated, arbitrary data structures as arguments.
-    You can use argument destructuring just like you can with functions
-    and `let` bindings
--   Macros should return data structures which can be evaluated by
-    Clojure
--   Most of the time, macros will return lists
--   It's important to be clear on the distinction between a symbol and
-    the value it evaluates to when building up your list
--   You can build up the list to be returned by using list functions or
-    by using syntax-quote
--   Syntax quoting usually leads to code that's clearer and more concise
--   You can unquote forms when using syntax quoting
--   Use `do` to wrap up many forms to be evaluated
+* Macros receive unevaluated, arbitrary data structures as arguments.
+  You can use argument destructuring just like you can with functions
+  and `let` bindings
+* Macros should return data structures which can be evaluated by
+  Clojure
+* Most of the time, macros will return lists
+* It's important to be clear on the distinction between a symbol and
+  the value it evaluates to when building up your list
+* You can build up the list to be returned by using list functions or
+  by using syntax-quote
+* Syntax quoting usually leads to code that's clearer and more concise
+* You can unquote forms when using syntax quoting
+* Use `do` to wrap up many forms to be evaluated
 
 ## Refactoring a Macro & Unquote Splicing
 
@@ -708,7 +705,7 @@ Here's how this would evaluate:
 ```
 
 This is the cause of the exception. `println` evaluates to nil, so we
-end up with something like \`(nil nil)=. `nil` isn't callable, and we
+end up with something like `(nil nil)`. `nil` isn't callable, and we
 get a NullPointerException.
 
 We ended up with this code because `map` returns a list. In this case,
@@ -777,9 +774,9 @@ until it makes sense.
 
 Macros have a couple unobvious "gotchas" that you should be aware of:
 
--   variable capture
--   double evaluation
--   macros all the way down
+* variable capture
+* double evaluation
+* macros all the way down
 
 ### Variable Capture
 
@@ -798,7 +795,7 @@ Here's how I feel about that thing you did:  Oh, big deal!
 ```
 
 The `println` call references the symbol `message` which we think is
-bound to the string ="Good job!"`. However, the =with-mischief` macro
+bound to the string `"Good job!"`. However, the `with-mischief` macro
 has created a new binding for message.
 
 Notice that we didn't use syntax-quote in our macro. Doing so would
@@ -872,7 +869,7 @@ Notice how both instance of `name#` is replaced with the same gensym'd
 symbol. `gensym` and auto-gensym are both used all the time when
 writing macros and they allow you avoid variable capture.
 
-\### Double Evaluation
+### Double Evaluation
 
 Consider the following:
 
@@ -882,13 +879,13 @@ Consider the following:
   `(if ~to-try
      (println (quote ~to-try) "was successful:" ~to-try)
      (println (quote ~to-try) "was not successful:" ~to-try)))
-
+     
 ;; Thread/sleep takes a number of milliseconds to sleep for
 (report (Thread/sleep 1000) (+ 1 1))
 ```
 
 In this case, we would actually sleep for 2 seconds because
-\`(Thread/sleep 1000)= actually gets evaluated twice. "Big deal!" your
+`(Thread/sleep 1000)` actually gets evaluated twice. "Big deal!" your
 inner example critic says. Well, if our code did something like
 transfer money between bank accounts, this would be a very big deal.
 Here's how we could avoid this problem:
@@ -1014,7 +1011,7 @@ something like this:
 
    :postal-code
    ["Please enter a postal code" not-empty
-
+    
     "Please enter a postal code that looks like a US postal code"
     #(or (empty? %)
          (not (re-seq #"[^0-9-]" %)))]
@@ -1110,10 +1107,10 @@ heart's content! Most often, validation will look something like this:
 Here's where we can an introduce a macro to clean things up a bit.
 Notice the pattern? It's:
 
-1.  Validate a record and bind result to `errors`
-2.  Check whether there were any errors
-3.  If there were, do the success thing
-4.  Otherwise do the failure thing
+1. Validate a record and bind result to `errors`
+2. Check whether there were any errors
+3. If there were, do the success thing
+4. Otherwise do the failure thing
 
 I think that we can clean this up by introducing a macro called
 `if-valid`. It will meet the rationale for creating a macro in that it
@@ -1157,18 +1154,18 @@ will help.
 
 Let's break the macro down:
 
-1.  It takes four arguments: `to-validate`, `validations`,
-    `errors-name`, and the rest-arg `then-else`. Using `errors-name`
-    like this is a new strategy. We want to have access to the errors
-    within the `then-else` statements, but we need to avoid variable
-    capture. Giving the macro the name that the errors should be bound
-    to allows us to get around this problem.
+1. It takes four arguments: `to-validate`, `validations`,
+   `errors-name`, and the rest-arg `then-else`. Using `errors-name`
+   like this is a new strategy. We want to have access to the errors
+   within the `then-else` statements, but we need to avoid variable
+   capture. Giving the macro the name that the errors should be bound
+   to allows us to get around this problem.
 
-2.  The syntax quote abstracts the general form of the let/validate/if
-    pattern we saw above.
+2. The syntax quote abstracts the general form of the let/validate/if
+   pattern we saw above.
 
-3.  We use unquote-splicing to unpack the `if` branches which were
-    packed into the `then-else` rest arg.
+3. We use unquote-splicing to unpack the `if` branches which were
+   packed into the `then-else` rest arg.
 
 Woohoo!
 
