@@ -1035,7 +1035,7 @@ So far so good, right? Now we just need to actually write out the
 validation.
 
 The `validate` function can be decomposed into two functions, one to
-get apply validations to a single validation and return error messages
+apply validations to a single validation and return error messages
 and another to accumulate those error messages into a final map of
 error messages like the one we see above.
 

@@ -542,7 +542,7 @@ Here are the differences:
    
 5. Finally, in the syntax-quoted version we have to unquote =code= so
    that it will be evaluated. Otherwise, the symbol =code= would be
-   included in the macro expansion instead of its value, `(+ 1 1)=:
+   included in the macro expansion instead of its value, =(+ 1 1)=:
 
 #+BEGIN_SRC clojure
 ;; This is what happens if we don't unquote "code" in the macro

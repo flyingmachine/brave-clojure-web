@@ -296,7 +296,7 @@ So in general, Clojure resolves a symbol by:
 2. Trying to find a local binding. If it doesn't...
 3. Trying to find a mapping introduced by =def=. If it doesn't...
 4. Throwing an exception
-
+   
 *** Lists
 
 If the data structure is an empty list, it evaluates to an empty list:
@@ -306,9 +306,9 @@ If the data structure is an empty list, it evaluates to an empty list:
 ; => ()
 #+END_SRC
 
-Otherwise, it is a /call/ to the first element of the list.
+Otherwise, it is a /call/ to the first element of the list:
 
-**** Function Calls
+*** Function Calls
 
 We're familiar with function calls:
 
@@ -322,7 +322,7 @@ We're familiar with function calls:
 When performing a function call, each operand is fully evaluated
 and then passed to the function as an argument.
 
-**** Special Forms
+*** Special Forms
 
 You can also call /special forms/. For example:
 
@@ -361,7 +361,7 @@ the last chapter, we represented them like this:
 As we saw in the Reader section, this invoke a reader macro so that we
 end up with:
 
-#+END_SRC
+#+BEGIN_SRC clojure
 (quote (a b c))
 ; => (a b c)
 #+END_SRC
@@ -429,7 +429,7 @@ syntax abstraction.
 "Syntax abstraction" sounds a little too abstract (ha ha!), so let's
 explore that a little.
 
-*** A Syntax Abstraction Example: The -> Macro
+** A Syntax Abstraction Example: The -> Macro
 
 Often, our Clojure code consists of a bunch of nested function calls.
 For example, I use the following function in one of my projects:
@@ -486,4 +486,4 @@ As you can see, this lets us write expressions backwards. It's just a
 toy example, of course, but you get the idea: macros give us complete
 freedom to express programs however we want to.
 
-In a later chapter we'll fully explore how to write macros. Fun!
+In the next chapter we'll fully explore how to write macros. Fun!

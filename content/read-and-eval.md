@@ -307,78 +307,78 @@ If the data structure is an empty list, it evaluates to an empty list:
 ; => ()
 ```
 
-Otherwise, it is a *call* to the first element of the list.
+Otherwise, it is a *call* to the first element of the list:
 
--   Function Calls
+### Function Calls
 
-    We're familiar with function calls:
-    
-    ```clojure
-    ;; The + symbol resolves to a function. The function is *called* with
-    ;; the arguments 1 and 2
-    (+ 1 2)
-    ; => 3
-    ```
-    
-    When performing a function call, each operand is fully evaluated
-    and then passed to the function as an argument.
+We're familiar with function calls:
 
--   Special Forms
+```clojure
+;; The + symbol resolves to a function. The function is *called* with
+;; the arguments 1 and 2
+(+ 1 2)
+; => 3
+```
 
-    You can also call *special forms*. For example:
-    
-    ```clojure
-    (eval (read-string "(if true 1 2)"))
-    ; => 1
-    ```
-    
-    In the above example, we evaluated a data structure which consisted of
-    the following:
-    
-    1.  The `if` symbol
-    2.  The value `true`
-    3.  The value `1`
-    4.  The value `2`
-    
-    `if` got resolved to the `if special form`. For the sake of brevity,
-    we're going to say "the `if` special form" or even just `if` instead
-    of "the special form whose symbol is `if`".
-    
-    In resolving the list data structure, we *called* `if` with the
-    *operands* `true`, `1`, and `2`.
-    
-    In general, special forms are special because they implement core
-    behavior that can't be implemented with functions. For example, when
-    you call a function, each operand gets evaluated. With `if`, however,
-    you don't want each operand to be evaluated.
-    
-    Another important special form is `quote`. When we introduced lists in
-    the last chapter, we represented them like this:
-    
-    ```clojure
-    '(a b c)
-    ```
-    
-    As we saw in the Reader section, this invoke a reader macro so that we
-    end up with:
-    
-    \#+END<sub>SRC</sub>
-    (quote (a b c))
-    ; => (a b c)
-    \\#+END<sub>SRC</sub>
-    
-    Normally, Clojure would try to resolve the `a` symbol and then *call*
-    it because it's the first element of a list. The `quote` special form
-    tells the evaluator "instead of evaluating my next data structure like
-    normal, just return the data structure itself."
-    
-    `def`, `let`, `loop`, `fn`, and `recur` are all special forms as well.
-    You can see why - they don't get evaluated in the same way as
-    functions.
-    
-    So, when Clojure evaluates a list data structure, it calls a function
-    or a special form. It can also call macros, which we're now ready to
-    learn about!
+When performing a function call, each operand is fully evaluated
+and then passed to the function as an argument.
+
+### Special Forms
+
+You can also call *special forms*. For example:
+
+```clojure
+(eval (read-string "(if true 1 2)"))
+; => 1
+```
+
+In the above example, we evaluated a data structure which consisted of
+the following:
+
+1.  The `if` symbol
+2.  The value `true`
+3.  The value `1`
+4.  The value `2`
+
+`if` got resolved to the `if special form`. For the sake of brevity,
+we're going to say "the `if` special form" or even just `if` instead
+of "the special form whose symbol is `if`".
+
+In resolving the list data structure, we *called* `if` with the
+*operands* `true`, `1`, and `2`.
+
+In general, special forms are special because they implement core
+behavior that can't be implemented with functions. For example, when
+you call a function, each operand gets evaluated. With `if`, however,
+you don't want each operand to be evaluated.
+
+Another important special form is `quote`. When we introduced lists in
+the last chapter, we represented them like this:
+
+```clojure
+'(a b c)
+```
+
+As we saw in the Reader section, this invoke a reader macro so that we
+end up with:
+
+\#+END<sub>SRC</sub>
+(quote (a b c))
+; => (a b c)
+\\#+END<sub>SRC</sub>
+
+Normally, Clojure would try to resolve the `a` symbol and then *call*
+it because it's the first element of a list. The `quote` special form
+tells the evaluator "instead of evaluating my next data structure like
+normal, just return the data structure itself."
+
+`def`, `let`, `loop`, `fn`, and `recur` are all special forms as well.
+You can see why - they don't get evaluated in the same way as
+functions.
+
+So, when Clojure evaluates a list data structure, it calls a function
+or a special form. It can also call macros, which we're now ready to
+learn about!
 
 ## Macros
 
@@ -430,7 +430,7 @@ syntax abstraction.
 "Syntax abstraction" sounds a little too abstract (ha ha!), so let's
 explore that a little.
 
-### A Syntax Abstraction Example: The -> Macro
+## A Syntax Abstraction Example: The -> Macro
 
 Often, our Clojure code consists of a bunch of nested function calls.
 For example, I use the following function in one of my projects:
@@ -487,4 +487,4 @@ As you can see, this lets us write expressions backwards. It's just a
 toy example, of course, but you get the idea: macros give us complete
 freedom to express programs however we want to.
 
-In a later chapter we'll fully explore how to write macros. Fun!
+In the next chapter we'll fully explore how to write macros. Fun!
