@@ -1,6 +1,6 @@
 #+Title: Writing Macros
 #+MDH_LINK_TITLE: Writing Macros
-#+OPTIONS: toc:nil num:nil creator:nil author:nil
+#+OPTIONS: toc:nil num:nil creator:nil author:nil h:6
 
 * Writing Macros
 
@@ -179,9 +179,9 @@ One key difference between functions and macros is that function
 arguments are fully evaluated before they're passed to the function,
 whereas macros receive arguments as unevaluated data structures.
 
-We can see this in the above example. If you tried evaluating `(1 1
+We can see this in the above example. If you tried evaluating =(1 1
 +)=, you would get an exception. However, since you're making a macro
-call, the unevaluated list `(1 1 +)= is passed to =postfix-notation=.
+call, the unevaluated list =(1 1 +)= is passed to =postfix-notation=.
 We can thus use =conj=, =butlast=, and =last= functions to rearrange
 the list so that it's something Clojure can evaluate:
 
@@ -355,7 +355,7 @@ quote.
 
 *** Syntax Quoting
 
-So far we've built up our lists by using ='= (quote) and functions
+So far we've built up our lists by using ~'~ (quote) and functions
 which operate on lists (=conj=, =butlast=, =first=, etc), and by using
 the =list= function to create a list. Indeed, you could write your
 macros that way until the cows come home. Sometimes, though, it leads
@@ -796,7 +796,7 @@ Here's how I feel about that thing you did:  Oh, big deal!
 #+END_SRC
 
 The =println= call references the symbol =message= which we think is
-bound to the string ="Good job!"=. However, the =with-mischief= macro
+bound to the string =Good job!=. However, the =with-mischief= macro
 has created a new binding for message.
 
 Notice that we didn't use syntax-quote in our macro. Doing so would
