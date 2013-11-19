@@ -181,9 +181,9 @@ One key difference between functions and macros is that function
 arguments are fully evaluated before they're passed to the function,
 whereas macros receive arguments as unevaluated data structures.
 
-We can see this in the above example. If you tried evaluating \`(1 1
-+)=, you would get an exception. However, since you're making a macro
-call, the unevaluated list \`(1 1 +)= is passed to `postfix-notation`.
+We can see this in the above example. If you tried evaluating `(1 1
++)`, you would get an exception. However, since you're making a macro
+call, the unevaluated list `(1 1 +)` is passed to `postfix-notation`.
 We can thus use `conj`, `butlast`, and `last` functions to rearrange
 the list so that it's something Clojure can evaluate:
 
@@ -256,7 +256,7 @@ Let's take the `postfix-notation` example:
 ; => 2
 ```
 
-When you pass the argument \`(1 1 +)= to the `postfix-notation` macro,
+When you pass the argument `(1 1 +)` to the `postfix-notation` macro,
 the value of `expression` within the macro body is a list comprised of
 three elements: the number one, the number one, and the symbol `+`.
 Note that the **symbol** `+` is distinct from its **value**, which is the
@@ -357,7 +357,7 @@ quote.
 
 ### Syntax Quoting
 
-So far we've built up our lists by using ='= (quote) and functions
+So far we've built up our lists by using `'` (quote) and functions
 which operate on lists (`conj`, `butlast`, `first`, etc), and by using
 the `list` function to create a list. Indeed, you could write your
 macros that way until the cows come home. Sometimes, though, it leads
@@ -587,7 +587,7 @@ destructuring the argument passed to `code-critic`, a map containing
 above, functions and `let` bindings both allow destructuring.
 
 Second, we have to wrap our two `println` expressions in a `do`
-expression. Why are we \*do\*ing that? (Ha ha!) Consider the following:
+expression. Why are we *do*ing that? (Ha ha!) Consider the following:
 
 ```clojure
 (defmacro code-makeover
@@ -708,7 +708,7 @@ Here's how this would evaluate:
 ```
 
 This is the cause of the exception. `println` evaluates to nil, so we
-end up with something like \`(nil nil)=. `nil` isn't callable, and we
+end up with something like `(nil nil)`. `nil` isn't callable, and we
 get a NullPointerException.
 
 We ended up with this code because `map` returns a list. In this case,
@@ -798,7 +798,7 @@ Here's how I feel about that thing you did:  Oh, big deal!
 ```
 
 The `println` call references the symbol `message` which we think is
-bound to the string ="Good job!"`. However, the =with-mischief` macro
+bound to the string `"Good job!"`. However, the `with-mischief` macro
 has created a new binding for message.
 
 Notice that we didn't use syntax-quote in our macro. Doing so would
@@ -872,7 +872,7 @@ Notice how both instance of `name#` is replaced with the same gensym'd
 symbol. `gensym` and auto-gensym are both used all the time when
 writing macros and they allow you avoid variable capture.
 
-\### Double Evaluation
+### Double Evaluation
 
 Consider the following:
 
@@ -888,7 +888,7 @@ Consider the following:
 ```
 
 In this case, we would actually sleep for 2 seconds because
-\`(Thread/sleep 1000)= actually gets evaluated twice. "Big deal!" your
+`(Thread/sleep 1000)` actually gets evaluated twice. "Big deal!" your
 inner example critic says. Well, if our code did something like
 transfer money between bank accounts, this would be a very big deal.
 Here's how we could avoid this problem:
@@ -1038,7 +1038,7 @@ So far so good, right? Now we just need to actually write out the
 validation.
 
 The `validate` function can be decomposed into two functions, one to
-get apply validations to a single validation and return error messages
+apply validations to a single validation and return error messages
 and another to accumulate those error messages into a final map of
 error messages like the one we see above.
 
