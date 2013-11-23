@@ -92,7 +92,7 @@ Here are some string examples:
 ```
 
 Notice that Clojure only allows double quotes to delineate strings.
-='Lord Voldemort'=, for example, is not a valid string. Also notice
+`'Lord Voldemort'`, for example, is not a valid string. Also notice
 that Clojure doesn't have string interpolation. It only allows
 concatenation via the `str` function:
 

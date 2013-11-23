@@ -219,9 +219,9 @@ without `read-string`:
 ```
 
 This is a consequence of using the REPL. Once the data structure
-represented by `(eval "t")` gets evaluated, ="t"= itself has already
+represented by `(eval "t")` gets evaluated, `"t"` itself has already
 gone through the read/eval process, yielding the string represented by
-="t"`. For the time being, we're going to keep using =read-string`,
+`"t"`. For the time being, we're going to keep using `read-string`,
 however, to more clearly show that `eval` works on data structures.
 
 ```clojure
@@ -359,13 +359,12 @@ the last chapter, we represented them like this:
 '(a b c)
 ```
 
-As we saw in the Reader section, this invoke a reader macro so that we
+As we saw in the Reader section, this invokes a reader macro so that we
 end up with:
 
-\#+END<sub>SRC</sub>
+```clojure
 (quote (a b c))
-; => (a b c)
-\\#+END<sub>SRC</sub>
+```
 
 Normally, Clojure would try to resolve the `a` symbol and then *call*
 it because it's the first element of a list. The `quote` special form
@@ -459,7 +458,7 @@ The `->` macro lets you rewrite the function like this:
       read-string))
 ```
 
-You can read this as "`path` gets passed to `io/resource`. The result
+You can read this as `path` gets passed to `io/resource`. The result
 gets passed to `slurp`. The result of that gets passed to
 `read-string`.
 
