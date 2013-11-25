@@ -44,11 +44,11 @@ new language:
   to know the why and how of lisp and functional programming.
 
 Make no mistake: you *will* work. But this book will make the work
-feel exhilirating, *not* exhausting. That's because this book does
+feel exhilarating, *not* exhausting. That's because this book does
 three things:
 
-- It takes the "dessert-first" appraoch, giving you the development
-  tools and and language details needed to start playing with real
+- It takes the "dessert-first" approach, giving you the development
+  tools and language details needed to start playing with real
   programs immediately
 - It assumes 0 experience with the JVM, functional programming, or
   lisp. It covers these topics in detail so that you'll feel like you
