@@ -42,7 +42,7 @@ compile '*' do
       when /scss$/ then filter(:sass, Compass.sass_engine_options)
       end
 
-      if item.attributes[:kind] == "documentation"
+      if item.attributes[:kind] == "documentation" && !item.attributes[:notoc]
         filter :toc
       end
     end

@@ -9,5 +9,5 @@ Guardfile
 .lein-env
 target
 repl-port
+*.odt
 org/*.md
-org/*.odt
