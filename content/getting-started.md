@@ -6,38 +6,54 @@ kind: documentation
 
 # Building, Running, and The REPL
 
-There's something powerful and motivating about getting a real program
-running. Once you can do that, you're free to experiment and you can
-actually share your work!
-
 In this chapter, you'll invest a small amount of time up front to get
 familiar with a quick, problem-free way to build and run Clojure
-programs. You'll also learn how to instantly experiment with code
-within a running Clojure process using a REPL. This will tighten your
-feedback loop, allowing you to learn more efficiently.
+programs. There's something powerful and motivating about getting a
+real program running. Once you can do that, you're free to experiment
+and you can actually share your work!
 
-Below, we'll briefly introduce Clojure. Next, we'll cover Leiningen,
-the de-facto standard build tool for Clojure. By the end, you'll know
-how to do the following:
+You'll also learn how to instantly try out code within a running
+Clojure process using a REPL. This will allow you to quickly test your
+understanding of the language, allowing you to learn more efficiently.
 
--   Create a new Clojure project with Leiningen
--   Build the project to create an executable jar file
--   Execute the jar file
--   Execute code in a Clojure REPL
+In order to get there, I'll first briefly introduce Clojure. I think
+you'll agree that that's a useful topic in a Clojure book! Next, I'll
+cover Leiningen, the de-facto standard build tool for Clojure. By the
+end, you'll know how to do the following:
+
+- Create a new Clojure project with Leiningen
+- Build the project to create an executable jar file
+- Execute the jar file
+- Execute code in a Clojure REPL
 
 ## First things first: What is Clojure?
 
-Clojure is actually two things! They are:
+Clojure was forged in a mythic volcano by Rich Hickey. Using an alloy
+of lisp, functional programming, and a lock of his own epic hair, he
+crafted a language which has proven to be delightful yet powerful. Its
+lisp heritage gives you the power to write code more expressively than
+is possible in most non-lisp languages. Its distinct take on
+functional programming will sharpen your thinking as a programmer
+*and* give you better tools for tackling complex domains like
+concurrent programming which are traditionally known to drive
+developers into years of therapy. All of which you'll learn about in
+this book.
 
--   Clojure the Language
-    -   Lisp dialect
-    -   Great support for concurrency and async programming
-    -   Path to enlightenment, etc.
--   Clojure the Compiler
-    -   An executable JAR, `clojure.jar`
-    -   Takes code written in Clojure the Language and compiles it to
-        Java Virtual Machine (JVM) bytecode
-    -   Source of confusion
+Clojure continues to evolve. As of this writing, it's at
+version 1.6.alpha3, and development is going strong.
+
+When talking about Clojure, though, it's important to keep in mind
+that Clojure is actually two things! They are:
+
+- Clojure the Language
+    - Lisp dialect with functional emphasis
+    - Great support for concurrency and asynchronous programming
+    - Path to enlightenment, etc.
+- Clojure the Compiler
+    - An executable JAR, `clojure.jar`
+    - Takes code written in Clojure the Language and compiles it to
+      Java Virtual Machine (JVM) bytecode
+    - Source of confusion
 
 This distinction is necessary because, unlike most programming
 languages - Ruby, Python, C, a bazillion others - Clojure is a *hosted
@@ -47,17 +63,17 @@ collection. We'll explore the relationship between Clojure and the JVM
 more later on, but for now the main thing you need to understand is
 this:
 
--   The JVM executes Java bytecode. For example, you can view the Java
-    programming language as a DSL for emitting Java bytecode.
--   JAR files contain Java bytecode. You can refer to JAR files as Java
-    programs.
--   There is a Java program, `clojure.jar`, which, when executed, reads
-    Clojure source code and produces Java bytecode
--   That Java bytecode then gets executed by the JVM process which is
-    already running `clojure.jar`
+- The JVM executes Java bytecode. For example, you can view the Java
+  programming language as a DSL for emitting Java bytecode.
+- JAR files contain Java bytecode. You can refer to JAR files as Java
+  programs.
+- There is a Java program, `clojure.jar`, which, when executed, reads
+  Clojure source code and produces Java bytecode.
+- That Java bytecode then gets executed by the JVM process which is
+  already running `clojure.jar`.
 
 Now that we've got our heads straight regarding what Clojure is, let's
-actually build a freakin Clojure program!
+actually build a freakin' Clojure program!
 
 ## Leiningen
 
@@ -104,16 +120,16 @@ Leiningen to build and run Clojure apps, and Leiningen expects your
 app to be laid out this way. Here's the function of each part of the
 skeleton:
 
--   `project.clj` is a configuration file for Leiningen. It helps
-    Leiningen answer questions like, "What dependencies does this
-    project have?" and "When this Clojure program runs, what function
-    should get executed first?"
--   `src/clojure_noob/core.clj` is where we'll be doing our
-    Clojure coding for awhile. In general, your source code will fall
-    under `src/{project_name}`
--   The `test` directory obviously contains tests.
--   `resources` is a place for you to store assets like images; we won't
-    be using it for awhile.
+- `project.clj` is a configuration file for Leiningen. It helps
+  Leiningen answer questions like, "What dependencies does this
+  project have?" and "When this Clojure program runs, what function
+  should get executed first?"
+- `src/clojure_noob/core.clj` is where we'll be doing our
+  Clojure coding for awhile. In general, your source code will fall
+  under `src/{project_name}`
+- The `test` directory obviously contains tests.
+- `resources` is a place for you to store assets like images; we won't
+  be using it for awhile.
 
 ### Running the Clojure project
 
@@ -142,8 +158,6 @@ Change line 9 so that it says this:
 (defn -main
   "I don't do a whole lot ... yet."
   [& args]
-  ;; work around dangerous default behaviour in Clojure
-  (alter-var-root #'*read-eval* (constantly false))
   (println "I'm a little teapot!"))
 ```
 
@@ -155,6 +169,12 @@ lein run
 
 You should see the output, "I'm a little teapot!" Congratulations,
 little teapot!
+
+As you go through the book you'll learn what's actually happening
+here, but for now all you need to know is that you created a function,
+`-main`, and that function gets run when you execute `lein run` at the
+command line. You can modify `-main` and execute `lein run` to
+experiment with Clojure.
 
 ### Building the Clojure Project
 
@@ -182,7 +202,17 @@ Emacs, let's go over one last important tool: the REPL.
 
 ### Using the REPL
 
-Run this:
+REPL stands for "Read-Eval-Print Loop" and it's a tool for
+experimenting with code. It presents you with a prompt and you type
+code into it. It then *reads* your input, *evaluates* it, *prints* the
+result, and *loops*, presenting you with a prompt again.
+
+The REPL is considered an essential tool for lisp developpment,
+development, and I strongly recommend you make use of it. It will let
+you quickly check your understanding of the language and explore
+ideas.
+
+To start a REPL, run this:
 
 ```sh
 lein repl
