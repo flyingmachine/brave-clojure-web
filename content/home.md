@@ -57,7 +57,7 @@ three things:
   exercises like "assaulting hobbits" and "tracking glittery vampires"
 
 By the end, you'll be able to use Clojure, one of the most exciting
-and fun programming languages in existence.
+and fun programming languages in existence!
 
 ## Part 1: Environment Setup
 
@@ -86,6 +86,7 @@ cover Emacs from the ground up so that you're guaranteed to have an
 efficient Emacs/Clojure workflow.
 
 [Read "Start Using Emacs"](/basic-emacs/)
+&bull;
 [Read "Using Emacs with Clojure"](/using-emacs-with-clojure/)
 
 ## Part 2: Language Fundamentals
@@ -135,11 +136,13 @@ understand how Clojure works and how it's different from other,
 non-lisp languages. With this structure in place, we'll introduce the
 macro, one of the most powerful tools in existence.
 
-### Writing Macros
-
 [Read "Clojure Alchemy: Reading, Evaluation, and Macros"](/read-and-eval/)
+
+### Writing Macros
 
 This chapter thoroughly examines how to write macros starting with
 basic examples and moving up in complexity. We'll close by donnig our
 make-believe caps, pretending that we run an online potion store and
 using macros to validate customer orders.
+
+[Read "Writig Macros"](/writing-macros/)
