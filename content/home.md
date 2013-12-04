@@ -145,4 +145,4 @@ basic examples and moving up in complexity. We'll close by donnig our
 make-believe caps, pretending that we run an online potion store and
 using macros to validate customer orders.
 
-[Read "Writig Macros"](/writing-macros/)
+[Read "Writing Macros"](/writing-macros/)
