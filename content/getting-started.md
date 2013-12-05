@@ -6,7 +6,7 @@ kind: documentation
 
 # Building, Running, and The REPL
 
-In this chapter, you'll invest a small amount of time up front to get
+In this chapter you'll invest a small amount of time up front to get
 familiar with a quick, problem-free way to build and run Clojure
 programs. There's something powerful and motivating about getting a
 real program running. Once you can do that, you're free to experiment
@@ -34,16 +34,16 @@ crafted a language which has proven to be delightful yet powerful. Its
 lisp heritage gives you the power to write code more expressively than
 is possible in most non-lisp languages. Its distinct take on
 functional programming will sharpen your thinking as a programmer
-*and* give you better tools for tackling complex domains like
-concurrent programming which are traditionally known to drive
+*and* give you better tools for tackling complex domains – like
+concurrent programming – which are traditionally known to drive
 developers into years of therapy. All of which you'll learn about in
 this book.
 
 Clojure continues to evolve. As of this writing, it's at
-version 1.6.alpha3, and development is going strong.
+version 1.6.alpha3 and development is going strong.
 
-When talking about Clojure, though, it's important to keep in mind
-that Clojure is actually two things! They are:
+When talking about Clojure, it's important to keep in mind that Clojure
+is actually two things! They are:
 
 - Clojure the Language
     - Lisp dialect with functional emphasis

@@ -14,11 +14,13 @@ The reason I recommend Emacs, however, is that it offers tight
 integration with a Clojure REPL. This allows you to instantly try out
 your code as you write. That kind of tight feedback loop will be
 useful both when learning Clojure and, later, when writing real
-Clojure programs. Emacs is also great for working with any Lisp
-dialect; Emacs itself is written in a Lisp dialect called Emacs Lisp.
-If you don't follow the thorough Emacs instructions below, then it's
-still worthwhile to invest time in setting up your editor to work with
-a REPL.
+Clojure programs.
+
+Emacs is also great for working with any Lisp dialect; Emacs itself is
+written in a Lisp dialect called Emacs Lisp. If you don't follow the
+thorough Emacs instructions in this chapter, then it's still
+worthwhile to invest time in setting up your editor to work with a
+REPL.
 
 By the end of this chapter, your Emacs setup will look something like
 this:
@@ -27,32 +29,32 @@ this:
 
 To get there, we'll do the following:
 
--   Install Emacs
--   Install a new-person-friendly Emacs configuration
+- Install Emacs
+- Install a new-person-friendly Emacs configuration
 
 After we're done installing and setting up Emacs, we'll cover:
 
--   Opening, editing, and saving files
--   Basic Emacs concepts
--   Essential Emacs key bindings
+- Opening, editing, and saving files
+- Basic Emacs concepts
+- Essential Emacs key bindings
 
 In the next chapter, we'll cover:
 
--   Editing Clojure code
--   Interacting with the REPL
+- Editing Clojure code
+- Interacting with the REPL
 
 ## Installation
 
 You should use the latest major version of Emacs, Emacs 24.
 
--   **OS X**: [Install vanilla Emacs as a Mac app](http://emacsformacosx.com/). There are other options,
-    like Aquamacs, which are supposed to make Emacs more "Mac-like", but
-    they're problematic in the long run because they're set up so
-    differently from standard Emacs that it's difficult to use the Emacs
-    manual or follow along with tutorials
--   **Ubuntu**: Follow [these instructions](https://launchpad.net/~cassou/+archive/emacs)
--   **Windows**: You can find a binary [at the bottom of this page](http://ftp.gnu.org/gnu/emacs/windows/). I'd
-    love to find some better Windows instructions.
+- **OS X**: [Install vanilla Emacs as a Mac app](http://emacsformacosx.com/). There are other options,
+  like Aquamacs, which are supposed to make Emacs more "Mac-like", but
+  they're problematic in the long run because they're set up so
+  differently from standard Emacs that it's difficult to use the Emacs
+  manual or follow along with tutorials
+- **Ubuntu**: Follow [these instructions](https://launchpad.net/~cassou/+archive/emacs)
+- **Windows**: You can find a binary [at the bottom of this page](http://ftp.gnu.org/gnu/emacs/windows/). I'd
+  love to find some better Windows instructions.
 
 After you're done installing Emacs, open it up. You should see
 something like this:
@@ -63,16 +65,18 @@ Welcome to the Cult of Emacs! You've made Richard Stallman proud!
 
 ## Configuration
 
-I've created a [github repo](https://github.com/flyingmachine/emacs-for-clojure) which contains all the files you need to
-get started. Just do the following:
+I've created a
+[github repo](https://github.com/flyingmachine/emacs-for-clojure)
+which contains all the files you need to get started. Just do the
+following to use it:
 
-1.  Close Emacs
-2.  Delete `~/.emacs` or `~/.emacs.d` if they exist
-3.  Run `git clone
-       https://github.com/flyingmachine/emacs-for-clojure.git ~/.emacs.d`
-4.  (Optional) delete the `.emacs.d/.git` directory. You'll probably
-    want to create your own git repo for `.emacs.d`
-5.  Open Emacs
+1. Close Emacs
+2. Delete `~/.emacs` or `~/.emacs.d` if they exist
+3. Run `git clone
+   https://github.com/flyingmachine/emacs-for-clojure.git ~/.emacs.d`
+4. (Optional) delete the `.emacs.d/.git` directory. You'll probably
+   want to create your own git repo for `.emacs.d`
+5. Open Emacs
 
 When you open Emacs you should see a lot of activity. This is because
 Emacs is downloading a bunch of packages which will be useful for
@@ -81,16 +85,15 @@ Emacs and open it again. After you do so you should see this:
 
 ![Emacs configged](/images/basic-emacs/emacs-configged.png)
 
-Feel free to resize it however you please. Now that we've got
-everything set up, let's actually start doing some editing!
+Now that we've got everything set up let's learn how to use Emacs!
 
 ## Emacs Escape Hatch
 
-Before we go further, you need to know an important Emacs key binding:
-Control+g. This key binding quits whatever Emacs command you're trying
-to run, so if things aren't going right, hold down the Control key and
-press "g" and then try again. It won't close Emacs or make you lose
-any work; it'll just cancel your current action.
+Before we dig into the fun stuff, you need to know an important Emacs
+key binding: Control+g. This key binding quits whatever Emacs command
+you're trying to run. So if things aren't going right, hold down the
+"control" key and press "g" and then try again. It won't close Emacs
+or make you lose any work; it'll just cancel your current action.
 
 ## Emacs Buffers
 
@@ -105,9 +108,9 @@ Lisp development. Let's go ahead and create a fresh buffer so that we
 can play around without having unexpected things happen. To create a
 buffer, do this:
 
--   Hold down Control and press x
--   Release Control
--   Press b
+- Hold down Control and press x
+- Release Control
+- Press b
 
 Since that is very wordy, let's express the same sequence in a compact
 format:
@@ -130,12 +133,12 @@ You should now see a completely blank buffer. Go ahead and just start
 typing stuff. You should find that keys mostly work the way you'd
 expect:
 
--   Characters show up as you type them
--   The up, down, left and right arrow keys move you as you'd expect
--   Enter creates a new line
+- Characters show up as you type them
+- The up, down, left and right arrow keys move you as you'd expect
+- Enter creates a new line
 
 You'll also notice that you're not sporting a bushy Unix beard or
-birkenstocks unless you had them to begin with, which should help ease
+birkenstocks unless you had them to begin with. This should help ease
 any lingering trepidation you feel about using Emacs.
 
 When you're done messing around, go ahead and **kill** the buffer:
@@ -216,30 +219,30 @@ will create a file with the buffer's contents at the path you entered.
 
 Let's recap:
 
-1.  In Emacs, editing takes place in *buffers*
-2.  To switch to a buffer, do `C-x b` and enter the buffer name in the
-       *minibuffer*
-3.  To create a new buffer, do `C-x b` and enter a new buffer name
-4.  To open a file, do `C-x C-f` and navigate to the file
-5.  To save a buffer to a file, do `C-x C-s`.
-6.  To create a new file, do `C-x C-f` and enter the new file's path.
-    When you save the buffer, Emacs will create the file on the file
-    system.
+1. In Emacs, editing takes place in *buffers*
+2. To switch to a buffer, do `C-x b` and enter the buffer name in the
+   *minibuffer*
+3. To create a new buffer, do `C-x b` and enter a new buffer name
+4. To open a file, do `C-x C-f` and navigate to the file
+5. To save a buffer to a file, do `C-x C-s`.
+6. To create a new file, do `C-x C-f` and enter the new file's path.
+   When you save the buffer, Emacs will create the file on the file
+   system.
 
 ## Key Bindings and Modes
 
-We've already come a long way, and can now use Emacs like a very basic
-editor. This should help you get by if you ever need to use Emacs
-on a server or are forced into pairing with an Emacs nerd.
+You've already come a long way! You can now use Emacs like a very
+basic editor. This should help you get by if you ever need to use
+Emacs on a server or are forced into pairing with an Emacs nerd.
 
 To really be productive, however, it'll be useful to go over some
-"key" details about key bindings (ha ha!). Then we'll introduce Emacs
-"modes". After that, we'll cover some core terminology and go over a
+"key" details about key bindings (ha ha!). Then I'll introduce Emacs
+"modes". After that, I'll cover some core terminology and go over a
 bunch of super useful key bindings.
 
 ### Key Bindings / Emacs is a Lisp Interpreter
 
-First, the term *key binding* derives from the fact that Emacs binds
+The term *key binding* derives from the fact that Emacs binds
 *keystrokes* to *commands*, which are just *elisp functions* (I'll use
 "command" and "function" interchangeably). For example, `C-x b` is
 bound to the function `switch-to-buffer`. Likewise, `C-x C-s` is bound
@@ -252,22 +255,25 @@ From Emacs's point of view, all functions are created equal. You can
 redefine functions, even core functions like `save-file`. You probably
 won't *want* to, but you can.
 
-This is because, at its core, Emacs is "just" a Lisp interpreter which
-happens to load code editing facilities. From the perspective of
-Emacs, `save-file` is just a function, as is `switch-to-buffer` and
-almost any other command you can run. Not only that, any functions
-*you* create are treated the same as any built-in functions. You can
-even use Emacs to execute elisp, modifying Emacs as it runs - but
-that's a tale for another day.
+You can redefine functions because, at its core, Emacs is "just" a
+Lisp interpreter which happens to load code editing facilities. From
+the perspective of Emacs, `save-file` is just a function, as is
+`switch-to-buffer` and almost any other command you can run. Not only
+that, any functions *you* create are treated the same as any built-in
+functions. You can even use Emacs to execute elisp, modifying Emacs as
+it runs.
 
-This is why Emacs is so flexible and why people like myself are so
-crazy about Emacs. Yes, it has a lot of surface of complexity which
-can be difficult to learn. But underlying it is the elegant simplicity
-of Lisp and the infinite tinkerability which comes with it.
+The freedom to modify Emacs using a powerful programming language is
+what makes Emacs so flexible and why people like myself are so crazy
+about it. Yes, it has a lot of surface of complexity which can take
+time to learn. But underlying it is the elegant simplicity of Lisp and
+the infinite tinkerability which comes with it.
 
-This tinkerability extends to key bindings in another way. Just as you
-can redefine existing functions, you can create, redefine, and remove
-key bindings.
+This tinkerability isn't limited to just creating and redefining
+functions. You can also create, redefine, and remove keybindings.
+Conceptually, keybindings are just an entry in a lookup table
+associating keystrokes with functions. That lookup table is completely
+modifiable.
 
 You can also run functions by name, without a specific keybinding,
 using `M-x {function-name}`, e.g. `M-x save-buffer`. "M" stands for
@@ -301,9 +307,10 @@ active at a time.
 
 Whereas major modes specialize Emacs for a certain file type, minor
 modes usually provide functionally that's useful across many file
-types. For example, Abbrev mode "automatically expands text based on
-pre-defined abbreviation definitions" (per the [Emacs manual](http://www.gnu.org/software/emacs/manual/html_node/emacs/Minor-Modes.html#Minor-Modes)). You can
-have multiple minor modes active at the same time.
+types. For example, abbrev mode "automatically expands text based on
+pre-defined abbreviation definitions" (per the
+[Emacs manual](http://www.gnu.org/software/emacs/manual/html_node/emacs/Minor-Modes.html#Minor-Modes)).
+You can have multiple minor modes active at the same time.
 
 You can see which modes are active on the **mode line**:
 
@@ -332,11 +339,11 @@ the bottom of the article.
 If all you want to do is use Emacs like Notepad, then you can skip
 this section entirely! But you'll be missing out on some great stuff:
 
--   Key Emacs terms
--   How to select text, cut it, copy it, and paste it
--   How to select text, cut it, copy it, and paste it (see what I did
-    there? Ha ha ha!)
--   How to move through a buffer efficiently
+- Key Emacs terms
+- How to select text, cut it, copy it, and paste it
+- How to select text, cut it, copy it, and paste it (see what I did
+  there? Ha ha ha!)
+- How to move through a buffer efficiently
 
 To get started, open up a new buffer in Emacs and name it
 "jack-handy". Then paste in the following text:
@@ -401,11 +408,11 @@ move point, everything between *mark* and *point* is the region. It's
 very similar to shift-selecting text for basic purposes. For example,
 do the following in your Jack Handy quotes buffer:
 
-1.  Go to the beginning of the file
-2.  Do `C-spc`
-3.  Do `M-f` twice. You should see a highlighted region encompassing
-    "If you".
-4.  Press backspace. That should delete "If you".
+1. Go to the beginning of the file
+2. Do `C-spc`
+3. Do `M-f` twice. You should see a highlighted region encompassing
+   "If you".
+4. Press backspace. That should delete "If you".
 
 One cool thing about using mark instead of shift-selecting text is
 that you're free to use all of Emacs's movement commands after you set
@@ -416,10 +423,10 @@ strain your pinky holding down the shift key.
 
 Regions also let you operate within limited areas of the buffer:
 
-1.  Create a region encompassing "The face of a child can say it all"
-2.  Do `M-x replace-string` and replace "face" with "head"
+1. Create a region encompassing "The face of a child can say it all"
+2. Do `M-x replace-string` and replace "face" with "head"
 
-This will perform the replacement only in the current region rather
+This will perform the replacement within the current region rather
 than the entire buffer after point, which is the default behavior.
 
 ### Killing and the Kill Ring
@@ -446,20 +453,19 @@ cycle through them. This is cool because you can cycle through the
 kill ring to retrieve text you killed a long time ago. Let's see this
 in action:
 
-1.  Create a region over the word "Treasure" in the first line.
-2.  Do `M-w`, which is bound to the `kill-ring-save` command.
-3.  Move point to the word "choreograpahy" on the last line.
-4.  Do `M-d`, which is bound to the `kill-word` command
-5.  Do `C-y`. This will insert the text you just killed,
-    "choreograpahy"
-6.  Do `M-y`. This will remove "choreograpahy" and insert "Treasure"
+1. Create a region over the word "Treasure" in the first line.
+2. Do `M-w`, which is bound to the `kill-ring-save` command. In
+   general, `M-w` is like copying. It adds the region to the kill ring
+   without deleting it
+3. Move point to the word "choreograpahy" on the last line
+4. Do `M-d`, which is bound to the `kill-word` command. This adds
+   "choreograpahy" word to the kill ring and deletes it
+5. Do `C-y`. This will "yank" the text you just killed,
+   "choreograpahy", inserting it at point
+6. Do `M-y`. This will remove "choreograpahy" and yank the next item
+   on the kill ring, "Treasure"
 
-So what just happened here? First, you added "Treasure" to the kill
-ring. Then you added "choreograpahy" to the kill ring . Next, you
-yanked "choreograpahy" from the kill ring. Finally, you replaced the
-last yank, "choreograpahy", with the previous kill, "Treasure".
-
-Here's a summary of key bindings: 
+Here's a summary of useful kill/yank key bindings: 
 
 | Keys | Description                           |
 |------+---------------------------------------|
@@ -472,7 +478,7 @@ Here's a summary of key bindings:
 
 ### Editing and Help
 
-Here are some editing keybindings you should know about:
+Here are some useful editing keybindings you should know about:
 
 | Keys | Description                                                                |
 |------+----------------------------------------------------------------------------|
@@ -480,7 +486,6 @@ Here are some editing keybindings you should know about:
 | C-j  | New line and indent, equivalent to "enter" followed by "tab"               |
 | M-/  | Hippie expand, cycles through possible expansions of the text before point |
 | M-\\ | Delete all spaces and tabs around point. I use this one a lot              |
-
 
 Emacs has excellent built-in help. These two keybindings will serve
 you well:
@@ -504,46 +509,46 @@ your lifetime.
 Personally, I feel inspired whenever I open Emacs. Like a craftsman
 entering his workshop, I feel a realm of possibility open before me. I
 feel the comfort of an environment that has evolved over time to fit
-me perfectly &mdash; an assortment of packages and keybindings which
-help me bring ideas to life day after day.
+me perfectly – an assortment of packages and keybindings which help me
+bring ideas to life day after day.
 
 These resources will help you as you continue you on your Emacs
 journey:
 
--   [The Emacs Manual](http://www.gnu.org/software/emacs/manual/html_node/emacs/index.html#Top), excellent, comprehensive instructions. Download
-    the PDF and read it on the go! Spend some time with it every
-    morning!
--   <http://www.masteringemacs.org/reading-guide/> This is one of the best
-    Emacs resources.
--   [Emacs Reference Card](http://www.ic.unicamp.br/~helio/disciplinas/MC102/Emacs_Reference_Card.pdf), a nice cheat sheet
--   [How to Learn Emacs, a Visual One-pager](http://sachachua.com/blog/wp-content/uploads/2013/05/How-to-Learn-Emacs8.png) for the more visually-minded
-    folks
--   `C-h t`, the built-in tutorial
+- [The Emacs Manual](http://www.gnu.org/software/emacs/manual/html_node/emacs/index.html#Top),
+  excellent, comprehensive instructions. Download the PDF and read it
+  on the go! Spend some time with it every morning!
+- [Mastering Emacs](http://www.masteringemacs.org/reading-guide/) This
+  is one of the best Emacs resources.
+- [Emacs Reference Card](http://www.ic.unicamp.br/~helio/disciplinas/MC102/Emacs_Reference_Card.pdf), a nice cheat sheet
+- [How to Learn Emacs, a Visual One-pager](http://sachachua.com/blog/wp-content/uploads/2013/05/How-to-Learn-Emacs8.png) for the more visually-minded
+  folks
+- `C-h t`, the built-in tutorial
 
 ## Summary
 
 Whew! We covered a lot of ground:
 
--   Installing and configuring Emacs
--   Quitting Emacs commands with `C-g`
--   How to switch and create bufferse with `C-x b`
--   Killing buffers with `C-x k`
--   Opening files with `C-x C-f`
--   Saving files with `C-x C-s`
--   How Emacs is a Lisp interpreter
--   How key bindings are related to commands
--   How to run commands with `M-x {{command-name}}`
--   How to install packages with `M-x package-install`
--   Modes are collections of key bindings and functions
--   There are major and minor modes
--   Key Emacs terms
-    -   Point
-    -   Mark
-    -   Region
-    -   Killing
-    -   The kill ring
-    -   Yanking
--   Moving point
+- Installing and configuring Emacs
+- Quitting Emacs commands with `C-g`
+- How to switch and create bufferse with `C-x b`
+- Killing buffers with `C-x k`
+- Opening files with `C-x C-f`
+- Saving files with `C-x C-s`
+- How Emacs is a Lisp interpreter
+- How key bindings are related to commands
+- How to run commands with `M-x {{command-name}}`
+- How to install packages with `M-x package-install`
+- Modes are collections of key bindings and functions
+- There are major and minor modes
+- Key Emacs terms
+  - Point
+  - Mark
+  - Region
+  - Killing
+  - The kill ring
+  - Yanking
+- Moving point
 
 With all of this hard-won Emacs knowledge under our belt, let's start
 using Emacs with Clojure!
