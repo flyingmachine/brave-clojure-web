@@ -881,7 +881,7 @@ Consider the following:
      (println (quote ~to-try) "was not successful:" ~to-try)))
      
 ;; Thread/sleep takes a number of milliseconds to sleep for
-(report (Thread/sleep 1000) (+ 1 1))
+(report (do (Thread/sleep 1000) (+ 1 1)))
 ```
 
 In this case, we would actually sleep for 2 seconds because
