@@ -719,7 +719,7 @@ invented exactly for this reason. Unquote splicing is represented by
 ; => (clojure.core/+ (1 2 3))
 
 ;; With unquote splicing
-`(+ ~@(1 2 3))
+`(+ ~@(list 1 2 3))
 ; => (clojure.core/+ 1 2 3)
 ```
 
