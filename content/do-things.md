@@ -472,284 +472,284 @@ Here's an example of a function definition and calling the function:
 Let's dive deeper into the docstring, parameters, and function
 body.
 
--   The Docstring
+####   The Docstring
 
-    The docstring is really cool. You can view the docstring for a
-    function in the REPL with `(doc fn-name)`, e.g. `(doc map)`.
+The docstring is really cool. You can view the docstring for a
+function in the REPL with `(doc fn-name)`, e.g. `(doc map)`.
 
--   Parameters
+#### Parameters
 
-    Clojure functions can be defined with zero or more parameters:
-    
-    ```clojure
-    (defn no-params
-      []
-      "I take no parameters!")
-    
-    (defn one-param
-      [x]
-      (str "I take one param: " x " It'd better be a string!"))
-    
-    (defn two-params
-      [x y]
-      (str "Two parameters! That's nothing! Pah! I will smoosh them "
-      "together to spite you! " x y))
-    ```
-    
-    Functions can also be overloaded by arity. This means that a different
-    function body will run depending on the number of arguments passed to
-    a function. Here's how you'd define a multi-arity function:
-    
-    ```clojure
-    ;; Here's the general form of a multiple-arity function definition.
-    ;; Notice that each arity definition is enclosed in parentheses
-    ;; and has an argument list
-    (defn multi-arity
-      ;; 3-arity arguments and body
-      ([first-arg second-arg third-arg]
-         (do-stuff first-arg second-arg third-arg))
-      ;; 2-arity arguments and body
-      ([first-arg second-arg]
-         (do-stuff first-arg second-arg))
-      ;; 1-arity arguments and body
-      ([first-arg]
-         (do-stuff first-arg)))
-    ```
-    
-    Overloading by arity is one way to provide default values for arguments:
-    
-    ```clojure
-    ;; Here's an actual function
-    (defn x-chop
-      "Describe the kind of chop you're inflicting on someone"
-      ;; 2-arity defintion
-      ([name chop-type]
-         (str "I " chop-type " chop " name "! Take that!"))
-      ;; 1-arity definition
-      ([name]
-         (x-chop name "karate")))
-    ;; In this case, "karate" is the default argument for the chop-type
-    ;; param
-    
-    (x-chop "Kanye West")
-    ; => "I karate chop Kanye West! Take that!"
-    
-    (x-chop "Kanye East" "slap")
-    ; => "I slap chop Kanye East! Take that!"
-    ```
-    
-    You can also make each arity do something completely unrelated:
-    
-    ```clojure
-    (defn weird-arity
-      ([]
-         "Destiny dressed you this morning my friend, and now Fear is
-         trying to pull off your pants. If you give up, if you give in,
-         you're gonna end up naked with Fear just standing there laughing
-         at your dangling unmentionables! - the Tick")
-      ([number]
-         (inc number)))
-    ```
-    
-    But most likely, you don't want to do that.
-    
-    Clojure also allows you to define variable-arity functions by
-    including a "rest-param", as in "put the rest of these arguments in a
-    list with the following name":
-    
-    ```clojure
-    (defn codger-communication
-      [whippersnapper]
-      (str "Get off my lawn, " whippersnapper "!!!"))
-    
-    (defn codger
-      [& whippersnappers] ;; the ampersand indicates the "rest-param"
-      (map codger-communication whippersnappers))
-    
-    (codger "Billy" "Henry" "Anne-Marie" "The Incredible Bulk")
-    ; =>
-    ; ("Get off my lawn, Billy!!!"
-    ;  "Get off my lawn, Henry!!!"
-    ;  "Get off my lawn, Anne-Marie!!!"
-    ;  "Get off my lawn, The Incredible Bulk!!!")
-    ```
-    
-    As you can see, when you provide arguments to a variable-arity
-    functions, the arguments get treated as a list.
-    
-    You can mix rest-params with normal params, but the rest-param has to
-    come last:
-    
-    ```clojure
-    (defn favorite-things
-      [name & things]
-      (str "Hi, " name ", here are my favorite things: "
-           (clojure.string/join ", " things)))
-    
-    (favorite-things "Doreen" "gum" "shoes" "berries")
-    ; => "Hi, Doreen, here are my favorite things: gum, shoes, berries"
-    ```
-    
-    Finally, Clojure has a more sophisticated way of defining parameters
-    called "destructuring", which deserves its own subsection:
+Clojure functions can be defined with zero or more parameters:
 
--   Destructuring
+```clojure
+(defn no-params
+  []
+  "I take no parameters!")
 
-    You don't have to use destructuring now. If you find it too
-    complicated, feel free to skip ahead and come back to this section
-    later. It will always be here for you!
-    
-    The basic idea behind destructuring is that it lets you concisely bind
-    *symbols* to *values* within a *collection*. Let's look at a basic
-    example:
-    
-    ```clojure
-    ;; Return the first element of a collection
-    (defn my-first
-      [[first-thing]] ; Notice that first-thing is within a vector
-      first-thing)
-    
-    (my-first ["oven" "bike" "waraxe"])
-    ; => "oven"
-    
-    ;; Here's how you would accomplish the same thing without destructuring:
-    (defn my-other-first
-      [collection]
-      (first collection))
-    (my-other-first ["nickel" "hair"])
-    ; => "nickel"
-    ```
-    
-    As you can see, the `my-first` associates the symbol `first-thing`
-    with the first element of the vector that was passed in as an
-    argument. It does this by placing the symbol within a vector.
-    
-    That vector is like a huge sign held up to Clojure which says, "Hey!
-    This function is going to receive a list or a vector as an argument.
-    Make my life easier by taking apart the argument's structure for me
-    and associating meaningful names with different parts of the
-    argument!"
-    
-    When destructuring a vector or list, you can name as many elements as
-    you want and also use rest params:
-    
-    ```clojure
-    (defn chooser
-      [[first-choice second-choice & unimportant-choices]]
-      (println (str "Your first choice is: " first-choice))
-      (println (str "Your second choice is: " second-choice))
-      (println (str "We're ignoring the rest of your choices. "
-                    "Here they are in case you need to cry over them: "
-                    (clojure.string/join ", " unimportant-choices))))
-    (chooser ["Marmalade", "Handsome Jack", "Pigpen", "Aquaman"])
-    ; => 
-    ; Your first choice is: Marmalade
-    ; Your second choice is: Handsome Jack
-    ; We're ignoring the rest of your choices. Here they are in case \
-    ; you need to cry over them: Pigpen, Aquaman
-    ```
-    
-    You can also destructure maps. In the same way that you tell Clojure
-    to destructure a vector or list by providing a vector as a parameter,
-    you destucture maps by providing a map as a parameter:
-    
-    ```clojure
-    (defn announce-treasure-location
-      [{lat :lat lng :lng}]
-      (println (str "Treasure lat: " lat))
-      (println (str "Treasure lng: " lng)))
-    (announce-treasure-location {:lat 28.22 :lng 81.33})
-    ; =>
-    ; Treasure lat: 100
-    ; Treasure lng: 50
-    ```
-    
-    Let's look more at this line:
-    
-    ```clojure
-    [{lat :lat lng :lng}]
-    ```
-    
-    This is like telling Clojure, "Yo! Clojure! Do me a flava and
-    associate the symbol `lat` with the value corresponding to the key
-    `:lat`. Do the same thing with `lng` and `:lng`, ok?."
-    
-    We often want to just take keywords and "break them out" of a map, so
-    there's a shorter syntax for that:
-    
-    ```clojure
-    ;; Works the same as above.
-    (defn announce-treasure-location
-      [{:keys [lat lng]}]
-      (println (str "Treasure lat: " lat))
-      (println (str "Treasure lng: " lng)))
-    ```
-    
-    If you want to have access to the original map argument, you can
-    indicate that:
-    
-    ```clojure
-    ;; Works the same as above.
-    (defn announce-treasure-location
-      [{:keys [lat lng] :as treasure-location}]
-      (println (str "Treasure lat: " lat))
-      (println (str "Treasure lng: " lng))
-    
-      ;; One would assume that this would put in new coordinates for your ship
-      (steer-ship! treasure-location))
-    ```
-    
-    In general, you can think of destructuring as instructing Clojure how
-    to associate symbols with values in a list, map, or vector.
-    
-    Now, on to the part of the function that actually does something: the
-    function body!
+(defn one-param
+  [x]
+  (str "I take one param: " x " It'd better be a string!"))
 
--   Function body
+(defn two-params
+  [x y]
+  (str "Two parameters! That's nothing! Pah! I will smoosh them "
+  "together to spite you! " x y))
+```
 
-    Your function body can contain any forms. Clojure automatically
-    returns the last form evaluated:
-    
-    ```clojure
-    (defn illustrative-function
-      []
-      (+ 1 304)
-      30
-      "joe")
-    (illustrative-function)
-    ; => "joe"
-    
-    (defn number-comment
-      [x]
-      (if (> x 6)
-        "Oh my gosh! What a big number!"
-        "That number's OK, I guess"))
-    
-    (number-comment 5)
-    ; => "That number's OK, I guess"
-    
-    (number-comment 7)
-    ; => "Oh my gosh! What a big number!"
-    ```
+Functions can also be overloaded by arity. This means that a different
+function body will run depending on the number of arguments passed to
+a function. Here's how you'd define a multi-arity function:
 
--   All Functions are Created Equal
+```clojure
+;; Here's the general form of a multiple-arity function definition.
+;; Notice that each arity definition is enclosed in parentheses
+;; and has an argument list
+(defn multi-arity
+  ;; 3-arity arguments and body
+  ([first-arg second-arg third-arg]
+     (do-stuff first-arg second-arg third-arg))
+  ;; 2-arity arguments and body
+  ([first-arg second-arg]
+     (do-stuff first-arg second-arg))
+  ;; 1-arity arguments and body
+  ([first-arg]
+     (do-stuff first-arg)))
+```
 
-    One final note: in Clojure, there are no privileged functions. `+` is
-    just a function, `-` is just a function, `inc` and `map` are just
-    functions. They're no better than your functions! So don't let them
-    give you any lip.
-    
-    More importantly, this fact helps to demonstrate Clojure's underlying
-    simplicity. In a way, Clojure is very dumb. When you make a function
-    call, Clojure just says, "map? Sure, whatever! I'll just apply this
-    and move on." It doesn't care what the function is or where it came
-    from, it treats all functions the same. At its core, Clojure doesn't
-    give two burger flips about addition, multiplication, or mapping. It
-    just cares about applying functions.
-    
-    As you program in with Clojure more, you'll see that this simplicity
-    is great. You don't have to worry about special rules or syntax for
-    working with functions. They all work the same!
+Overloading by arity is one way to provide default values for arguments:
+
+```clojure
+;; Here's an actual function
+(defn x-chop
+  "Describe the kind of chop you're inflicting on someone"
+  ;; 2-arity defintion
+  ([name chop-type]
+     (str "I " chop-type " chop " name "! Take that!"))
+  ;; 1-arity definition
+  ([name]
+     (x-chop name "karate")))
+;; In this case, "karate" is the default argument for the chop-type
+;; param
+
+(x-chop "Kanye West")
+; => "I karate chop Kanye West! Take that!"
+
+(x-chop "Kanye East" "slap")
+; => "I slap chop Kanye East! Take that!"
+```
+
+You can also make each arity do something completely unrelated:
+
+```clojure
+(defn weird-arity
+  ([]
+     "Destiny dressed you this morning my friend, and now Fear is
+     trying to pull off your pants. If you give up, if you give in,
+     you're gonna end up naked with Fear just standing there laughing
+     at your dangling unmentionables! - the Tick")
+  ([number]
+     (inc number)))
+```
+
+But most likely, you don't want to do that.
+
+Clojure also allows you to define variable-arity functions by
+including a "rest-param", as in "put the rest of these arguments in a
+list with the following name":
+
+```clojure
+(defn codger-communication
+  [whippersnapper]
+  (str "Get off my lawn, " whippersnapper "!!!"))
+
+(defn codger
+  [& whippersnappers] ;; the ampersand indicates the "rest-param"
+  (map codger-communication whippersnappers))
+
+(codger "Billy" "Henry" "Anne-Marie" "The Incredible Bulk")
+; =>
+; ("Get off my lawn, Billy!!!"
+;  "Get off my lawn, Henry!!!"
+;  "Get off my lawn, Anne-Marie!!!"
+;  "Get off my lawn, The Incredible Bulk!!!")
+```
+
+As you can see, when you provide arguments to a variable-arity
+functions, the arguments get treated as a list.
+
+You can mix rest-params with normal params, but the rest-param has to
+come last:
+
+```clojure
+(defn favorite-things
+  [name & things]
+  (str "Hi, " name ", here are my favorite things: "
+       (clojure.string/join ", " things)))
+
+(favorite-things "Doreen" "gum" "shoes" "berries")
+; => "Hi, Doreen, here are my favorite things: gum, shoes, berries"
+```
+
+Finally, Clojure has a more sophisticated way of defining parameters
+called "destructuring", which deserves its own subsection:
+
+#### Destructuring
+
+You don't have to use destructuring now. If you find it too
+complicated, feel free to skip ahead and come back to this section
+later. It will always be here for you!
+
+The basic idea behind destructuring is that it lets you concisely bind
+*symbols* to *values* within a *collection*. Let's look at a basic
+example:
+
+```clojure
+;; Return the first element of a collection
+(defn my-first
+  [[first-thing]] ; Notice that first-thing is within a vector
+  first-thing)
+
+(my-first ["oven" "bike" "waraxe"])
+; => "oven"
+
+;; Here's how you would accomplish the same thing without destructuring:
+(defn my-other-first
+  [collection]
+  (first collection))
+(my-other-first ["nickel" "hair"])
+; => "nickel"
+```
+
+As you can see, the `my-first` associates the symbol `first-thing`
+with the first element of the vector that was passed in as an
+argument. It does this by placing the symbol within a vector.
+
+That vector is like a huge sign held up to Clojure which says, "Hey!
+This function is going to receive a list or a vector as an argument.
+Make my life easier by taking apart the argument's structure for me
+and associating meaningful names with different parts of the
+argument!"
+
+When destructuring a vector or list, you can name as many elements as
+you want and also use rest params:
+
+```clojure
+(defn chooser
+  [[first-choice second-choice & unimportant-choices]]
+  (println (str "Your first choice is: " first-choice))
+  (println (str "Your second choice is: " second-choice))
+  (println (str "We're ignoring the rest of your choices. "
+                "Here they are in case you need to cry over them: "
+                (clojure.string/join ", " unimportant-choices))))
+(chooser ["Marmalade", "Handsome Jack", "Pigpen", "Aquaman"])
+; => 
+; Your first choice is: Marmalade
+; Your second choice is: Handsome Jack
+; We're ignoring the rest of your choices. Here they are in case \
+; you need to cry over them: Pigpen, Aquaman
+```
+
+You can also destructure maps. In the same way that you tell Clojure
+to destructure a vector or list by providing a vector as a parameter,
+you destucture maps by providing a map as a parameter:
+
+```clojure
+(defn announce-treasure-location
+  [{lat :lat lng :lng}]
+  (println (str "Treasure lat: " lat))
+  (println (str "Treasure lng: " lng)))
+(announce-treasure-location {:lat 28.22 :lng 81.33})
+; =>
+; Treasure lat: 100
+; Treasure lng: 50
+```
+
+Let's look more at this line:
+
+```clojure
+[{lat :lat lng :lng}]
+```
+
+This is like telling Clojure, "Yo! Clojure! Do me a flava and
+associate the symbol `lat` with the value corresponding to the key
+`:lat`. Do the same thing with `lng` and `:lng`, ok?."
+
+We often want to just take keywords and "break them out" of a map, so
+there's a shorter syntax for that:
+
+```clojure
+;; Works the same as above.
+(defn announce-treasure-location
+  [{:keys [lat lng]}]
+  (println (str "Treasure lat: " lat))
+  (println (str "Treasure lng: " lng)))
+```
+
+If you want to have access to the original map argument, you can
+indicate that:
+
+```clojure
+;; Works the same as above.
+(defn announce-treasure-location
+  [{:keys [lat lng] :as treasure-location}]
+  (println (str "Treasure lat: " lat))
+  (println (str "Treasure lng: " lng))
+
+  ;; One would assume that this would put in new coordinates for your ship
+  (steer-ship! treasure-location))
+```
+
+In general, you can think of destructuring as instructing Clojure how
+to associate symbols with values in a list, map, or vector.
+
+Now, on to the part of the function that actually does something: the
+function body!
+
+#### Function body
+
+Your function body can contain any forms. Clojure automatically
+returns the last form evaluated:
+
+```clojure
+(defn illustrative-function
+  []
+  (+ 1 304)
+  30
+  "joe")
+(illustrative-function)
+; => "joe"
+
+(defn number-comment
+  [x]
+  (if (> x 6)
+    "Oh my gosh! What a big number!"
+    "That number's OK, I guess"))
+
+(number-comment 5)
+; => "That number's OK, I guess"
+
+(number-comment 7)
+; => "Oh my gosh! What a big number!"
+```
+
+#### All Functions are Created Equal
+
+One final note: in Clojure, there are no privileged functions. `+` is
+just a function, `-` is just a function, `inc` and `map` are just
+functions. They're no better than your functions! So don't let them
+give you any lip.
+
+More importantly, this fact helps to demonstrate Clojure's underlying
+simplicity. In a way, Clojure is very dumb. When you make a function
+call, Clojure just says, "map? Sure, whatever! I'll just apply this
+and move on." It doesn't care what the function is or where it came
+from, it treats all functions the same. At its core, Clojure doesn't
+give two burger flips about addition, multiplication, or mapping. It
+just cares about applying functions.
+
+As you program in with Clojure more, you'll see that this simplicity
+is great. You don't have to worry about special rules or syntax for
+working with functions. They all work the same!
 
 ### Anonymous Functions
 
