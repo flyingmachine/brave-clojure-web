@@ -50,17 +50,3 @@ This associates the *symbol* `actually-great-books` with the vector
 that follows. It's like telling Clojure, "Take this object and store
 it within your vast labyrinth of bits and bytes. But before you do
 that, smack this label on it."
-
-Then, 
-
-Instead, each
-item is given a label which corresponds
-
-Your project houses collections of "objects" like
-data structures, functions, and macros.
-
-In order to 
-
-Whereas the librarians you're used to deal with books, magazines, dvds
-and the like, your librarian will be working with functions, data
-structures, and macros.
