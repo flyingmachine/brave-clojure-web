@@ -26,8 +26,10 @@ understand:
 * How to use `require`, `use`, and `import`
 * What dynamic binding is and why you'd use it
 
-To get there, we'll explore the idea of your project as a library. Try
-the examples in your REPL as we go!
+To get there, you'll explore the idea of your project as a library.
+You'll do all your exploration in the REPL at first and then progress
+to trying out examples in a filesystem-based project. Be sure to try
+out all the examples!
 
 ## Your Project as a Library
 
@@ -51,14 +53,14 @@ form `def` is like telling Clojure to glue a symbol to a programmatic
 "object", like a data structure or function, and then store it:
 
 ```clojure
-(def actually-great-books ["East of Eden" "The Glass Bead Game"])
+(def great-books ["East of Eden" "The Glass Bead Game"])
 ```
 
-Then, when you hand Clojure the symbol `actually-great-books`, it's
+Then, when you hand Clojure the symbol `great-books`, it's
 like saying "find the object with this name and give it to me."
 
 ```clojure
-actually-great-books
+great-books
 ; => ["East of Eden" "The Glass Bead Game"]
 ```
 
@@ -68,8 +70,8 @@ paradise is about to be turned upside down!
 What happens when you call `def` again with the same symbol?
 
 ```clojure
-(def actually-great-books ["The Power of Bees" "Journey to Upstairs"]
-actually-great-books
+(def great-books ["The Power of Bees" "Journey to Upstairs"])
+great-books
 ; => ["The Power of Bees" "Journey to Upstairs"]
 ```
 
@@ -109,17 +111,17 @@ that using `def` it like telling Clojure:
 
 * Look in the *current namespace* for an object with the given symbol.
   If you find one, remove the symbol. Using the examples above, we
-  would remove `actually-great-books` from the vector
+  would remove `great-books` from the vector
   `["East of Eden" "The Glass Bead Game"]`.
 * Attach the symbol to the given object. In the above examples, we'd
-  attach `actually-great-books` to
+  attach `great-books` to
   `["The Power of Bees" "Journey to Upstairs"]`.
 * Store the object in the current namespace.
 
 Thus, using namespaces allows you to avoid the name collisions other
 languages are prone to.
 
-### Creating and Switching to Namespaces
+## Creating and Switching to Namespaces
 
 Clojure has three tools for creating namespaces:
 
@@ -127,7 +129,8 @@ Clojure has three tools for creating namespaces:
 * The function `in-ns`
 * The macro `ns`
 
-Let's look at each in detail.
+Let's look at `create-ns` and `in-ns`. We'll examine `ns` in great
+detail in an upcoming section.
 
 `create-ns` takes a symbol, creates a namespace with that name if it
 doesn't exist already, and returns the namespace. Remember from the
@@ -136,7 +139,7 @@ an argument to a function:
 
 ```clojure
 ;; Creates the namespace if it doesn't exist and return
-user> (create-ns 'secret-lair)
+user> (create-ns 'ch)
 ; => #<Namespace secret-lair>
 
 ;; Returns the namespace if it already exists
@@ -148,16 +151,66 @@ user> (create-ns 'secret-lair)
 ; => secret-lair
 ```
 
-You'll rarely use `create-ns` in your code. Instead, you'll use
-`in-ns` which creates the namespace if it doesn't exist and then
-switches to it:
+This is pretty neat, but in practice you'll probably never use
+`create-ns` in your code. It's not very useful to create a namespace
+and not move into it. `in-ns` does just that, creating the namespace
+if it doesn't exist and switching to it:
 
 ```clojure
 user> (in-ns 'secret-living-room)
 ; => #<Namespace secret-living-room>
 ```
 
-Notice that your REPL prompt is now `secret-living-room>`.
+Notice that your REPL prompt is now `secret-living-room>`, indicating
+that you are indeed in the new namespace you just created. Now when
+you use `def` it will store the named object in the
+`secret-living-room` namespace.
+
+What if you want to use things from other namespaces, though? To do
+that, you use what's called a "fully-qualified" symbol. The general
+form is `namespace/name`:
+
+```clojure
+;; We get an exception if we try to refer to the user namespace's
+;; great-books from within secret-living-room
+secret-living-room> great-books
+; => Exception: Unable to resolve symbol: great-books in this context
+
+;; But using the fully-qualified symbol works:
+secret-living-room> user/great-books
+; => ["The Power of Bees" "Journey to Upstairs"]
+```
+
+The way I think about this is that I imagine I am an extremely
+impatient academic thrust into the middle of an international plot.
+All across the world, sacred and historically important cheeses have
+gone missing. Wisconsin's Standard Cheddar: gone! The Great Cheese
+Jars of Tutankhamun: stolen!
+
+And now, these daring cheese thieves have claimed the most famous
+cheese of all: the Cheese of Turin, a crumb of cheese purported to
+have fallen from the lips of a deity during his last dinner.
+
+Because I'm an academic I attempt to solve the case the best way I
+know how: by heading to the library and researching the shit out of
+it. My trusty assistant, Clojure, accompanies me. As we bustle from
+room to room, I shout at Clojure to hand me one thing after another.
+
+But Clojure is kind of dumb. From within the `user` room, I belt out
+"`join`! Give me `join`!" as specks of spittle fly out of my mouth.
+"`RuntimeException: Unable to resolve symbol: join`", Clojure whines
+in response. "For the love of brie, just hand me
+`clojure.string/join`"! I retort, and Clojure dutifully hands me the
+function I was looking for.
+
+After awhile, though, my voice gets hoarse. I need some way to tell
+Clojure what objects to get me without having to use the fully
+qualified symbol every. damn. time.
+
+Luckily, Clojure has some tools that allow me to yell at it more
+succinctly.
+
+## require, refer, and use
 
 ### Creating Namespaces
 
