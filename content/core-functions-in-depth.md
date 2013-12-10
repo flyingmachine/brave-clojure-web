@@ -148,7 +148,7 @@ and `cons`:
 
 ```javascript
 var map = function (list, transform) {
-  if (list #+END_SRC null) {
+  if (list === null) {
     return null;
   } else {
     return cons(transform(first(list)), map(rest(list), transform));

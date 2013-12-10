@@ -251,7 +251,7 @@ Let's take the `postfix-notation` example:
   (conj (butlast expression) (last expression)))
 
 (macroexpand '(postfix-notation (1 1 +)))
-; => (+ 1 2)
+; => (+ 1 1)
 
 (postfix-notation (1 1 +))
 ; => 2
