@@ -75,7 +75,7 @@ actually-great-books
 
 It's like Clojure peeled the label off the first vector and placed it on
 the second. The result is that you can no longer ask Clojure to find
-the first vector.
+the first vector. This is referred to as a *name collision*.
 
 You may have experienced this in other programming languages.
 Javacript is notorious for it, and it happens in Ruby as well. It's a
@@ -88,10 +88,15 @@ won't overwrite your code. Clojure solves this problem with
 
 I think of namespaces as actual spaces, as storage rooms for my
 objects. In Clojure, you are always "in" a namespace. When you start
-the REPL, for example, you're in the `user` namespace. The current
+the REPL, for example, you're in the `user` namespace. The prompt will
+show the current namespace with something like `user>`.
+
+Namespaces are data structures of type `clojure.lang.Namespace`. You
+can pass them as arguments to functions, for example. The current
 namespace is always accessible with `*ns*` &ndash; try typing that in
 the REPL. Namespaces have names, and you can get the name of the
-current namespace with `(ns-name *ns*)`.
+current namespace with `(ns-name *ns*)`. In the next section we'll go
+over how to create and switch to name spaces.
 
 By using namespaces, we can use the same names in different contexts.
 For example, Clojure stores string-related functions in the namespace
@@ -112,15 +117,47 @@ that using `def` it like telling Clojure:
 * Store the object in the current namespace.
 
 Thus, using namespaces allows you to avoid the name collisions other
-languages are prone to. But how do you create them?
+languages are prone to.
 
-### Creating Namespaces
+### Creating and Switching to Namespaces
 
+Clojure has three tools for creating namespaces:
 
+* The function `create-ns`
+* The function `in-ns`
+* The macro `ns`
 
+Let's look at each in detail.
+
+`create-ns` takes a symbol, creates a namespace with that name if it
+doesn't exist already, and returns the namespace. Remember from the
+chapter [Do Things]("/do-things") to quote a symbol when passing it as
+an argument to a function:
 
 ```clojure
+;; Creates the namespace if it doesn't exist and return
+user> (create-ns 'secret-lair)
+; => #<Namespace secret-lair>
+
+;; Returns the namespace if it already exists
+user> (create-ns 'secret-lair)
+; => #<Namespace secret-lair>
+
+;; Pass the returned namespace as an argument
+; (ns-name (create-ns 'secret-lair))
+; => secret-lair
 ```
+
+You'll rarely use `create-ns` in your code. Instead, you'll use
+`in-ns` which creates the namespace if it doesn't exist and then
+switches to it:
+
+```clojure
+user> (in-ns 'secret-living-room)
+; => #<Namespace secret-living-room>
+```
+
+Notice that your REPL prompt is now `secret-living-room>`.
 
 ### Creating Namespaces
 

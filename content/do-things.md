@@ -251,12 +251,37 @@ we start working with macros. Functions can return symbols and take
 them as arguments:
 
 ```clojure
+;; Identity returns its argument
 (identity 'test)
 ; => test
 ```
 
 For now, though, it's OK to think "Big whoop!" and not be very
 impressed.
+
+You may have noticed the single quote, `'`, in the above example. This
+is called "quoting". You'll learn about this in detail in the chapter
+"Clojure Alchemy: Reading, Evaluation, and Macros". Here's the quick
+explanation for now:
+
+```clojure
+;; Giving Clojure a symbol returns the "object" it refers to
+failed-protagonist-names
+; => ["Larry Potter" "Doreen the Explorer" "The Incredible Bulk"]
+(first failed-protagonist-names)
+; => "Larry Potter"
+
+;; Quoting a symbol tells Clojure to use the symbol itself as a data
+;; structure, not the object the symbol refers to
+'failed-protagonist-names
+; => failed-protagonist-names
+(eval 'failed-protagonist-names)
+; => ["Larry Potter" "Doreen the Explorer" "The Incredible Bulk"]
+(first 'failed-protagonist-names)
+; => Throws exception!
+(first ['failed-protagonist-names 'failed-antagonist-names])
+; => failed-protagonist-names
+```
 
 Thus concludes our Clojure data structures primer. Now it's time to
 dig in to functions and see how these data structures can be used!
