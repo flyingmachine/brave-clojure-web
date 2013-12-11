@@ -98,7 +98,7 @@ var node1 = {
 
 Graphically, you could represent this list like this:
 
-[Linked list](./images/core-functions-in-depth/linked-list.png)
+![Linked list](images/core-functions-in-depth/linked-list.png)
 
 There are three core functions that you can perform on a linked list:
 `first`, `rest`, and `cons`. Once those are implemented, you can
