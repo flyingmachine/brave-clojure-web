@@ -5,10 +5,10 @@ kind: documentation
 draft: true
 ---
 
-Within each of us is lives a librarian, a fantastical creature who
-delights in the organizational arts. Day and night, he yearns to to
-bring order to your codebase. Happily, Clojure provides a suite of
-tools designed specifically for aiding your inner librarian in its
+Within each of us is lives a librarian named Melvil, a fantastical
+creature who delights in the organizational arts. Day and night, Melvil
+yearns to bring order to your codebase. Happily, Clojure provides a
+suite of tools designed specifically for aiding this homunculus in its
 constant struggle against the forces of chaos.
 
 These tools allow you to keep your code organized by grouping related
@@ -16,9 +16,8 @@ functions and data together. They also prevent name collisions,
 ensuring that you don't accidentally overwrite someone else's code or
 vice versa.
 
-This chapter will instruct you in the proper usage of these tools. The
-librarian inside you quivers with excitement! By the end, you will
-understand:
+This chapter will instruct you in the proper usage of these tools.
+Melvil quivers with excitement! By the end, you will understand:
 
 * How to think about `def`
 * What namespaces are and how to use them
@@ -27,9 +26,10 @@ understand:
 * What dynamic binding is and why you'd use it
 
 To get there, you'll explore the idea of your project as a library.
-You'll do all your exploration in the REPL at first and then progress
-to trying out examples in a filesystem-based project. Be sure to try
-out all the examples!
+You'll also join me in a tale of suspense and mystery as we solve the
+heist of a lifetime. You'll start in the REPL and then progress to
+trying out examples in a filesystem-based project. Be sure to try out
+all the examples!
 
 ## Your Project as a Library
 
@@ -67,7 +67,7 @@ great-books
 So far, so good, right? Well, brace yourself, because this idyllic
 paradise is about to be turned upside down!
 
-What happens when you call `def` again with the same symbol?
+Call `def` again with the same symbol:
 
 ```clojure
 (def great-books ["The Power of Bees" "Journey to Upstairs"])
@@ -75,16 +75,17 @@ great-books
 ; => ["The Power of Bees" "Journey to Upstairs"]
 ```
 
-It's like Clojure peeled the label off the first vector and placed it on
-the second. The result is that you can no longer ask Clojure to find
-the first vector. This is referred to as a *name collision*.
+It's like Clojure peeled the label off the first vector and placed it
+on the second. Chaos! Anarchy! The result is that you can no longer
+ask Clojure to find the first vector. This is referred to as a *name
+collision*.
 
 You may have experienced this in other programming languages.
 Javacript is notorious for it, and it happens in Ruby as well. It's a
 problem because you can unintentionally overwrite your own code, and
 if you use someone else's libraries you have no guarantee that they
-won't overwrite your code. Clojure solves this problem with
-**namespaces**.
+won't overwrite your code. Melvil recoils in horror! Thankfully,
+Clojure solves this problem with **namespaces**.
 
 ## Introducing Namespaces
 
@@ -93,17 +94,18 @@ objects. In Clojure, you are always "in" a namespace. When you start
 the REPL, for example, you're in the `user` namespace. The prompt will
 show the current namespace with something like `user>`.
 
-Namespaces are data structures of type `clojure.lang.Namespace`. You
-can pass them as arguments to functions, for example. The current
-namespace is always accessible with `*ns*` &ndash; try typing that in
-the REPL. Namespaces have names, and you can get the name of the
-current namespace with `(ns-name *ns*)`. In the next section we'll go
-over how to create and switch to name spaces.
+Namespaces are objects of type `clojure.lang.Namespace`. You can pass
+them as arguments to functions, for example. The current namespace is
+always accessible with `*ns*` &ndash; try typing that in the REPL.
+Namespaces have names, and you can get the name of the current
+namespace with `(ns-name *ns*)`. In the next section we'll go over how
+to create and switch to name spaces.
 
 By using namespaces, we can use the same names in different contexts.
 For example, Clojure stores string-related functions in the namespace
 `clojure.string` and set-related functions in `clojure.set`. Each
-namespace has a function stored under the name `join`.
+namespace has a function stored under the name `join`. No conflicts!
+Melvil lets out an audible sigh.
 
 So when I said above that using `def` is like telling Clojure to
 attach a symbol to an object and store it, it's more accurate to say
@@ -182,10 +184,11 @@ secret-living-room> user/great-books
 ```
 
 The way I think about this is that I imagine I am an extremely
-impatient academic thrust into the middle of an international plot.
-All across the world, sacred and historically important cheeses have
-gone missing. Wisconsin's Standard Cheddar: gone! The Great Cheese
-Jars of Tutankhamun: stolen!
+impatient academic specializing in semiotics-au-fromage, or the study
+of symbols as they relate to cheese. Suddenly, I'm thrust into the
+middle of an international plot. All across the world, sacred and
+historically important cheeses have gone missing. Wisconsin's Standard
+Cheddar: gone! The Great Cheese Jars of Tutankhamun: stolen!
 
 And now, these daring cheese thieves have claimed the most famous
 cheese of all: the Cheese of Turin, a crumb of cheese purported to
@@ -197,7 +200,7 @@ it. My trusty assistant, Clojure, accompanies me. As we bustle from
 room to room, I shout at Clojure to hand me one thing after another.
 
 But Clojure is kind of dumb. From within the `user` room, I belt out
-"`join`! Give me `join`!" as specks of spittle fly out of my mouth.
+"`join`! Give me `join`!", specks of spittle flying out my mouth.
 "`RuntimeException: Unable to resolve symbol: join`", Clojure whines
 in response. "For the love of brie, just hand me
 `clojure.string/join`"! I retort, and Clojure dutifully hands me the
@@ -210,7 +213,32 @@ qualified symbol every. damn. time.
 Luckily, Clojure has some tools that allow me to yell at it more
 succinctly.
 
-## require, refer, and use
+## refer and alias
+
+The first tool, `refer`, gives us fine-grained control over how we
+refer to objects in other namespaces. Fire up a new REPL session and
+try the following (and keep in mind that this is not at all indicative
+of how you should actually structure a Clojure project):
+
+```clojure
+user> (in-ns 'cheese.taxonomy)
+cheese.taxonomy> (def cheddars ["mild" "medium" "strong" "sharp" "extra sharp"])
+cheese.taxonomy> (def bries ["Wisconsin" "Somerset" "Brie de Meaux" "Brie de Melun"])
+cheese.taxonomy> (in-ns 'cheese.analysis)
+cheese.analysis> (clojure.core/refer 'cheese.taxonomy) ; ~~1~~
+cheese.analysis> bries
+; => ["Wisconsin" "Somerset" "Brie de Meaux" "Brie de Melun"]
+cheese.analysis> cheddars
+; => ["mild" "medium" "strong" "sharp" "extra sharp"]
+```
+
+Calling `refer` with a symbol allows us to refer to the corresponding
+namespace's objects without having to use their fully-qualified names.
+
+You ignorant clod!
+
+## Using other libraries
+
 
 ### Creating Namespaces
 
