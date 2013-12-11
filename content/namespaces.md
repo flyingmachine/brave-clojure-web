@@ -1,6 +1,6 @@
 ---
-title: "Namespaces: a Librarians's Tale"
-link_title: "Namespaces: a Librarian's Tale"
+title: "Organizing Your Project: a Librarians's Tale"
+link_title: "Organizing Your Project: a Librarian's Tale"
 kind: documentation
 draft: true
 ---
@@ -42,89 +42,111 @@ No human being is going to know off-hand what a book's address is, so
 libraries provide tools for finding the address. For example, if you
 searched for "The Da Vinci Code" your local library's database, it
 would return the address "813.54" to you (if it's using the Dewey
-Decimal System). Now that you know that _The Da Vinci Code_'s address,
-you can efficiently navigate your library and locate the physical
-space where the book resides. Then you can engage in the literary
-and/or hate-reading adventure of your lifetime.
+Decimal System). Now you can efficiently navigate your library and
+locate the physical space where _The Da Vinci Code_ resides. Then you
+can engage in the literary and/or hate-reading adventure of your
+lifetime.
 
 It's useful to imagine a similar physical setup in Clojure. I think of
 Clojure as storing objects like data structures and functions in a
-vast set of numbered lockers. Clojure keeps track of links between the
-*symbols* which identify objects and the references
+vast set of numbered lockers. No human being is going to know off-hand
+which locker an object is stored in. Instead, we want to give Clojure
+an identifier which it can use to retrieve the object.
 
-Clojure uses *namespaces* to organize
-maps between human-friendly *symbols* and references (known as *Vars*) to
-these lockers.
+In order for this to happen, Clojure has to maintain the associations
+between our identifiers and locker addresses. It does this using
+*namespaces*. Namespaces contain maps between human-friendly *symbols*
+and references to locker addresses (known as *Vars*).
 
-
-
-I think of namespaces as little cubicles used to organize the 
-
-
-When you give Clojure a name, it looks up the
-corresponding Var. That gives it the location of the locker. Clojure
-then hustles on over to the locker and retrieves the object you want.
-
-In Clojure, you are always "in" a namespace. When you start the REPL,
-for example, you're in the `user` namespace. The prompt will show the
-current namespace with something like `user>`.
-
-Namespaces are objects of type `clojure.lang.Namespace`. The current
-namespace is always accessible with `*ns*` &ndash; try typing that in
-the REPL. Namespaces have names, and you can get the name of the
-current namespace with `(ns-name *ns*)`. (In the next section we'll go
-over how to create and switch to name spaces.)
+Technically, namespaces are objects of type `clojure.lang.Namespace`.
+The current namespace is accessible with `*ns*` &ndash; try evaluating
+that in the REPL. Namespaces have names, and you can get the name of
+the current namespace with `(ns-name *ns*)`.
 
 ```clojure
 (ns-name *ns*)
 ; => user
 ```
 
-Now that you know Clojure's organization system, how do you get it to
-store new objects? With `def`! Observe:
+In Clojure programs, you are always "in" a namespace. When you start
+the REPL, for example, you're in the `user` namespace (as you can see
+above). The prompt will show the current namespace with something like
+`user>`. In a later section we'll go over how to create and switch to
+name spaces.
+
+This terminology makes me think of namespaces as little cubicles lined
+with cubbies. The cubbies have names like `str`, `ns-name`, and so on,
+and within each is the corresponding var. This might sound like a
+completely boring analogy, but believe me, Melvil loves it.
+
+Now that we know how Clojure's organization system works, let's look
+at how we use it!
+
+## Storing Objects with def
+
+Our primary tool for storing objects is `def`. Other tools like `defn`
+and `defmacro` use `def` under the hood. Here's an example of def in
+action:
 
 ```clojure
-user> (def great-books ["East of Eden" "The Glass Bead Game"])
+(def great-books ["East of Eden" "The Glass Bead Game"])
 ; => #'user/great-books
-user> great-books
+great-books
 ["East of Eden" "The Glass Bead Game"]
 ```
 
 This is like telling Clojure:
 
-* find a free storage locker
-* shove `["East of Eden" "The Glass Bead Game"]` in it
-* write down the locker's number on a Var
-* update the current namespace's map with the association between
+1. Find a Var named `great-books`. If it doesn't exist, create it and
+  update the current namespace's map with the association between
   `great-books` and the Var that was just created
-* Return the Var (in this case, `#'user/great-books`)
+2. Find a free storage locker
+3. Shove `["East of Eden" "The Glass Bead Game"]` in it
+4. Write the address of the locker on the Var
+5. Return the Var (in this case, `#'user/great-books`)
 
-This process is called *interning* a Var.
+This process is called *interning* a Var. You can interact with a
+namespace's map of symbols-to-interned-vars:
+
+```clojure
+(ns-interns *ns*)
+; => {great-books #'user/great-books}
+
+(get (ns-interns *ns*) 'great-books)
+; => #'user/great-books
+```
 
 `#'user/great-books` probably looks unfamiliar to you at this point.
 That's the *reader form* of a Var. I explain reader forms in the
 chapter [Clojure Alchemy: Reading, Evaluation, and Macros](Clojure
-Alchemy: Reading, Evaluation, and Macros). For now, all you need to
-know is that asking Clojure to evaluate it will return a Var. It's
-like saying, "go into the `user` namespace and give me Var associated
-with the symbol `great-books`:
+Alchemy: Reading, Evaluation, and Macros). For now, just know that
+`#'` can be used to grab hold of the Var corresponding to the symbol
+that follows; `#'user/great-books` lets you use the Var associated
+with the symbol `great-books` within the `user` namespace. We can
+`deref` vars to get the objects they point to:
 
 ```clojure
-
+(deref #'user/great-books)
+; => ["East of Eden" "The Glass Bead Game"]
 ```
 
-Then, when you hand Clojure the symbol `great-books`, it's
-like saying:
+This is like telling Clojure:
 
-* Retrieve the Var associated with `great-books`
 * Get the locker number from the Var
 * Go to that locker number and grab what's inside
 * Give it to me!
+
+Normally, though, you'll just use the symbol:
 
 ```clojure
 great-books
 ; => ["East of Eden" "The Glass Bead Game"]
 ```
+
+This is like telling Clojure:
+
+* Retrieve the Var associated with `great-books`
+* `deref` that bad Jackson
 
 So far, so good, right? Well, brace yourself, because this idyllic
 paradise is about to be turned upside down!
@@ -137,41 +159,17 @@ great-books
 ; => ["The Power of Bees" "Journey to Upstairs"]
 ```
 
-It's like Clojure peeled the label off the first vector and placed it
-on the second. Chaos! Anarchy! The result is that you can no longer
-ask Clojure to find the first vector. This is referred to as a *name
-collision*.
+The Var has been updated with the address of the new vector. The
+result is that you can no longer ask Clojure to find the first vector.
+This is referred to as a *name collision*. Chaos! Anarchy!
 
 You may have experienced this in other programming languages.
 Javacript is notorious for it, and it happens in Ruby as well. It's a
 problem because you can unintentionally overwrite your own code, and
 if you use someone else's libraries you have no guarantee that they
 won't overwrite your code. Melvil recoils in horror! Thankfully,
-Clojure solves this problem with **namespaces**.
-
-## Introducing Namespaces
-
-By using namespaces, we can use the same names in different contexts.
-For example, Clojure stores string-related functions in the namespace
-`clojure.string` and set-related functions in `clojure.set`. Each
-namespace has a function stored under the name `join`. No conflicts!
-Melvil lets out an audible sigh.
-
-So when I said above that using `def` is like telling Clojure to
-attach a symbol to an object and store it, it's more accurate to say
-that using `def` it like telling Clojure:
-
-* Look in the *current namespace* for an object with the given symbol.
-  If you find one, remove the symbol. Using the examples above, we
-  would remove `great-books` from the vector
-  `["East of Eden" "The Glass Bead Game"]`.
-* Attach the symbol to the given object. In the above examples, we'd
-  attach `great-books` to
-  `["The Power of Bees" "Journey to Upstairs"]`.
-* Store the object in the current namespace.
-
-Thus, using namespaces allows you to avoid the name collisions other
-languages are prone to.
+Clojure allows to create as many namespaces as we like so that we can
+avoid these collisions.
 
 ## Creating and Switching to Namespaces
 
@@ -247,10 +245,11 @@ have fallen from the lips of a deity during his last dinner.
 Because I'm an academic I attempt to solve the case the best way I
 know how: by heading to the library and researching the shit out of
 it. My trusty assistant, Clojure, accompanies me. As we bustle from
-room to room, I shout at Clojure to hand me one thing after another.
+namespace to namespace, I shout at Clojure to hand me one thing after
+another.
 
-But Clojure is kind of dumb. From within the `user` room, I belt out
-"`join`! Give me `join`!", specks of spittle flying out my mouth.
+But Clojure is kind of dumb. From within the `user` namespace, I belt
+out "`join`! Give me `join`!", specks of spittle flying out my mouth.
 "`RuntimeException: Unable to resolve symbol: join`", Clojure whines
 in response. "For the love of brie, just hand me
 `clojure.string/join`"! I retort, and Clojure dutifully hands me the
