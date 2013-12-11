@@ -34,30 +34,40 @@ all the examples!
 ## Your Project as a Library
 
 Real-world libraries store collections of objects like books,
-magazines, and DVDs. Each object is placed systematically within this
-physical space and given a name which corresponds with its
-location. That way you can easily find an object if you know its name.
+magazines, and DVDs. They use addressing systems so that, given an
+object's address, you can navigate the physical space and retrieve the
+object you're looking for.
 
-For example, if I picked up _The Da Vinci Code_ (a modern masterpiece)
-at your local library, I would likely find a piece of paper with
-"813.54" printed on it glued to the book's spine. "813.54" is the
-book's name within the context of the library's organizational system.
-And now that you know that _The Da Vinci Code_ is named "813.54", you
-can efficiently navigate your library and locate the physical space
-where the book resides. Then you can engage in the literary and/or
-hate-reading adventure of your lifetime.
+No human being is going to know off-hand what a book's address is, so
+libraries provide tools for finding the address. For example, if you
+searched for "The Da Vinci Code" your local library's database, it
+would return the address "813.54" to you (if it's using the Dewey
+Decimal System). Now that you know that _The Da Vinci Code_'s address,
+you can efficiently navigate your library and locate the physical
+space where the book resides. Then you can engage in the literary
+and/or hate-reading adventure of your lifetime.
 
 It's useful to imagine a similar physical setup in Clojure. I think of
 Clojure as storing objects like data structures and functions in a
-vast set of numbered lockers. Clojure uses *namespaces* to organize
-maps between human-friendly names and references (known as *Vars*) to
-these lockers. When you give Clojure a name, it looks up the
-corresponding Var. That gives it the location of the locker, which it
-hustles on over to and retrieves the object you want.
+vast set of numbered lockers. Clojure keeps track of links between the
+*symbols* which identify objects and the references
 
-In Clojure, you are always "in" a namespace. When you start
-the REPL, for example, you're in the `user` namespace. The prompt will
-show the current namespace with something like `user>`.
+Clojure uses *namespaces* to organize
+maps between human-friendly *symbols* and references (known as *Vars*) to
+these lockers.
+
+
+
+I think of namespaces as little cubicles used to organize the 
+
+
+When you give Clojure a name, it looks up the
+corresponding Var. That gives it the location of the locker. Clojure
+then hustles on over to the locker and retrieves the object you want.
+
+In Clojure, you are always "in" a namespace. When you start the REPL,
+for example, you're in the `user` namespace. The prompt will show the
+current namespace with something like `user>`.
 
 Namespaces are objects of type `clojure.lang.Namespace`. The current
 namespace is always accessible with `*ns*` &ndash; try typing that in
@@ -65,25 +75,43 @@ the REPL. Namespaces have names, and you can get the name of the
 current namespace with `(ns-name *ns*)`. (In the next section we'll go
 over how to create and switch to name spaces.)
 
+```clojure
+(ns-name *ns*)
+; => user
+```
+
 Now that you know Clojure's organization system, how do you get it to
 store new objects? With `def`! Observe:
 
 ```clojure
 user> (def great-books ["East of Eden" "The Glass Bead Game"])
 ; => #'user/great-books
+user> great-books
+["East of Eden" "The Glass Bead Game"]
 ```
 
 This is like telling Clojure:
 
 * find a free storage locker
-* shove `["East of Eden" "The Glass Bead Game"]` in it,
+* shove `["East of Eden" "The Glass Bead Game"]` in it
 * write down the locker's number on a Var
 * update the current namespace's map with the association between
   `great-books` and the Var that was just created
-* Return the Var (in this case, `#'user/great-books`
+* Return the Var (in this case, `#'user/great-books`)
+
+This process is called *interning* a Var.
 
 `#'user/great-books` probably looks unfamiliar to you at this point.
-Don't worry, I'll cover that soon.
+That's the *reader form* of a Var. I explain reader forms in the
+chapter [Clojure Alchemy: Reading, Evaluation, and Macros](Clojure
+Alchemy: Reading, Evaluation, and Macros). For now, all you need to
+know is that asking Clojure to evaluate it will return a Var. It's
+like saying, "go into the `user` namespace and give me Var associated
+with the symbol `great-books`:
+
+```clojure
+
+```
 
 Then, when you hand Clojure the symbol `great-books`, it's
 like saying:
@@ -122,10 +150,6 @@ won't overwrite your code. Melvil recoils in horror! Thankfully,
 Clojure solves this problem with **namespaces**.
 
 ## Introducing Namespaces
-
-I think of namespaces as actual spaces, as storage rooms for my
-objects. 
-
 
 By using namespaces, we can use the same names in different contexts.
 For example, Clojure stores string-related functions in the namespace
