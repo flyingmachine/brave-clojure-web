@@ -19,10 +19,10 @@ vice versa.
 This chapter will instruct you in the proper usage of these tools.
 Melvil quivers with excitement! By the end, you will understand:
 
-* How to think about `def`
+* What `def` does
 * What namespaces are and how to use them
 * The relationship between namespaces and the filesystem
-* How to use `require`, `use`, and `import`
+* How to use `refer` and `ns`
 * What dynamic binding is and why you'd use it
 
 To get there, you'll explore the idea of your project as a library.
@@ -35,7 +35,7 @@ all the examples!
 
 Real-world libraries store collections of objects like books,
 magazines, and DVDs. Each object is placed systematically within this
-physical space and affixed with a name which corresponds with its
+physical space and given a name which corresponds with its
 location. That way you can easily find an object if you know its name.
 
 For example, if I picked up _The Da Vinci Code_ (a modern masterpiece)
@@ -47,17 +47,51 @@ can efficiently navigate your library and locate the physical space
 where the book resides. Then you can engage in the literary and/or
 hate-reading adventure of your lifetime.
 
-It's useful to imagine the same physical process in Clojure. In
-Clojure, you use **symbols** to represent names. Using the special
-form `def` is like telling Clojure to glue a symbol to a programmatic
-"object", like a data structure or function, and then store it:
+It's useful to imagine a similar physical setup in Clojure. I think of
+Clojure as storing objects like data structures and functions in a
+vast set of numbered lockers. Clojure uses *namespaces* to organize
+maps between human-friendly names and references (known as *Vars*) to
+these lockers. When you give Clojure a name, it looks up the
+corresponding Var. That gives it the location of the locker, which it
+hustles on over to and retrieves the object you want.
+
+In Clojure, you are always "in" a namespace. When you start
+the REPL, for example, you're in the `user` namespace. The prompt will
+show the current namespace with something like `user>`.
+
+Namespaces are objects of type `clojure.lang.Namespace`. The current
+namespace is always accessible with `*ns*` &ndash; try typing that in
+the REPL. Namespaces have names, and you can get the name of the
+current namespace with `(ns-name *ns*)`. (In the next section we'll go
+over how to create and switch to name spaces.)
+
+Now that you know Clojure's organization system, how do you get it to
+store new objects? With `def`! Observe:
 
 ```clojure
-(def great-books ["East of Eden" "The Glass Bead Game"])
+user> (def great-books ["East of Eden" "The Glass Bead Game"])
+; => #'user/great-books
 ```
 
+This is like telling Clojure:
+
+* find a free storage locker
+* shove `["East of Eden" "The Glass Bead Game"]` in it,
+* write down the locker's number on a Var
+* update the current namespace's map with the association between
+  `great-books` and the Var that was just created
+* Return the Var (in this case, `#'user/great-books`
+
+`#'user/great-books` probably looks unfamiliar to you at this point.
+Don't worry, I'll cover that soon.
+
 Then, when you hand Clojure the symbol `great-books`, it's
-like saying "find the object with this name and give it to me."
+like saying:
+
+* Retrieve the Var associated with `great-books`
+* Get the locker number from the Var
+* Go to that locker number and grab what's inside
+* Give it to me!
 
 ```clojure
 great-books
@@ -90,16 +124,8 @@ Clojure solves this problem with **namespaces**.
 ## Introducing Namespaces
 
 I think of namespaces as actual spaces, as storage rooms for my
-objects. In Clojure, you are always "in" a namespace. When you start
-the REPL, for example, you're in the `user` namespace. The prompt will
-show the current namespace with something like `user>`.
+objects. 
 
-Namespaces are objects of type `clojure.lang.Namespace`. You can pass
-them as arguments to functions, for example. The current namespace is
-always accessible with `*ns*` &ndash; try typing that in the REPL.
-Namespaces have names, and you can get the name of the current
-namespace with `(ns-name *ns*)`. In the next section we'll go over how
-to create and switch to name spaces.
 
 By using namespaces, we can use the same names in different contexts.
 For example, Clojure stores string-related functions in the namespace
@@ -234,8 +260,7 @@ cheese.analysis> cheddars
 
 Calling `refer` with a symbol allows us to refer to the corresponding
 namespace's objects without having to use their fully-qualified names.
-
-You ignorant clod!
+I think of this as
 
 ## Using other libraries
 
