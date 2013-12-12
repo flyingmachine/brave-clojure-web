@@ -365,9 +365,9 @@ development.
 
 However, you're unlikely to create your entire program in the REPL. In
 the next section I'll cover everything you need to know to organize
-your project on a filesystem.
+your a real project.
 
-## Filesystem Organization
+## Real Project Organization
 
 Up until now I've covered the building blocks of Clojure's
 organization system. Now I'll show how to use them in real
@@ -377,3 +377,73 @@ projects. I'll cover:
 * Using `require` to load a file
 * Using `ns` to set up a namespace
 
+To kill to birds with one stone (or feed two birds with one seed,
+depending on how much of a hippie you are), our example will be used
+to catch the pesky international cheese thief by mapping the locations
+of his heists. Run the following:
+
+```shell
+lein new app the-divine-cheese-code
+```
+
+This should create a directory structure that looks like this:
+
+```
+| .gitignore
+| doc
+| | intro.md
+| project.clj
+| README.md
+| resources
+| src
+| | the_divine_cheese_code
+| | | core.clj
+| test
+| | the_divine_cheese_code
+| | | core_test.clj
+```
+
+Now, open `src/the_divine_cheese_code/core.clj`. You should see this
+on the first line:
+
+```clojure
+(ns the-divine-cheese-code.core
+```
+
+`ns` is the primary way you that create and manage namespaces within
+Clojure. I'm going to explain it fully shortly. For now, though, this
+line is very similar to the `in-ns` function we used above. It creates
+a namespace if it doesn't exist and then switches to it.
+
+The name of the namespace is `the-divine-cheese-code.core`. In
+Clojure, there's a one-to-one mapping between a namespace and the path
+of the file where the namespace is declared relative to the source
+code's root:
+
+* The source code's root is `src`
+* Dashes in namespace names correspond with underscores in the
+  filesystem. `the-divine-cheese-code` is mapped to
+  `the_divine_cheese_code` on the filesystem
+* The namespace component preceding every period (`.`) in a namespace
+  name corresponds with a directory. `the_divine_cheese_code` is a
+  directory.
+* The final component of a namespace corersponds with a file with the
+  `.clj` extension; `core` is mapped to `core.clj`.
+
+Your project is going to have two more namespaces,
+`the-divine-cheese-code.crimes.data` and
+`the-divine-cheese-code.crimes.visualization`. Go ahead and create the
+files for them now:
+
+```shell
+mkdir src/the_divine_cheese_code/crimes
+touch src/the_divine_cheese_code/crimes/data.clj
+touch src/the_divine_cheese_code/visualization/svg.clj
+```
+
+Now open `src/the_divine_cheese_code/crimes/data.clj` and make it
+looks like this:
+
+```clojure
+
+```
