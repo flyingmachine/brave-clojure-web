@@ -430,18 +430,16 @@ code's root:
 * The final component of a namespace corersponds with a file with the
   `.clj` extension; `core` is mapped to `core.clj`.
 
-Your project is going to have two more namespaces,
-`the-divine-cheese-code.crimes.data` and
+Your project is going to have one more namespaces,
 `the-divine-cheese-code.crimes.visualization`. Go ahead and create the
-files for them now:
+file for it now:
 
 ```shell
-mkdir src/the_divine_cheese_code/crimes
-touch src/the_divine_cheese_code/crimes/data.clj
+mkdir src/the_divine_cheese_code/visualization
 touch src/the_divine_cheese_code/visualization/svg.clj
 ```
 
-Now open `src/the_divine_cheese_code/crimes/data.clj` and make it
+Now open `src/the_divine_cheese_code/visualization/svg.clj` and make it
 looks like this:
 
 ```clojure
