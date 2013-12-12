@@ -25,11 +25,14 @@ Melvil quivers with excitement! By the end, you will understand:
 * How to use `refer` and `ns`
 * What dynamic binding is and why you'd use it
 
-To get there, you'll explore the idea of your project as a library.
-You'll also join me in a tale of suspense and mystery as we solve the
-heist of a lifetime. You'll start in the REPL and then progress to
-trying out examples in a filesystem-based project. Be sure to try out
-all the examples!
+To get there, you'll explore the idea of your project as a library
+using the REPL. This will give you a clear mental model of Clojure's
+organizational system. You'll also join me in a tale of suspense and
+mystery as we solve the heist of a lifetime. This will give you an
+increased heartrate and a slight pain in your bum as you sit on the
+edge of your seat. Finally, I'll show you how you'll organize projects
+in real life using the filesystem. Put a pillow on your seat's edge
+and read on!
 
 ## Your Project as a Library
 
@@ -357,15 +360,20 @@ cheese.analysis> taxonomy/bries
 ```
 
 And that's it! Those are all your basic tools for referring to objects
-outside of your current namespace!
+outside of your current namespace! They're great aids to REPL
+development.
 
-## Using other libraries
+However, you're unlikely to create your entire program in the REPL. In
+the next section I'll cover everything you need to know to organize
+your project on a filesystem.
 
+## Filesystem Organization
 
-### Creating Namespaces
+Up until now I've covered the building blocks of Clojure's
+organization system. Now I'll show how to use them in real
+projects. I'll cover:
 
-### Changing Namespaces
+* The relationship between file paths and namespaces
+* Using `require` to load a file
+* Using `ns` to set up a namespace
 
-### Referring to Other Objects
-
-## More efficient
