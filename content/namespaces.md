@@ -116,6 +116,18 @@ namespace's map of symbols-to-interned-vars:
 ; => #'user/great-books
 ```
 
+You can also get the map the namespace uses for looking up a Var when
+given a symbol:
+
+```clojure
+(ns-map *ns*)
+; => very large map which we won't print here
+
+;; The symbol 'great-books is mapped to the Var we created above
+(get (ns-map *ns*) 'great-books)
+; => #'user/great-books
+```
+
 `#'user/great-books` probably looks unfamiliar to you at this point.
 That's the *reader form* of a Var. I explain reader forms in the
 chapter [Clojure Alchemy: Reading, Evaluation, and Macros](Clojure
@@ -274,7 +286,7 @@ user> (in-ns 'cheese.taxonomy)
 cheese.taxonomy> (def cheddars ["mild" "medium" "strong" "sharp" "extra sharp"])
 cheese.taxonomy> (def bries ["Wisconsin" "Somerset" "Brie de Meaux" "Brie de Melun"])
 cheese.taxonomy> (in-ns 'cheese.analysis)
-cheese.analysis> (clojure.core/refer 'cheese.taxonomy) ; ~~1~~
+cheese.analysis> (clojure.core/refer 'cheese.taxonomy)
 cheese.analysis> bries
 ; => ["Wisconsin" "Somerset" "Brie de Meaux" "Brie de Melun"]
 cheese.analysis> cheddars
@@ -283,7 +295,69 @@ cheese.analysis> cheddars
 
 Calling `refer` with a symbol allows us to refer to the corresponding
 namespace's objects without having to use their fully-qualified names.
-I think of this as
+It updates the current namespace's symbol/object map. You can see the
+new entries:
+
+```clojure
+cheese.analysis> ('bries (clojure.core/ns-map clojure.core/*ns*))
+#'cheese.taxonomy/bries
+
+cheese.analysis> ('cheddars (clojure.core/ns-map clojure.core/*ns*))
+#'cheese.taxonomy/cheddars
+```
+
+It's as if Clojure does something like:
+
+1. Call `ns-interns` on the `cheese.taxonomy` namespace
+2. Merge that with the `ns-map` of the current namespace
+3. Make the result the new `ns-map` of the current namespace
+
+You can also pass `refer` the filters `:only`, `:exclude`, and
+`:rename`. `:only` and `:exclude` limit the symbol/Var mappings which
+get merged into the current namespace's `ns-map`. `:rename` lets you
+use different symbols for the vars being merged in. Here's what would
+happen if we had used these options in the example above:
+
+```clojure
+;; :only example
+cheese.analysis> (clojure.core/refer 'cheese.taxonomy :only ['bries])
+cheese.analysis> bries
+; => ["Wisconsin" "Somerset" "Brie de Meaux" "Brie de Melun"]
+cheese.analysis> cheddars 
+; => RuntimeException: Unable to resolve symbol: cheddars
+
+;; :exclude example
+cheese.analysis> (clojure.core/refer 'cheese.taxonomy :exclude ['bries])
+cheese.analysis> bries
+; => RuntimeException: Unable to resolve symbol: bries
+cheese.analysis> cheddars 
+; => ["mild" "medium" "strong" "sharp" "extra sharp"]
+
+;; :rename example
+cheese.analysis> (clojure.core/refer 'cheese.taxonomy :rename {'bries 'yummy-bries})
+cheese.analysis> bries
+; => RuntimeException: Unable to resolve symbol: bries
+cheese.analysis> yummy-bries
+; => ["Wisconsin" "Somerset" "Brie de Meaux" "Brie de Melun"]
+```
+
+By the way, notice that we're having to use the fully-qualified names
+of all the functions in `clojure.core`, whereas we didn't have to do
+that in the `user` namespace. That's because the REPL automatically
+refers `clojure.core` within the `user` namespace.
+
+So that's `refer`! `alias` is relatively simple by comparison. All it
+does it let you use a shorter namespace name when using a
+fully-qualified name:
+
+```clojure
+cheese.analysis> (clojure.core/alias 'taxonomy 'cheese.taxonomy)
+cheese.analysis> taxonomy/bries
+["Wisconsin" "Somerset" "Brie de Meaux" "Brie de Melun"]
+```
+
+And that's it! Those are all your basic tools for referring to objects
+outside of your current namespace!
 
 ## Using other libraries
 
