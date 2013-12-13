@@ -133,12 +133,13 @@ given a symbol:
 
 `#'user/great-books` probably looks unfamiliar to you at this point.
 That's the *reader form* of a Var. I explain reader forms in the
-chapter [Clojure Alchemy: Reading, Evaluation, and Macros](Clojure
-Alchemy: Reading, Evaluation, and Macros). For now, just know that
-`#'` can be used to grab hold of the Var corresponding to the symbol
-that follows; `#'user/great-books` lets you use the Var associated
-with the symbol `great-books` within the `user` namespace. We can
-`deref` vars to get the objects they point to:
+chapter
+[Clojure Alchemy: Reading, Evaluation, and Macros](/read-and-eval).
+For now, just know that `#'` can be used to grab hold of the Var
+corresponding to the symbol that follows; `#'user/great-books` lets
+you use the Var associated with the symbol `great-books` within the
+`user` namespace. We can `deref` vars to get the objects they point
+to:
 
 ```clojure
 (deref #'user/great-books)
@@ -373,9 +374,11 @@ Up until now I've covered the building blocks of Clojure's
 organization system. Now I'll show how to use them in real
 projects. I'll cover:
 
-* The relationship between file paths and namespaces
-* Using `require` to load a file
+* The relationship between file paths and namespace names
+* Loading a file with `require` and `use`
 * Using `ns` to set up a namespace
+
+### The relationship between file paths and namespace names
 
 To kill to birds with one stone (or feed two birds with one seed,
 depending on how much of a hippie you are), our example will be used
@@ -416,9 +419,9 @@ line is very similar to the `in-ns` function we used above. It creates
 a namespace if it doesn't exist and then switches to it.
 
 The name of the namespace is `the-divine-cheese-code.core`. In
-Clojure, there's a one-to-one mapping between a namespace and the path
-of the file where the namespace is declared relative to the source
-code's root:
+Clojure, there's a one-to-one mapping between a namespace name and the
+path of the file where the namespace is declared, relative to the
+source code's root:
 
 * The source code's root is `src`
 * Dashes in namespace names correspond with underscores in the
@@ -439,9 +442,328 @@ mkdir src/the_divine_cheese_code/visualization
 touch src/the_divine_cheese_code/visualization/svg.clj
 ```
 
-Now open `src/the_divine_cheese_code/visualization/svg.clj` and make it
-looks like this:
+Notice that the filesystem path follows the rules outlined above. With
+the relationship between namespaces and the filesystem down, let's
+look at `require` and `use`.
+
+### Loading a file with `require` and `use`
+
+`src/the_divine_cheese_code/core.clj` is going to coordinate the work
+of your project. It's going to use the functions in `svg.clj` to
+create SVG markup, save it to a file, and open the file in a browser.
+To use `svg.clj`'s functions, `core.clj` will have to *load* it. But
+first, it makes sense to add some code to `svg.clj`. Make it look like
+this (you'll add in more later):
 
 ```clojure
+(ns the-divine-cheese-code.visualization.svg)
 
+(defn- latlng->point
+  [latlng]
+  (str (:lat latlng) "," (:lng latlng)))
+
+(defn points
+  [locations]
+  (clojure.string/join " " (map latlng->point locations)))
 ```
+
+This just converts a vector of latitude/longitude coordinates into a
+string of points.
+
+In order to use this code, though, we have to `require` it. `require`
+takes a symbol and *loads* code if it hasn't already been loaded.
+Go ahead and require `the-divine-cheese-code.visualization.svg` by
+changing `core.clj` so that it looks like this:
+
+```clojure
+(ns the-divine-cheese-code.core)
+;; Load our SVG code
+(require 'the-divine-cheese-code.visualization.svg)
+;; Refer it so that we don't have to use the fully-qualified name to
+;; reference svg functions
+(refer 'the-divine-cheese-code.visualization.svg)
+
+(def heists [{:location "Cologne, Germany"
+              :cheese-name "x"
+              :lat 50.95
+              :lng 6.97}
+             {:location "Zurich, Switzerland"
+              :cheese-name "x"
+              :lat 47.37
+              :lng 8.55}
+             {:location "Marseilles, France"
+              :cheese-name "x"
+              :lat 43.30
+              :lng 5.37}
+             {:location "Zurich, Switzerland"
+              :cheese-name "x"
+              :lat 47.37
+              :lng 8.55}
+             {:location "Vatican City"
+              :lat 41.90
+              :lng 12.45}])
+
+(defn -main
+  [& args]
+  (println (points heists)))
+```
+
+If you run the project with `lein run` you should see
+
+```shell
+50.95,6.97 47.37,8.55 43.3,5.37 47.37,8.55 41.9,12.45
+```
+
+Hooray! You're one step closer to catching that purloiner of the
+fermented curd! Using `require` successfully loaded
+`the-divine-cheese-code.visualization.svg` for use.
+
+The details of `require` are actually a bit complicated, and I'll
+cover them in a later chapter, but for practical purposes you can
+think of `require` as telling Clojure:
+
+* Do nothing if you've already called `require` with this symbol
+  (`the-divine-cheese-code.visualization.svg`). Otherwise...
+* Find the file which corresponds with this symbol using the rules we
+  described in "The relationship between file paths and namespaces"
+  above. In this case, Clojure finds
+  `src/the_divine_cheese_code/visualization/svg.clj`.
+* Read and evaluate the contents of that file. Clojure expects the
+  file to declare a namespace corresponding to its path (which ours
+  does).
+
+`require` also lets you alias a namespace when you require it:
+
+```clojure
+;; This:
+(require '[the-divine-cheese-code.visualization.svg :as svg])
+
+;; ...is equivalent to this:
+(require 'the-divine-cheese-code.visualization.svg)
+(alias 'svg 'the-divine-cheese-code.visualization.svg)
+
+;; You can now use the aliased namespace
+(svg/points heists)
+; => "50.95,6.97 47.37,8.55 43.3,5.37 47.37,8.55 41.9,12.45"
+```
+
+Clojure provides another "shortcut". Instead of calling `require` and
+`refer` separately, the function `use` does both:
+
+```clojure
+;; This:
+(require 'the-divine-cheese-code.visualization.svg)
+(refer 'the-divine-cheese-code.visualization.svg)
+
+;; ...is equivalent to this:
+(use 'the-divine-cheese-code.visualization.svg)
+```
+
+You can alias a namespace with `use` just like you can with `require`:
+
+```clojure
+;; This:
+(use '[the-divine-cheese-code.visualization.svg :as svg :only (points)])
+
+;; ...is equivalent to this:
+(require 'the-divine-cheese-code.visualization.svg)
+(refer 'the-divine-cheese-code.visualization.svg)
+(alias 'svg 'the-divine-cheese-code.visualization.svg)
+
+;; You can now access "points" with or without the aliased namespace
+(= svg/points points)
+; => true
+
+;; You can access "latlng->point" as well
+(= svg/latlng->point latlng->point)
+; => true
+```
+
+The reason you might want to alias a namespace when using it is
+because `use` takes the same options as `refer` above:
+
+```clojure
+;; This:
+(use '[the-divine-cheese-code.visualization.svg :as svg :only points])
+
+;; ...is equivalent to this:
+(require 'the-divine-cheese-code.visualization.svg)
+(refer 'the-divine-cheese-code.visualization.svg :only 'points)
+(alias 'svg 'the-divine-cheese-code.visualization.svg)
+
+;; This works as expected
+(= svg/points points)
+; => true
+
+;; We can use the alias the reach latlng->point
+svg/latlng->point
+; => no exception
+
+;: But we can't use the bare name
+latlng->point
+; => exception!
+```
+
+The takeaway here is that `require` and `use` load files and
+optionally `alias` or `refer` their namespaces. This covers the main
+use cases of `require` and `use`. As you write Clojure programs and
+read code written by others, you might encounter even more ways of
+writing `require` and `use`, at which point it'll make sense to read
+Clojure's API docs to understand what's going on. However, what you've
+learned so far should cover 95.3% of your needs.
+
+Now it's time to look at the `ns` macro.
+
+### Using `ns`
+
+Everything we've covered so far &ndash; `in-ns`, `refer`, `alias`,
+`require`, and `use` are actually hardly ever used in your source code
+files. Normally, you would only use them when playing around in the
+REPL. Instead, you'll use the `ns` macro. In the last section I showed
+how `use` calls can also `refer` and `alias` namespaces. `ns` is
+conceptually similar. In this section, you'll learn about how one `ns`
+call can incorporate `require`, `use`, `in-ns`, `alias`, and `refer`.
+
+We mentioned already that `ns` is like calling `in-ns`. `ns` also
+defaults to referring the `clojure.core` namespace. That's why we can
+call `println` from within `the-divine-cheese-code.core` without using
+the fully qualified name, `clojure.core/println`.
+
+You can control what gets referred from `clojure-core` with
+`:refer-clojure`. `:refer-clojure` takes the same options as `refer`:
+
+```clojure
+;; This will break our code, causing us to have to use
+;; clojure.core/println within the -main function:
+(ns the-divine-cheese-code.core
+  (:refer-clojure :exclude [println]))
+```
+
+Within `ns`, the form `(:refer-clojure)` is called a *reference*. This
+might look weird to you. Is this reference a function call? A macro?
+What is it? You'll learn fully how to make sense of it in the chapter
+[Clojure Alchemy: Reading, Evaluation, and Macros](/read-and-eval).
+For now, though, it should be sufficient to understand how each
+reference maps to functions calls. For example, the above code is
+equivalent to:
+
+```clojure
+(in-ns 'the-divine-cheese-code.core)
+(refer 'clojure.core :exclude ['println])
+```
+
+There are six possible kinds of references within `ns`:
+
+* `(:refer-clojure)`
+* `(:require)`
+* `(:use)`
+* `(:import)`
+* `(:load)`
+* `(:gen-class)`
+
+For now, I'm going to ignore `(:import)`, `(:load)`, and
+`(:gen-class)`. They'll be covered in a later chapter.
+
+`(:require)` works similarly to the require function. For example:
+
+```clojure
+;; This:
+(ns the-divine-cheese-code.core
+  (:require the-divine-cheese-code.visualization.svg))
+
+;; ...is equivalent to this:
+(in-ns 'the-divine-cheese-code.core)
+(require 'the-divine-cheese-code.visualization.svg)
+```
+
+Notice that in the `ns` form you don't have to quote your symbol with
+`'` You'll never have to quote symbols within `ns`.
+
+You can also `alias` a lib that you `require` within `ns`, just like
+when you call the function:
+
+```clojure
+;; This:
+(ns the-divine-cheese-code.core
+  (:require [the-divine-cheese-code.visualization.svg :as svg]))
+
+;; ...is equivalent to this:
+(in-ns 'the-divine-cheese-code.core)
+(require ['the-divine-cheese-code.visualization.svg :as 'svg])
+
+;; ... which is equivalent to this:
+(in-ns 'the-divine-cheese-code.core)
+(require 'the-divine-cheese-code.visualization.svg)
+(alias 'svg 'the-divine-cheese-code.visualization.svg)
+```
+
+You can require multiple libs in a `(:require)` reference:
+
+```clojure
+;; This:
+(ns the-divine-cheese-code.core
+  (:require [the-divine-cheese-code.visualization.svg :as svg]
+            [clojure.java.browse :as browse]))
+
+;; ...is equivalent to this:
+(in-ns 'the-divine-cheese-code.core)
+(require ['the-divine-cheese-code.visualization.svg :as 'svg])
+(require ['clojure.java.browse :as 'browse])
+```
+
+One difference between the `(:require)` reference and the `require`
+function, however, is that the reference allows you to refer names:
+
+```clojure
+;; This:
+(ns the-divine-cheese-code.core
+  (:require [the-divine-cheese-code.visualization.svg :refer [points]]))
+
+;; ...is equivalent to this:
+(in-ns 'the-divine-cheese-code.core)
+(require 'the-divine-cheese-code.visualization.svg)
+(refer 'the-divine-cheese-code.visualization.svg :only ['points])
+
+;; You can also refer all symbols (notice the :all keyword):
+(ns the-divine-cheese-code.core
+  (:require [the-divine-cheese-code.visualization.svg :refer :all]))
+
+;; ...same as doing this:
+(in-ns 'the-divine-cheese-code.core)
+(require 'the-divine-cheese-code.visualization.svg)
+(refer 'the-divine-cheese-code.visualization.svg)
+```
+
+This is the preferred way to require code, alias namespaces, and refer
+symbols. It's recommended that you not use `(:use)`, but since it's
+possible that you'll come across it, it's good to know how it works.
+Here's an example:
+
+```clojure
+;; You know the drill. This:
+(ns the-divine-cheese-code.core
+  (:use clojure.java.browse))
+
+;; Does this:
+(in-ns 'the-divine-cheese-code.core)
+(use 'clojure.java.browse)
+
+;; Whereas this:
+(ns the-divine-cheese-code.core
+  (:use [clojure.java browse io]))
+
+;; Does this:
+(in-ns 'the-divine-cheese-code.core)
+(use 'clojure.java.browse)
+(use 'clojure.java.io)
+```
+
+Notice that when you follow `:use` with a vector, it takes the first
+symbol as the "base" and then calls use with each symbol that follows.
+
+Oh my god that's it! Now you can use `ns` like a pro! And you're going
+to need to, dammit, because that "voleur des fromages" (as they
+probably say in French) is still running amok! Remember him/her!?!?
+
+## To Catch a Burglar
+
