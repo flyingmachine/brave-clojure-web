@@ -766,4 +766,3 @@ to need to, dammit, because that "voleur des fromages" (as they
 probably say in French) is still running amok! Remember him/her!?!?
 
 ## To Catch a Burglar
-

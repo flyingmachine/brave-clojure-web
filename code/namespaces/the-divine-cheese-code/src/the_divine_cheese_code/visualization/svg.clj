@@ -1,7 +1,6 @@
 (ns the-divine-cheese-code.visualization.svg
-  (:require [clojure.string :refer [join]])
+  (:require [clojure.string :as s])
   (:refer-clojure :exclude [min max]))
-
 
 (defn comparison-over-maps
   [comparison keys]
@@ -34,7 +33,7 @@
 
 (defn points
   [locations]
-  (join " " (map latlng->point locations)))
+  (s/join " " (map latlng->point locations)))
 
 (defn line
   [points]
