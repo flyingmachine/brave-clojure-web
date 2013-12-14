@@ -1,5 +1,6 @@
 (ns the-divine-cheese-code.core
-  (:require [clojure.java.browse :as browse])
+  (:require [clojure.java.browse :as browse]
+            [the-divine-cheese-code.visualization.svg :refer [xml]])
   (:gen-class))
 
 (def heists [{:location "Cologne, Germany"
@@ -29,8 +30,13 @@
        "/"
        filename))
 
+(defn template
+  [contents]
+  (str "<style>polyline { fill:none; stroke:#5881d8; stroke-width:3}</style>"
+       contents))
+
 (defn -main
   [& args]
   (let [filename "map.html"]
-    (spit filename (draw 200 200 (line (points the-divine-cheese-code.core/heists))))
+    (spit filename (template (xml 50 100 heists)))
     (browse/browse-url (url filename))))
