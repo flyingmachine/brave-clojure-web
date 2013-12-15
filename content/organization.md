@@ -260,14 +260,17 @@ cheese-analysis> cheese-taxonomy/cheddars
 
 The way I think about this is that I imagine I am an extremely
 impatient academic specializing in semiotics-au-fromage, or the study
-of symbols as they relate to cheese. Suddenly, I'm thrust into the
-middle of an international plot. All across the world, sacred and
-historically important cheeses have gone missing. Wisconsin's Standard
-Cheddar: gone! The Great Cheese Jars of Tutankhamun: stolen!
+of symbols as they relate to cheese.
 
-And now, these daring cheese thieves have claimed the most famous
-cheese of all: the Cheese of Turin, a crumb of cheese purported to
-have fallen from the lips of a deity during his last dinner.
+Suddenly, I'm thrust into the middle of an international plot. All
+across the world, sacred and historically important cheeses have gone
+missing. Wisconsin's Standard Cheddar: gone! The Great Cheese Jars of
+Tutankhamun: stolen! Meanwhile, I'm being chased by the Illuminati,
+Masons, and the Crips *and* Bloods!
+
+And now, this daring cheese thief has claimed the most famous cheese
+of all: the Cheese of Turin, a crumb of cheese purported to have
+fallen from the lips of a deity during his last dinner.
 
 Because I'm an academic I attempt to solve the case the best way I
 know how: by heading to the library and researching the shit out of
