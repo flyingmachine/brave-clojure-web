@@ -39,5 +39,8 @@
 (defn -main
   [& args]
   (let [filename "map.html"]
-    (spit filename (template (xml 50 100 heists)))
+    (->> heists
+         (xml 50 100)
+         template
+         (spit filename))
     (browse/browse-url (url filename))))

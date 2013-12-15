@@ -2,7 +2,6 @@
 title: "Organizing Your Project: a Librarians's Tale"
 link_title: "Organizing Your Project: a Librarian's Tale"
 kind: documentation
-draft: true
 ---
 
 Within each of us is lives a librarian named Melvil, a fantastical
@@ -22,8 +21,7 @@ Melvil quivers with excitement! By the end, you will understand:
 * What `def` does
 * What namespaces are and how to use them
 * The relationship between namespaces and the filesystem
-* How to use `refer` and `ns`
-* What dynamic binding is and why you'd use it
+* How to use `refer`, `alias`, `require`, `use`, and `ns`
 
 To get there, you'll explore the idea of your project as a library
 using the REPL. This will give you a clear mental model of Clojure's
@@ -31,8 +29,8 @@ organizational system. You'll also join me in a tale of suspense and
 mystery as we solve the heist of a lifetime. This will give you an
 increased heartrate and a slight pain in your bum as you sit on the
 edge of your seat. Finally, I'll show you how you'll organize projects
-in real life using the filesystem. Put a pillow on your seat's edge
-and read on!
+in real life using the filesystem. Put a pillow on your chair and read
+on!
 
 ## Your Project as a Library
 
@@ -82,6 +80,12 @@ with cubbies. The cubbies have names like `str`, `ns-name`, and so on,
 and within each is the corresponding var. This might sound like a
 completely boring analogy, but believe me, Melvil loves it.
 
+When you give Clojure a name like `str`, it finds the corresponding
+cubby in the current cubicle. It then takes the Var, gets a locker
+address, and retrievs an object from that locker for you. Clojure is
+such an obedient little helper! We can tell it to do stuff all day
+long, and it doesn't mind at all!
+
 Now that we know how Clojure's organization system works, let's look
 at how we use it!
 
@@ -109,12 +113,14 @@ This is like telling Clojure:
 5. Return the Var (in this case, `#'user/great-books`)
 
 This process is called *interning* a Var. You can interact with a
-namespace's map of symbols-to-interned-vars:
+namespace's map of symbols-to-interned-Vars:
 
 ```clojure
+;; Return map of interned Vars
 (ns-interns *ns*)
 ; => {great-books #'user/great-books}
 
+;; Get a specific Var
 (get (ns-interns *ns*) 'great-books)
 ; => #'user/great-books
 ```
@@ -124,7 +130,7 @@ given a symbol:
 
 ```clojure
 (ns-map *ns*)
-; => very large map which we won't print here
+; => very large map which I won't print here; try it out!
 
 ;; The symbol 'great-books is mapped to the Var we created above
 (get (ns-map *ns*) 'great-books)
@@ -165,7 +171,7 @@ This is like telling Clojure:
 * `deref` that bad Jackson
 
 So far, so good, right? Well, brace yourself, because this idyllic
-paradise is about to be turned upside down!
+paradise or organization is about to be turned upside down!
 
 Call `def` again with the same symbol:
 
@@ -205,15 +211,15 @@ an argument to a function:
 
 ```clojure
 ;; Creates the namespace if it doesn't exist and return
-user> (create-ns 'ch)
-; => #<Namespace secret-lair>
+user> (create-ns 'cheese-taxonomy)
+; => #<Namespace cheese-taxonomy>
 
 ;; Returns the namespace if it already exists
-user> (create-ns 'secret-lair)
-; => #<Namespace secret-lair>
+user> (create-ns 'cheese-taxonomy)
+; => #<Namespace cheese-taxonomy>
 
 ;; Pass the returned namespace as an argument
-; (ns-name (create-ns 'secret-lair))
+; (ns-name (create-ns 'cheese-taxonomy))
 ; => secret-lair
 ```
 
@@ -223,28 +229,33 @@ and not move into it. `in-ns` does just that, creating the namespace
 if it doesn't exist and switching to it:
 
 ```clojure
-user> (in-ns 'secret-living-room)
-; => #<Namespace secret-living-room>
+user> (in-ns 'cheese-analysis)
+; => #<Namespace cheese-analysis>
 ```
 
-Notice that your REPL prompt is now `secret-living-room>`, indicating
+Notice that your REPL prompt is now `cheese-analysis>`, indicating
 that you are indeed in the new namespace you just created. Now when
 you use `def` it will store the named object in the
-`secret-living-room` namespace.
+`cheese-decoding` namespace.
 
 What if you want to use things from other namespaces, though? To do
 that, you use what's called a "fully-qualified" symbol. The general
 form is `namespace/name`:
 
 ```clojure
-;; We get an exception if we try to refer to the user namespace's
-;; great-books from within secret-living-room
-secret-living-room> great-books
-; => Exception: Unable to resolve symbol: great-books in this context
+(in-ns 'cheese-taxonomy)
+cheese-taxonomy> (def cheddars ["mild" "medium" "strong" "sharp" "extra sharp"])
+cheese-taxonomy> (in-ns 'cheese-analysis)
+
+;; We get an exception if we try to refer to the cheese-taxonomy
+;; namespace's cheddars from within cheese-analysis
+
+cheese-analysis> cheddars
+; => Exception: Unable to resolve symbol: cheddars in this context
 
 ;; But using the fully-qualified symbol works:
-secret-living-room> user/great-books
-; => ["The Power of Bees" "Journey to Upstairs"]
+cheese-analysis> cheese-taxonomy/cheddars
+; => ["mild" "medium" "strong" "sharp" "extra sharp"]
 ```
 
 The way I think about this is that I imagine I am an extremely
@@ -264,8 +275,9 @@ it. My trusty assistant, Clojure, accompanies me. As we bustle from
 namespace to namespace, I shout at Clojure to hand me one thing after
 another.
 
-But Clojure is kind of dumb. From within the `user` namespace, I belt
-out "`join`! Give me `join`!", specks of spittle flying out my mouth.
+But Clojure is kind of dumb and has a hard time figuring out what I'm
+referring to. From within the `user` namespace, I belt out "`join`!
+Give me `join`!", specks of spittle flying out my mouth.
 "`RuntimeException: Unable to resolve symbol: join`", Clojure whines
 in response. "For the love of brie, just hand me
 `clojure.string/join`"! I retort, and Clojure dutifully hands me the
@@ -350,6 +362,33 @@ of all the functions in `clojure.core`, whereas we didn't have to do
 that in the `user` namespace. That's because the REPL automatically
 refers `clojure.core` within the `user` namespace.
 
+One thing to notice is that you have complete freedom over how to
+organize your namespaces. It makes sense to group related functions
+and data together in the same namespace.
+
+Sometimes you may want a function to only be available to other
+functions within the same namespace. Clojure allows you to define
+*private* functions, like so:
+
+```clojure
+(in-ns 'cheese.analysis)
+;; Notice the dash after "defn"
+(defn- private-function
+  "Just an example function"
+  []
+  )
+```
+
+If you try to call this function from another namespace or refer it,
+Clojure will throw an exception:
+
+```clojure
+cheese.taxonomy> (cheese.analysis/private-function)
+; => throws exception
+cheese.taxonomy> (clojure.core/refer 'cheese.analysis :only ['private-function])
+; => also throws exception
+```
+
 So that's `refer`! `alias` is relatively simple by comparison. All it
 does it let you use a shorter namespace name when using a
 fully-qualified name:
@@ -385,7 +424,7 @@ depending on how much of a hippie you are), our example will be used
 to catch the pesky international cheese thief by mapping the locations
 of his heists. Run the following:
 
-```shell
+```bash
 lein new app the-divine-cheese-code
 ```
 
@@ -423,21 +462,23 @@ Clojure, there's a one-to-one mapping between a namespace name and the
 path of the file where the namespace is declared, relative to the
 source code's root:
 
-* The source code's root is `src`
+* The source code's root is `src` in this case. In general, the root
+  is determine by the *classpath*, which is something I'll cover in a
+  later chapter.
 * Dashes in namespace names correspond with underscores in the
   filesystem. `the-divine-cheese-code` is mapped to
   `the_divine_cheese_code` on the filesystem
-* The namespace component preceding every period (`.`) in a namespace
-  name corresponds with a directory. `the_divine_cheese_code` is a
+* The component preceding every period (`.`) in a namespace name
+  corresponds with a directory. `the_divine_cheese_code` is a
   directory.
 * The final component of a namespace corersponds with a file with the
   `.clj` extension; `core` is mapped to `core.clj`.
 
 Your project is going to have one more namespaces,
-`the-divine-cheese-code.crimes.visualization`. Go ahead and create the
+`the-divine-cheese-code.visualization.svg`. Go ahead and create the
 file for it now:
 
-```shell
+```bash
 mkdir src/the_divine_cheese_code/visualization
 touch src/the_divine_cheese_code/visualization/svg.clj
 ```
@@ -458,16 +499,17 @@ this (you'll add in more later):
 ```clojure
 (ns the-divine-cheese-code.visualization.svg)
 
-(defn- latlng->point
+(defn latlng->point
+  "Convert lat/lng map to comma-separated string" 
   [latlng]
-  (str (:lat latlng) "," (:lng latlng)))
+  (str (:lng latlng) "," (:lat latlng)))
 
 (defn points
   [locations]
   (clojure.string/join " " (map latlng->point locations)))
 ```
 
-This just converts a vector of latitude/longitude coordinates into a
+This just converts a seq of latitude/longitude coordinates into a
 string of points.
 
 In order to use this code, though, we have to `require` it. `require`
@@ -484,22 +526,23 @@ changing `core.clj` so that it looks like this:
 (refer 'the-divine-cheese-code.visualization.svg)
 
 (def heists [{:location "Cologne, Germany"
-              :cheese-name "x"
+              :cheese-name "Archbishop Hildebold's Cheese Pretzel"
               :lat 50.95
               :lng 6.97}
              {:location "Zurich, Switzerland"
-              :cheese-name "x"
+              :cheese-name "The Standard Emmental"
               :lat 47.37
               :lng 8.55}
-             {:location "Marseilles, France"
-              :cheese-name "x"
+             {:location "Marseille, France"
+              :cheese-name "Le Fromage de Cosquer"
               :lat 43.30
               :lng 5.37}
              {:location "Zurich, Switzerland"
-              :cheese-name "x"
+              :cheese-name "The Lesser Emmental"
               :lat 47.37
               :lng 8.55}
              {:location "Vatican City"
+              :cheese-name "The Cheese of Turin"
               :lat 41.90
               :lng 12.45}])
 
@@ -510,7 +553,7 @@ changing `core.clj` so that it looks like this:
 
 If you run the project with `lein run` you should see
 
-```shell
+```bash
 50.95,6.97 47.37,8.55 43.3,5.37 47.37,8.55 41.9,12.45
 ```
 
@@ -547,7 +590,7 @@ think of `require` as telling Clojure:
 ; => "50.95,6.97 47.37,8.55 43.3,5.37 47.37,8.55 41.9,12.45"
 ```
 
-Clojure provides another "shortcut". Instead of calling `require` and
+Clojure provides another shortcut. Instead of calling `require` and
 `refer` separately, the function `use` does both:
 
 ```clojure
@@ -617,12 +660,13 @@ Now it's time to look at the `ns` macro.
 ### Using `ns`
 
 Everything we've covered so far &ndash; `in-ns`, `refer`, `alias`,
-`require`, and `use` are actually hardly ever used in your source code
-files. Normally, you would only use them when playing around in the
-REPL. Instead, you'll use the `ns` macro. In the last section I showed
-how `use` calls can also `refer` and `alias` namespaces. `ns` is
-conceptually similar. In this section, you'll learn about how one `ns`
-call can incorporate `require`, `use`, `in-ns`, `alias`, and `refer`.
+`require`, and `use` &ndash; are actually hardly ever used in your
+source code files. Normally, you would only use them when playing
+around in the REPL. Instead, you'll use the `ns` macro. In the last
+section I showed how `use` calls can also `refer` and `alias`
+namespaces. `ns` is conceptually similar. In this section, you'll
+learn about how one `ns` call can incorporate `require`, `use`,
+`in-ns`, `alias`, and `refer`.
 
 We mentioned already that `ns` is like calling `in-ns`. `ns` also
 defaults to referring the `clojure.core` namespace. That's why we can
@@ -736,7 +780,7 @@ function, however, is that the reference allows you to refer names:
 
 This is the preferred way to require code, alias namespaces, and refer
 symbols. It's recommended that you not use `(:use)`, but since it's
-possible that you'll come across it, it's good to know how it works.
+likely that you'll come across it, it's good to know how it works.
 Here's an example:
 
 ```clojure
@@ -766,3 +810,243 @@ to need to, dammit, because that "voleur des fromages" (as they
 probably say in French) is still running amok! Remember him/her!?!?
 
 ## To Catch a Burglar
+
+We can't allow this plunderer of parmesan to make off with any more
+cheese! It's time to finish drawing lines based on the coordinates of
+his heists! That will surely reveal something!
+
+If you draw lines using the given coordinates, though, it'll look
+messed up. First, latitude coordinates ascend from south to north,
+whereas SVG y coordinates ascend from top to bottom. In other words,
+the drawing is going to be flipped so you need to flip it back.
+
+Second, the drawing is going to be really small. To fix that, you'll
+"zoom in" on it by translating and scaling it. It will be like taking
+a drawing that looks like this:
+
+![Final look](images/organization/before.png)
+
+and turning it into a drawing that looks like this:
+
+![Final look](images/organization/after.png)
+
+Honestly, this is all completely arbitrary and it's no longer directly
+related to code organization, but it's fun and I think you'll have a
+good time going through the code! Make your `svg.clj` file look like
+the code below. Note points are floating in the ocean, like `~~~1~~~`:
+
+```clojure
+;; ~~~1~~~
+(ns the-divine-cheese-code.visualization.svg
+  (:require [clojure.string :as s])
+  (:refer-clojure :exclude [min max]))
+
+;; ~~~2~~~
+(defn comparator-over-maps
+  [comparison-fn keys]
+  (fn [maps]
+    ;; ~~~2.3~~~
+    (reduce (fn [result current-map]
+              ;; ~~~2.2~~~
+              (reduce merge
+                      ;; ~~~2.1~~~
+                      (map (fn [key]
+                             {key (comparison-fn (key result) (key current-map))})
+                           keys)))
+            maps)))
+
+;; ~~~3~~~
+(def min (comparator-over-maps clojure.core/min [:lat :lng]))
+(def max (comparator-over-maps clojure.core/max [:lat :lng]))
+
+;; ~~~4~~~
+(defn translate-to-00
+  [locations]
+  (let [mincoords (min locations)]
+    (map #(merge-with - % mincoords) locations)))
+
+;; ~~~5~~~
+(defn scale
+  [width height locations]
+  (let [maxcoords (max locations)
+        ratio {:lat (/ height (:lat maxcoords))
+               :lng (/ width (:lng maxcoords))}]
+    (map #(merge-with * % ratio) locations)))
+
+(defn latlng->point
+  "Convert lat/lng map to comma-separated string" 
+  [latlng]
+  (str (:lng latlng) "," (:lat latlng)))
+
+(defn points
+  "Given a seq of lat/lng maps, return string of points joined by space"
+  [locations]
+  (s/join " " (map latlng->point locations)))
+
+(defn line
+  [points]
+  (str "<polyline points=\"" points "\" />"))
+
+(defn transform
+  "Just chains other functions"
+  [width height locations]
+  (->> locations
+       translate-to-00
+       (scale width height)))
+
+(defn xml
+  "svg 'template' which also flips the coordinate system"
+  [width height locations]
+  (str "<svg height=\"" height "\" width=\"" width "\">"
+       ;; these two <g> tags flip the coordinate system
+       "<g transform=\"translate(0," height ")\">"
+       "<g transform=\"scale(1,-1)\">"
+       (-> (transform width height locations)
+           points
+           line)
+       "</g></g>"
+       "</svg>"))
+```
+
+All the functions from `latlng->point` on are pretty straightforward.
+They just take `{:lat x :lng y}` maps and transform them so that an
+SVG can be created.
+
+The rest of the code transforms your latitude/longitude points so that
+your SVG will look nice. The approach is to find the rectangular
+bounds of our drawing, translate that so its origin is 0,0, and then
+scale it to a usable size.
+
+In more detail:
+
+1. Alias `clojure.string` as `s` to make the code more succinct. Also,
+   exclude the `min` and `max` functions from `clojure.core` because
+   you're going to define your own functions with the same names.
+2. This is probably the trickiest bit, so bear with me. I'll go over
+   the general purpose then deconstruct from the inside out.
+
+   `comparison-over-maps` is a function which returns a function. We
+   use it to construct the `min` and `max` functions below. `min`, for
+   example, works like this:
+
+   ```clojure
+   (min [{:a 1 :b 3} {:a 5 :b 0}]) ; => {:a 1 :b 0}`
+   ```
+
+    Here's how the returned function works:
+
+     1. The innermost loop takes a seq of keys (`:lat` and `:lng`) and
+        returns a seq of maps, like `'({:lat 47.37} {:lng 6.97})`. If
+        the `comparison-fn` is `clojure.core/min`, then the `:lat` and
+        `:lng` values will be the lowest ones encountered so far
+     2. It calls `reduce` with `merge` to create a single map.
+        `'({:lat 47.37} {:lng 6.97})` is reduced to `{:lat 47.37
+        :lng 6.97}`. This map is now the `min` map.
+     3. The encompassing `reduce` "feeds" in each map so that the
+        inner `reduce` can run the comparison function and return the
+        new `min` map. If `maps` is
+        `the-divine-cheese-code.core/heists`, for example, then the
+        result will be `{:lng 5.37, :lat 41.9}`.
+3. You use `comparator-over-maps` to create our comparison functions.
+   If you think of our drawing as being inscribed in a rectangle, than
+   `min` is the corner of the rectangle closest 0,0 and `max` is the
+   corner fathest from it.
+4. `translate-to-00` works by finding the `min` of our locations and
+   subtracting that from each location. It does this with
+   `merge-with`. Here's an example of `merge-with`:
+
+    ```clojure
+    (merge-with - {:lat 50 :lng 10} {:lat 5 :lng 5})
+    ; => {:lat 45 :lng 5}
+    ```
+5. Scale multiplies each point by the ratio between the maximum
+   latitude and longitude and the desired height and width.
+
+With `svg.clj` all coded up, make `core.clj` look like this:
+
+```clojure
+(ns the-divine-cheese-code.core
+  (:require [clojure.java.browse :as browse]
+            [the-divine-cheese-code.visualization.svg :refer [xml]])
+  (:gen-class))
+
+(def heists [{:location "Cologne, Germany"
+              :cheese-name "Archbishop Hildebold's Cheese Pretzel"
+              :lat 50.95
+              :lng 6.97}
+             {:location "Zurich, Switzerland"
+              :cheese-name "The Standard Emmental"
+              :lat 47.37
+              :lng 8.55}
+             {:location "Marseille, France"
+              :cheese-name "Le Fromage de Cosquer"
+              :lat 43.30
+              :lng 5.37}
+             {:location "Zurich, Switzerland"
+              :cheese-name "The Lesser Emmental"
+              :lat 47.37
+              :lng 8.55}
+             {:location "Vatican City"
+              :cheese-name "The Cheese of Turin"
+              :lat 41.90
+              :lng 12.45}])
+
+(defn url
+  [filename]
+  (str "file:///"
+       (System/getProperty "user.dir")
+       "/"
+       filename))
+
+(defn template
+  [contents]
+  (str "<style>polyline { fill:none; stroke:#5881d8; stroke-width:3}</style>"
+       contents))
+
+(defn -main
+  [& args]
+  (let [filename "map.html"]
+    (->> heists
+         (xml 50 100)
+         template
+         (spit filename))
+    (browse/browse-url (url filename))))
+```
+
+Nothing too complicated going on here. Within `-main` you build up the
+drawing and write it to a file, then open it. You should try that now!
+You'll see something that looks like this:
+
+<style>polyline { fill:none; stroke:#5881d8; stroke-width:3}</style><svg height="100" width="50"><g transform="translate(0,100)"><g transform="scale(1,-1)"><polyline points="11.299435028248586,100.0 22.457627118644073,60.441988950276205 0.0,15.469613259668485 22.457627118644073,60.441988950276205 50.0,0.0" /></g></g></svg>
+
+Wait a minute&hellip; That looks a lot like&hellip; That looks a lot
+like a lambda. Clojure's logo is a lambda&hellip;. Oh my God! Clojure,
+it was you this whole time!
+
+## Summary
+
+You went over a lot of info in this chapter. By now, you should have
+all the tools you need to start organizing your projects. Here's
+everything that was covered:
+
+* Namespaces organize maps between *symbols* and *Vars*
+* Vars are references to Clojure objects (data structures, functions,
+  etc.)
+* You are always in a namespace. You can create namespaces with
+  `create-ns`. It's more useful to use `in-ns`.
+* There's a one-to-one relationship between a namespace and its path
+  on the filesystem
+* `def` stores an object and updates the current namespace with a map
+  between a symbol and a Var that points at the object
+* You can create private functions with `defn-`
+* You can refer to objects in other namespaces by using the *fully
+  qualified* name, like `cheese.taxonomy/cheddars`
+* `refer` allows you to use names from other namespaces without having
+  to fully qualify them
+* `alias` allows you to use a shorter name for namespace when you're
+  writing out a fully qualified name
+* `require` and `use` load files and optionally let you `refer` and
+  `alias` the corresponding namespaces
+* `ns` is the preferred way to create namespaces and call `require`
+  and `use`
+* Lastly and most importantly: it ain't easy being cheesey.

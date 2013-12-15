@@ -2,24 +2,31 @@
   (:require [clojure.string :as s])
   (:refer-clojure :exclude [min max]))
 
-(defn comparison-over-maps
-  [comparison keys]
+;; ~~~2~~~
+(defn comparator-over-maps
+  [comparison-fn keys]
   (fn [maps]
+    ;; ~~~2.3~~~
     (reduce (fn [result current-map]
+              ;; ~~~2.2~~~
               (reduce merge
+                      ;; ~~~2.1~~~
                       (map (fn [key]
-                             {key (comparison (key result) (key current-map))})
+                             {key (comparison-fn (key result) (key current-map))})
                            keys)))
             maps)))
 
-(def min (comparison-over-maps clojure.core/min [:lat :lng]))
-(def max (comparison-over-maps clojure.core/max [:lat :lng]))
+;; ~~~3~~~
+(def min (comparator-over-maps clojure.core/min [:lat :lng]))
+(def max (comparator-over-maps clojure.core/max [:lat :lng]))
 
+;; ~~~4~~~
 (defn translate-to-00
   [locations]
   (let [mincoords (min locations)]
     (map #(merge-with - % mincoords) locations)))
 
+;; ~~~5~~~
 (defn scale
   [width height locations]
   (let [maxcoords (max locations)
@@ -28,10 +35,12 @@
     (map #(merge-with * % ratio) locations)))
 
 (defn latlng->point
+  "Convert lat/lng map to comma-separated string" 
   [latlng]
   (str (:lng latlng) "," (:lat latlng)))
 
 (defn points
+  "Given a seq of lat/lng maps, return string of points joined by space"
   [locations]
   (s/join " " (map latlng->point locations)))
 

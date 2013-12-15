@@ -10,6 +10,7 @@ language-fundamentals-overview
 do-things
 core-functions-in-depth
 functional-programming
+organization
 read-and-eval
 writing-macros
 upcoming
