@@ -275,7 +275,8 @@ the Freemasons, and the Foot Clan!
 
 And now, this daring cheese thief has claimed the most famous cheese
 of all: the Cheese of Turin, a crumb of cheese purported to have
-fallen from the lips of a deity during his last dinner.
+fallen from the lips of a deity during his last dinner. This threatens
+to throw the world into total chaos for some reason!
 
 Because I'm an academic I attempt to solve this mystery the best way I
 know how: by heading to the library and researching the shit out of
