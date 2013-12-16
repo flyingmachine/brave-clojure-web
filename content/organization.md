@@ -26,8 +26,8 @@ Melvil quivers with excitement! By the end, you will understand:
 To get there, you'll explore the idea of your project as a library
 using the REPL. This will give you a clear mental model of Clojure's
 organizational system. You'll also join me in a tale of suspense and
-mystery as we solve the heist of a lifetime. This will give you an
-increased heartrate and a slight pain in your bum as you sit on the
+mystery as we solve the heist of a lifetime! This will give you an
+increased heartrate and a slight pain in your bum from sitting on the
 edge of your seat. Finally, I'll show you how you'll organize projects
 in real life using the filesystem. Put a pillow on your chair and read
 on!
@@ -39,25 +39,28 @@ magazines, and DVDs. They use addressing systems so that, given an
 object's address, you can navigate the physical space and retrieve the
 object you're looking for.
 
-No human being is going to know off-hand what a book's address is, so
-libraries provide tools for finding the address. For example, if you
-searched for "The Da Vinci Code" your local library's database, it
-would return the address "813.54" to you (if it's using the Dewey
-Decimal System). Now you can efficiently navigate your library and
-locate the physical space where _The Da Vinci Code_ resides. Then you
-can engage in the literary and/or hate-reading adventure of your
-lifetime.
+No human being is going to know off-hand what a book or DVD's address
+is, though. Libraries therefore record the association between an
+object's title and its address and provide tools for searching these
+records.
+
+For example, if you searched for "The Da Vinci Code" your
+local library's database, it would return the address "813.54" to you
+(if it's using the Dewey Decimal System). Now you can efficiently
+navigate your library and locate the physical space where _The Da
+Vinci Code_ resides. Then you can engage in the literary and/or
+hate-reading adventure of your lifetime.
 
 It's useful to imagine a similar physical setup in Clojure. I think of
 Clojure as storing objects like data structures and functions in a
-vast set of numbered lockers. No human being is going to know off-hand
-which locker an object is stored in. Instead, we want to give Clojure
+vast set of numbered shelves. No human being is going to know off-hand
+which shelf an object is stored in. Instead, we want to give Clojure
 an identifier which it can use to retrieve the object.
 
 In order for this to happen, Clojure has to maintain the associations
-between our identifiers and locker addresses. It does this using
+between our identifiers and shelf addresses. It does this using
 *namespaces*. Namespaces contain maps between human-friendly *symbols*
-and references to locker addresses (known as *Vars*).
+and references to shelf addresses (known as *Vars*).
 
 Technically, namespaces are objects of type `clojure.lang.Namespace`.
 The current namespace is accessible with `*ns*` &ndash; try evaluating
@@ -73,7 +76,7 @@ In Clojure programs, you are always "in" a namespace. When you start
 the REPL, for example, you're in the `user` namespace (as you can see
 above). The prompt will show the current namespace with something like
 `user>`. In a later section we'll go over how to create and switch to
-name spaces.
+namespaces.
 
 This terminology makes me think of namespaces as little cubicles lined
 with cubbies. The cubbies have names like `str`, `ns-name`, and so on,
@@ -81,13 +84,13 @@ and within each is the corresponding var. This might sound like a
 completely boring analogy, but believe me, Melvil loves it.
 
 When you give Clojure a name like `str`, it finds the corresponding
-cubby in the current cubicle. It then takes the Var, gets a locker
-address, and retrievs an object from that locker for you. Clojure is
+cubby in the current cubicle. It then takes the Var, gets a shelf
+address, and retrieves an object from that shelf for you. Clojure is
 such an obedient little helper! We can tell it to do stuff all day
 long, and it doesn't mind at all!
 
-Now that we know how Clojure's organization system works, let's look
-at how we use it!
+Now that we know about Clojure's organization system, let's look at
+how we use it!
 
 ## Storing Objects with def
 
@@ -107,9 +110,9 @@ This is like telling Clojure:
 1. Find a Var named `great-books`. If it doesn't exist, create it and
   update the current namespace's map with the association between
   `great-books` and the Var that was just created
-2. Find a free storage locker
-3. Shove `["East of Eden" "The Glass Bead Game"]` in it
-4. Write the address of the locker on the Var
+2. Find a free storage shelf
+3. Shove `["East of Eden" "The Glass Bead Game"]` onto it
+4. Write the address of the shelf on the Var
 5. Return the Var (in this case, `#'user/great-books`)
 
 This process is called *interning* a Var. You can interact with a
@@ -154,8 +157,8 @@ to:
 
 This is like telling Clojure:
 
-* Get the locker number from the Var
-* Go to that locker number and grab what's inside
+* Get the shelf number from the Var
+* Go to that shelf number and grab what's inside
 * Give it to me!
 
 Normally, though, you'll just use the symbol:
@@ -225,8 +228,8 @@ user> (create-ns 'cheese-taxonomy)
 
 This is pretty neat, but in practice you'll probably never use
 `create-ns` in your code. It's not very useful to create a namespace
-and not move into it. `in-ns` does just that, creating the namespace
-if it doesn't exist and switching to it:
+and not move into it. `in-ns` is what you need. It creates the
+namespace if it doesn't exist and switches to it:
 
 ```clojure
 user> (in-ns 'cheese-analysis)
@@ -266,13 +269,13 @@ Suddenly, I'm thrust into the middle of an international plot. All
 across the world, sacred and historically important cheeses have gone
 missing. Wisconsin's Standard Cheddar: gone! The Great Cheese Jars of
 Tutankhamun: stolen! Meanwhile, I'm being chased by the Illuminati,
-Masons, and the Crips *and* Bloods!
+the Freemasons, and the Foot Clan!
 
 And now, this daring cheese thief has claimed the most famous cheese
 of all: the Cheese of Turin, a crumb of cheese purported to have
 fallen from the lips of a deity during his last dinner.
 
-Because I'm an academic I attempt to solve the case the best way I
+Because I'm an academic I attempt to solve this mystery the best way I
 know how: by heading to the library and researching the shit out of
 it. My trusty assistant, Clojure, accompanies me. As we bustle from
 namespace to namespace, I shout at Clojure to hand me one thing after
@@ -318,10 +321,10 @@ It updates the current namespace's symbol/object map. You can see the
 new entries:
 
 ```clojure
-cheese.analysis> ('bries (clojure.core/ns-map clojure.core/*ns*))
+cheese.analysis> (get (clojure.core/ns-map clojure.core/*ns*) 'bries)
 #'cheese.taxonomy/bries
 
-cheese.analysis> ('cheddars (clojure.core/ns-map clojure.core/*ns*))
+cheese.analysis> (get (clojure.core/ns-map clojure.core/*ns*) 'cheddars)
 #'cheese.taxonomy/cheddars
 ```
 
@@ -361,13 +364,16 @@ cheese.analysis> yummy-bries
 ```
 
 By the way, notice that we're having to use the fully-qualified names
-of all the functions in `clojure.core`, whereas we didn't have to do
-that in the `user` namespace. That's because the REPL automatically
-refers `clojure.core` within the `user` namespace.
+of all the objects in `clojure.core`, like `clojure.core/ns-map` and
+`clojure.core/refer`. We didn't have to do that in the `user`
+namespace. That's because the REPL automatically refers `clojure.core`
+within the `user` namespace.
 
-One thing to notice is that you have complete freedom over how to
+Another thing to notice is that you have complete freedom over how to
 organize your namespaces. It makes sense to group related functions
-and data together in the same namespace.
+and data together in the same namespace. You might think that Clojure
+imposes some kind of relationship between your namespace and the
+objects it contains, but it doesn't.
 
 Sometimes you may want a function to only be available to other
 functions within the same namespace. Clojure allows you to define
@@ -377,15 +383,15 @@ functions within the same namespace. Clojure allows you to define
 (in-ns 'cheese.analysis)
 ;; Notice the dash after "defn"
 (defn- private-function
-  "Just an example function"
-  []
-  )
+  "Just an example function that does nothing"
+  [])
 ```
 
 If you try to call this function from another namespace or refer it,
 Clojure will throw an exception:
 
 ```clojure
+cheese.analysis> (in-ns 'cheese.taxonomy)
 cheese.taxonomy> (cheese.analysis/private-function)
 ; => throws exception
 cheese.taxonomy> (clojure.core/refer 'cheese.analysis :only ['private-function])
@@ -408,7 +414,7 @@ development.
 
 However, you're unlikely to create your entire program in the REPL. In
 the next section I'll cover everything you need to know to organize
-your a real project.
+a real project with source code living on the filesystem.
 
 ## Real Project Organization
 
@@ -453,12 +459,14 @@ on the first line:
 
 ```clojure
 (ns the-divine-cheese-code.core
+  (:gen-class))
 ```
 
 `ns` is the primary way you that create and manage namespaces within
 Clojure. I'm going to explain it fully shortly. For now, though, this
 line is very similar to the `in-ns` function we used above. It creates
 a namespace if it doesn't exist and then switches to it.
+`(:gen-class)` will also be covered in detail later.
 
 The name of the namespace is `the-divine-cheese-code.core`. In
 Clojure, there's a one-to-one mapping between a namespace name and the
@@ -477,7 +485,7 @@ source code's root:
 * The final component of a namespace corersponds with a file with the
   `.clj` extension; `core` is mapped to `core.clj`.
 
-Your project is going to have one more namespaces,
+Your project is going to have one more namespace,
 `the-divine-cheese-code.visualization.svg`. Go ahead and create the
 file for it now:
 
@@ -609,7 +617,7 @@ You can alias a namespace with `use` just like you can with `require`:
 
 ```clojure
 ;; This:
-(use '[the-divine-cheese-code.visualization.svg :as svg :only (points)])
+(use '[the-divine-cheese-code.visualization.svg :as svg])
 
 ;; ...is equivalent to this:
 (require 'the-divine-cheese-code.visualization.svg)
@@ -630,11 +638,11 @@ because `use` takes the same options as `refer` above:
 
 ```clojure
 ;; This:
-(use '[the-divine-cheese-code.visualization.svg :as svg :only points])
+(use '[the-divine-cheese-code.visualization.svg :as svg :only [points]])
 
 ;; ...is equivalent to this:
 (require 'the-divine-cheese-code.visualization.svg)
-(refer 'the-divine-cheese-code.visualization.svg :only 'points)
+(refer 'the-divine-cheese-code.visualization.svg :only ['points])
 (alias 'svg 'the-divine-cheese-code.visualization.svg)
 
 ;; This works as expected
@@ -650,6 +658,11 @@ latlng->point
 ; => exception!
 ```
 
+If you try all the above code in a REPL and `latlng->point` doesn't
+throw an exception, it's because you referred `latlng->point` in the
+previous code example. You'll need to restart your REPL session for
+the code to behave as shown.
+
 The takeaway here is that `require` and `use` load files and
 optionally `alias` or `refer` their namespaces. This covers the main
 use cases of `require` and `use`. As you write Clojure programs and
@@ -660,16 +673,14 @@ learned so far should cover 95.3% of your needs.
 
 Now it's time to look at the `ns` macro.
 
-### Using `ns`
+### Using ns
 
 Everything we've covered so far &ndash; `in-ns`, `refer`, `alias`,
 `require`, and `use` &ndash; are actually hardly ever used in your
 source code files. Normally, you would only use them when playing
-around in the REPL. Instead, you'll use the `ns` macro. In the last
-section I showed how `use` calls can also `refer` and `alias`
-namespaces. `ns` is conceptually similar. In this section, you'll
-learn about how one `ns` call can incorporate `require`, `use`,
-`in-ns`, `alias`, and `refer`.
+around in the REPL. Instead, you'll use the `ns` macro. In this
+section, you'll learn about how one `ns` call can incorporate
+`require`, `use`, `in-ns`, `alias`, and `refer`.
 
 We mentioned already that `ns` is like calling `in-ns`. `ns` also
 defaults to referring the `clojure.core` namespace. That's why we can
@@ -690,9 +701,10 @@ Within `ns`, the form `(:refer-clojure)` is called a *reference*. This
 might look weird to you. Is this reference a function call? A macro?
 What is it? You'll learn fully how to make sense of it in the chapter
 [Clojure Alchemy: Reading, Evaluation, and Macros](/read-and-eval).
-For now, though, it should be sufficient to understand how each
-reference maps to functions calls. For example, the above code is
-equivalent to:
+For now, though, it should be enough to understand how each reference
+maps to functions calls. That way you'll have a practical
+understanding, even if the underlying machinery isn't clear yet. For
+example, the above code is equivalent to:
 
 ```clojure
 (in-ns 'the-divine-cheese-code.core)
@@ -1036,7 +1048,8 @@ everything that was covered:
 * Vars are references to Clojure objects (data structures, functions,
   etc.)
 * You are always in a namespace. You can create namespaces with
-  `create-ns`. It's more useful to use `in-ns`.
+  `create-ns`. It's more useful to use `in-ns`. You'll probably only
+  use these functions in a REPL.
 * There's a one-to-one relationship between a namespace and its path
   on the filesystem
 * `def` stores an object and updates the current namespace with a map
