@@ -1032,7 +1032,7 @@ With `svg.clj` all coded up, make `core.clj` look like this:
 
 Nothing too complicated going on here. Within `-main` you build up the
 drawing and write it to a file, then open it. You should try that now!
-You'll see something that looks like this:
+Run `lein run` and you'll see something that looks like this:
 
 <style>polyline { fill:none; stroke:#5881d8; stroke-width:3}</style><svg height="100" width="50"><g transform="translate(0,100)"><g transform="scale(1,-1)"><polyline points="11.299435028248586,100.0 22.457627118644073,60.441988950276205 0.0,15.469613259668485 22.457627118644073,60.441988950276205 50.0,0.0" /></g></g></svg>
 
