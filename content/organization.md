@@ -4,6 +4,8 @@ link_title: "Organizing Your Project: a Librarian's Tale"
 kind: documentation
 ---
 
+# Organizing Your Project: a Librarian's Tale
+
 Within each of us is lives a librarian named Melvil, a fantastical
 creature who delights in the organizational arts. Day and night, Melvil
 yearns to bring order to your codebase. Happily, Clojure provides a
