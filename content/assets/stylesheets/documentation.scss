@@ -198,7 +198,6 @@ header {
   .signup {
     @include push(2);
     @include span-columns(8, 12);
-    @include trailer;
   }
 }
 
