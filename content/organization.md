@@ -842,11 +842,11 @@ Second, the drawing is going to be really small. To fix that, you'll
 "zoom in" on it by translating and scaling it. It will be like taking
 a drawing that looks like this:
 
-![Final look](images/organization/before.png)
+![Before](images/organization/before.png)
 
 and turning it into a drawing that looks like this:
 
-![Final look](images/organization/after.png)
+![After](images/organization/after.png)
 
 Honestly, this is all completely arbitrary and it's no longer directly
 related to code organization, but it's fun and I think you'll have a
