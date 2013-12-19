@@ -211,20 +211,20 @@ detail in an upcoming section.
 
 `create-ns` takes a symbol, creates a namespace with that name if it
 doesn't exist already, and returns the namespace. Remember from the
-chapter [Do Things]("/do-things") to quote a symbol when passing it as
+chapter [Do Things](/do-things) to quote a symbol when passing it as
 an argument to a function:
 
 ```clojure
 ;; Creates the namespace if it doesn't exist and return
-user> (create-ns 'cheese-taxonomy)
-; => #<Namespace cheese-taxonomy>
+user> (create-ns 'cheese.taxonomy)
+; => #<Namespace cheese.taxonomy>
 
 ;; Returns the namespace if it already exists
-user> (create-ns 'cheese-taxonomy)
-; => #<Namespace cheese-taxonomy>
+user> (create-ns 'cheese.taxonomy)
+; => #<Namespace cheese.taxonomy>
 
 ;; Pass the returned namespace as an argument
-; (ns-name (create-ns 'cheese-taxonomy))
+; (ns-name (create-ns 'cheese.taxonomy))
 ; => secret-lair
 ```
 
@@ -234,32 +234,32 @@ and not move into it. `in-ns` is what you need. It creates the
 namespace if it doesn't exist and switches to it:
 
 ```clojure
-user> (in-ns 'cheese-analysis)
-; => #<Namespace cheese-analysis>
+user> (in-ns 'cheese.analysis)
+; => #<Namespace cheese.analysis>
 ```
 
-Notice that your REPL prompt is now `cheese-analysis>`, indicating
+Notice that your REPL prompt is now `cheese.analysis>`, indicating
 that you are indeed in the new namespace you just created. Now when
 you use `def` it will store the named object in the
-`cheese-decoding` namespace.
+`cheese.analysis` namespace.
 
 What if you want to use things from other namespaces, though? To do
 that, you use what's called a "fully-qualified" symbol. The general
 form is `namespace/name`:
 
 ```clojure
-(in-ns 'cheese-taxonomy)
-cheese-taxonomy> (def cheddars ["mild" "medium" "strong" "sharp" "extra sharp"])
-cheese-taxonomy> (in-ns 'cheese-analysis)
+(in-ns 'cheese.taxonomy)
+cheese.taxonomy> (def cheddars ["mild" "medium" "strong" "sharp" "extra sharp"])
+cheese.taxonomy> (in-ns 'cheese.analysis)
 
-;; We get an exception if we try to refer to the cheese-taxonomy
-;; namespace's cheddars from within cheese-analysis
+;; We get an exception if we try to refer to the cheese.taxonomy
+;; namespace's cheddars from within cheese.analysis
 
-cheese-analysis> cheddars
+cheese.analysis> cheddars
 ; => Exception: Unable to resolve symbol: cheddars in this context
 
 ;; But using the fully-qualified symbol works:
-cheese-analysis> cheese-taxonomy/cheddars
+cheese.analysis> cheese.taxonomy/cheddars
 ; => ["mild" "medium" "strong" "sharp" "extra sharp"]
 ```
 
