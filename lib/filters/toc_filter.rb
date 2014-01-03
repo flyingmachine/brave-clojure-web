@@ -21,6 +21,8 @@ class NokogiriTOC
 
     doc = Nokogiri::HTML(html)
     return unless doc.at_css(options[:toc_selector])
+
+    @path = doc.at_css("meta[path]")[:path]
     
     toc_data = []
     
@@ -59,7 +61,7 @@ class NokogiriTOC
   def self.build_toc(toc, data)
     data.each do |item|
       li = toc.document.create_element("li")
-      li.add_child(li.document.create_element("a", item[:t], :href => "##{to_anchor(item[:t])}"))
+      li.add_child(li.document.create_element("a", item[:t], :href => "#{@path}##{to_anchor(item[:t])}"))
       unless item[:c].empty?
         build_toc(li.add_child(li.document.create_element("ol")), item[:c])
       end
