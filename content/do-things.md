@@ -8,26 +8,112 @@ kind: documentation
 
 While you've undoubtedly heard of Clojure's awesome concurrency
 support and other stupendous features, Clojure's most salient
-characteristic is that it is a Lisp. We're going to explore this Lisp
-core. And this core is comprised of two parts: functions and data.
+characteristic is that it is a Lisp. In this chapter, you're going to
+explore the elements which comprise this Lisp core: syntax, functions,
+and data. This will provide you with a solid foundation for actually
+representing and solving problems in Clojure.
 
-Functions and data are intertwined: functions are understood in terms
-of the data they operate on, and data is understood in terms of the
-functions that operate on it. We'll handle this pedagogical
-chicken-and-egg problem by briefly introducing the most common Clojure
-data structures. Then, we'll dive deep into functions.
+Finally, this groundwork will also allow you to write some super
+important code. In the last section, you'll tie everything together by
+creating a model of a hobbit and writing a function to hit it in a
+random spot. Super! Important!
 
-All of this groundwork will allow us to write some super important
-code. In the last section, we'll create a model of a hobbit so that we
-can create a function to hit it in a random spot. Super! Important!
+As you go through these examples, it's important that you type them
+out and run them. Programming in a new language is a skill, and, just
+like yodeling or synchronized swimming, you have to practice it to
+learn it. By the way, "Synchronized Swimming for Yodelers for the
+Brave and True" is due to be published in August of 20never. Check it
+out!
 
-As you go through these examples, it's really important that you type
-them out and run them. Programming in a new language is a skill, and,
-just like yodeling or synchronized swimming, you have to practice it
-to learn it.
+## Syntax
 
-One final note before we start: in Clojure, the core data structures
-aren't mutable. For example, we'll be looking at the vector data
+Clojure's syntax is very simple. Clojure understands:
+
+1. Literal representations of data structures like numbers, strings,
+   maps, and vectors
+2. Operations
+
+These literal representations are all syntactically valid:
+
+```clojure
+1
+"a string"
+["a" "vector" "of" "strings"]
+```
+
+Your code will rarely contain free-floating literals. Insteaad, you'll
+pass literals as arguments to operations. All operations take the
+form, "opening parthensis, operator, arguments, close parenthesis":
+
+```clojure
+(operator arg1 arg2 ... argn)
+```
+
+Notice that there are no commas. Clojure uses whitespace to separate
+arguments and it treats commas as whitespace. Here are some example
+operations:
+
+```clojure
+(+ 1 2 3)
+; => 6
+
+(str "It was the panda " "in the library " "with a dust buster")
+; => "It was the panda in the library with a dust buster"
+```
+
+This is probably different from what you're used to. In other
+languages, different operations might have different syntax rules. For
+example, JavaScript employs a smorgasborg of infix notation, dot
+operators, and parentheses:
+
+```javascript
+1 + 2 + 3
+"It was the panda ".concat("in the library ", "with a dust buster")
+```
+
+Clojure's syntax is very clean and simple by comparison. No matter
+what operator you're using or what kind of data you're operating on,
+the syntax is the same.
+
+Each argument to an operator can itself be an operation. In fact, the
+operation itself can be an operation. Here's some syntactically valid
+code which is explained later in this chapter in the section on
+functions:
+
+```clojure
+((or + -) 1 (+ 2 (+ 3 4)))
+```
+
+As you can see, Clojure allows operations to be nested arbitrarily.
+Lisp folks would describe this kind of syntax by saying that Clojure
+code consists of **symbolic expressions**, also known as
+**s-expressions** or **sexps**. Don't get too hung up on the
+terminology, though. As long as you understand how to write
+syntactically valid Clojure, you're in good shape. From now on, I'll
+use the term "expression" to refer to syntactically valid Clojure
+code.
+
+One final thing before you move on to data structures: you use `def` to
+*bind* a *name* to a *value* in Clojure:
+
+```
+(def failed-protagonist-names
+  ["Larry Potter"
+   "Doreen the Explorer"
+   "The Incredible Bulk"])
+```
+
+In this case, you're binding the name `failed-protagonist-names` to a
+vector containing three strings. Notice that I'm using the term
+"bind", whereas in other langauges you'd say that you're *assigning* a
+value to a *variable*.
+
+
+
+One final note before we start: in Clojure, we name things using `def`
+
+
+For example, we'll be looking at the vector data
 structure, which looks a lot like arrays in other languages:
 
 ```clojure
@@ -60,7 +146,7 @@ immutability in more detail later on, but for now keep in mind that
 immutability distinguishes these data structures from the ones you're
 used to in other programming languages.
 
-## Just Enough Data Structures
+## Data Structures
 
 This section will briefly introduce you to core Clojure data
 structures. If you're curious about the functions used, [ClojureDocs](http://clojuredocs.org/) is
@@ -132,9 +218,6 @@ You can look up values in maps:
 (get {:a 0 :b {:c "ho hum"}} :b)
 ; => {:c "ho hum"}
 ```
-
-Notice that we didn't need to use commas. In Clojure, commas are
-considered whitespace.
 
 ### Keywords
 

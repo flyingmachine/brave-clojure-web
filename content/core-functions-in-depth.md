@@ -10,18 +10,18 @@ If you're a huge *Vampire Diaries* fan like me then you'll remember
 the episode where the female teenage love interest, Elena, really
 starts to question her mysterious crush's behavior: "Why did he
 instantly vanish without a trace, which is impossible, when I scraped
-my knee?" and "How come his face turned into a horrible mask of death
+my knee?" and "How come his face turned into a grotesque mask of death
 when I nicked my finger?" and so on.
 
 You might be asking yourself similar questions if you've started
-playing with Clojure's core functions. "Why did \`map\` return what
-looks like a list when I gave it a vector?" and "How come \`reduce\`
+playing with Clojure's core functions. "Why did `map` return what
+looks like a list when I gave it a vector?" and "How come `reduce`
 treats my map like a list of vectors?" and so on. (With Clojure,
 though, you're at least spared from contemplating the profound
-existential terror of being a seventeen-year-old for eternity.)
+existential horror of being a seventeen-year-old for eternity.)
 
 In this chapter, you'll learn about Clojure's deep, dark,
-bloodthirsty, supernatur&ndash; \* *cough* \* I mean, in this chapter,
+bloodthirsty, supernatur&ndash; \**cough*\* I mean, in this chapter,
 you'll learn about a couple of Clojure's underlying concepts. This
 will give you the grounding you need to read the documentation for
 functions you haven't used before and to understand what's happening
