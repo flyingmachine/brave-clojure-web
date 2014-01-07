@@ -6,6 +6,9 @@ kind: documentation
 
 # Do Things
 
+Hot damn! Your environment is all set up and you are ready to learn
+how to actually *do things* with Clojure!
+
 While you've undoubtedly heard of Clojure's awesome concurrency
 support and other stupendous features, Clojure's most salient
 characteristic is that it is a Lisp. In this chapter, you're going to
@@ -18,12 +21,12 @@ code. In the last section, you'll tie everything together by creating
 a model of a hobbit and writing a function to hit it in a random spot.
 Super! Important!
 
-As you go through these examples, it's important that you type them
-out and run them. Programming in a new language is a skill, and, just
-like yodeling or synchronized swimming, you have to practice it to
-learn it. By the way, "Synchronized Swimming for Yodelers for the
-Brave and True" is due to be published in August of 20never. Check it
-out!
+As you go through the chapter, I recommend that you type out the
+examples in a REPL and run them. Programming in a new language is a
+skill, and, just like yodeling or synchronized swimming, you have to
+practice it to learn it. By the way, "Synchronized Swimming for
+Yodelers for the Brave and True" is due to be published in August of
+20never. Check it out!
 
 ## Syntax
 
@@ -41,9 +44,11 @@ These literal representations are all syntactically valid:
 ["a" "vector" "of" "strings"]
 ```
 
-Your code will rarely contain free-floating literals, though.
-Insteaad, you'll use literals in operations. All operations take the
-form, "opening parthensis, operator, operands, closing parenthesis":
+Your code will rarely contain free-floating literals, of course, since
+they don't actually *do* anything on their own. Insteaad, you'll use
+literals in operations. Operations are how you *do things*. All
+operations take the form, "opening parthensis, operator, operands,
+closing parenthesis":
 
 ```clojure
 (operator operand1 operand2 ... operandn)
@@ -62,18 +67,19 @@ operations:
 ```
 
 This is probably different from what you're used to. In other
-languages, different operations might have different syntax rules. For
-example, JavaScript employs a smorgasborg of infix notation, dot
-operators, and parentheses:
+languages, different operations might have different syntax rules
+depending on the operator and the operands. For example, JavaScript
+employs a smorgasborg of infix notation, dot operators, and
+parentheses:
 
 ```javascript
 1 + 2 + 3
 "It was the panda ".concat("in the library ", "with a dust buster")
 ```
 
-Clojure's syntax is very clean and simple by comparison. No matter
-what operator you're using or what kind of data you're operating on,
-the syntax is the same.
+Clojure's syntax is very simple and consistent by comparison. No
+matter what operator you're using or what kind of data you're
+operating on, the syntax is the same.
 
 Lisp folks would describe this kind of syntax by saying that Clojure
 code consists of **symbolic expressions**, also known as
@@ -90,6 +96,8 @@ is explained later in this chapter in the section on functions:
 ```clojure
 ((or + -) 1 (+ 2 (+ 3 4)))
 ```
+
+## Naming Things with def
 
 One final thing before we move on to data structures: you use `def` to
 *bind* a *name* to a *value* in Clojure:
@@ -162,14 +170,58 @@ You'll learn more about why Clojure was implemented this way, but for
 now it's fun to just learn how to do things without all that
 philosophizing. Without further ado:
 
+### nil, true, false, Truthiness, Equality
+
+Clojure has `true` and `false` values. `nil` is used to indicate "no
+value" in Clojure. You can check if a value is `nil` with the cleverly
+named `nil?` function:
+
+```clojure
+(nil? 1)
+; => false
+
+(nil? nil)
+; => true
+```
+
+Both `nil` and `false` are used to represent logical falsiness, while
+all other values are logically truthy. `=` is the equality operator:
+
+```clojure
+(= 1 1)
+; => true
+
+(= nil nil)
+; => true
+
+(= 1 2)
+; => false
+```
+
+Some other languages require you use different operators when
+comparing values of different types. For example, you might have to
+use some kind of special "string equality" operator specially made
+just for strings. You don't need to anything weird or tedious like
+that to test for equality when using Clojure's built-in data
+structures.
+
 ### Numbers
 
-We're only going to work with integers and floats for awhile, though
-[Clojure's treatment of numbers](http://clojure.org/data_structures#Data-Structures-Numbers) is more sophisticated than that. Examples:
+Clojure has pretty sophisticated numerical support. I'm not going to
+spend much time dwelling on the boring technical details (like
+coercion and contagion), because that will get in the way of *doing
+things*. If you're interested in said boring details, check out
+[http://clojure.org/data_structures#Data Structures-Numbers](http://clojure.org/data_structures#Data
+Structures-Numbers). Suffice to say that Clojure will merrily handle
+pretty much anything you throw at it.
+
+In the mean time, we'll be working with integers and floats. We'll
+also be working with ratios, which Clojure can represent directly:
 
 ```clojure
 93
 1.2
+1/5
 ```
 
 ### Strings
@@ -177,9 +229,9 @@ We're only going to work with integers and floats for awhile, though
 Here are some string examples:
 
 ```clojure
-(println "Lord Voldemort")
-(println "\"He who must not be named\"")
-(println "\"Great cow of Moscow!\" - Hermes Conrad")
+"Lord Voldemort"
+"\"He who must not be named\""
+"\"Great cow of Moscow!\" - Hermes Conrad"
 ```
 
 Notice that Clojure only allows double quotes to delineate strings.
@@ -189,17 +241,21 @@ concatenation via the `str` function:
 
 ```clojure
 (def name "Chewbacca")
-(println (str "\"Uggllglglglglglglglll\" - " name))
+(str "\"Uggllglglglglglglglll\" - " name)
 ; => "Uggllglglglglglglglll" - Chewbacca
 ```
 
 ### Maps
 
 Maps are similar to dictionaries or hashes in other languages. They're
-a way of associating some value with some other value. Examples:
+a way of associating some value with some other value. Here are
+example map literals:
 
 ```clojure
-;; ":a" is a keyword and we'll cover it in the next section
+;; An empty map
+{}
+
+;; ":a", ":b", ":c" are keywords and we'll cover them in the next section
 {:a 1
  :b "boring example"
  :c []}
@@ -211,18 +267,49 @@ a way of associating some value with some other value. Examples:
 {:name {:first "John" :middle "Jacob" :last "Jingleheimerschmidt"}}
 ```
 
-You can look up values in maps:
+Notice that map values can be of any type. String, number, map,
+vector, even function! Clojure don't care!
+
+You can look up values in maps with the `get` function:
 
 ```clojure
-(get {:a 0} :a)
-; => 0
-
 (get {:a 0 :b 1} :b)
 ; => 1
 
 (get {:a 0 :b {:c "ho hum"}} :b)
 ; => {:c "ho hum"}
 ```
+
+`get` will return `nil` if it doesn't find your key, but you can give
+it a default value to return:
+
+```clojure
+(get {:a 0 :b 1} :c)
+; => nil
+
+(get {:a 0 :b 1} :c "UNICORNS")
+; => "UNICORNS"
+```
+
+The `get-in` function lets you look up values in nested maps:
+
+```clojure
+(get-in {:a 0 :b {:c "ho hum"}} [:b :c])
+; => "ho hum"
+```
+
+`[:b :c]` is a vector, which you'll read about in a minute.
+
+Another way to look up a value in a map is to treat the map like a
+function, with the key as its argument:
+
+```clojure
+({:name "The Human Coffee Pot"} :name)
+; => "The Human Coffee Pot"
+```
+
+Real Clojurists hardly ever do this though. However, Real Clojurists
+*do* use keywords to look up values in maps:
 
 ### Keywords
 
@@ -247,20 +334,34 @@ Keywords can be used as functions. For example:
 ;; This is equivalent to:
 (get {:a 1 :b 2 :c 3} :a)
 ; => 1
+
+;; Provide a default value, just like get:
+(:d {:a 1 :b 2 :c 3} "FAERIES")
 ```
 
-I think this is super cool and I do it all the time. You should do it,
-too!
+I think this is super cool and Real Clojurists do it all the time. You
+should do it, too!
+
+Besides using map literals, you can use the `hash-map` function to
+create a map:
+
+```clojure
+(hash-map :a 1 :b 2)
+; => {:a 1 :b 2}
+```
+
+Clojure also lets you create sorted maps, but I won't be covering
+that.
 
 ### Vectors
 
 A vector is similar to an array in that it's a 0-indexed collection:
 
 ```clojure
-;; Here's a vector
+;; Here's a vector literal
 [3 2 1]
 
-;; Here we're returning elements of vectors
+;; Here we're returning an element of a vector
 (get [3 2 1] 0)
 ; => 3
 
@@ -270,8 +371,15 @@ A vector is similar to an array in that it's a 0-indexed collection:
 ; => {:name "Pugsley Winterbottom"}
 ```
 
-Vectors do differ from arrays in important ways, and we'll go over
-those differences later.
+Notice that we're using the same `get` function as we use when looking
+up values in maps. The next chapter explain why we do this.
+
+You can create vectors with the `vector` function:
+
+```clojure
+(vector "creepy" "full" "moon")
+; => ["creepy" "full" "moon"]
+```
 
 ### Lists
 
@@ -290,10 +398,21 @@ values. You can't access their elements in the same way, though:
 (get '(100 200 300 400) 0)
 
 ;; This works but has different performance characteristics which we
-;; don't care about right now
+;; don't care about right now.
 (nth '(100 200 300 400) 3)
 ; => 400
 ```
+
+You can create lists with the `list` function:
+
+```clojure
+(list 1 2 3 4)
+; => (1 2 3 4)
+```
+
+When should you use a list and when should you use a vector? For now,
+you're probably best off just using vectors. As you learn more, you'll
+get a good feel for when to use which.
 
 ### Sets
 
@@ -312,6 +431,9 @@ Sets are collections of unique values:
 (get #{:a :b} :a)
 ; => :a
 
+(:a #{:a :b})
+; => :a
+
 (get #{:a :b} "hannah montanna")
 ; => nil
 ```
@@ -319,7 +441,7 @@ Sets are collections of unique values:
 ### Symbols and Naming
 
 Symbols are identifiers that are normally used to refer to something.
-Let's associate a value with a symbol:
+Let's look at our `def` example again:
 
 ```clojure
 (def failed-protagonist-names
@@ -347,28 +469,53 @@ them as arguments:
 For now, though, it's OK to think "Big whoop!" and not be very
 impressed.
 
-You may have noticed the single quote, `'`, in the above example. This
-is called "quoting". You'll learn about this in detail in the chapter
-"Clojure Alchemy: Reading, Evaluation, and Macros". Here's the quick
-explanation for now:
+### Quoting
+
+You may have noticed the single quote, `'`, in the examples above.
+This is called "quoting". You'll learn about this in detail in the
+chapter "Clojure Alchemy: Reading, Evaluation, and Macros". Here's the
+quick explanation for now.
+
+
+Giving Clojure a symbol returns the "object" it refers to:
 
 ```clojure
-;; Giving Clojure a symbol returns the "object" it refers to
 failed-protagonist-names
 ; => ["Larry Potter" "Doreen the Explorer" "The Incredible Bulk"]
+
 (first failed-protagonist-names)
 ; => "Larry Potter"
+```
 
-;; Quoting a symbol tells Clojure to use the symbol itself as a data
-;; structure, not the object the symbol refers to
+Quoting a symbol tells Clojure to use the symbol itself as a data
+structure, not the object the symbol refers to:
+
+```clojure
 'failed-protagonist-names
 ; => failed-protagonist-names
+
 (eval 'failed-protagonist-names)
 ; => ["Larry Potter" "Doreen the Explorer" "The Incredible Bulk"]
+
 (first 'failed-protagonist-names)
 ; => Throws exception!
+
 (first ['failed-protagonist-names 'failed-antagonist-names])
 ; => failed-protagonist-names
+```
+
+You can also quote collections like a lists, maps, and vectors. All
+symbols within the collection will be unevaluated:
+
+```clojure
+'(failed-protagonist-names 0 1)
+; => (failed-protagonist-names 0 1)
+
+(first '(failed-protagonist-names 0 1))
+; => failed-protagonist-names
+
+(second '(failed-protagonist-names 0 1))
+; => 0
 ```
 
 ### Simplicity
