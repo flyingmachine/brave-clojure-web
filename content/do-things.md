@@ -438,6 +438,37 @@ Sets are collections of unique values:
 ; => nil
 ```
 
+You can create sets from existing vectors and lists by using the `set`
+function. One for use this might be to check whether an element exists
+in a collection:
+
+```clojure
+(set [3 3 3 4 4])
+; => #{3 4}
+
+;; 3 exists in vector
+(get (set [3 3 3 4 4]) 3)
+; => 3
+
+;; but 5 doesn't
+(get (set [3 3 3 4 4]) 5)
+; => nil
+```
+
+Just as you can create hash maps and sorted maps, you can create hash
+sets and sorted sets:
+
+```clojure
+(hash-set 1 1 3 1 2)
+; => #{1 2 3}
+
+(sorted-set :b :a :c)
+; => #{:a :b :c}
+```
+
+Clojure also lets you define how a set is sorted using the
+`sorted-set-by` function, but this book doesn't cover that.
+
 ### Symbols and Naming
 
 Symbols are identifiers that are normally used to refer to something.
@@ -521,8 +552,24 @@ symbols within the collection will be unevaluated:
 ### Simplicity
 
 You may have noticed that this treatment of data structures doesn't
-include a description of how to create new types or classes. Clojure's
-emphasis on simplicity encourages you to utilize 
+include a description of how to create new types or classes. This is
+because Clojure's emphasis on simplicity encourages you to reach for
+the built-in, "basic" data structures first.
+
+If you come from an object-oriented background, you might think that
+this approach is weird and backwards. What you'll find, though, is
+that your data does not have to be tightly bundled with a class for it
+to be useful and intelligible. Here's an epigram loved by Clojurists
+which hints at the Clojure philosophy:
+
+    It is better to have 100 functions operate on one data structure
+    than 10 functions on 10 data structures.
+    
+    -- Alan Peris
+
+You'll learn more about this aspect of Clojure's philosophy in the
+coming chapters. For now, though, keep an eye out for the ways that
+you gain code re-use by sticking to basic data structures.
 
 Thus concludes our Clojure data structures primer. Now it's time to
 dig in to functions and see how these data structures can be used!
@@ -535,10 +582,10 @@ block &mdash; the function &mdash; is so simple. This section will
 initiate you in the beauty and elegance of Lisp functions by
 explaining:
 
--   Calling functions
--   Defining functions
--   Anonymous functions
--   Returning functions
+* Calling functions
+* Defining functions
+* Anonymous functions
+* Returning functions
 
 You can use `(doc functionname)` and `(source functionname)` in the
 REPL to see the documentation or source code for a function.
