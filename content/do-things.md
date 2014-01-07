@@ -10,13 +10,13 @@ While you've undoubtedly heard of Clojure's awesome concurrency
 support and other stupendous features, Clojure's most salient
 characteristic is that it is a Lisp. In this chapter, you're going to
 explore the elements which comprise this Lisp core: syntax, functions,
-and data. This will provide you with a solid foundation for actually
+and data. This will provide you with a solid foundation for
 representing and solving problems in Clojure.
 
-Finally, this groundwork will also allow you to write some super
-important code. In the last section, you'll tie everything together by
-creating a model of a hobbit and writing a function to hit it in a
-random spot. Super! Important!
+This groundwork will also allow you to write some super important
+code. In the last section, you'll tie everything together by creating
+a model of a hobbit and writing a function to hit it in a random spot.
+Super! Important!
 
 As you go through these examples, it's important that you type them
 out and run them. Programming in a new language is a skill, and, just
@@ -41,16 +41,16 @@ These literal representations are all syntactically valid:
 ["a" "vector" "of" "strings"]
 ```
 
-Your code will rarely contain free-floating literals. Insteaad, you'll
-pass literals as arguments to operations. All operations take the
-form, "opening parthensis, operator, arguments, close parenthesis":
+Your code will rarely contain free-floating literals, though.
+Insteaad, you'll use literals in operations. All operations take the
+form, "opening parthensis, operator, operands, closing parenthesis":
 
 ```clojure
-(operator arg1 arg2 ... argn)
+(operator operand1 operand2 ... operandn)
 ```
 
 Notice that there are no commas. Clojure uses whitespace to separate
-arguments and it treats commas as whitespace. Here are some example
+operands and it treats commas as whitespace. Here are some example
 operations:
 
 ```clojure
@@ -75,25 +75,23 @@ Clojure's syntax is very clean and simple by comparison. No matter
 what operator you're using or what kind of data you're operating on,
 the syntax is the same.
 
-Each argument to an operator can itself be an operation. In fact, the
-operation itself can be an operation. Here's some syntactically valid
-code which is explained later in this chapter in the section on
-functions:
+Lisp folks would describe this kind of syntax by saying that Clojure
+code consists of **symbolic expressions**, also known as
+**s-expressions** or **sexps**.
+
+Don't get too hung up on the terminology, though. As long as you
+understand how to write syntactically valid Clojure, you're in good
+shape. From now on, I'll use the term "expression" to refer to
+syntactically valid Clojure code.
+
+Expressions can be nested. Here's some syntactically valid code which
+is explained later in this chapter in the section on functions:
 
 ```clojure
 ((or + -) 1 (+ 2 (+ 3 4)))
 ```
 
-As you can see, Clojure allows operations to be nested arbitrarily.
-Lisp folks would describe this kind of syntax by saying that Clojure
-code consists of **symbolic expressions**, also known as
-**s-expressions** or **sexps**. Don't get too hung up on the
-terminology, though. As long as you understand how to write
-syntactically valid Clojure, you're in good shape. From now on, I'll
-use the term "expression" to refer to syntactically valid Clojure
-code.
-
-One final thing before you move on to data structures: you use `def` to
+One final thing before we move on to data structures: you use `def` to
 *bind* a *name* to a *value* in Clojure:
 
 ```
@@ -106,25 +104,44 @@ One final thing before you move on to data structures: you use `def` to
 In this case, you're binding the name `failed-protagonist-names` to a
 vector containing three strings. Notice that I'm using the term
 "bind", whereas in other langauges you'd say that you're *assigning* a
-value to a *variable*.
+value to a *variable*. For example, in Ruby you might perform multiple
+assignments to a variable to "build up" its value:
 
-
-
-One final note before we start: in Clojure, we name things using `def`
-
-
-For example, we'll be looking at the vector data
-structure, which looks a lot like arrays in other languages:
-
-```clojure
-(def failed-protagonist-names
-  ["Larry Potter"
-   "Doreen the Explorer"
-   "The Incredible Bulk"])
+```ruby
+severity = :mild
+error_message = "OH GOD! IT'S A DISASTER! WE'RE "
+if severity == :mild
+  error_message = error_message + "MILDLY INCONVENIENCED!"
+elsif severity == :terrible
+  error_message = error_message + "DOOOOOOOMED!"
+end
 ```
 
-Most other languages would allow you to manipulate this array. In
-Ruby or Javascript, for example:
+The Clojure equivalent would be:
+
+```clojure
+(def severity :mild)
+(def error-message "OH GOD! IT'S A DISASTER! WE'RE ")
+(if (= severity :mild)
+  (def error-message (str error-message "MILDLY INCONVENIENCED!"))
+  (def error-message (str error-message "DOOOOOOOMED!")))
+```
+
+However, this is really bad Clojure. For now, you should treat `def`
+as if it's defining constants. But fear not! Over the next few
+chapters you'll learn how to work with this apparent limitation by
+coding in the functional style.
+
+## Data Structures
+
+Clojure comes with a handful of data structures which you'll find
+yourself using the majority of the time. If you're coming from an
+object-oriented background, you'll be surprised at how much you can do
+with the "basic" types presented here.
+
+All of Clojure's data structures are immutable, meaning you can't
+change them in place. There's no Clojure equivalent for the following
+Ruby:
 
 ```ruby
 failed_protagonist_names = [
@@ -141,21 +158,9 @@ failed_protagonist_names
 # ]
 ```
 
-In Clojure, there is no equivalent. We'll cover the implications of
-immutability in more detail later on, but for now keep in mind that
-immutability distinguishes these data structures from the ones you're
-used to in other programming languages.
-
-## Data Structures
-
-This section will briefly introduce you to core Clojure data
-structures. If you're curious about the functions used, [ClojureDocs](http://clojuredocs.org/) is
-a great reference for finding out more. You can also use `(doc
-functionname)` and `(source functionname)` in the REPL to see the
-documentation or source code for a function.
-
-We won't go over all the functions that can operate on each data
-structure, so I recommend you check out the [Clojure Cheatsheet](http://clojure.org/cheatsheet).
+You'll learn more about why Clojure was implemented this way, but for
+now it's fun to just learn how to do things without all that
+philosophizing. Without further ado:
 
 ### Numbers
 
@@ -366,6 +371,12 @@ failed-protagonist-names
 ; => failed-protagonist-names
 ```
 
+### Simplicity
+
+You may have noticed that this treatment of data structures doesn't
+include a description of how to create new types or classes. Clojure's
+emphasis on simplicity encourages you to utilize 
+
 Thus concludes our Clojure data structures primer. Now it's time to
 dig in to functions and see how these data structures can be used!
 
@@ -381,6 +392,9 @@ explaining:
 -   Defining functions
 -   Anonymous functions
 -   Returning functions
+
+You can use `(doc functionname)` and `(source functionname)` in the
+REPL to see the documentation or source code for a function.
 
 ### Calling Functions
 
@@ -1484,6 +1498,10 @@ solidify your Clojure knowledge if you haven't started already. One
 great place to start would be to refactor out the `loop` in the `hit`
 function. Or, write out some project Euler challenges. Write
 *anything*.
+
+The [Clojure Cheatsheet](http://clojure.org/cheatsheet) is a great
+reference listing all the built-in functions which operate on the data
+structures we covered.
 
 In the next update, I'll include some project ideas and guidance. In
 the mean time, you can also check out
