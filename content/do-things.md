@@ -88,13 +88,14 @@ code consists of **symbolic expressions**, also known as
 Don't get too hung up on the terminology, though. As long as you
 understand how to write syntactically valid Clojure, you're in good
 shape. From now on, I'll use the term "expression" to refer to
-syntactically valid Clojure code.
+syntactically valid Clojure code. All expressions return a value.
 
 Expressions can be nested. Here's some syntactically valid code which
 is explained later in this chapter in the section on functions:
 
 ```clojure
 ((or + -) 1 (+ 2 (+ 3 4)))
+; => 10
 ```
 
 ## Naming Things with def
@@ -472,18 +473,15 @@ Clojure also lets you define how a set is sorted using the
 ### Symbols and Naming
 
 Symbols are identifiers that are normally used to refer to something.
-Let's look at our `def` example again:
+Let's look at a `def` example:
 
 ```clojure
-(def failed-protagonist-names
-  ["Larry Potter"
-   "Doreen the Explorer"
-   "The Incredible Bulk"])
+(def failed-movie-titles ["Gone With the Moving Air" "Swellfellas"])
 ```
 
 In this case, `def` associates the value
-`["Larry Potter" "Doreen the Explorer" "The Incredible Bulk"]` with
-the symbol `failed-protagonist-names`.
+`["Gone With the Moving Air" "Swellfellas"]` with the symbol
+`failed-movie-titles`.
 
 You might be thinking, "So what? Every other programming language lets
 me associate a name with a value. Big whoop!" Lisps, however, allow
@@ -583,6 +581,7 @@ initiate you in the beauty and elegance of Lisp functions by
 explaining:
 
 * Calling functions
+* The difference between functions and special forms
 * Defining functions
 * Anonymous functions
 * Returning functions
@@ -590,9 +589,30 @@ explaining:
 You can use `(doc functionname)` and `(source functionname)` in the
 REPL to see the documentation or source code for a function.
 
+### Functions vs. Special Forms
+
+By now you've evaluated many operations in the REPL:
+
+```clojure
+(def failed-movie-titles ["Gone With the Moving Air" "Swellfellas"])
+(if (= severity :mild)
+  (def error-message (str error-message "MILDLY INCONVENIENCED!"))
+  (def error-message (str error-message "DOOOOOOOMED!")))
+(first [1 2 3 4])
+```
+
+`def`, `if`, and `first` are all operators, but only `first` is a
+function. So what are `def` and `if`? To explain that, we need to
+introduce a bit more terminology.
+
+In the Lisp world, you can refer to expressions as **forms**. The
+above examples are all forms. Forms which use `def` or `if` are called
+**special forms**. They're special because they don't follow the same
+evaluation rules as functions.
+
 ### Calling Functions
 
-By now you've evaluated many function calls in the REPL:
+By now you've seen many examples of function calls:
 
 ```clojure
 (+ 1 2 3 4)
@@ -600,28 +620,22 @@ By now you've evaluated many function calls in the REPL:
 (first [1 2 3 4])
 ```
 
-You've probably been able to deduce that a function call returns a
-value. You've also probably deduced that function calls take the
-general form of:
+I've already gone over how all Clojure expressions have the same
+syntax: opening parenthesis, operator, operands, closing parenthesis.
+"Function call" is just another term for an expression where the
+operator is a *function expression*. A *function expression* is just
+an expression which returns a function.
 
-```
-<function-call> ::= (<function-expression> [<arg>*])
-```
-
-(If you're not familiar with [Backus-Naur Form](https://en.wikipedia.org/wiki/Backus–Naur_Form), this basically says "A
-function call is denoted by an opening parenthesis, followed by a
-function expression, followed by one or more optional arguments.)
-
-What you might not know, however, is how flexible this structure is.
-For example, a `function expression` can be any expression which
-evaluates to a function. The following are all valid function calls
-which evaluate to `6`:
+It might not be obvious, but this let's you write some pretty
+interesting code. The following are all valid function calls which
+evaluate to `6`:
 
 ```clojure
 ;; Return value of "or" is first truthy value, and + is truthy
 ((or + -) 1 2 3)
 
-;; Return value of "and" is first falsey value or last truthy value
+;; Return value of "and" is first falsey value or last truthy value.
+;; + is the last truthy value
 ((and (= 1 1) +) 1 2 3)
 
 ;; Return value of "first" is the first element in a sequence
@@ -788,7 +802,7 @@ Here's an example of a function definition and calling the function:
 Let's dive deeper into the docstring, parameters, and function
 body.
 
-####   The Docstring
+#### The Docstring
 
 The docstring is really cool. You can view the docstring for a
 function in the REPL with `(doc fn-name)`, e.g. `(doc map)`.
