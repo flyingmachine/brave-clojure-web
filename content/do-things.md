@@ -382,6 +382,13 @@ You can create vectors with the `vector` function:
 ; => ["creepy" "full" "moon"]
 ```
 
+Elements get added to the *end* of a vector:
+
+```clojure
+(conj [1 2 3] 4)
+; => [1 2 3 4]
+```
+
 ### Lists
 
 Lists are similar to vectors in that they're linear collections of
@@ -409,6 +416,13 @@ You can create lists with the `list` function:
 ```clojure
 (list 1 2 3 4)
 ; => (1 2 3 4)
+```
+
+Elements get added to the *beginning* of a list:
+
+```clojure
+(conj '(1 2 3) 4)
+; => (4 1 2 3)
 ```
 
 When should you use a list and when should you use a vector? For now,
@@ -1315,8 +1329,8 @@ In our symmetrizer above, we saw the following:
 
 All this does is bind the names on the left to the values on the
 right. You can think of `let` as short for "let it be", which is also
-a beautiful Beatles song (in case you didn't know (in which case, wtf
-man)). For example, "Let `final-body-parts` be `(conj final-body-parts
+a beautiful Beatles song (in case you didn't know (in which case,
+wtf?)). For example, "Let `final-body-parts` be `(conj final-body-parts
 part)`."
 
 Here are some simpler examples:
@@ -1332,17 +1346,18 @@ Here are some simpler examples:
 (let [dalmatians (take 2 dalmatian-list)]
   dalmatians)
 ; => ("Pongo" "Missis")
+```
 
-;; Notice the rest-param - it works just like rest-params
-;; in functions
+You can also use rest-params in `let`, just like you can in functions:
+
+```clojure
 (let [[pongo & dalmatians] dalmatian-list]
   [pongo dalmatians])
-; => ["Pongo" ("Missis" "Puppy 1" "Puppy 2")]  
+; => ["Pongo" ("Missis" "Puppy 1" "Puppy 2")]
 ```
 
 Notice that the value of a `let` form is the last form in its body
-which gets evaluated. Also, `let` forms are special forms, just like
-`if`. Special!
+which gets evaluated.
 
 `let` forms follow all the destructuring rules which we introduced in
 "Calling a Function" above.
@@ -1350,11 +1365,11 @@ which gets evaluated. Also, `let` forms are special forms, just like
 One way to think about `let` forms is that they provide parameters and
 their arguments side-by-side. `let` forms have two main uses:
 
--   They provide clarity by allowing you to name things
--   They allow you to evaluate an expression only once and re-use the
-    result. This is especially important when you need to re-use the
-    result of an expensive function call, like a network API call. It's
-    also important when the expression has side effects.
+* They provide clarity by allowing you to name things
+* They allow you to evaluate an expression only once and re-use the
+  result. This is especially important when you need to re-use the
+  result of an expensive function call, like a network API call. It's
+  also important when the expression has side effects.
 
 Let's have another look at the `let` form in our symmetrizing function
 so we can understand exactly what's going on:
@@ -1414,14 +1429,14 @@ binding with an initial value. This is almost like calling an
 anonymous function with a default value. On the first pass through the
 loop, `iteration` has a value of 0.
 
-Next, we print a super interesting little message.
+Next, it prints a super interesting little message.
 
-Then, we check the value of `iteration` - if it's greater than 3 then
+Then, it checks the value of `iteration` - if it's greater than 3 then
 it's time to say goodbye. Otherwise, we `recur`. This is like calling
 the anonymous function created by `loop`, but this time we pass it an
 argument, `(inc iteration)`.
 
-We could in fact accomplish the same thing just using functions:
+You could in fact accomplish the same thing just using functions:
 
 ```clojure
 (defn recursive-printer
@@ -1447,19 +1462,18 @@ better performance.
 
 ### Regular Expressions
 
-I won't go into how regular expressions work, but here's their literal
-notation:
+Regular expressions are tools for performing pattern matching on text.
+I won't go into how they work, but here's their literal notation:
 
 ```clojure
 ;; pound, open quote, close quote
 #"regular-expression"
 ```
 
-And here's how regexes are used in our symmetrizer:
+In our symmetrizer, `re-find` returns true or false based on whether
+the ;; the part's name starts with the string "left-":
 
 ```clojure
-;; re-find returns true or false based on whether the
-;; the part's name starts with the string "left-"
 (defn has-matching-part?
   [part]
   (re-find #"^left-" (:name part)))
@@ -1467,31 +1481,17 @@ And here's how regexes are used in our symmetrizer:
 ; => true
 (has-matching-part? {:name "neckbeard"})
 ; => false
+```
 
-;; Use a regex tp replace "left-" with "right-"
+`matching-part` uses a regex to replace `"left-"` with `"right-"`:
+
+```
 (defn matching-part
   [part]
   {:name (clojure.string/replace (:name part) #"^left-" "right-")
    :size (:size part)})
 (matching-part {:name "left-eye" :size 1})
 ; => {:name "right-eye" :size 1}]
-```
-
-### conj
-
-`conj` adds elements to a sequence:
-
-```clojure
-(conj [] 1)
-; => [1]
-
-;; Conj adds elements to the *end* of a vector
-(conj [1] 2 3)
-; => [1 2 3]
-
-;; But it adds elements to *beginning* of a list
-(conj '(1) 2 3)
-; => (3 2 1)
 ```
 
 ### Symmetrizer
@@ -1582,7 +1582,35 @@ Here's a simple example:
 ; => 10
 ```
 
-Reduce could be implemented like this:
+This is like telling Clojure to do this:
+
+```clojure
+(+ (+ (+ 1 2) 3) 4)
+```
+
+So, reduce works by doing this:
+
+1. Apply the given function to the first two elements of a sequence.
+   That's where `(+ 1 2)` comes from.
+2. Apply the given function to the result and the next element of the
+   sequence. In this case, the result of step 1 is `3`, and the next
+   element of the sequence is `3` as well. So you end up with `(+ 3
+   3)`.
+3. Repeat step 2 for every remaining element in the sequence.
+
+Reduce also takes an optional initial value. `15` is the initial value
+here:
+
+```clojure
+(reduce + 15 [1 2 3 4])
+```
+
+If you provide an initial value, then reduce starts by applying the
+given function to the initial value and the first element of the
+sequence, rather than the first two elements of the sequence.
+
+To further understand how reduce works, here's one way that it could
+be implemented:
 
 ```clojure
 (defn my-reduce
@@ -1648,16 +1676,13 @@ Oh my god, that poor hobbit! You monster!
 ## What Now?
 
 By this point I *highly* recommend actually writing some code to
-solidify your Clojure knowledge if you haven't started already. One
-great place to start would be to refactor out the `loop` in the `hit`
-function. Or, write out some project Euler challenges. Write
-*anything*.
-
-The [Clojure Cheatsheet](http://clojure.org/cheatsheet) is a great
+solidify your Clojure knowledge if you haven't started already. The
+[Clojure Cheatsheet](http://clojure.org/cheatsheet) is a great
 reference listing all the built-in functions which operate on the data
 structures we covered.
 
-In the next update, I'll include some project ideas and guidance. In
-the mean time, you can also check out
-[4Clojure](<http://www.4clojure.com/problems>), an online set of Clojure
-problems designed to test your knowledge.
+One great place to start would be to factor out the `loop` in the
+`hit` function. Or, write out some Project Euler challenges. You can
+also check out [4Clojure](<http://www.4clojure.com/problems>), an
+online set of Clojure problems designed to test your knowledge. Just
+write something!
