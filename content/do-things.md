@@ -581,34 +581,13 @@ initiate you in the beauty and elegance of Lisp functions by
 explaining:
 
 * Calling functions
-* The difference between functions and special forms
+* How functions differ from macros and special forms
 * Defining functions
 * Anonymous functions
 * Returning functions
 
 You can use `(doc functionname)` and `(source functionname)` in the
 REPL to see the documentation or source code for a function.
-
-### Functions vs. Special Forms
-
-By now you've evaluated many operations in the REPL:
-
-```clojure
-(def failed-movie-titles ["Gone With the Moving Air" "Swellfellas"])
-(if (= severity :mild)
-  (def error-message (str error-message "MILDLY INCONVENIENCED!"))
-  (def error-message (str error-message "DOOOOOOOMED!")))
-(first [1 2 3 4])
-```
-
-`def`, `if`, and `first` are all operators, but only `first` is a
-function. So what are `def` and `if`? To explain that, we need to
-introduce a bit more terminology.
-
-In the Lisp world, you can refer to expressions as **forms**. The
-above examples are all forms. Forms which use `def` or `if` are called
-**special forms**. They're special because they don't follow the same
-evaluation rules as functions.
 
 ### Calling Functions
 
@@ -627,13 +606,24 @@ operator is a *function expression*. A *function expression* is just
 an expression which returns a function.
 
 It might not be obvious, but this let's you write some pretty
-interesting code. The following are all valid function calls which
-evaluate to `6`:
+interesting code. Here's a function expression which returns the `+`
+(addition) function:
 
 ```clojure
 ;; Return value of "or" is first truthy value, and + is truthy
-((or + -) 1 2 3)
+(or + -)
+```
 
+You can use that expression as the operator in another expression:
+
+```clojure
+((or + -) 1 2 3)
+; => 6
+```
+
+Here are a couple more valid function calls which return 6:
+
+```clojure
 ;; Return value of "and" is first falsey value or last truthy value.
 ;; + is the last truthy value
 ((and (= 1 1) +) 1 2 3)
@@ -667,124 +657,111 @@ Function flexibility doesn't end with the function expression!
 Syntactically, functions can take any expressions as arguments &mdash;
 including *other functions*.
 
-Take the function `map` (not to be confused with the map data
-structure), which can be understood by example:
+Take the `map` function (not to be confused with the map data
+structure). `map` creates a new list by applying a function to each
+member of a collection:
 
 ```clojure
 ;; The "inc" function increments a number by 1
-(inc 1)
-; => 2
+(inc 1.1)
+; => 2.1
 
-(inc 3.3)
-; => 4.3
-
-;; "map" creates a new list by applying a function to each member of
-;; a collection.
 (map inc [0 1 2 3])
 ; => (1 2 3 4)
-
-;; Note that "map" doesn't return a vector even though we supplied a
-;; vector as an argument. You'll learn why later. For now, just trust
-;; that this is OK and expected.
-
-;; The "dec" function is like "inc" except it subtracts 1
-(dec 3)
-; => 2
-
-(map dec [0 1 2 3])
-; => (-1 0 1 2)
 ```
+
+(Note that `map` doesn't return a vector even though we supplied a
+vector as an argument. You'll learn why later. For now, just trust
+that this is OK and expected.)
 
 Indeed, Clojure's ability to receive functions as arguments allows you
 to build more powerful abstractions. Those unfamiliar with this kind
-of programming think of functions as allowing you to generalize over
-data instances. For example, the `+` function abstracts addition over
-any specific numbers.
+of programming think of functions as allowing you to generalize
+operations over data instances. For example, the `+` function
+abstracts addition over any specific numbers.
 
 By contrast, Clojure (and all Lisps) allows you to create functions
 which generalize over processes. `map` allows you to generalize the
 process of transforming a collection by applying a function &mdash; any
 function &mdash; over any collection.
 
-### Clarifying Terminology
-
-In the above discussion, we make use of terms which might not be
-clear:
-
--   expression
--   evaluate
--   function call
--   apply a function
-
-An **expression** is anything which Clojure can **evaluate** to a value. I
-have to be honest here, though &mdash; I've been using the term
-"expression" because it's more familiar, but in Lisp we call them
-**forms**. For example, the following are all forms:
-
-```clojure
-2
-[1 2 3]
-(inc 1)
-(map inc [1 3 (inc 5)])
-((or + -) 1 2 3)
-```
-
-But these are not valid forms:
-
-```clojure
-;; No closing paren
-(+ 1 2
-
-;; No opening paren
-+ 1 2)
-```
-
-We'll go into more detail about how Clojure evaluates forms later in
-the chapter, but for now you can just think of it as a black box.
-Clojure encounters a form and magically evaluates it! Yay, magic!
-
-A **function call** is a form which is enclosed in parentheses where
-the first element in the parentheses is a function. Example:
-
-```clojure
-;; Not a function call. If "if" isn't a function, then what is it?
-;; Find out in section 3.2 below
-(if true 1 2)
-; => 1
-
-;; A proper function call
-(+ 1 2)
-3
-```
-
-When Clojure encounters a function call, it continues the evaluation
-process by first evaluating all sub-forms recursively. Once the
-sub-forms are evaluated, the function is applied and it returns a
-value. For example:
+The last thing that you need know about function calls is that Clojure
+evaluates all function arguments recursively before passing them to
+the function. Here's how Clojure would evaluate a function call whose
+arguments are also function calls:
 
 ```clojure
 ;; Here's the function call. It kicks off the evaluation process
-(+ (inc 12) (/ (- 20 2) 100.0))
+(+ (inc 199) (/ 100 (- 7 2)))
 
 ;; All sub-forms are evaluated before applying the "+" function
-(+ 13 (/ (- 20 2) 100.0)) ; evaluated "(inc 12)"
-(+ 13 (/ 18 100.0)) ; evaluated (-20 2)
-(+ 13 0.18) ; evaluated (/ 18 100.0)
-13.18 ; final evaluation
+(+ 200 (/ 100 (- 7 2))) ; evaluated "(inc 199)"
+(+ 200 (/ 100 5)) ; evaluated (-20 2)
+(+ 200 20) ; evaluated (/ 100 5)
+220 ; final evaluation
 ```
 
-And that's how you call a function! Now let's learn how to define
-these crazy puppies!
+### Function Calls, Macro Calls, and Special Forms
+
+In the last section, you learned that function calls are expressions
+which have a function expression as the operator. There are two other
+kinds of expressions: **macro calls** and **special forms**. You've
+already seen a couple special forms:
+
+```clojure
+(def failed-movie-titles ["Gone With the Moving Air" "Swellfellas"])
+(if (= severity :mild)
+  (def error-message (str error-message "MILDLY INCONVENIENCED!"))
+  (def error-message (str error-message "DOOOOOOOMED!")))
+```
+
+You'll learn everything there is to know about macro calls and special
+forms in the chapter "Clojure Alchemy: Reading, Evaluation, and
+Macros". For now, though, it's enough to know that, in Lisps, you can
+use the term **form** interchangeably with *expression*. The main
+feature which makes special forms "special" is that *they don't always
+evaluate all of their operands*, unlike function calls.
+
+Take `if`, for example. Its general structure is:
+
+```clojure
+(if boolean-form
+  then-form
+  optional-else-form)
+```
+
+Now imagine you had an `if` statement like this:
+
+```clojure
+(if good-mood
+  (tweet walking-on-sunshine-lyrics)
+  (tweet mopey-country-song-lyrics))
+```
+
+If Clojure evaluated both `tweet` function calls, then your followers
+would end up very confused.
+
+Another feature which separates special forms is that you can't use
+them as arguments to functions.
+
+In general, special forms implement core Clojure functionality that
+just can't be implemented with functions. There are only a handful of
+Clojure special forms, and it's pretty amazing that such a rich
+language is implemented with such a small set of building blocks.
+
+Macros are similar to special forms in that they evaluate their
+operands differently from function calls. But this detour has taken
+long enough; it's time to learn how to define functions!
 
 ### Defining Functions
 
 Function definitions are comprised of five main parts:
 
--   `defn`
--   A name
--   (Optional) a docstring
--   Parameters
--   The function body
+* `defn`
+* A name
+* (Optional) a docstring
+* Parameters
+* The function body
 
 Here's an example of a function definition and calling the function:
 
@@ -805,7 +782,10 @@ body.
 #### The Docstring
 
 The docstring is really cool. You can view the docstring for a
-function in the REPL with `(doc fn-name)`, e.g. `(doc map)`.
+function in the REPL with `(doc fn-name)`, e.g. `(doc map)`. The
+docstring is also utilized if you use a tool to generate documentation
+for your code. In the above example, `"Return a cheer that might be a
+bit too enthusiastic"` is the docstring.
 
 #### Parameters
 
@@ -837,36 +817,47 @@ a function. Here's how you'd define a multi-arity function:
 (defn multi-arity
   ;; 3-arity arguments and body
   ([first-arg second-arg third-arg]
-     (do-stuff first-arg second-arg third-arg))
+     (do-things first-arg second-arg third-arg))
   ;; 2-arity arguments and body
   ([first-arg second-arg]
-     (do-stuff first-arg second-arg))
+     (do-things first-arg second-arg))
   ;; 1-arity arguments and body
   ([first-arg]
-     (do-stuff first-arg)))
+     (do-things first-arg)))
 ```
 
-Overloading by arity is one way to provide default values for arguments:
+Overloading by arity is one way to provide default values for
+arguments. In this case, `"karate"` is the default argument for the
+`chop-type` param: 
 
 ```clojure
-;; Here's an actual function
 (defn x-chop
   "Describe the kind of chop you're inflicting on someone"
-  ;; 2-arity defintion
   ([name chop-type]
      (str "I " chop-type " chop " name "! Take that!"))
-  ;; 1-arity definition
   ([name]
      (x-chop name "karate")))
-;; In this case, "karate" is the default argument for the chop-type
-;; param
-
-(x-chop "Kanye West")
-; => "I karate chop Kanye West! Take that!"
-
-(x-chop "Kanye East" "slap")
-; => "I slap chop Kanye East! Take that!"
 ```
+
+If you call `x-chop` with two arguments, then the function works just
+as it would if it weren't a multi-arity function:
+
+```clojure
+(x-chop "Kanye West" "slap")
+; => "I slap chop Kanye West! Take that!"
+```
+
+If you call `x-chop` with only one argument, though, then `x-chop`
+will actually call itself with the second argument `"karate"`
+supplied:
+
+```clojure
+(x-chop "Kanye East")
+; => "I karate chop Kanye East! Take that!"
+```
+
+It might seem unusual to define a function in terms of itself like
+this. If so, great! You're learning a new way to do things!
 
 You can also make each arity do something completely unrelated:
 
@@ -925,10 +916,6 @@ called "destructuring", which deserves its own subsection:
 
 #### Destructuring
 
-You don't have to use destructuring now. If you find it too
-complicated, feel free to skip ahead and come back to this section
-later. It will always be here for you!
-
 The basic idea behind destructuring is that it lets you concisely bind
 *symbols* to *values* within a *collection*. Let's look at a basic
 example:
@@ -941,8 +928,11 @@ example:
 
 (my-first ["oven" "bike" "waraxe"])
 ; => "oven"
+```
 
-;; Here's how you would accomplish the same thing without destructuring:
+Here's how you would accomplish the same thing without destructuring:
+
+```
 (defn my-other-first
   [collection]
   (first collection))
@@ -952,7 +942,8 @@ example:
 
 As you can see, the `my-first` associates the symbol `first-thing`
 with the first element of the vector that was passed in as an
-argument. It does this by placing the symbol within a vector.
+argument. You tell `my-first` to do this by placing the symbol
+`first-thing` within a vector.
 
 That vector is like a huge sign held up to Clojure which says, "Hey!
 This function is going to receive a list or a vector as an argument.
@@ -1015,12 +1006,13 @@ there's a shorter syntax for that:
   (println (str "Treasure lng: " lng)))
 ```
 
-If you want to have access to the original map argument, you can
-indicate that:
+You can retain access to the original map argument by using the `:as`
+keyword. In the example below, the original map is accessed with
+`treasure-location`:
 
 ```clojure
 ;; Works the same as above.
-(defn announce-treasure-location
+(defn receive-treasure-location
   [{:keys [lat lng] :as treasure-location}]
   (println (str "Treasure lat: " lat))
   (println (str "Treasure lng: " lng))
@@ -1071,7 +1063,7 @@ give you any lip.
 
 More importantly, this fact helps to demonstrate Clojure's underlying
 simplicity. In a way, Clojure is very dumb. When you make a function
-call, Clojure just says, "map? Sure, whatever! I'll just apply this
+call, Clojure just says, "`map`? Sure, whatever! I'll just apply this
 and move on." It doesn't care what the function is or where it came
 from, it treats all functions the same. At its core, Clojure doesn't
 give two burger flips about addition, multiplication, or mapping. It
@@ -1084,7 +1076,7 @@ working with functions. They all work the same!
 ### Anonymous Functions
 
 In Clojure, your functions don't have to have names. In fact, you'll
-find yourself using anonymous functions all the time.
+find yourself using anonymous functions all the time. How mysterious!
 
 There are two ways to create anonymous functions. The first is to use
 the `fn` form:
@@ -1095,8 +1087,7 @@ the `fn` form:
   function body)
 
 ;; Example
-(map (fn [name]
-       (str "Hi, " name))
+(map (fn [name] (str "Hi, " name))
      ["Darth Vader" "Mr. Magoo"])
 ; => ("Hi, Darth Vader" "Hi, Mr. Magoo")
 
@@ -1126,7 +1117,7 @@ There's another, more compact way to create anonymous functions:
 ;; Whoa this looks weird.
 #(* % 3)
 
-;; Example
+;; Apply this weird looking thing
 (#(* % 3) 8)
 ; => 24
 
@@ -1311,51 +1302,6 @@ Conspicuously missing is the hobbit's right side. Let's fix that:
 
 Holy shipmates! This has a lot going on that we haven't discussed yet.
 So let's discuss it!
-
-### if
-
-Clojure's `if` form is very simple
-
-```clojure
-(if boolean-form
-  then-form
-  optional-else-form)
-```
-
-You could describe this as, if the boolean form returns true then
-evaluate and return `then-form`. Otherwise evaluate and return
-`optional-else-form` if it's there.
-
-If you have eagle eyes, you may have noticed something *different*
-about `if`: the `then` and `else` forms *are never both evaluated*.
-The rationale is clear. Imagine you had an `if` statement like this:
-
-```clojure
-(if good-mood
-  (adjust-salary! 10000 all-employees)
-  (adjust-salary! -20000 all-employees))
-```
-
-If we evaluated both forms, like we do with function calls, then those
-poor employees would lose no matter what.
-
-Contrast this with a function call:
-
-```clojure
-(oh-my-god-a-function (+ 1 3) (+ 3 4))
-```
-
-As we discussed in section 2.2 above, when you call a function, all of
-the sub-forms are evaluated before the function is applied. `(+ 1 3)`
-and `(+ 3 4)` are both evaluated before `oh-my-god-a-function` is
-applied.
-
-This means that `if` is not a function. So what is it?
-
-In Lisp, there are a handful of **special forms** which do not follow
-the default evaluation rules. `if` is a special form, as are `def` and
-`defn`. We'll talk about special forms a bit in the next chapter. For
-now, you can feel special every time you use `if`.
 
 ### let
 
