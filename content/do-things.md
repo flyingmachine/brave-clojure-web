@@ -791,7 +791,7 @@ arguments are also function calls:
 
 ;; All sub-forms are evaluated before applying the "+" function
 (+ 200 (/ 100 (- 7 2))) ; evaluated "(inc 199)"
-(+ 200 (/ 100 5)) ; evaluated (-20 2)
+(+ 200 (/ 100 5)) ; evaluated (- 7 2)
 (+ 200 20) ; evaluated (/ 100 5)
 220 ; final evaluation
 ```
