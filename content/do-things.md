@@ -74,7 +74,7 @@ operations:
 ; => "It was the panda in the library with a dust buster"
 ```
 
-To recap, Clojure consists for *forms*. Forms have a uniform
+To recap, Clojure consists of *forms*. Forms have a uniform
 structure. They consist of literals and operations. Operations consist
 of forms enclosed within parentheses.
 
@@ -130,7 +130,7 @@ Here's an example:
 Notice that each branch of the if can only have one form. This is
 different from most languages. For example, in Ruby you can write:
 
-```clojure
+```ruby
 if true
   doer.do_thing(1)
   doer.do_thing(2)
@@ -182,7 +182,7 @@ That covers the essential control flow operators!
 One final thing before we move on to data structures: you use `def` to
 *bind* a *name* to a *value* in Clojure:
 
-```
+```clojure
 (def failed-protagonist-names
   ["Larry Potter"
    "Doreen the Explorer"
@@ -417,6 +417,7 @@ Keywords can be used as functions. For example:
 
 ;; Provide a default value, just like get:
 (:d {:a 1 :b 2 :c 3} "FAERIES")
+; => "FAERIES
 ```
 
 I think this is super cool and Real Clojurists do it all the time. You
