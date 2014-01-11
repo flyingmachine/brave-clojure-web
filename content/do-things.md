@@ -1551,7 +1551,7 @@ I won't go into how they work, but here's their literal notation:
 ```
 
 In our symmetrizer, `re-find` returns true or false based on whether
-the ;; the part's name starts with the string "left-":
+the part's name starts with the string "left-":
 
 ```clojure
 (defn has-matching-part?
