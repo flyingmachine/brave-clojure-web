@@ -1565,7 +1565,7 @@ the ;; the part's name starts with the string "left-":
 
 `matching-part` uses a regex to replace `"left-"` with `"right-"`:
 
-```
+```clojure
 (defn matching-part
   [part]
   {:name (clojure.string/replace (:name part) #"^left-" "right-")
