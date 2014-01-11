@@ -6,8 +6,8 @@ kind: documentation
 
 # Do Things
 
-Hot damn! Your environment is all set up and you are ready to learn
-how to actually *do things* with Clojure!
+It's time to to learn how to actually *do things* with Clojure! Hot
+damn!
 
 While you've undoubtedly heard of Clojure's awesome concurrency
 support and other stupendous features, Clojure's most salient
@@ -30,13 +30,21 @@ Yodelers for the Brave and True" is due to be published in August of
 
 ## Syntax
 
-Clojure's syntax is very simple. Clojure understands:
+Clojure's syntax is simple. Like all Lisps, it employs a uniform
+structure, a handful of special operators, and a constant supply of
+parentheses delivered from the parenthesis mines hidden beneath the
+Massachusetts Institute of Technology, where Lisp was born.
+
+### Forms
+
+All Clojure code is written in a uniform structure. Clojure understands:
 
 1. Literal representations of data structures like numbers, strings,
    maps, and vectors
 2. Operations
 
-These literal representations are all syntactically valid:
+We use the term **form** to refer to structurally valid code. These
+literal representations are all valid forms:
 
 ```clojure
 1
@@ -66,10 +74,21 @@ operations:
 ; => "It was the panda in the library with a dust buster"
 ```
 
-This is probably different from what you're used to. In other
-languages, different operations might have different syntax rules
-depending on the operator and the operands. For example, JavaScript
-employs a smorgasborg of infix notation, dot operators, and
+To recap, Clojure consists for *forms*. Forms have a uniform
+structure. They consist of literals and operations. Operations consist
+of forms enclosed within parentheses.
+
+For good measure, here's something that is not a form because it
+doesn't have a closing parenthesis:
+
+```clojure
+(+
+```
+
+Clojure's structural uniformity is probably different from what you're
+used to. In other languages, different operations might have different
+structures depending on the operator and the operands. For example,
+JavaScript employs a smorgasborg of infix notation, dot operators, and
 parentheses:
 
 ```javascript
@@ -77,28 +96,88 @@ parentheses:
 "It was the panda ".concat("in the library ", "with a dust buster")
 ```
 
-Clojure's syntax is very simple and consistent by comparison. No
+Clojure's structure is very simple and consistent by comparison. No
 matter what operator you're using or what kind of data you're
-operating on, the syntax is the same.
+operating on, the structure is the same.
 
-Lisp folks would describe this kind of syntax by saying that Clojure
-code consists of **symbolic expressions**, also known as
-**s-expressions** or **sexps**.
+One final note: I'll also use the term **expression** to refer to
+Clojure forms. Don't get too hung up on the terminology, though.
 
-Don't get too hung up on the terminology, though. As long as you
-understand how to write syntactically valid Clojure, you're in good
-shape. From now on, I'll use the term "expression" to refer to
-syntactically valid Clojure code. All expressions return a value.
+### Control Flow
 
-Expressions can be nested. Here's some syntactically valid code which
-is explained later in this chapter in the section on functions:
+Here are some basic control flow operators. Throughout the book you'll
+encounter more.
+
+#### if
+
+The general structure of `if` is:
 
 ```clojure
-((or + -) 1 (+ 2 (+ 3 4)))
-; => 10
+(if boolean-form
+  then-form
+  optional-else-form)
 ```
 
-## Naming Things with def
+Here's an example:
+
+```clojure
+(if true
+  "abra cadabra"
+  "hocus pocus")
+; => "abra cadabra"
+```
+
+Notice that each branch of the if can only have one form. This is
+different from most languages. For example, in Ruby you can write:
+
+```clojure
+if true
+  doer.do_thing(1)
+  doer.do_thing(2)
+else
+  other_doer.do_thing(1)
+  other_doer.do_thing(2)
+end
+```
+
+To get around this apparent limitation, we have the `do` operator:
+
+#### do
+
+`do` lets you "wrap up" multiple forms. Try the following in your REPL:
+
+```clojure
+(if true
+  (do (println "Success!")
+      "abra cadabra")
+  (do (println "Failure :(")
+      "hocus pocus"))
+; => Success!
+; => "abra cadabra"
+```
+
+In this case, `Success!` is printed in the REPL and `"abra cadabra"`
+is returned as the value of the entire `if` expression.
+
+#### when
+
+The `when` operator is like a combination of `if` and `do`, but with
+no else form. Here's an example:
+
+```clojure
+(when true
+  (println "Success!")
+  "abra cadabra")
+; => Success!
+; => "abra cadabra"
+```
+
+Use `when` when you want to do multiple things when some condition is
+true, and you don't want to anything when the condition is false.
+
+That covers the essential control flow operators!
+
+### Naming Things with def
 
 One final thing before we move on to data structures: you use `def` to
 *bind* a *name* to a *value* in Clojure:
@@ -731,10 +810,9 @@ already seen a couple special forms:
 
 You'll learn everything there is to know about macro calls and special
 forms in the chapter "Clojure Alchemy: Reading, Evaluation, and
-Macros". For now, though, it's enough to know that, in Lisps, you can
-use the term **form** interchangeably with *expression*. The main
-feature which makes special forms "special" is that *they don't always
-evaluate all of their operands*, unlike function calls.
+Macros". For now, though, the main feature which makes special forms
+"special" is that *they don't always evaluate all of their operands*,
+unlike function calls.
 
 Take `if`, for example. Its general structure is:
 
