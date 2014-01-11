@@ -1,10 +1,10 @@
 ---
-title: Do Things
-link_title: Do Things
+title: "Do Things: a Clojure Language Crash Course"
+link_title: "Do Things: a Clojure Language Crash Course"
 kind: documentation
 ---
 
-# Do Things
+# Do Things: a Clojure Language Crash Course
 
 It's time to to learn how to actually *do things* with Clojure! Hot
 damn!
