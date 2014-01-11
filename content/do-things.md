@@ -472,7 +472,8 @@ Elements get added to the *end* of a vector:
 ### Lists
 
 Lists are similar to vectors in that they're linear collections of
-values. You can't access their elements in the same way, though:
+values. There are some differences, though. You can't list elements
+with `get`:
 
 ```clojure
 ;; Here's a list - note the preceding single quote
@@ -534,8 +535,8 @@ Sets are collections of unique values:
 ```
 
 You can create sets from existing vectors and lists by using the `set`
-function. One for use this might be to check whether an element exists
-in a collection:
+function. One unobvious use for this is to check whether an element
+exists in a collection:
 
 ```clojure
 (set [3 3 3 4 4])
