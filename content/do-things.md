@@ -88,7 +88,7 @@ doesn't have a closing parenthesis:
 Clojure's structural uniformity is probably different from what you're
 used to. In other languages, different operations might have different
 structures depending on the operator and the operands. For example,
-JavaScript employs a smorgasborg of infix notation, dot operators, and
+JavaScript employs a smorgasbord of infix notation, dot operators, and
 parentheses:
 
 ```javascript
