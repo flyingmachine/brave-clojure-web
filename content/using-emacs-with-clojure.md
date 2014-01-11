@@ -27,25 +27,25 @@ REPL stands for "Read-Eval-Print Loop", and a REPL is a great tool for
 quickly developing code.
 
 To connect Emacs to a REPL, we're going to use the Emacs package
-[nrepl.el](https://github.com/clojure-emacs/nrepl.el). If you followed the instructions in the previous chapter you
-should already have it installed, but you can also install it by
-running `M-x package-install`, then entering `nrepl` and hitting
-`enter`.
+[CIDER](https://github.com/clojure-emacs/cider). If you followed the
+instructions in the previous chapter you should already have it
+installed, but you can also install it by running `M-x
+package-install`, then entering `cider` and hitting `enter`.
 
 nrepl is a Clojure library which you can think of as similar to an SSH
 daemon. It allows clients to connect to a running Clojure process and
-execute code. nrepl.el is an Emacs client for nrepl.
+execute code. CIDER is an Emacs client for nrepl.
 
 Let's go ahead and use it to start an Emacs REPL session. After we've
 got a REPL session running, we'll briefly go over what Emacs is doing.
 
 Using Emacs, open the file `clojure-noob/src/clojure_noob/core.clj`
-which you created in Chapter 1. Next, do `M-x nrepl-jack-in`. This
+which you created in Chapter 1. Next, do `M-x cider-jack-in`. This
 starts a Clojure process with nrepl running and connects Emacs to it.
 After a short wait (it should be less than a minute), you should see
 something like this:
 
-![nrepl-jack-in](/images/using-emacs-with-clojure/nrepl-jack-in.png)
+![cider-jack-in](/images/using-emacs-with-clojure/nrepl-jack-in.png)
 
 If you've never seen Emacs split into two halves like this, don't
 worry! We'll cover that in a second.
@@ -74,7 +74,7 @@ windows!
 
 Emacs was invented in like, 1802 or something, so it uses terminology
 slightly different from what you're used to. When you ran
-`nrepl-jack-in` above, Emacs split its **frame** into two **windows**:
+`cider-jack-in` above, Emacs split its **frame** into two **windows**:
 
 ![Frame and windows](/images/using-emacs-with-clojure/emacs-windows.png)
 
@@ -96,10 +96,10 @@ Then do:
 
 -   `C-x 3` to split the window side by side again
 -   `C-x o` to switch to the right window
--   `C-x b *nrepl*` to switch to the nrepl buffer in the right window
+-   `C-x b *cider-repl*` to switch to the CIDER buffer in the right window
 
 Once you've tried things out a bit, set up Emacs so that it contains
-two side-by-side windows with Clojure code on the left and nrepl on
+two side-by-side windows with Clojure code on the left and CIDER on
 the right, as in the above images. If you're interested in learning
 more about windows and frames, [the Emacs manual](http://www.gnu.org/software/emacs/manual/html_node/elisp/Windows.html#Windows) has a ton of info.
 
@@ -120,25 +120,25 @@ Then do the following:
 2.  `C-x C-e`
 
 Once you do this, you should see the text `Cleanliness is next to
-godliness` appear in the nrepl buffer:
+godliness` appear in the CIDER buffer:
 
 ![keep it clean](/images/using-emacs-with-clojure/nrepl-eval-last-expression.png)
 
 The key binding `C-x C-e` runs the command
-`nrepl-eval-last-expression`. As the command suggests, this makes
+`cider-eval-last-expression`. As the command suggests, this makes
 Emacs send the expression immediately preceding point to nrepl, which
 then evaluates it.
 
 Now let's try to run the `-main` function so that we can let the world
 know that we're little tea pots:
 
-1.  In the core.clj buffer, do `C-c M-n`. The nrepl prompt in the right
+1. In the core.clj buffer, do `C-c M-n`. The prompt in the right
     window should now read `clojure-noob.core>`. `C-c M-n` sets the
-    nrepl namespace to the namespace listed at the top of your current
-    file, in this case `clojure-noob.core`. We haven't gone into detail
+    namespace to the namespace listed at the top of your current file,
+    in this case `clojure-noob.core`. We haven't gone into detail
     about namespaces yet, but for now it's enough to know that
-    namespaces are an organizational mechanism which allows us to avoid
-    naming conflicts.
+    namespaces are an organizational mechanism which allows us to
+    avoid naming conflicts.
 2.  Enter `(-main)` at the prompt
 
 You should see `I'm a little teapot!`. How exciting!
@@ -165,9 +165,9 @@ Finally, try this:
     parenthesis.
 2.  Press `C-↵`.
 
-nrepl should close the parenthis and evaluate the expression.
+CIDER should close the parenthis and evaluate the expression.
 
-The [nrepl.el README](https://github.com/clojure-emacs/nrepl.el) has a comprehensive list of key bindings which you
+The [CIDER README](https://github.com/clojure-emacs/cider) has a comprehensive list of key bindings which you
 can learn over time, but for now here's a summary of the key bindings
 we just went over:
 
@@ -179,7 +179,7 @@ we just went over:
 | C-x C-e | Evaluate the expression immediately preceding point |
 | C-c C-k | Compile current buffer                              |
 
-### nrepl Buffer Key Bindings
+### CIDER Buffer Key Bindings
 
 | Keys               | Description                    |
 |--------------------+--------------------------------|
@@ -205,7 +205,7 @@ You should see something like this:
 To get rid of the stack trace in the left window, do
 
 1.  `C-x o` to swith to the window
-2.  `q` to close the stack trace and go back to nrepl
+2.  `q` to close the stack trace and go back to CIDER
 
 If you want to view the error again, you can switch to the buffer `*nrepl-error*`.
 
