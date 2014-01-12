@@ -658,7 +658,7 @@ which hints at the Clojure philosophy:
     It is better to have 100 functions operate on one data structure
     than 10 functions on 10 data structures.
     
-    -- Alan Peris
+    -- Alan Perlis
 
 You'll learn more about this aspect of Clojure's philosophy in the
 coming chapters. For now, though, keep an eye out for the ways that
