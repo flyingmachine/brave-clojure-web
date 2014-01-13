@@ -456,7 +456,7 @@ This will work with other data structures as well:
 (into [] (map identity [:garlic :sesame-oil :fried-eggs]))
 ; => [:garlic :sesame-oil :fried-eggs]
 
-;; convert back to set
+;; convert back to list
 (map identity [:garlic-clove :garlic-clove])
 ; => (:garlic-clove :garlic-clove)
 
