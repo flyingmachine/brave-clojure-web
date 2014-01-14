@@ -173,7 +173,7 @@ no else form. Here's an example:
 ```
 
 Use `when` when you want to do multiple things when some condition is
-true, and you don't want to anything when the condition is false.
+true, and you don't want to do anything when the condition is false.
 
 That covers the essential control flow operators!
 
@@ -278,10 +278,10 @@ all other values are logically truthy. `=` is the equality operator:
 ; => false
 ```
 
-Some other languages require you use different operators when
+Some other languages require you to use different operators when
 comparing values of different types. For example, you might have to
 use some kind of special "string equality" operator specially made
-just for strings. You don't need to anything weird or tedious like
+just for strings. You don't need anything weird or tedious like
 that to test for equality when using Clojure's built-in data
 structures.
 
@@ -453,7 +453,7 @@ A vector is similar to an array in that it's a 0-indexed collection:
 ```
 
 Notice that we're using the same `get` function as we use when looking
-up values in maps. The next chapter explain why we do this.
+up values in maps. The next chapter explains why we do this.
 
 You can create vectors with the `vector` function:
 
@@ -628,7 +628,7 @@ structure, not the object the symbol refers to:
 ; => failed-protagonist-names
 ```
 
-You can also quote collections like a lists, maps, and vectors. All
+You can also quote collections like lists, maps, and vectors. All
 symbols within the collection will be unevaluated:
 
 ```clojure
@@ -989,7 +989,7 @@ list with the following name":
 ;  "Get off my lawn, The Incredible Bulk!!!")
 ```
 
-As you can see, when you provide arguments to a variable-arity
+As you can see, when you provide arguments to variable-arity
 functions, the arguments get treated as a list.
 
 You can mix rest-params with normal params, but the rest-param has to
@@ -1026,7 +1026,7 @@ example:
 
 Here's how you would accomplish the same thing without destructuring:
 
-```
+```clojure
 (defn my-other-first
   [collection]
   (first collection))
@@ -1163,7 +1163,7 @@ from, it treats all functions the same. At its core, Clojure doesn't
 give two burger flips about addition, multiplication, or mapping. It
 just cares about applying functions.
 
-As you program in with Clojure more, you'll see that this simplicity
+As you program with Clojure more, you'll see that this simplicity
 is great. You don't have to worry about special rules or syntax for
 working with functions. They all work the same!
 
@@ -1422,10 +1422,10 @@ Here are some simpler examples:
 
 
 (def dalmatian-list
-  ["Pongo" "Missis" "Puppy 1" "Puppy 2"]) ; and 97 more...
+  ["Pongo" "Perdita" "Puppy 1" "Puppy 2"]) ; and 97 more...
 (let [dalmatians (take 2 dalmatian-list)]
   dalmatians)
-; => ("Pongo" "Missis")
+; => ("Pongo" "Perdita")
 ```
 
 You can also use rest-params in `let`, just like you can in functions:
@@ -1433,7 +1433,7 @@ You can also use rest-params in `let`, just like you can in functions:
 ```clojure
 (let [[pongo & dalmatians] dalmatian-list]
   [pongo dalmatians])
-; => ["Pongo" ("Missis" "Puppy 1" "Puppy 2")]
+; => ["Pongo" ("Perdita" "Puppy 1" "Puppy 2")]
 ```
 
 Notice that the value of a `let` form is the last form in its body
