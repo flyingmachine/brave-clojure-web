@@ -324,10 +324,10 @@ It updates the current namespace's symbol/object map. You can see the
 new entries:
 
 ```clojure
-cheese.analysis> (get (clojure.core/ns-map clojure.core/*ns*) 'bries)
+cheese.analysis> (clojure.core/get (clojure.core/ns-map clojure.core/*ns*) 'bries)
 #'cheese.taxonomy/bries
 
-cheese.analysis> (get (clojure.core/ns-map clojure.core/*ns*) 'cheddars)
+cheese.analysis> (clojure.core/get (clojure.core/ns-map clojure.core/*ns*) 'cheddars)
 #'cheese.taxonomy/cheddars
 ```
 
