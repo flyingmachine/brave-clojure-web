@@ -296,7 +296,8 @@ Structures-Numbers). Suffice to say that Clojure will merrily handle
 pretty much anything you throw at it.
 
 In the mean time, we'll be working with integers and floats. We'll
-also be working with ratios, which Clojure can represent directly:
+also be working with ratios, which Clojure can represent directly.
+Here's an integer, a float, and a ratio:
 
 ```clojure
 93
@@ -388,7 +389,7 @@ function, with the key as its argument:
 ; => "The Human Coffee Pot"
 ```
 
-Real Clojurists hardly ever do this though. However, Real Clojurists
+Real Clojurists hardly ever do this, though. However, Real Clojurists
 *do* use keywords to look up values in maps:
 
 ### Keywords
@@ -404,7 +405,8 @@ keywords:
 :_?
 ```
 
-Keywords can be used as functions. For example:
+Keywords can be used as functions which look up the corresponding
+value in a data structure. For example:
 
 ```clojure
 ;; Look up :a in map
@@ -472,8 +474,8 @@ Elements get added to the *end* of a vector:
 ### Lists
 
 Lists are similar to vectors in that they're linear collections of
-values. There are some differences, though. You can't list elements
-with `get`:
+values. There are some differences, though. You can't retrieve list
+elements with `get`:
 
 ```clojure
 ;; Here's a list - note the preceding single quote
@@ -681,9 +683,6 @@ explaining:
 * Anonymous functions
 * Returning functions
 
-You can use `(doc functionname)` and `(source functionname)` in the
-REPL to see the documentation or source code for a function.
-
 ### Calling Functions
 
 By now you've seen many examples of function calls:
@@ -700,7 +699,7 @@ syntax: opening parenthesis, operator, operands, closing parenthesis.
 operator is a *function expression*. A *function expression* is just
 an expression which returns a function.
 
-It might not be obvious, but this let's you write some pretty
+It might not be obvious, but this lets you write some pretty
 interesting code. Here's a function expression which returns the `+`
 (addition) function:
 
@@ -835,7 +834,7 @@ Now imagine you had an `if` statement like this:
 If Clojure evaluated both `tweet` function calls, then your followers
 would end up very confused.
 
-Another feature which separates special forms is that you can't use
+Another feature which differentiates special forms is that you can't use
 them as arguments to functions.
 
 In general, special forms implement core Clojure functionality that
@@ -844,8 +843,9 @@ Clojure special forms, and it's pretty amazing that such a rich
 language is implemented with such a small set of building blocks.
 
 Macros are similar to special forms in that they evaluate their
-operands differently from function calls. But this detour has taken
-long enough; it's time to learn how to define functions!
+operands differently from function calls and they also can't be passed
+as arguments to functions. But this detour has taken long enough; it's
+time to learn how to define functions!
 
 ### Defining Functions
 
@@ -902,12 +902,13 @@ Clojure functions can be defined with zero or more parameters:
 
 Functions can also be overloaded by arity. This means that a different
 function body will run depending on the number of arguments passed to
-a function. Here's how you'd define a multi-arity function:
+a function.
+
+Here's the general form of a multiple-arity function definition.
+Notice that each arity definition is enclosed in parentheses and has
+an argument list:
 
 ```clojure
-;; Here's the general form of a multiple-arity function definition.
-;; Notice that each arity definition is enclosed in parentheses
-;; and has an argument list
 (defn multi-arity
   ;; 3-arity arguments and body
   ([first-arg second-arg third-arg]
@@ -981,10 +982,9 @@ list with the following name":
   [& whippersnappers] ;; the ampersand indicates the "rest-param"
   (map codger-communication whippersnappers))
 
-(codger "Billy" "Henry" "Anne-Marie" "The Incredible Bulk")
+(codger "Billy" "Anne-Marie" "The Incredible Bulk")
 ; =>
 ; ("Get off my lawn, Billy!!!"
-;  "Get off my lawn, Henry!!!"
 ;  "Get off my lawn, Anne-Marie!!!"
 ;  "Get off my lawn, The Incredible Bulk!!!")
 ```
@@ -1001,8 +1001,8 @@ come last:
   (str "Hi, " name ", here are my favorite things: "
        (clojure.string/join ", " things)))
 
-(favorite-things "Doreen" "gum" "shoes" "berries")
-; => "Hi, Doreen, here are my favorite things: gum, shoes, berries"
+(favorite-things "Doreen" "gum" "shoes" "kara-te")
+; => "Hi, Doreen, here are my favorite things: gum, shoes, kara-te"
 ```
 
 Finally, Clojure has a more sophisticated way of defining parameters
@@ -1040,9 +1040,9 @@ argument. You tell `my-first` to do this by placing the symbol
 `first-thing` within a vector.
 
 That vector is like a huge sign held up to Clojure which says, "Hey!
-This function is going to receive a list or a vector as an argument.
-Make my life easier by taking apart the argument's structure for me
-and associating meaningful names with different parts of the
+This function is going to receive a list or a vector or a set as an
+argument. Make my life easier by taking apart the argument's structure
+for me and associating meaningful names with different parts of the
 argument!"
 
 When destructuring a vector or list, you can name as many elements as
@@ -1116,7 +1116,7 @@ keyword. In the example below, the original map is accessed with
 ```
 
 In general, you can think of destructuring as instructing Clojure how
-to associate symbols with values in a list, map, or vector.
+to associate symbols with values in a list, map, set, or vector.
 
 Now, on to the part of the function that actually does something: the
 function body!
@@ -1228,7 +1228,7 @@ This kind of anonymous function looks a lot like a function call,
 except that it's preceded by a pound sign, `#`:
 
 ```clojure
-;; Function expression
+;; Function call
 (* 8 3)
 
 ;; Anonymous function
@@ -1257,7 +1257,7 @@ You can also pass a rest param:
 ```
 
 The main difference between this form and `fn` is that this form can
-easily become unreadable and is best used for very short functions.
+easily become unreadable and is best used for short functions.
 
 ### Returning Functions
 
@@ -1334,7 +1334,10 @@ relative size of the body part. Look, I know that only anime
 characters have eyes 1/3 the size of their head, but just go with it,
 OK?
 
-Conspicuously missing is the hobbit's right side. Let's fix that:
+Conspicuously missing is the hobbit's right side. Let's fix that.
+The code below is the most complex code we've looked at so far. It
+introduces some ideas we haven't covered yet. Don't worry though,
+because we're going to examine it in great detail:
 
 ```clojure
 (defn has-matching-part?
@@ -1394,8 +1397,7 @@ Conspicuously missing is the hobbit's right side. Let's fix that:
  {:name "right-foot", :size 2}]
 ```
 
-Holy shipmates! This has a lot going on that we haven't discussed yet.
-So let's discuss it!
+Let's break this down!
 
 ### let
 
@@ -1410,8 +1412,8 @@ In our symmetrizer above, we saw the following:
 All this does is bind the names on the left to the values on the
 right. You can think of `let` as short for "let it be", which is also
 a beautiful Beatles song (in case you didn't know (in which case,
-wtf?)). For example, "Let `final-body-parts` be `(conj final-body-parts
-part)`."
+wtf?)). For example, "Let `final-body-parts` be `(conj
+final-body-parts part)`."
 
 Here are some simpler examples:
 
@@ -1426,6 +1428,22 @@ Here are some simpler examples:
 (let [dalmatians (take 2 dalmatian-list)]
   dalmatians)
 ; => ("Pongo" "Perdita")
+```
+
+`let` also introduces a new scope:
+
+```clojure
+(def x 0)
+(let [x 1] x)
+; => 1
+```
+
+However, you can reference existing bindings in your `let` binding:
+
+```
+(def x 0)
+(let [x (inc x)] x)
+; => 1
 ```
 
 You can also use rest-params in `let`, just like you can in functions:
@@ -1465,29 +1483,26 @@ so we can understand exactly what's going on:
     (recur remaining final-body-parts)))
 ```
 
-
 Notice that `part`, `remaining`, and `final-body-parts` each gets used
 multiple times in the body of the `let`. If, instead of using the
 names `part`, `remaining`, and `final-body-parts` we used the original
 expressions, it would be a mess! For example:
 
 ```clojure
-(let [[part & remaining] remaining-asym-parts
-      final-body-parts (conj final-body-parts part)]
-  (if (has-matching-part? (first remaining-asym-parts))
-    (recur (rest remaining-asym-parts)
-           (conj (conj final-body-parts (first remaining-asym-parts))
-                 (matching-part (first remaining-asym-parts))))
-    (recur (rest remaining-asym-parts)
-           (conj final-body-parts (first remaining-asym-parts)))))
+(if (has-matching-part? (first remaining-asym-parts))
+  (recur (rest remaining-asym-parts)
+         (conj (conj (conj final-body-parts part) (first remaining-asym-parts))
+               (matching-part (first remaining-asym-parts))))
+  (recur (rest remaining-asym-parts)
+         (conj (conj final-body-parts part) (first remaining-asym-parts))))
 ```
 
 So, `let` is a handy way to introduce names for values.
 
 ### loop
 
-`loop` provides an efficient way to do recursion in Clojure. Let's
-look at a simple example:
+`loop` provides another way to do recursion in Clojure. Let's look at
+a simple example:
 
 ```clojure
 (loop [iteration 0]
