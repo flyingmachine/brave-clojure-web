@@ -105,7 +105,6 @@ This should create a directory structure that looks like this:
 | | intro.md
 | project.clj
 | README.md
-| resources
 | src
 | | clojure_noob
 | | | core.clj
