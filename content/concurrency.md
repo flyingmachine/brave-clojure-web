@@ -1,0 +1,56 @@
+---
+title: Concurrency & Parallelism
+link_title: Concurrency & Parallelism
+kind: documentation
+draft: true
+---
+
+Concurrency, or The Art of Walking and Chewing Bubble Gum, is an
+involved topic.
+
+
+
+* Intro to concurrency & parallelism
+    * What is it?
+        * Concurrency is managing more than one task at the same time
+        * Parallelism is executing tasks at the same time on separate
+          processors or cores
+        * Distribution is paralellism spread over processors in separate
+          machine
+    * Why do we care?
+        * Performance: throughput & latency
+            * blocking ops, mostly i/o
+            * analysis distribution
+        * Hardware trends
+* Easy concurrent ops
+    * control when a task runs, its effect on the current thread, and
+      how to get its val
+    * future
+    * delay
+    * promise
+    * combine delay/future
+    * show when blocking happens
+    * explain that concurrent tasks are composed of sequential ops
+* What are the pitfalls?
+    * Commonly understood as shared access to mutable state
+        * reference cell
+        * mutual exclusion
+        * dining philosophers
+    * Clojure facilities understood as tools for safety and liveness
+* Shared access to mutable state
+    * How other languages define state and how that causes trouble
+    * We need to define state
+        * chain of related values associated with an identity
+        * regardless of how you think the world actually works, you
+          can agree that in computers we're dealing with information,
+          and information is immutable
+* Tactic one: statelessness
+    * pure functions are parallelizable
+    * immutable objects are parallelizable
+        * explain how keys and indices can be seen as names
+    * pmap
+    * ppmap
+* Tactic two: atomic updates
+    * using `atom`
+* Tactic three: STM
+* Tactic 4: core.async
