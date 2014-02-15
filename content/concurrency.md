@@ -99,11 +99,23 @@ In Clojure, tasks are implemented as JVM *threads*. I think of a
 thread as an actual, physical piece of thread that's been threaded
 through a sequence of instructions. In my mind, the instructions are
 marshmallows, because marshmallows are delicious. The processor
-executes these instructions one-at-a-time. I envision this as an
-alligator consuming the instructions, because alligators love
-marshmallows (true fact!).
+executes these instructions in order. I envision this as an alligator
+consuming the instructions, because alligators love marshmallows (true
+fact!). So executing a program looks like a bunch of marshmallows
+strung out on a line with a pacifist alligator traveling down the line
+and eating them one by one.
 
 Here's a single-core processor executing a single-threaded program:
+
+TODO: add image here
+
+A thread can "spawn" a new thread. In a single-processor system, the
+processor switches back and forth between the threads. Here's where we
+things start to get tricky. While the processor will execute the
+instructions on each thread in order, it makes no guarantees about how
+it will switch back and forth between threads. Here's an illustration
+of two threads along with a timeline of how their instructions were
+executed:
 
 TODO: add image here
 
