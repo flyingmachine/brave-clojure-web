@@ -19,18 +19,14 @@ programming. In this chapter, you'll learn the following:
 * Tool 3: STM
 * Tool 4: core.async
 
-## Concurrent and Parallel Programming Concepts
+## Concurrency and Parallelism Defined
 
 Concurrent and parallel programming involves a lot of messy details at
 all level of program execution, from the hardware to the operating
 system to the programming language to the code that you're typing out
-with your very own fingers. In this section we'll ignore most of those
-details and instead focus on the concepts which will allow you to
-reason correctly about your code 90% of the time.
-
-### Definitions
-
-To kick things off, let's define our terms.
+with your very own fingers. In this section we'll ignore those details
+and instead focus on the implementation-independent high-level
+concepts.
 
 *Concurrency* refers to *managing* more than one task at the same
 time. We can illustrate concurrency with the song "Telephone" by Lady
@@ -67,35 +63,46 @@ simultaneously executing tasks on multiple hands, computer systems
 generally achieve parallelism by simultaneously executing tasks on
 multiple cores or processors.
 
+You can see from this definition that parallelism is a child of
+concurrency: in order to execute multiple tasks simultaneously, you
+first have to manage multiple tasks. Concurrency can be seen as
+potential paralellism.
+
 It's important to distinguish *parallelism* from *distribution*.
-Distributed computing is a special kind of parallel computing where
+Distributed computing is a specialization of parallel computing where
 the processors don't reside in the same computer. It'd be like Lady
 Gaga asking Beyoncé, "Please text this guy while I drink."
 
 I'm only going to use "parallel" to refer to cohabitating processors.
-While Clojure does have libraries that aid distributed programming,
+While there are Clojure libraries that aid distributed programming,
 this book only covers parallel programming. That said, the concepts
 you'll learn apply directly to distributed programming.
 
-"Concurrent programming" and "parallel programming" refer to the
-techniques used to manage the kinds of risks that arise when your
-program executes more than one task at the same time.
+"Concurrent programming" and "parallel programming" refer to the how
+you decompose a task into parallelizable sub-tasks and the techniques
+you use manage the kinds of risks that arise when your program
+executes more than one task at the same time.
 
-Finally, I've been using the term "task" to refer to *logical*
-sequences of operations which can be performed independently of each
-other. Texting can be performed independently of pouring a drink into
-your face, for example. So, "task" is an abstract term which says
-nothing about implementation.
+To better understand those risks and how Clojure help you avoid them,
+let's examine how concurrency and parallelism are implemented in
+Clojure.
 
-NOTE: Clarify this. Describe what a thread is? Create a visualization?
+## Clojure Implementation: JVM Threads
 
-In Clojure, tasks are implemented as JVM *threads*. When you're
-programming in Clojure, though, you will rarely need to manage threads
-yourself.
+I've been using the term "task" to refer to *logical* sequences of
+operations which can be performed independently of each other. Texting
+can be performed independently of pouring a drink into your face, for
+example. So, "task" is an abstract term which says nothing about
+implementation.
 
-Still, we're going to explore the nature of threads
-throughout the chapter because there are risks involved in
-multithreaded programming.
+In Clojure, tasks are implemented as JVM *threads*. I think of a
+thread as an actual, physical piece of thread that's been threaded
+through a sequence of instructions. In my mind, the instructions are
+marshmallows, because marshmallows are delicious. The marshmallows are
+then consumed by the processor, which I envision as an alligator
+because alligators love marshmallows (true fact!).
+
+
 
 ### Who Cares?
 
