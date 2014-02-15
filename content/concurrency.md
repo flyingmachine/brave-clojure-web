@@ -99,52 +99,34 @@ multithreaded programming.
 
 ### Who Cares?
 
-Why should you care about any of this? The reason is that parallel
+Why should you bother with any of this? The reason is that parallel
 programming is essential for writing performant applications on modern
 hardware. In recent years CPU designers have focused more on enabling
 parallel execution than on increasing clock speed. This is mostly
 because increasing clock speed requires exponentially more power,
 making it impractical. You can google "cpu power wall", "cpu memory
-wall" and "instruction-level parallelism wall" to find out more.
-
-Whatever the reason, the result for Joe and
-Josephine Programmer is that
-
-This is because they've run into three
-"walls":
-
-* The power wall: increasing clock speed requires the consumption of
-  so much extra power that it's impractical.
-* The memory wall: clock speeds
+wall" and "instruction-level parallelism wall" to find out more. As
+those creepy Intel bunnies continue smooshing more and more cores
+together, it's up to you and me to squueze performance out of them.
 
 Performance can be measured as both *latency*, or the total amount of
 time it takes to complete a task, and *throughput*, or the number of
 tasks a program completes per second. Parallelism can improve both, as
 this diagram shows:
 
-TODO: serial vs parallel execution of tasks
+TODO: diagram serial vs parallel execution of tasks
+
+## Easy Concurrent Ops
 
 
 
-
-* Intro to concurrency & parallelism
-    * What is it?
-        * Concurrency is managing more than one task at the same time
-        * Parallelism is executing tasks at the same time on separate
-          processors or cores
-        * Distribution is paralellism spread over processors in separate
-          machine
-    * Why do we care?
-        * Performance: throughput & latency
-            * blocking ops, mostly i/o
-            * analysis distribution
-        * Hardware trends
 * Easy concurrent ops
     * control when a task runs, its effect on the current thread, and
       how to get its val
     * future
     * delay
-    * promise
+    * promise - show example of searching multiple sources, delivering
+      first result
     * combine delay/future
     * show when blocking happens
     * explain that concurrent tasks are composed of sequential ops
