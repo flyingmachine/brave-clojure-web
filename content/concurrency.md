@@ -98,9 +98,14 @@ implementation.
 In Clojure, tasks are implemented as JVM *threads*. I think of a
 thread as an actual, physical piece of thread that's been threaded
 through a sequence of instructions. In my mind, the instructions are
-marshmallows, because marshmallows are delicious. The marshmallows are
-then consumed by the processor, which I envision as an alligator
-because alligators love marshmallows (true fact!).
+marshmallows, because marshmallows are delicious. The processor
+executes these instructions one-at-a-time. I envision this as an
+alligator consuming the instructions, because alligators love
+marshmallows (true fact!).
+
+Here's a single-core processor executing a single-threaded program:
+
+TODO: add image here
 
 
 
