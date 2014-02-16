@@ -78,10 +78,10 @@ While there are Clojure libraries that aid distributed programming,
 this book only covers parallel programming. That said, the concepts
 you'll learn apply directly to distributed programming.
 
-"Concurrent programming" and "parallel programming" refer to the how
-you decompose a task into parallelizable sub-tasks and the techniques
-you use manage the kinds of risks that arise when your program
-executes more than one task at the same time.
+"Concurrent programming" and "parallel programming" refer to how you
+decompose a task into parallelizable sub-tasks and the techniques you
+use manage the kinds of risks that arise when your program executes
+more than one task at the same time.
 
 To better understand those risks and how Clojure help you avoid them,
 let's examine how concurrency and parallelism are implemented in
@@ -93,17 +93,16 @@ I've been using the term "task" to refer to *logical* sequences of
 operations which can be performed independently of each other. Texting
 can be performed independently of pouring a drink into your face, for
 example. So, "task" is an abstract term which says nothing about
-implementation.
+implementation. 
 
-In Clojure, tasks are implemented as JVM *threads*. I think of a
-thread as an actual, physical piece of thread that's been threaded
-through a sequence of instructions. In my mind, the instructions are
-marshmallows, because marshmallows are delicious. The processor
-executes these instructions in order. I envision this as an alligator
-consuming the instructions, because alligators love marshmallows (true
-fact!). So executing a program looks like a bunch of marshmallows
-strung out on a line with a pacifist alligator traveling down the line
-and eating them one by one.
+I think of a thread as an actual, physical piece of thread that's been
+threaded through a sequence of instructions. In my mind, the
+instructions are marshmallows, because marshmallows are delicious. The
+processor executes these instructions in order. I envision this as an
+alligator consuming the instructions, because alligators love
+marshmallows (true fact!). So executing a program looks like a bunch
+of marshmallows strung out on a line with a pacifist alligator
+traveling down the line and eating them one by one.
 
 Here's a single-core processor executing a single-threaded program:
 
@@ -153,13 +152,19 @@ of threads by showing what happens when multiple cores meet multiple
 threads.
 
 Whereas the above example showed concurrent execution on a single
-processor through interleaving, a multi-core system can execute each
-thread in parallel. Each processor will go through its thread's
-instructions in order, like so:
+processor through interleaving, a multi-core system will assign a
+thread to each core. This allows the computer to execute more than one
+thread simultaneously. Each core executes its thread's instructions in
+order:
 
 TODO: image
 
-
+Notice that the image doesn't show the *absolute* ordering of the
+instructions. As with interleaving on a single core, there are no
+order guarantees so the program is nondeterministic. To make things
+even more fun, your programs will typically have more threads than
+cores, so each core will have to switch back and forth among multiple
+threads.
 
 
 ### Who Cares?
