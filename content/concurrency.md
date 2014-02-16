@@ -110,14 +110,55 @@ Here's a single-core processor executing a single-threaded program:
 TODO: add image here
 
 A thread can "spawn" a new thread. In a single-processor system, the
-processor switches back and forth between the threads. Here's where we
-things start to get tricky. While the processor will execute the
-instructions on each thread in order, it makes no guarantees about how
-it will switch back and forth between threads. Here's an illustration
-of two threads along with a timeline of how their instructions were
-executed:
+processor switches back and forth between the threads (interleaving).
+Here's where we things start to get tricky. While the processor will
+execute the instructions on each thread in order, it makes no
+guarantees about when it will switch back and forth between threads.
+
+Here's an illustration of two threads, "A" and "B", along with a
+timeline of how their instructions could be executed. I've lightly
+shaded the instructions on thread B to help distinguish them from the
+instructions on thread A:
 
 TODO: add image here
+
+Note that this is just a *possible* ordering of instruction execution.
+The processor could also have executed the instructions in the order,
+"A1, A2, A3, B1, A4, B2, B3", for example. The main idea is that you
+can't know what order the instructions will actually take. This makes
+the program *nondeterministic*. You can't know beforehand what the
+result will be because you can't know the execution order.
+
+To drive this point home, imagine the program in the image above
+includes the following pseudo instructions:
+
+| ID | Instruction |
+|----+-------------|
+| A1 | WRITE X = 0 |
+| A2 | READ X      |
+| A3 | PRINT X     |
+| B1 | WRITE X = 5 |
+
+If the processor follows the order "A1, A2, A3, B1" then the program
+will print the number `0`. If it follows the order "A1, B1, A2, A3",
+then the program will print the number `5`. Even weirder, if the order
+is "A1, A2, B1, A3" then the program will print `0` even though `X`'s
+value is `5`.
+
+This little thought experiment demonstrates one of the central
+challenges in concurrent programming. I'll cover it in more detail
+later in this chapter, along with Clojure's facilities for working
+with nondeterminism. For now, though, let's round out our discussion
+of threads by showing what happens when multiple cores meet multiple
+threads.
+
+Whereas the above example showed concurrent execution on a single
+processor through interleaving, a multi-core system can execute each
+thread in parallel. Each processor will go through its thread's
+instructions in order, like so:
+
+TODO: image
+
 
 
 
