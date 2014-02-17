@@ -28,6 +28,8 @@ with your very own fingers. In this section we'll ignore those details
 and instead focus on the implementation-independent high-level
 concepts.
 
+### Managing Tasks vs. Executing Tasks Simultaneously
+
 *Concurrency* refers to *managing* more than one task at the same
 time. We can illustrate concurrency with the song "Telephone" by Lady
 Gaga. Gaga sings,
@@ -63,17 +65,33 @@ simultaneously executing tasks on multiple hands, computer systems
 generally achieve parallelism by simultaneously executing tasks on
 multiple cores or processors.
 
-You can see from this definition that parallelism is a child of
+You can see from this definition that parallelism is a subclass of
 concurrency: in order to execute multiple tasks simultaneously, you
 first have to manage multiple tasks. Concurrency can be seen as
 potential paralellism.
+
+### Blocking and Async
+
+One of the big use cases for concurrent programming is for *blocking*
+operations. "Blocking" really just means waiting and you'll most often
+hear it used in relation to I/O operations. Let's examine this using
+the Concurrent Lady Gaga example.
+
+If Lady Gaga texts her interlocutor and then stands there with her
+phone in her hand, staring at the screen for a response, then you
+could say that the "read next text message" is blocking. If, instead,
+she tucks her phone away so that she can drink until it alerts her by
+beeping or vibrating, then you could say she's handling the "read next
+text message" operation *asynchronously*.
+
+### Parallelism vs. Distribution
 
 It's important to distinguish *parallelism* from *distribution*.
 Distributed computing is a specialization of parallel computing where
 the processors don't reside in the same computer. It'd be like Lady
 Gaga asking Beyoncé, "Please text this guy while I drink."
 
-I'm only going to use "parallel" to refer to cohabitating processors.
+I'm going to use "parallel" only to refer to cohabitating processors.
 While there are Clojure libraries that aid distributed programming,
 this book only covers parallel programming. That said, the concepts
 you'll learn apply directly to distributed programming.
@@ -159,13 +177,19 @@ order:
 
 TODO: image
 
-Notice that the image doesn't show the *absolute* ordering of the
-instructions. As with interleaving on a single core, there are no
-order guarantees so the program is nondeterministic. To make things
-even more fun, your programs will typically have more threads than
-cores, so each core will have to switch back and forth among multiple
-threads.
+As with interleaving on a single core, there are no order guarantees
+so the program is nondeterministic. To make things even more fun, your
+programs will typically have more threads than cores, so each core
+will likely perform interleaving on multiple threads.
 
+The takeaway here is that concurrent programming has the potential to
+be confusing and terrifying. With the right tools, however, it's
+manageable and even fun. Let's start looking at the right tools.
+
+## Futures, Delays, and Promises
+
+In Clojure, you can use *futures* to execute a task on another thread.
+You can create a future with the `future` macro.
 
 ### Who Cares?
 
