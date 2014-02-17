@@ -19,6 +19,25 @@ programming. In this chapter, you'll learn the following:
 * Tool 3: STM
 * Tool 4: core.async
 
+### Who Cares?
+
+Why should you bother with any of this? The reason is that parallel
+programming is essential for writing performant applications on modern
+hardware. In recent years CPU designers have focused more on enabling
+parallel execution than on increasing clock speed. This is mostly
+because increasing clock speed requires exponentially more power,
+making it impractical. You can google "cpu power wall", "cpu memory
+wall" and "instruction-level parallelism wall" to find out more. As
+those creepy Intel bunnies continue smooshing more and more cores
+together, it's up to you and me to squueze performance out of them.
+
+Performance can be measured as both *latency*, or the total amount of
+time it takes to complete a task, and *throughput*, or the number of
+tasks a program completes per second. Parallelism can improve both, as
+this diagram shows:
+
+TODO: diagram serial vs parallel execution of tasks
+
 ## Concurrency and Parallelism Defined
 
 Concurrent and parallel programming involves a lot of messy details at
@@ -206,14 +225,14 @@ Could get written as this:
     By the power invested in me
     by Thunder, lightning, wind and rain,
     the state of California
-    I now pronounce you a delicious sandwich, and wife
+    I now pronounce you a delicious man sandwich, and wife
     I summon again
 
 Finally, the dwarven berserker problem can be stated as follows.
 Imagine four berserkers are sitting around a rough-hewn, circular
 wooden table and comforting each other. "I know I'm distant toward my
 children, but I just don't know how to communicate with them," one
-says. The rest sip their coffees and nod knowingly, care lines
+growls. The rest sip their coffees and nod knowingly, care lines
 creasing their eyeplaces.
 
 Now, as everyone knows, the dwarven berserker ritual for ending a
@@ -235,70 +254,91 @@ indefinitely waiting for the comfort stick to their right to become
 available, resulting in *deadlock*.
 
 The takeaway here is that concurrent programming has the potential to
-be confusing and terrifying. With the right tools, however, it's
+be confusing and terrifying. But! With the right tools, it's
 manageable and even fun. Let's start looking at the right tools.
 
 ## Futures, Delays, and Promises
 
-In Clojure, you can use *futures* to execute a task on another thread.
-You can create a future with the `future` macro.
+In Clojure, you can use *futures* to place a task on another thread.
+You can create a future with the `future` macro. Try this in a REPL:
+
+```clojure
+(future (Thread/sleep 4000)
+        (println "I'll print after 4 seconds"))
+(println "I'll print immediately")
+```
+
+`Thread/sleep` tells the current thread to just sit on its ass and do
+nothing for the specified number of milliseconds. Normally, if you
+evaluated `Thread/sleep` in your REPL you wouldn't be able to
+evaluated any other statements until the REPL was done sleeping; your
+REPL would be blocked. However, `future` throws your call to
+`Thread/sleep` into another thread, allowing the REPL's thread to
+continue, unblocked.
+
+Futures will cache their results. You can retrieve them by
+*dereferencing* the future with either the `deref` function or the
+short `@` reader macro.
+
+```clojure
+(let [result (future (println "this prints once")
+                     (+ 1 1))]
+  (println "deref: " (deref result))
+  (println "@: " @result))
+; =>
+; "this prints once"
+; deref: 2
+; @: 2
+```
+
+Notice that the the string `"this prints once"` indeed only prints
+once, showing that the future's body runs only once and the result
+gets cached.
+
+Dereferencing a future will block if the future hasn't finished
+running:
+
+```clojure
+(let [result (future (Thread/sleep 3000)
+                     (+ 1 1))]
+  (println "The result is: " @result)
+  (println "It will be at least 3 seconds before I print"))
+; =>
+; The result is:  2
+; It will be at least 3 seconds before I print
+```
+
+Sometimes you want to place aa time limit on how long to wait for a
+future. To do that, you can pass the number of milliseconds to wait to
+`deref` along with the value to return if the deref does time out:
+
+```clojure
+(deref (future (Thread/sleep 1000) 0)
+       10
+       5)
+; => 5
+```
+
+Finally, you can interrogate a future to see if it's done running with
+`realized?`:
+
+```clojure
+(realized? (future (Thread/sleep 1000)))
+; => false
+
+(let [f (future)]
+  @f
+  (realized? f))
+; => true
+```
+
+### Dereferencing
+
+Up until now, we haven't had to use dereferencing to get a hold of the
+value associated with a name. It's necessary when you decouple
+
+* When a task is *defined*
+* When a task is *executed*
+* When you *require the result* of a task
 
 
-
-### Who Cares?
-
-Why should you bother with any of this? The reason is that parallel
-programming is essential for writing performant applications on modern
-hardware. In recent years CPU designers have focused more on enabling
-parallel execution than on increasing clock speed. This is mostly
-because increasing clock speed requires exponentially more power,
-making it impractical. You can google "cpu power wall", "cpu memory
-wall" and "instruction-level parallelism wall" to find out more. As
-those creepy Intel bunnies continue smooshing more and more cores
-together, it's up to you and me to squueze performance out of them.
-
-Performance can be measured as both *latency*, or the total amount of
-time it takes to complete a task, and *throughput*, or the number of
-tasks a program completes per second. Parallelism can improve both, as
-this diagram shows:
-
-TODO: diagram serial vs parallel execution of tasks
-
-## Easy Concurrent Ops
-
-
-
-* Easy concurrent ops
-    * control when a task runs, its effect on the current thread, and
-      how to get its val
-    * future
-    * delay
-    * promise - show example of searching multiple sources, delivering
-      first result
-    * combine delay/future
-    * show when blocking happens
-    * explain that concurrent tasks are composed of sequential ops
-* What are the dangers?
-    * Commonly understood as shared access to mutable state
-        * reference cell
-        * mutual exclusion
-        * dining philosophers
-    * Clojure facilities understood as tools for safety and liveness
-* Shared access to mutable state
-    * How other languages define state and how that causes trouble
-    * We need to define state
-        * chain of related values associated with an identity
-        * regardless of how you think the world actually works, you
-          can agree that in computers we're dealing with information,
-          and information is immutable
-* Tactic one: statelessness
-    * pure functions are parallelizable
-    * immutable objects are parallelizable
-        * explain how keys and indices can be seen as names
-    * pmap
-    * ppmap
-    * reducers
-* Tactic two: atomic updates
-    * using `atom`
-* Tactic three: STM
-* Tactic 4: core.async
