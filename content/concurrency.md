@@ -111,7 +111,14 @@ I've been using the term "task" to refer to *logical* sequences of
 operations which can be performed independently of each other. Texting
 can be performed independently of pouring a drink into your face, for
 example. So, "task" is an abstract term which says nothing about
-implementation. 
+implementation. In Clojure, you can mentally map the concept "task" to
+JVM threads.
+
+### So What's a Thread?
+
+I'm glad you asked! Rather than giving a technical definition of a
+thread, though, I'm going to describe a useful mental model of how
+threads work.
 
 I think of a thread as an actual, physical piece of thread that's been
 threaded through a sequence of instructions. In my mind, the
@@ -133,9 +140,9 @@ execute the instructions on each thread in order, it makes no
 guarantees about when it will switch back and forth between threads.
 
 Here's an illustration of two threads, "A" and "B", along with a
-timeline of how their instructions could be executed. I've lightly
-shaded the instructions on thread B to help distinguish them from the
-instructions on thread A:
+timeline of how their instructions could be executed. I've shaded the
+instructions on thread B to help distinguish them from the
+instructions on thread A.
 
 TODO: add image here
 
@@ -145,6 +152,21 @@ The processor could also have executed the instructions in the order,
 can't know what order the instructions will actually take. This makes
 the program *nondeterministic*. You can't know beforehand what the
 result will be because you can't know the execution order.
+
+Whereas the above example showed concurrent execution on a single
+processor through interleaving, a multi-core system will assign a
+thread to each core. This allows the computer to execute more than one
+thread simultaneously. Each core executes its thread's instructions in
+order:
+
+TODO: image
+
+As with interleaving on a single core, there are no order guarantees
+so the program is nondeterministic. To make things even more fun, your
+programs will typically have more threads than cores, so each core
+will likely perform interleaving on multiple threads.
+
+### Reference Cells, Mutual Exclusion, Dwarven Berserkers
 
 To drive this point home, imagine the program in the image above
 includes the following pseudo instructions:
@@ -163,24 +185,54 @@ is "A1, A2, B1, A3" then the program will print `0` even though `X`'s
 value is `5`.
 
 This little thought experiment demonstrates one of the central
-challenges in concurrent programming. I'll cover it in more detail
-later in this chapter, along with Clojure's facilities for working
-with nondeterminism. For now, though, let's round out our discussion
-of threads by showing what happens when multiple cores meet multiple
-threads.
+challenges in concurrent programming. We'll call this the "reference
+cell" problem. There are two other problems involved in concurrent
+programming: mutual exclusion and the dwarven berserkers.
 
-Whereas the above example showed concurrent execution on a single
-processor through interleaving, a multi-core system will assign a
-thread to each core. This allows the computer to execute more than one
-thread simultaneously. Each core executes its thread's instructions in
-order:
+For the mutual exclusion problem, imagine two threads are each trying
+to write the text of a different spell to a file. Without any way to claim
+exclusive write access to the file, the spell will end up garbled as
+the write instructions get interleaved. These two spells:
 
-TODO: image
+    By the power invested in me
+    by the state of California
+    I now pronounce you man and wife
 
-As with interleaving on a single core, there are no order guarantees
-so the program is nondeterministic. To make things even more fun, your
-programs will typically have more threads than cores, so each core
-will likely perform interleaving on multiple threads.
+    Thunder, lightning, wind and rain,
+    a delicious sandwich, I summon again
+
+Could get written as this:
+
+    By the power invested in me
+    by Thunder, lightning, wind and rain,
+    the state of California
+    I now pronounce you a delicious sandwich, and wife
+    I summon again
+
+Finally, the dwarven berserker problem can be stated as follows.
+Imagine four berserkers are sitting around a rough-hewn, circular
+wooden table and comforting each other. "I know I'm distant toward my
+children, but I just don't know how to communicate with them," one
+says. The rest sip their coffees and nod knowingly, care lines
+creasing their eyeplaces.
+
+Now, as everyone knows, the dwarven berserker ritual for ending a
+comforting coffee klatch is to pick up their "comfort sticks"
+("double-bladed waraxes") and scratch each others' backs. One waraxe
+is placed between each pair of dwarves, like so:
+
+Their rituaal proceeds thusly:
+
+1. Pick up the *left* waraxe, if available
+2. Pick up the *right* waraxe, if available
+3. Comfort your neighbor with your "comfort sticks"
+4. Release both waraxes
+5. Go to 1
+
+Following this ritual, it's entirely possible that all dwarven
+berserkers will pick up their left comfort stick and then block
+indefinitely waiting for the comfort stick to their right to become
+available, resulting in *deadlock*.
 
 The takeaway here is that concurrent programming has the potential to
 be confusing and terrifying. With the right tools, however, it's
@@ -190,6 +242,8 @@ manageable and even fun. Let's start looking at the right tools.
 
 In Clojure, you can use *futures* to execute a task on another thread.
 You can create a future with the `future` macro.
+
+
 
 ### Who Cares?
 
