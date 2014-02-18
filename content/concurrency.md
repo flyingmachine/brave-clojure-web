@@ -366,10 +366,16 @@ necessary.
 
 Futures allow you to require the result of a task independently of
 when it's defined and evaluated. Calling `future` defines the task and
-indicates that it should start being evaluated immediately. You can
-then require the result whenever you want by dereferencing. You can even
-ignore the result if you want to, for example if you're using a future
-to log a message asynchronously.
+indicates that it should start being evaluated immediately. It also
+indicates that you don't need the result immediately.
+
+When you dereference a future, you indicate that the result is
+required *right now* and that evaluation should stop until the result
+is obtained. You'll see how this can help you deal with the mutual
+exclusion problem in just a little bit.
+
+Alternatively, you can ignore the result. For example, you can use
+futures to write to a log file asynchronously.
 
 Clojure also allows you to treat "task definition" and "requiring the
 result" independently with `delays` and `promises`.
@@ -402,6 +408,10 @@ return `nil` without printing anything:
 ; => nil
 ```
 
+TODO - use example of futures and delays where you are receiving data
+in a nondeterministic order and want to handle the results in a
+deterministic order
+
 ### Promises
 
 Promises allow you to express the expectation of a result indepedently
@@ -411,9 +421,94 @@ create promises with `promise` and deliver a result to them with
 
 ```clojure
 (def my-promise (promise))
-(deliver my-promise 3)
+(deliver my-promise (+ 1 2))
 @my-promise
 
 ; => 3
 ```
+
+You can only deliver a result to a promise once. Just like with
+futures and delays, dereferencing a promise will block until a result
+is available.
+
+One potential use for promises is to find the first satisfactory
+element in a collection of data. Suppose, for example, that you're
+gathering ingredients for a spell to summon a parrot that repeats what
+people say, but in James Earl Jones's voice. Because James Earl Jones
+has the smoothest voice on earth, one of the ingredients is premium
+yak butter with a smoothness rating of 97 or greater. Because you
+haven't yet summoned a tree that grows money, you have a budget of
+$100 for one pound (or 0.45kg if you're a European sorcerer).
+
+Because you are a modern practitioner of the freaking awesome arts,
+you know that yak butter retailers now offer their catalogs online.
+Rather than tediously navigate each site, you create a script to give
+you the URL of the first yak butter offering that meets your needs.
+
+Here's a simulation of what that script might look like. We'll
+generate yak butter products to simulate the results you'd get from
+making API calls:
+
+```clojure
+(def sites ["http://yak-butter-international.com"
+            "http://butter-than-nothing.com"
+            "http://yak-attack.com"
+            "http://baby-got-yak.com"])
+
+(defn generate-yak-butter
+  "Yak butter with random smoothness and price for site"
+  [id site]
+  {:id id
+   :smoothness (inc (int (rand 100)))
+   :price (inc (int (rand 1000)))
+   :url (str site "/products/" id)})
+
+(defn yak-butter-generator
+  "Create lazy list of random yak butters for site"
+  [site]
+  (iterate (fn [x] (generate-yak-butter (inc (:id x)) site))
+           (generate-yak-butter 0 site)))
+
+(defn yak-butters
+  "Return a lazy list of yak butters for this site. Sleep 1 seconds to
+  simulate network connection"
+  [site n]
+  (Thread/sleep 1000)
+  (take n (yak-butter-generator site)))
+```
+
+`yak-butters` returns a lazy list of yak butters with random
+smoothness ratings and prices. Here's an example of what it could
+return:
+
+```clojure
+(yak-butters "http://yak-attack.com" 2)
+; => returns:
+({:id 0, :smoothness 93, :price 78, :url "http://yak-attack.com/products/0"}
+ {:id 1, :smoothness 14, :price 263, :url "http://yak-attack.com/products/1"})
+```
+
+With a promise and futures, you can
+perform a parallel search for a satisfactory yak butter and continue
+execution as soon it's found:
+
+```clojure
+(defn satisfactory?
+  [butter]
+  (and (<= (:price butter) 100)
+       (>= (:smoothness butter) 97)
+       butter))
+
+(let [butter-promise (promise)]
+  (doseq [site sites]
+    (future (if-let [satisfactory-butter (some satisfactory? (yak-butters site 250000))]
+              (deliver butter-promise satisfactory-butter))))
+  (println "And the winner is:" @butter-promise))
+```
+
+The actual time this take takes to execute will vary since it
+generates random data.
+
+
+### Solving Problems
 
