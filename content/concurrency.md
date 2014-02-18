@@ -41,17 +41,18 @@ TODO: diagram serial vs parallel execution of tasks
 ## Concurrency and Parallelism Defined
 
 Concurrent and parallel programming involves a lot of messy details at
-all level of program execution, from the hardware to the operating
-system to the programming language to the code that you're typing out
-with your very own fingers. In this section we'll ignore those details
-and instead focus on the implementation-independent high-level
-concepts.
+all levels of program execution, from the hardware to the operating
+system to programming language libraries to the code that you're
+typing out with your very own fingers. In this section I'll ignore
+those details and instead focus on the implementation-independent
+high-level concepts.
 
 ### Managing Tasks vs. Executing Tasks Simultaneously
 
 **Concurrency** refers to *managing* more than one task at the same
-time. We can illustrate concurrency with the song "Telephone" by Lady
-Gaga. Gaga sings,
+time. "Task" just means "something that needs to get done." We can
+illustrate concurrency with the song "Telephone" by Lady Gaga. Gaga
+sings,
 
     I cannot text you with a drink in my hand, eh
 
@@ -66,10 +67,10 @@ sing,
 In this hypothetical universe, Lady Gaga is *managing* two tasks:
 drinking and texting. However, she is not *executing* both tasks at
 the same time. Instead, she's switching between the two. This is
-called **interleaving**. Note that, when talking about interleaving, you
-don't have to fully complete a task between switching; Gaga could type
-one word, put her phone down, pick up her drink and have a sip, then
-switch back to her phone and type another word.
+called **interleaving**. Note that, when talking about interleaving,
+you don't have to fully complete a task before switching; Gaga could
+type one word, put her phone down, pick up her drink and have a sip,
+then switch back to her phone and type another word.
 
 **Parallelism** refers to *executing* more than one task at the same
 time. If Madame Gaga were to execute her two tasks in parallel, she
@@ -89,6 +90,17 @@ concurrency: in order to execute multiple tasks simultaneously, you
 first have to manage multiple tasks. Concurrency can be seen as
 potential paralellism.
 
+It's important to distinguish parallelism from **distribution**.
+Distributed computing is a specialization of parallel computing where
+the processors don't reside in the same computer and where tasks are
+distributed to computers over a network. It'd be like Lady
+Gaga asking Beyoncé, "Please text this guy while I drink."
+
+I'm going to use "parallel" only to refer to cohabitating processors.
+While there are Clojure libraries that aid distributed programming,
+this book only covers parallel programming. That said, the concepts
+you'll learn apply directly to distributed programming.
+
 ### Blocking and Async
 
 One of the big use cases for concurrent programming is for
@@ -98,26 +110,17 @@ examine this using the Concurrent Lady Gaga example.
 
 If Lady Gaga texts her interlocutor and then stands there with her
 phone in her hand, staring at the screen for a response, then you
-could say that the "read next text message" is blocking. If, instead,
-she tucks her phone away so that she can drink until it alerts her by
-beeping or vibrating, then you could say she's handling the "read next
-text message" operation **asynchronously**.
+could say that the "read next text message" operation is blocking. If,
+instead, she tucks her phone away so that she can drink until it
+alerts her by beeping or vibrating, then you could say she's handling
+the "read next text message" operation **asynchronously**.
 
-### Parallelism vs. Distribution
 
-It's important to distinguish parallelism from **distribution**.
-Distributed computing is a specialization of parallel computing where
-the processors don't reside in the same computer. It'd be like Lady
-Gaga asking Beyoncé, "Please text this guy while I drink."
-
-I'm going to use "parallel" only to refer to cohabitating processors.
-While there are Clojure libraries that aid distributed programming,
-this book only covers parallel programming. That said, the concepts
-you'll learn apply directly to distributed programming.
+### Concurrent Programmin, Parallel Programming
 
 "Concurrent programming" and "parallel programming" refer to how you
 decompose a task into parallelizable sub-tasks and the techniques you
-use manage the kinds of risks that arise when your program executes
+use to manage the kinds of risks that arise when your program executes
 more than one task at the same time.
 
 To better understand those risks and how Clojure help you avoid them,
@@ -127,11 +130,14 @@ Clojure.
 ## Clojure Implementation: JVM Threads
 
 I've been using the term "task" to refer to *logical* sequences of
-operations which can be performed independently of each other. Texting
-can be performed independently of pouring a drink into your face, for
+related operations. Texting consists of a series of related operations
+separate from those involved in pouring a drink into your face, for
 example. So, "task" is an abstract term which says nothing about
-implementation. In Clojure, you can mentally map the concept "task" to
-JVM threads.
+implementation.
+
+In Clojure, you can think of your normal, serial code as a sequence of
+tasks. You indicate that tasks can be performed concurrently by
+placing them on **threads**.
 
 ### So What's a Thread?
 
@@ -335,25 +341,79 @@ Finally, you can interrogate a future to see if it's done running with
 
 ### Dereferencing
 
-While I think that dereferencing is easy to understand, I want to tell
-you a bit more about some of its implications. Serial code creates an
-ordering dependency between the following elements:
+Dereferencing is easy to understand, but it implies some nuances that
+aren't immediately obvious. It allows you more flexibility than is
+possible with serial code. When you write serial code, you create
+dependencies between:
 
 * When a task is *defined*
 * When a task is *evaluated*
 * When you *require the result* of a task
 
-Take the simple code `(+ 1 1)`. This defines your task, and it is
-evaluated immediately after it's encountered. You must then do
-something immediately with the result (pass it to another function,
-bind it to a name) or else it's lost forever.
+Take this example code:
 
-Futures, however, allow you to require the result of a task
-independently of when it's defined and evaluated. Calling `future`
-defines the task and indicates that it should start being evaluated
-immediately. You can then require the result whenever you want by
-derefencing. You can even ignore the result if you want to, for
-example if you're using a future to log a message asynchronously.
+```clojure
+(/ (web-api/get :total-sales)
+   (web-api/get :total-customers))
+```
 
-Clojure also provides you to treat the other aspects independently
-with `delays` and `promises`.
+In this code, you're communicating that the task `(web-api/get
+:total-sales)` must be evaluated now and that you require the result
+before evaluating the next task, `(web-api/get :total-customers)`.
+Part of learning concurrent programming is learning to identify when
+you've created these chronological dependencies that aren't actually
+necessary.
+
+Futures allow you to require the result of a task independently of
+when it's defined and evaluated. Calling `future` defines the task and
+indicates that it should start being evaluated immediately. You can
+then require the result whenever you want by dereferencing. You can even
+ignore the result if you want to, for example if you're using a future
+to log a message asynchronously.
+
+Clojure also allows you to treat "task definition" and "requiring the
+result" independently with `delays` and `promises`.
+
+### Delays
+
+Delays allow you to decouple a task's definition from when it's
+evaluated and when you require the result. You can create a delay with
+`delay`. In this example, nothing is printed:
+
+```clojure
+(def print-delay (delay (println "I'll be here when you need me")))
+```
+
+You can evaluate the delay and get its result by dereferencing or
+using `force`:
+
+```clojure
+(force print-delay)
+; => "I'll be here when you need me"
+; => nil
+```
+
+Like futures, a delay is only run once and its result is cached. The
+return value of `println` is `nil`, so subsequent dereferencing will
+return `nil` without printing anything:
+
+```clojure
+@print-delay
+; => nil
+```
+
+### Promises
+
+Promises allow you to express the expectation of a result indepedently
+of the task that should produce it and when that task should run. You
+create promises with `promise` and deliver a result to them with
+`deliver`. You obtain the result by dereferencing:
+
+```clojure
+(def my-promise (promise))
+(deliver my-promise 3)
+@my-promise
+
+; => 3
+```
+
