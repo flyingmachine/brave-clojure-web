@@ -31,8 +31,8 @@ wall" and "instruction-level parallelism wall" to find out more. As
 those creepy Intel bunnies continue smooshing more and more cores
 together, it's up to you and me to squueze performance out of them.
 
-Performance can be measured as both *latency*, or the total amount of
-time it takes to complete a task, and *throughput*, or the number of
+Performance can be measured as both **latency**, or the total amount of
+time it takes to complete a task, and **throughput**, or the number of
 tasks a program completes per second. Parallelism can improve both, as
 this diagram shows:
 
@@ -49,7 +49,7 @@ concepts.
 
 ### Managing Tasks vs. Executing Tasks Simultaneously
 
-*Concurrency* refers to *managing* more than one task at the same
+**Concurrency** refers to *managing* more than one task at the same
 time. We can illustrate concurrency with the song "Telephone" by Lady
 Gaga. Gaga sings,
 
@@ -66,12 +66,12 @@ sing,
 In this hypothetical universe, Lady Gaga is *managing* two tasks:
 drinking and texting. However, she is not *executing* both tasks at
 the same time. Instead, she's switching between the two. This is
-called *interleaving*. Note that, when talking about interleaving, you
+called **interleaving**. Note that, when talking about interleaving, you
 don't have to fully complete a task between switching; Gaga could type
 one word, put her phone down, pick up her drink and have a sip, then
 switch back to her phone and type another word.
 
-*Parallelism* refers to *executing* more than one task at the same
+**Parallelism** refers to *executing* more than one task at the same
 time. If Madame Gaga were to execute her two tasks in parallel, she
 would sing:
 
@@ -91,21 +91,21 @@ potential paralellism.
 
 ### Blocking and Async
 
-One of the big use cases for concurrent programming is for *blocking*
-operations. "Blocking" really just means waiting and you'll most often
-hear it used in relation to I/O operations. Let's examine this using
-the Concurrent Lady Gaga example.
+One of the big use cases for concurrent programming is for
+**blocking** operations. "Blocking" really just means waiting and
+you'll most often hear it used in relation to I/O operations. Let's
+examine this using the Concurrent Lady Gaga example.
 
 If Lady Gaga texts her interlocutor and then stands there with her
 phone in her hand, staring at the screen for a response, then you
 could say that the "read next text message" is blocking. If, instead,
 she tucks her phone away so that she can drink until it alerts her by
 beeping or vibrating, then you could say she's handling the "read next
-text message" operation *asynchronously*.
+text message" operation **asynchronously**.
 
 ### Parallelism vs. Distribution
 
-It's important to distinguish *parallelism* from *distribution*.
+It's important to distinguish parallelism from **distribution**.
 Distributed computing is a specialization of parallel computing where
 the processors don't reside in the same computer. It'd be like Lady
 Gaga asking Beyoncé, "Please text this guy while I drink."
@@ -169,7 +169,7 @@ Note that this is just a *possible* ordering of instruction execution.
 The processor could also have executed the instructions in the order,
 "A1, A2, A3, B1, A4, B2, B3", for example. The main idea is that you
 can't know what order the instructions will actually take. This makes
-the program *nondeterministic*. You can't know beforehand what the
+the program **nondeterministic**. You can't know beforehand what the
 result will be because you can't know the execution order.
 
 Whereas the above example showed concurrent execution on a single
@@ -251,7 +251,7 @@ Their rituaal proceeds thusly:
 Following this ritual, it's entirely possible that all dwarven
 berserkers will pick up their left comfort stick and then block
 indefinitely waiting for the comfort stick to their right to become
-available, resulting in *deadlock*.
+available, resulting in **deadlock**.
 
 The takeaway here is that concurrent programming has the potential to
 be confusing and terrifying. But! With the right tools, it's
@@ -259,7 +259,7 @@ manageable and even fun. Let's start looking at the right tools.
 
 ## Futures, Delays, and Promises
 
-In Clojure, you can use *futures* to place a task on another thread.
+In Clojure, you can use **futures** to place a task on another thread.
 You can create a future with the `future` macro. Try this in a REPL:
 
 ```clojure
@@ -276,9 +276,10 @@ REPL would be blocked. However, `future` throws your call to
 `Thread/sleep` into another thread, allowing the REPL's thread to
 continue, unblocked.
 
-Futures will cache their results. You can retrieve them by
-*dereferencing* the future with either the `deref` function or the
-short `@` reader macro.
+Futures differ from the values you're used to, like hashes and maps,
+in that you have to *dereference* them to obtain their value. You can
+dereference a future with either the `deref` function or the short `@`
+reader macro.
 
 ```clojure
 (let [result (future (println "this prints once")
@@ -334,11 +335,25 @@ Finally, you can interrogate a future to see if it's done running with
 
 ### Dereferencing
 
-Up until now, we haven't had to use dereferencing to get a hold of the
-value associated with a name. It's necessary when you decouple
+While I think that dereferencing is easy to understand, I want to tell
+you a bit more about some of its implications. Serial code creates an
+ordering dependency between the following elements:
 
 * When a task is *defined*
-* When a task is *executed*
+* When a task is *evaluated*
 * When you *require the result* of a task
 
+Take the simple code `(+ 1 1)`. This defines your task, and it is
+evaluated immediately after it's encountered. You must then do
+something immediately with the result (pass it to another function,
+bind it to a name) or else it's lost forever.
 
+Futures, however, allow you to require the result of a task
+independently of when it's defined and evaluated. Calling `future`
+defines the task and indicates that it should start being evaluated
+immediately. You can then require the result whenever you want by
+derefencing. You can even ignore the result if you want to, for
+example if you're using a future to log a message asynchronously.
+
+Clojure also provides you to treat the other aspects independently
+with `delays` and `promises`.
