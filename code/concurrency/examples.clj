@@ -13,3 +13,14 @@
        10
        5)
 ; => 5
+
+(defmacro queue
+  [queue & task]
+  `(future @~queue ~@task))
+
+@(-> (future (println 1))
+     (queue (future (Thread/sleep 1000) (println 2)))
+     (queue (future (Thread/sleep 100) (println 3))))
+
+
+
