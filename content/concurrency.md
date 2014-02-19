@@ -440,75 +440,76 @@ yak butter with a smoothness rating of 97 or greater. Because you
 haven't yet summoned a tree that grows money, you have a budget of
 $100 for one pound (or 0.45kg if you're a European sorcerer).
 
-Because you are a modern practitioner of the freaking awesome arts,
-you know that yak butter retailers now offer their catalogs online.
-Rather than tediously navigate each site, you create a script to give
-you the URL of the first yak butter offering that meets your needs.
+Because you are a modern practitioner of the magical-ornithological
+arts, you know that yak butter retailers now offer their catalogs
+online. Rather than tediously navigate each site, you create a script
+to give you the URL of the first yak butter offering that meets your
+needs.
 
-Here's a simulation of what that script might look like. We'll
-generate yak butter products to simulate the results you'd get from
-making API calls:
+In this scenario, the collection of data is the yak butter options
+provided by each store. You can model that by defining some yak butter
+products, creating a function to mock out an API call, and creating
+a function to test whether a product is satisfactory:
 
 ```clojure
-(def sites ["http://yak-butter-international.com"
-            "http://butter-than-nothing.com"
-            "http://yak-attack.com"
-            "http://baby-got-yak.com"])
+(def yak-butter-international
+  {:store "Yak Butter International"
+    :price 90
+    :smoothness 90})
+(def butter-than-nothing
+  {:store "Butter than Nothing"
+   :price 150
+   :smoothness 83})
+;; This is the butter that meets our requirements
+(def baby-got-yak
+  {:store "Baby Got Yak"
+   :price 94
+   :smoothness 99})
 
-(defn generate-yak-butter
-  "Yak butter with random smoothness and price for site"
-  [id site]
-  {:id id
-   :smoothness (inc (int (rand 100)))
-   :price (inc (int (rand 1000)))
-   :url (str site "/products/" id)})
-
-(defn yak-butter-generator
-  "Create lazy list of random yak butters for site"
-  [site]
-  (iterate (fn [x] (generate-yak-butter (inc (:id x)) site))
-           (generate-yak-butter 0 site)))
-
-(defn yak-butters
-  "Return a lazy list of yak butters for this site. Sleep 1 seconds to
-  simulate network connection"
-  [site n]
+(defn mock-api-call
+  [result]
   (Thread/sleep 1000)
-  (take n (yak-butter-generator site)))
-```
+  result)
 
-`yak-butters` returns a lazy list of yak butters with random
-smoothness ratings and prices. Here's an example of what it could
-return:
-
-```clojure
-(yak-butters "http://yak-attack.com" 2)
-; => returns:
-({:id 0, :smoothness 93, :price 78, :url "http://yak-attack.com/products/0"}
- {:id 1, :smoothness 14, :price 263, :url "http://yak-attack.com/products/1"})
-```
-
-With a promise and futures, you can
-perform a parallel search for a satisfactory yak butter and continue
-execution as soon it's found:
-
-```clojure
 (defn satisfactory?
   [butter]
   (and (<= (:price butter) 100)
        (>= (:smoothness butter) 97)
        butter))
-
-(let [butter-promise (promise)]
-  (doseq [site sites]
-    (future (if-let [satisfactory-butter (some satisfactory? (yak-butters site 250000))]
-              (deliver butter-promise satisfactory-butter))))
-  (println "And the winner is:" @butter-promise))
 ```
 
-The actual time this take takes to execute will vary since it
-generates random data.
+The API call waits 1 second before returning a result to simulate the
+time it would take to perform an actual call.
 
+If you check each site serially, it could take more than 3 seconds to
+obtain a result, as the following code shows. Note that `time` prints
+the time taken to evaluate a form and `comp` composes functions:
+
+```clojure
+(time (some (comp satisfactory? mock-api-call)
+            [yak-butter-international butter-than-nothing baby-got-yak]))
+; => "Elapsed time: 3002.132 msecs"
+; => {:store "Baby Got Yak", :smoothness 99, :price 94}
+```
+
+You can use a promise and futures to perform each check on a separate
+thread. If your computer has multiple cores, you could cut down the
+time taken to about 1 second:
+
+```clojure
+(time
+ (let [butter-promise (promise)]
+   (doseq [butter [yak-butter-international butter-than-nothing baby-got-yak]]
+     (future (if-let [satisfactory-butter (satisfactory? (mock-api-call butter))]
+               (deliver butter-promise satisfactory-butter))))
+   (println "And the winner is:" @butter-promise)))
+; => "Elapsed time: 1002.652 msecs"
+; => And the winner is: {:store Baby Got Yak, :smoothness 99, :price 94}
+```
+
+By decoupling the requirement for a result from how the result is
+actually copmuted, you can perform multiple computations in parallel
+and safe yourself some time.
 
 ### Solving Problems
 

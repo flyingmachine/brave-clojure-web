@@ -23,37 +23,30 @@
   `(do (Thread/sleep ~timeout) ~@body))
 
 (-> (future (wait 2000 (println 1)))
+
     (queue (wait 1000 (println 2)))
     (queue (wait 500 (println 3)))
     (queue (wait 250 (println 4))))
 
 ;; Yak butter
 
-(def sites ["http://yak-butter-international.com"
-            "http://butter-than-nothing.com"
-            "http://yak-attack.com"
-            "http://baby-got-yak.com"])
+(def yak-butter-international
+  {:store "Yak Butter International"
+    :price 90
+    :smoothness 90})
+(def butter-than-nothing
+  {:store "Butter than Nothing"
+   :price 150
+   :smoothness 83})
+(def baby-got-yak
+  {:store "Baby Got Yak"
+   :price 94
+   :smoothness 99})
 
-(defn generate-yak-butter
-  "Yak butter with random smoothness and price for site"
-  [id site]
-  {:id id
-   :smoothness (inc (int (rand 100)))
-   :price (inc (int (rand 1000)))
-   :url (str site "/products/" id)})
-
-(defn yak-butter-generator
-  "Create lazy list of random yak butters for site"
-  [site]
-  (iterate (fn [x] (generate-yak-butter (inc (:id x)) site))
-           (generate-yak-butter 0 site)))
-
-(defn yak-butters
-  "Return a lazy list of yak butters for this site. Sleep 1 seconds to
-  simulate network connection"
-  [site n]
+(defn mock-api-call
+  [result]
   (Thread/sleep 1000)
-  (take n (yak-butter-generator site)))
+  result)
 
 (defn satisfactory?
   [butter]
@@ -62,8 +55,11 @@
        butter))
 
 (let [butter-promise (promise)]
-  (doseq [site sites]
-    (future (if-let [satisfactory-butter (some satisfactory? (yak-butters site 250000))]
+  (doseq [butter [yak-butter-international butter-than-nothing baby-got-yak]]
+    (future (if-let [satisfactory-butter (satisfactory? (mock-api-call butter))]
               (deliver butter-promise satisfactory-butter))))
   (println "And the winner is:" @butter-promise))
 
+
+(time (some (comp satisfactory? mock-api-call)
+            [yak-butter-international butter-than-nothing baby-got-yak]))
