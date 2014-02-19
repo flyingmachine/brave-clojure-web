@@ -408,9 +408,17 @@ return `nil` without printing anything:
 ; => nil
 ```
 
-TODO - use example of futures and delays where you are receiving data
-in a nondeterministic order and want to handle the results in a
-deterministic order
+One way you can use a delay is to fire off a statement the first time
+one future out of a group of related futures finishes. For example,
+you might want to upload a set of documents and notify a user as soon
+as the first one is up, as in this pseudocode
+
+```clojure
+(let [notify (delay (email-user "full-metal@alchemists.com"))]
+  (doseq [doc documents]
+    (future (upload-document doc)
+            @notify)))
+```
 
 ### Promises
 
