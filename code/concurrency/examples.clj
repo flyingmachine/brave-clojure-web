@@ -65,6 +65,7 @@
             [yak-butter-international butter-than-nothing baby-got-yak]))
 
 
-(let [wisdom-callback (promise)]
-  (future (println "Here's some Ferengi wisdom" @promise))
-  (deliver with-callbacks "Whisper your way to success."))
+(let [ferengi-wisdom-promise (promise)]
+  (future (println "Here's some Ferengi wisdom:" @ferengi-wisdom-promise))
+  (Thread/sleep 100)
+  (deliver ferengi-wisdom-promise "Whisper your way to success."))
