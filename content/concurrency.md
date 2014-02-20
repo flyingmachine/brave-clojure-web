@@ -343,31 +343,30 @@ Finally, you can interrogate a future to see if it's done running with
 
 Dereferencing is easy to understand, but it implies some nuances that
 aren't immediately obvious. It allows you more flexibility than is
-possible with serial code. When you write serial code, you create
-dependencies between:
+possible with serial code. When you write serial code, you bind
+together these three events:
 
-* When a task is *defined*
-* When a task is *evaluated*
-* When you *require the result* of a task
+* Task definition
+* Task execution
+* Requiring the task's result
 
-Take this example code:
+As an example, take this hypothetical code, which defines a simple api
+call task:
 
 ```clojure
-(/ (web-api/get :total-sales)
-   (web-api/get :total-customers))
+(web-api/get :dwarven-beard-waxes)
 ```
 
-In this code, you're communicating that the task `(web-api/get
-:total-sales)` must be evaluated now and that you require the result
-before evaluating the next task, `(web-api/get :total-customers)`.
-Part of learning concurrent programming is learning to identify when
-you've created these chronological dependencies that aren't actually
-necessary.
+As soon as Clojure encounters this task definition, it executes it. It
+also requires the result *right now*, blocking until the api call
+finishes.
 
-Futures allow you to require the result of a task independently of
-when it's defined and evaluated. Calling `future` defines the task and
-indicates that it should start being evaluated immediately. It also
-indicates that you don't need the result immediately.
+Futures, however, allow you to separate the "require the result" event
+from the other two. Calling `future` defines the task and indicates
+that it should start being evaluated immediately. *But*, it also
+indicates that you don't need the result immediately. Part of learning
+concurrent programming is learning to identify when you've created
+these chronological dependencies when they aren't actually necessary.
 
 When you dereference a future, you indicate that the result is
 required *right now* and that evaluation should stop until the result
@@ -377,8 +376,9 @@ exclusion problem in just a little bit.
 Alternatively, you can ignore the result. For example, you can use
 futures to write to a log file asynchronously.
 
-Clojure also allows you to treat "task definition" and "requiring the
-result" independently with `delays` and `promises`.
+This kind of flexibility is pretty cool. Clojure also allows you to
+treat "task definition" and "requiring the result" independently with
+`delays` and `promises`. Onward!
 
 ### Delays
 
@@ -410,15 +410,21 @@ return `nil` without printing anything:
 
 One way you can use a delay is to fire off a statement the first time
 one future out of a group of related futures finishes. For example,
-you might want to upload a set of documents and notify a user as soon
-as the first one is up, as in this pseudocode
+your app uploads a set of headshots to a headshot-sharing site and
+notifies the owner as soon as the first one is up, as in the
+following:
 
 ```clojure
-(let [notify (delay (email-user "full-metal@alchemists.com"))]
-  (doseq [doc documents]
-    (future (upload-document doc)
+(let [notify (delay (email-user "and-my-axe@gmail.com"))]
+  (doseq [headshot gimli-headshots]
+    (future (upload-document headshot)
             @notify)))
 ```
+
+In this example, Gimli will be grateful to know when the first
+headshot is available so that he can begin tweaking it and sharing it.
+He'll also appreciate not being spammed, and you'll appreciate not
+facing his reaction to being spammed.
 
 ### Promises
 
@@ -448,7 +454,7 @@ yak butter with a smoothness rating of 97 or greater. Because you
 haven't yet summoned a tree that grows money, you have a budget of
 $100 for one pound (or 0.45kg if you're a European sorcerer).
 
-Because you are a modern practitioner of the magical-ornithological
+Because you are a modern practitioner of the magico-ornithological
 arts, you know that yak butter retailers now offer their catalogs
 online. Rather than tediously navigate each site, you create a script
 to give you the URL of the first yak butter offering that meets your
@@ -516,8 +522,24 @@ time taken to about 1 second:
 ```
 
 By decoupling the requirement for a result from how the result is
-actually copmuted, you can perform multiple computations in parallel
-and safe yourself some time.
+actually computed, you can perform multiple computations in parallel
+and save yourself some time.
+
+You can also use promises to register callbacks, achieving the same
+functionality that you might be used to in JavaScript. Here's how to
+do it:
+
+```clojure
+(let [ferengi-wisdom-promise (promise)]
+  (future (println "Here's some Ferengi wisdom:" @ferengi-wisdom-promise))
+  (Thread/sleep 100)
+  (deliver ferengi-wisdom-promise "Whisper your way to success."))
+; => Here's some Ferengi wisdom: Whisper your way to success.
+```
+
+Futures, delays, and promises are great, simple ways to manage
+concurrency in your application. In the next section, we'll look at a
+couple more ways you can use these tools together.
 
 ### Solving Problems
 

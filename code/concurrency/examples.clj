@@ -63,3 +63,8 @@
 
 (time (some (comp satisfactory? mock-api-call)
             [yak-butter-international butter-than-nothing baby-got-yak]))
+
+
+(let [wisdom-callback (promise)]
+  (future (println "Here's some Ferengi wisdom" @promise))
+  (deliver with-callbacks "Whisper your way to success."))

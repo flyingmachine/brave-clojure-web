@@ -1,4 +1,3 @@
-
 (def sites ["http://yak-butter-international.com"
             "http://butter-than-nothing.com"])
 
