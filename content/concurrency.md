@@ -577,10 +577,9 @@ one more fun way to keep your concurrent applications under control.
 ### Simple Queueing
 
 Sometimes the best way to handle concurrent code is to re-serialize
-it. We can do that by placing our tasks into a queue.
-
-To demonstrate that the queue works as intended, you'll have to do a
-lot of `sleep`ing. Here's a macro to do that more concisely:
+it. You can do that by placing our tasks into a queue. To easily
+demonstrate that the queue works as intended, you'll have to do a lot
+of `sleep`ing. Here's a simple macro to do that more concisely:
 
 ```clojure
 (defmacro wait
@@ -589,3 +588,22 @@ lot of `sleep`ing. Here's a macro to do that more concisely:
   `(do (Thread/sleep ~timeout) ~@body))
 ```
 
+Our demonstration will pay homage to the British, since they invented
+queues. We'll use a queue to ensure that the customary British
+greeting, "'Ello, gov'na! Pip pip! Cheerio!" is delivered in the
+correct order. First, here's an example of it being delivered in the
+wrong order:
+
+```clojure
+(future (wait 200 (println "'Ello, gov'na!")))
+(future (wait 400 (println "Pip pip!")))
+(future (wait 100 (println "Cheerio!")))
+
+; => Cheerio!
+; => 'Ello, gov'na!
+; => Pip pip!
+```
+
+This is the wrong greeting completely, though no British person would
+be so impolite as to correct you. What we want is some way to ensure
+that 

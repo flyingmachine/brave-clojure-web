@@ -24,7 +24,6 @@
   `(do (Thread/sleep ~timeout) ~@body))
 
 (-> (future (wait 2000 (println 1)))
-
     (queue (wait 1000 (println 2)))
     (queue (wait 500 (println 3)))
     (queue (wait 250 (println 4))))
