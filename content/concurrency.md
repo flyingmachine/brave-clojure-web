@@ -19,7 +19,7 @@ programming. In this chapter, you'll learn the following:
 * Tool 3: STM
 * Tool 4: core.async
 
-### Who Cares?
+## Who Cares?
 
 Why should you bother with any of this? The reason is that parallel
 programming is essential for writing performant applications on modern
@@ -191,7 +191,7 @@ so the program is nondeterministic. To make things even more fun, your
 programs will typically have more threads than cores, so each core
 will likely perform interleaving on multiple threads.
 
-### Reference Cells, Mutual Exclusion, Dwarven Berserkers
+### The Three Goblins: Reference Cells, Mutual Exclusion, Dwarven Berserkers
 
 To drive this point home, imagine the program in the image above
 includes the following pseudo instructions:
@@ -209,13 +209,14 @@ then the program will print the number `5`. Even weirder, if the order
 is "A1, A2, B1, A3" then the program will print `0` even though `X`'s
 value is `5`.
 
-This little thought experiment demonstrates one of the central
-challenges in concurrent programming. We'll call this the "reference
-cell" problem. There are two other problems involved in concurrent
-programming: mutual exclusion and the dwarven berserkers.
+This little thought experiment demonstrates one of the three central
+challenges in concurrent programming, a.k.a "The Three Concurrency
+Goblins." We'll call this the "reference cell" problem. There are two
+other problems involved in concurrent programming: mutual exclusion
+and the dwarven berserkers problem.
 
-For the mutual exclusion problem, imagine two threads are each trying
-to write the text of a different spell to a file. Without any way to claim
+For mutual exclusion, imagine two threads are each trying to write the
+text of a different spell to a file. Without any way to claim
 exclusive write access to the file, the spell will end up garbled as
 the write instructions get interleaved. These two spells:
 
@@ -250,7 +251,7 @@ Their rituaal proceeds thusly:
 
 1. Pick up the *left* waraxe, if available
 2. Pick up the *right* waraxe, if available
-3. Comfort your neighbor with your "comfort sticks"
+3. Comfort your neighbor with vigorous swings of your "comfort sticks"
 4. Release both waraxes
 5. Go to 1
 
@@ -277,15 +278,16 @@ You can create a future with the `future` macro. Try this in a REPL:
 `Thread/sleep` tells the current thread to just sit on its ass and do
 nothing for the specified number of milliseconds. Normally, if you
 evaluated `Thread/sleep` in your REPL you wouldn't be able to
-evaluated any other statements until the REPL was done sleeping; your
+evaluate any other statements until the REPL was done sleeping; your
 REPL would be blocked. However, `future` throws your call to
 `Thread/sleep` into another thread, allowing the REPL's thread to
 continue, unblocked.
 
 Futures differ from the values you're used to, like hashes and maps,
-in that you have to *dereference* them to obtain their value. You can
-dereference a future with either the `deref` function or the short `@`
-reader macro.
+in that you have to *dereference* them to obtain their value. The
+value of a future is the value of the last expression evaluated. You
+can dereference a future with either the `deref` function or the `@`
+reader macro. Try this out to use them both:
 
 ```clojure
 (let [result (future (println "this prints once")
@@ -315,14 +317,14 @@ running:
 ; It will be at least 3 seconds before I print
 ```
 
-Sometimes you want to place aa time limit on how long to wait for a
+Sometimes you want to place a time limit on how long to wait for a
 future. To do that, you can pass the number of milliseconds to wait to
-`deref` along with the value to return if the deref does time out:
+`deref` along with the value to return if the deref does time out. In
+this example, you tell `deref` to return the value `5` if the future
+doesn't return a value within 10 milliseconds.
 
 ```clojure
-(deref (future (Thread/sleep 1000) 0)
-       10
-       5)
+(deref (future (Thread/sleep 1000) 0) 10 5)
 ; => 5
 ```
 
@@ -338,6 +340,13 @@ Finally, you can interrogate a future to see if it's done running with
   (realized? f))
 ; => true
 ```
+
+Futures are a dead simple way to sprikle some concurrency on your
+program. On their own, they give you the power to chuck tasks onto
+other threads, allowing you to increase performance. They don't
+protect you against The Three Concurrency Goblins, but you'll learn
+some ways to protect yourself with delays and promises in just a
+minute. First, though, let's take a closer look at dereferencing.
 
 ### Dereferencing
 
@@ -366,7 +375,7 @@ from the other two. Calling `future` defines the task and indicates
 that it should start being evaluated immediately. *But*, it also
 indicates that you don't need the result immediately. Part of learning
 concurrent programming is learning to identify when you've created
-these chronological dependencies when they aren't actually necessary.
+these chronological couplings when they aren't actually necessary.
 
 When you dereference a future, you indicate that the result is
 required *right now* and that evaluation should stop until the result
@@ -382,36 +391,41 @@ treat "task definition" and "requiring the result" independently with
 
 ### Delays
 
-Delays allow you to decouple a task's definition from when it's
-evaluated and when you require the result. You can create a delay with
+Delays allow you to define a task definition without having to execute
+it or require the result immediately. You can create a delay with
 `delay`. In this example, nothing is printed:
 
 ```clojure
-(def print-delay (delay (println "I'll be here when you need me")))
+(def jackson-5-delay
+  (delay (let [message "Just call my name and I'll be there"]
+           (println "First deref:" message)
+           message)))
 ```
 
 You can evaluate the delay and get its result by dereferencing or
-using `force`:
+using `force`. `force` has the same effect as `deref`; it just
+communicates more clearly that you're causing a task to start
+as opposed to waiting for a task to finish.
 
 ```clojure
-(force print-delay)
-; => "I'll be here when you need me"
-; => nil
+(force jackson-5-delay)
+; => First deref: Just call my name and I'll be there
+; => "Just call my name and I'll be there"
 ```
 
-Like futures, a delay is only run once and its result is cached. The
-return value of `println` is `nil`, so subsequent dereferencing will
-return `nil` without printing anything:
+Like futures, a delay is only run once and its result is cached.
+Subsequent dereferencing will return the Jackson 5 message without
+printing anything:
 
 ```clojure
-@print-delay
-; => nil
+@jackson-5-delay
+; => "Just call my name and I'll be there"
 ```
 
 One way you can use a delay is to fire off a statement the first time
 one future out of a group of related futures finishes. For example,
-your app uploads a set of headshots to a headshot-sharing site and
-notifies the owner as soon as the first one is up, as in the
+pretend your app uploads a set of headshots to a headshot-sharing site
+and notifies the owner as soon as the first one is up, as in the
 following:
 
 ```clojure
@@ -425,6 +439,15 @@ In this example, Gimli will be grateful to know when the first
 headshot is available so that he can begin tweaking it and sharing it.
 He'll also appreciate not being spammed, and you'll appreciate not
 facing his reaction to being spammed.
+
+This technique can help protect you from the Mutual Exclusion
+Concurrency Goblin. You can view a delay as a resource in the same way
+that a printer is a resource. Since the body of a delay is guaranteed
+to only ever fire once, you can be sure that only one thread will ever
+have "access" to the "resource" at a time. Of course, no thread will
+ever be able to access the resource ever again. That might be too
+drastic a constraint for most situations, but in cases like the
+example above it works perfectly.
 
 ### Promises
 
@@ -525,9 +548,14 @@ By decoupling the requirement for a result from how the result is
 actually computed, you can perform multiple computations in parallel
 and save yourself some time.
 
-You can also use promises to register callbacks, achieving the same
-functionality that you might be used to in JavaScript. Here's how to
-do it:
+You can view this as a way to protect yourself from the Reference Cell
+Concurrency Goblin. Since promises can only be written to once, you're
+can't create the kind of inconsistent state that arises from
+nondeterministic reads and writes.
+
+The last thing I should mention is that you can also use promises to
+register callbacks, achieving the same functionality that you might be
+used to in JavaScript. Here's how to do it:
 
 ```clojure
 (let [ferengi-wisdom-promise (promise)]
@@ -537,9 +565,27 @@ do it:
 ; => Here's some Ferengi wisdom: Whisper your way to success.
 ```
 
-Futures, delays, and promises are great, simple ways to manage
-concurrency in your application. In the next section, we'll look at a
-couple more ways you can use these tools together.
+In this example, you're creating a future that executes immediately.
+However, it's blocking because it's waiting for a value to be
+delivered to `ferengi-wisdom-promise`. After 100 milliseconds, you
+deliver the value and the `println` statement in the future runs.
 
-### Solving Problems
+Futures, delays, and promises are great, simple ways to manage
+concurrency in your application. In the next section, we'll look at
+one more fun way to keep your concurrent applications under control.
+
+### Simple Queueing
+
+Sometimes the best way to handle concurrent code is to re-serialize
+it. We can do that by placing our tasks into a queue.
+
+To demonstrate that the queue works as intended, you'll have to do a
+lot of `sleep`ing. Here's a macro to do that more concisely:
+
+```clojure
+(defmacro wait
+  "Sleep `timeout` seconds before evaluating body"
+  [timeout & body]
+  `(do (Thread/sleep ~timeout) ~@body))
+```
 

@@ -19,6 +19,7 @@
   `(future @~queue ~@task))
 
 (defmacro wait
+  "Sleep `timeout` seconds before evaluating body"
   [timeout & body]
   `(do (Thread/sleep ~timeout) ~@body))
 
@@ -69,3 +70,9 @@
   (future (println "Here's some Ferengi wisdom:" @ferengi-wisdom-promise))
   (Thread/sleep 100)
   (deliver ferengi-wisdom-promise "Whisper your way to success."))
+
+
+(def jackson-5-delay
+  (delay (let [message "Just call my name and I'll be there"]
+           (println "First deref:" message)
+           message)))
