@@ -757,6 +757,15 @@ as its first argument. Then, we just repeat instances of `(queue
 G__627 (random-quote) (append-to-file "quotes.txt" @G__627))`. This
 mirrors the way `queue` is used in the British example above.
 
-While all of this works and it's super fun to play with, it feels a
-little awkward. Later in this section you'll learn how to queue like a
-pro with the core.async library.
+And that's it for futures, delays, and promises! This section has
+shown how you can combine them together to make your concurrent safer.
+
+In the rest of the chapter, you'll dive deeper into the root cause of
+concurrency danger: shared access to mutable "state". You'll learn
+Clojure's more sophisticated tools for managing state.
+
+## What is state?
+
+
+
+## Make it Stateless
