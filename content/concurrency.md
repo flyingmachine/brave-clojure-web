@@ -266,6 +266,15 @@ manageable and even fun. Let's start looking at the right tools.
 
 ## Futures, Delays, and Promises
 
+Futures, delays, and promises are easy, lightweight tools for
+concurrent programming. In this section, you'll learn how each works
+and how to use them together to defend against the Reference Cell
+Concurrency Goblin and the Mutual Exclusion Concurrency Goblin. You'll
+discover that, while simple, these tools can go a long way toward
+meeting your concurrency needs.
+
+### Futures
+
 In Clojure, you can use **futures** to place a task on another thread.
 You can create a future with the `future` macro. Try this in a REPL:
 
@@ -576,6 +585,12 @@ one more fun way to keep your concurrent applications under control.
 
 ### Simple Queueing
 
+So far you've looked at some simple ways to combine futures, delays,
+and promises to make your concurrent programs a little safer. In this
+section, you'll use a macro to combine futures and promises in a
+slightly more complex manner. You might not necessarily ever use this
+code, but it'll show the power of these simple tools a bit more.
+
 Sometimes the best way to handle concurrent tasks is to re-serialize
 them. You can do that by placing your tasks onto a queue. In this
 example, you'll make API calls to pull random quotes from
@@ -693,9 +708,21 @@ see by the elapsed time that the "work" of sleeping was shunted onto
 separate cores.
 
 Now let's use this to read from "I Heart Quotes" concurrently while
-writing serially:
+writing serially. Here's the final product. I'll walk through it below.
 
 ```clojure
+(defn append-to-file
+  [filename s]
+  (spit filename s :append true))
+
+(defn format-quote
+  [quote]
+  (str "=== BEGIN QUOTE ===\n" quote "=== END QUOTE ===\n\n"))
+
+(defn random-quote
+  []
+  (format-quote (slurp "http://www.iheartquotes.com/api/v1/random")))
+
 (defmacro snag-quotes-queued
   [n filename]
   (let [quote-gensym (gensym)
@@ -704,12 +731,31 @@ writing serially:
                            (append-to-file ~filename @~quote-gensym))]
     `(-> (future)
          ~@(take n (repeat queue-line)))))
+
+```
+
+`append-to-file` and `format-quote` are the same as above, they're
+just shown here again so you don't have to flip back  and forth.
+`random-quote` simply grabs a quote and formats it.
+
+The interesting bits are in `snag-quotes-queued`. The point of the
+macro is to returns a form something along the lines of:
+
+```clojure
+(snag-quotes-queued 4 "quotes.txt")
+; => expands to:
+(-> (future)
+    (queue G__627 (random-quote) (append-to-file "quotes.txt" @G__627))
+    (queue G__627 (random-quote) (append-to-file "quotes.txt" @G__627))
+    (queue G__627 (random-quote) (append-to-file "quotes.txt" @G__627))
+    (queue G__627 (random-quote) (append-to-file "quotes.txt" @G__627)))
 ```
 
 There are a couple things going on here. We have to "seed" the queue
-with a no-op future because queue expects a dereferenceable object.
-Also, we have to write this as a macro so that we can correctly pass
-one queue macro call to the next queue macro call.
+with a no-op future because `queue` expects a dereferenceable object
+as its first argument. Then, we just repeat instances of `(queue
+G__627 (random-quote) (append-to-file "quotes.txt" @G__627))`. This
+mirrors the way `queue` is used in the British example above.
 
 While all of this works and it's super fun to play with, it feels a
 little awkward. Later in this section you'll learn how to queue like a

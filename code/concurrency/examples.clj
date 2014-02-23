@@ -107,14 +107,17 @@
        ~serialized
        ~concurrent-promise-name)))
 
-
 (time @(-> (future (wait 200 (println "'Ello, gov'na!")))
            (queue line (wait 400 "Pip pip!") (println @line))
            (queue line (wait 100 "Cheerio!") (println @line))))
 
+(defn append-to-file
+  [filename s]
+  (spit filename s :append true))
 
-(defn queue-quote
-  [filename])
+(defn format-quote
+  [quote]
+  (str "=== BEGIN QUOTE ===\n" quote "=== END QUOTE ===\n\n"))
 
 (defn random-quote
   []

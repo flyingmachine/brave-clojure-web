@@ -11,3 +11,4 @@ target
 repl-port
 *.odt
 org/*.md
+quotes.txt
