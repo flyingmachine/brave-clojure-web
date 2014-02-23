@@ -576,10 +576,83 @@ one more fun way to keep your concurrent applications under control.
 
 ### Simple Queueing
 
-Sometimes the best way to handle concurrent code is to re-serialize
-it. You can do that by placing our tasks into a queue. To easily
-demonstrate that the queue works as intended, you'll have to do a lot
-of `sleep`ing. Here's a simple macro to do that more concisely:
+Sometimes the best way to handle concurrent tasks is to re-serialize
+them. You can do that by placing your tasks onto a queue. In this
+example, you'll make API calls to pull random quotes from
+[I Heart Quotes](http://www.iheartquotes.com/) and write them to your
+own quote library. For this process, you want to allow the API calls
+to happen concurrently but you want to serialize the writes so that
+none of the quotes get garbled, like the spell example above.
+
+Here's the un-queued quote for retrieving a random quote and writing
+it:
+
+```clojure
+(defn append-to-file
+  [filename s]
+  (spit filename s :append true))
+
+(defn format-quote
+  [quote]
+  (str "=== BEGIN QUOTE ===\n" quote "=== END QUOTE ===\n\n"))
+
+(defn snag-quotes
+  [n filename]
+  (dotimes [_ n]
+    (->> (slurp "http://www.iheartquotes.com/api/v1/random")
+         format-quote
+         (append-to-file filename)
+         (future))))
+```
+
+If you call `(snag-quotes 2 "quotes.txt")` you'll end up with a file
+that contains something like:
+
+```
+=== BEGIN QUOTE ===
+Leela: You buy one pound of underwear and you're on their list forever.
+
+[futurama] http://iheartquotes.com/fortune/show/1463
+=== END QUOTE ===
+
+=== BEGIN QUOTE ===
+It takes about 12 ears of corn to make a tablespoon of corn oil.
+
+[codehappy] http://iheartquotes.com/fortune/show/39667
+=== END QUOTE ===
+```
+
+Most likely you got lucky like I did and your quotes weren't
+interleaved. To ensure that you'll always be this lucky, you can use
+this macro:
+
+```clojure
+(defmacro queue
+  [q concurrent-promise-name & work]
+  (let [concurrent (butlast work)
+        serialized (last work)]
+    `(let [~concurrent-promise-name (promise)]
+       (future (deliver ~concurrent-promise-name (do ~@concurrent)))
+       (deref ~q)
+       ~serialized
+       ~concurrent-promise-name)))
+```
+
+`queue` works by splitting a task into a concurrent and serialized
+portion. It creates a future, which is what allows the concurrent
+portion to run concurrently. You can see this with `(future (deliver
+~concurrent-promise-name (do ~@concurrent)))`. The next line, `(deref
+~q)`, blocks the thread until `q` is done, preventing the serialized
+portion from running until the previous job in the queue is done.
+Finally, the macro returns a promise which can then be used in another
+call to `queue`.
+
+To demonstrate that this works, you're going to pay homage to the
+British, since they invented queues. you'll use a queue to ensure that
+the customary British greeting, "'Ello, gov'na! Pip pip! Cheerio!" is
+delivered in the correct order. This demonstration is going to involve
+an abundance of `sleep`ing, so here's a macro to do that more
+concisely:
 
 ```clojure
 (defmacro wait
@@ -588,11 +661,8 @@ of `sleep`ing. Here's a simple macro to do that more concisely:
   `(do (Thread/sleep ~timeout) ~@body))
 ```
 
-Our demonstration will pay homage to the British, since they invented
-queues. We'll use a queue to ensure that the customary British
-greeting, "'Ello, gov'na! Pip pip! Cheerio!" is delivered in the
-correct order. First, here's an example of it being delivered in the
-wrong order:
+Now here's an example of the greeting being delivered in the wrong
+order:
 
 ```clojure
 (future (wait 200 (println "'Ello, gov'na!")))
@@ -605,5 +675,42 @@ wrong order:
 ```
 
 This is the wrong greeting completely, though no British person would
-be so impolite as to correct you. What we want is some way to ensure
-that 
+be so impolite as to correct you. Here's how you can `queue` it so as
+not to embarrass yourself:
+
+```clojure
+(time @(-> (future (wait 200 (println "'Ello, gov'na!")))
+           (queue line (wait 400 "Pip pip!") (println @line))
+           (queue line (wait 100 "Cheerio!") (println @line))))
+; => 'Ello, gov'na!
+; => Pip pip!
+; => Cheerio!
+; => "Elapsed time: 401.635 msecs"
+```
+
+Blimey! The greeting is delivered in the correct order, and you can
+see by the elapsed time that the "work" of sleeping was shunted onto
+separate cores.
+
+Now let's use this to read from "I Heart Quotes" concurrently while
+writing serially:
+
+```clojure
+(defmacro snag-quotes-queued
+  [n filename]
+  (let [quote-gensym (gensym)
+        queue-line `(queue ~quote-gensym
+                           (random-quote)
+                           (append-to-file ~filename @~quote-gensym))]
+    `(-> (future)
+         ~@(take n (repeat queue-line)))))
+```
+
+There are a couple things going on here. We have to "seed" the queue
+with a no-op future because queue expects a dereferenceable object.
+Also, we have to write this as a macro so that we can correctly pass
+one queue macro call to the next queue macro call.
+
+While all of this works and it's super fun to play with, it feels a
+little awkward. Later in this section you'll learn how to queue like a
+pro with the core.async library.

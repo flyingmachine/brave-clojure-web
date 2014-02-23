@@ -75,3 +75,56 @@
   (delay (let [message "Just call my name and I'll be there"]
            (println "First deref:" message)
            message)))
+
+(defn append-to-file
+  [filename s]
+  (spit filename s :append true))
+
+(defn format-quote
+  [quote]
+  (str "=== BEGIN QUOTE ===\n" quote "=== END QUOTE ===\n\n"))
+
+(defn snag-quotes
+  [n filename]
+  (dotimes [_ n]
+    (->> (slurp "http://www.iheartquotes.com/api/v1/random")
+         format-quote
+         (append-to-file filename)
+         (future))))
+
+(defmacro wait
+  "Sleep `timeout` seconds before evaluating body"
+  [timeout & body]
+  `(do (Thread/sleep ~timeout) ~@body))
+
+(defmacro queue
+  [q concurrent-promise-name & work]
+  (let [concurrent (butlast work)
+        serialized (last work)]
+    `(let [~concurrent-promise-name (promise)]
+       (future (deliver ~concurrent-promise-name (do ~@concurrent)))
+       (deref ~q)
+       ~serialized
+       ~concurrent-promise-name)))
+
+
+(time @(-> (future (wait 200 (println "'Ello, gov'na!")))
+           (queue line (wait 400 "Pip pip!") (println @line))
+           (queue line (wait 100 "Cheerio!") (println @line))))
+
+
+(defn queue-quote
+  [filename])
+
+(defn random-quote
+  []
+  (format-quote (slurp "http://www.iheartquotes.com/api/v1/random")))
+
+(defmacro snag-quotes-queued
+  [n filename]
+  (let [quote-gensym (gensym)
+        queue-line `(queue ~quote-gensym
+                           (random-quote)
+                           (append-to-file ~filename @~quote-gensym))]
+    `(-> (future)
+         ~@(take n (repeat queue-line)))))
