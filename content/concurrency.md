@@ -751,21 +751,206 @@ macro is to returns a form something along the lines of:
     (queue G__627 (random-quote) (append-to-file "quotes.txt" @G__627)))
 ```
 
-There are a couple things going on here. We have to "seed" the queue
+There are a couple things going on here. You have to "seed" the queue
 with a no-op future because `queue` expects a dereferenceable object
-as its first argument. Then, we just repeat instances of `(queue
+as its first argument. Then, you just repeat instances of `(queue
 G__627 (random-quote) (append-to-file "quotes.txt" @G__627))`. This
-mirrors the way `queue` is used in the British example above.
+mirrors the way the British example above uses `queue`.
 
 And that's it for futures, delays, and promises! This section has
 shown how you can combine them together to make your concurrent safer.
 
 In the rest of the chapter, you'll dive deeper into the root cause of
 concurrency danger: shared access to mutable "state". You'll learn
-Clojure's more sophisticated tools for managing state.
+Clojure's sophisticated tools for managing state.
 
-## What is state?
+## Unpacking State
 
+Literature on concurrency generally agrees that the Three Concurrency
+Goblins are all spawned from the same pit of evil: shared access to
+mutable state. You can see this in the Reference Cell discussion
+above: when two threads make uncoordinated changes to the reference
+cell the result is nondeterministic behavior.
 
+In fact, it's more accurate to say that concurrency problems arise
+from a flawed model of state. Imperative programming languages in
+general embody this flawed model, and object-orient languages in
+particular do.
+
+In this section, you'll learn how Clojure treats the concept of state
+differently from object-oriented languages. (Though I use OO
+terminology, the explanation is more widely applicable.) You'll learn
+how this philosophical foundation makes Clojure inherently safer for
+concurrency. While there isn't any code involved, this is one of the
+most important sections in the book.
+
+By the way, this section is heavily inspired by Rich Hickey's talks,
+especially "Are We There Yet?"
+
+### Metaphysics, Programming, and You: Comparing OOP and FP
+
+The concept of "state" is inextricably related to the concepts of
+"value", "identity", "time", and "behavior". In order to understand
+state, you'll need to understand these concepts as well.
+
+In object-oriented programming languages, these concepts aren't
+well-defined, and the result is a fertile breeding ground for the
+Three Concurrency Goblins. By contrast, Clojure was designed with
+clear and explicit definitions of these concepts.
+
+To better understand the differences, let's compare the models of
+reality which underlie OOP and Clojure. It's this underlying
+difference which gives rise to their different approach to the
+concepts above.
+
+When talking about metaphysics things tend to get a little fuzzy, but
+hopefully this will all make sense.
+
+As the ever-trusty
+[Wikipedia](http://en.wikipedia.org/wiki/Metaphysics) explains,
+metaphysics attempts to answer two basic questions in the broadest
+possible terms:
+
+* What is there?
+* What is it like?
+
+Rich Hickey explains the difference between OOP and FP metaphysics by
+contrasting their explanations of what a river is. 
+
+#### Imperative Programming
+
+In imperative metaphysics, a river is something which actually exists in the
+world. I know, I know, I can hear what you're saying: "Uh... yeah?
+So?" But believe me, the accuracy of that statement has caused many a
+sleepless night for philosophers.
+
+The wrinkle is that the river is always changing. Its water never
+ceases to flow. In OOP terms, we would say that it has mutable state,
+and that its state is ever fluctuating. No matter how much the river
+changes, we still identify it as the same river.
+
+The fact that the state of the River Object and that Objects in
+general are never stable doesn't stop us from nevertheless treating
+them as the fundamental building blocks of programs. In fact, this is
+seen as an advantage of OOP. It doesn't matter how the state changes,
+you can still interact with a stable interface and all will work as it
+should. An object can change, but to all observers it is still
+considered the same object.
+
+This conforms to our intuitive sense of the world. The position of the
+electrons of the coffee in my mug matters naught; the coffee still
+interacts with my taste buds in the way I expect.
+
+Finally, in OOP, objects do things. They act on each other. Again, this
+conforms to our intuitive sense of the world: change is the
+result of objects acting upon each other. A Person object pushes on a
+Door object and enters a House object.
+
+TODO you can visualize this as a box.
+
+#### Functional Programming
+
+![FP Metaphysics](/assets/images/posts/fp-metaphysics.png)
+
+In FP metaphysics, we would say that we never step in the same river
+twice. What we see as a discrete _thing_ which actually exists in the
+world independent of its mutations is in reality a succession of
+discrete, unchanging things.
+
+The "river" is not a thing in and of itself; it's a concept that we
+superimpose on a succession of related phenomena. This concept is very
+useful - I won't belabor that point - but it is just a concept.
+
+What really exists are atoms (in the sense of atomic, unchanging,
+stable entities) and processes. The river is not a stable object;
+rather, it is a succession of related atoms which are generated by
+some kind of process.
+
+These atoms don't act upon each other and they can't be changed. They
+can't _do_ anything. Change is not the result of one object acting on
+another; change is the result of a process being applied to an
+unchangeable atom. To say that something has changed is to say, "Oh,
+there's a new atom in this stream of atoms." It's like saying that
+HEAD points to a new commit in your Git repo.
+
+### Value
+
+It's obvious that numbers like 3 and 6 and 42 are values. Numbers are
+stable, unchanging.
+
+It should also be obvious that OO languages have "no proper notion" of
+values in this sense. You can create a class whose instances are
+composed of immutable components, but there is no high-level concept
+of immutable value implemented as a first class construct within the
+class.
+
+This is one of the main causes of headaches when doing OOP. How many
+times have you pulled your hair out trying to figure out how an
+object's attribute got changed? The fact is, in OO languages there is
+no built-in mechanism to ensure that the object you're dealing with is
+stable.
+
+This is the big reason why concurrent programming is so difficult.
+Even in single-threaded programs this is a problem, and it's one of
+the reasons why we develop sprawling test suites. You can't be sure if
+a method call on your Toupee object is somehow going to cause a change
+in your HipsterGlasses object.
+
+By contrast, in FP languages emphasis is placed on working with
+immutable values. Since these values can't change, a whole class of
+problems simply disappears.
+
+### Identity
+
+In FP, identity is essentially a name we give to a sequence of related
+atoms. "River" refers to the sequence R1, R2, R3, etc, produced by the
+river process. This is directly analogous to HEAD in Git - it's just a
+name which is used to refer to actual values. In OO, there really
+isn't such a distinction.
+
+Or as the man himself says, 
+
+> Identity is a putative entity we associate with a series of causally
+> related values (states) over time. It's a label, a construct we use
+> to collect a time series.
+
+In OO, identity and state are mashed together. The name refers to
+right now's value, and all previous values are discarded.
+
+### State
+
+In OO, there is no real clear definition of state. Maybe it's, "the
+values of all the attributes within an object right now." And it has
+to be "right now", because there's no language-supported way of
+holding on to the past.
+
+This becomes clearer if you contrast it with the notion of identity in
+FP. In the Hickeysian universe, a State is a specific value for an
+identity at a point in time. (For me, this definition really clarified
+my own thoughts.)
+
+### Time
+
+There's no real notion of time in OO. Everything's just "right now".
+This is part of what causes problems in concurrent programs.
+
+By contrast, in the FP worldview we've been exploring, time is
+well-defined. Time is a by-product of ordering states within an
+identity.
+
+(By the way, I'd really like to write more here, and would appreciate
+any suggestions.)
+
+### Behavior
+
+Behavior is changing the value associated with a name. In FP, it's
+adding a new brick and making the name point to the new brick. In OOP,
+it's placing a new thing in the box.
+
+### Why Does This Matter?
 
 ## Make it Stateless
+
+## Atoms
+
+## 
