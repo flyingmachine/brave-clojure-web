@@ -758,31 +758,30 @@ G__627 (random-quote) (append-to-file "quotes.txt" @G__627))`. This
 mirrors the way the British example above uses `queue`.
 
 And that's it for futures, delays, and promises! This section has
-shown how you can combine them together to make your concurrent safer.
+shown how you can combine them together to make your concurrent
+program safer.
 
-In the rest of the chapter, you'll dive deeper into the root cause of
-concurrency danger: shared access to mutable "state". You'll learn
-Clojure's sophisticated tools for managing state.
+In the rest of the chapter, you'll dive deeper into Clojure's
+philosophy and discover how the language's design enables even more
+power concurrency tools.
 
-## Unpacking State
+## Escaping The Pit of Evil
 
 Literature on concurrency generally agrees that the Three Concurrency
 Goblins are all spawned from the same pit of evil: shared access to
 mutable state. You can see this in the Reference Cell discussion
 above: when two threads make uncoordinated changes to the reference
-cell the result is nondeterministic behavior.
+cell the result is unpredictable.
 
-In fact, it's more accurate to say that concurrency problems arise
-from a flawed model of state. Imperative programming languages in
-general embody this flawed model, and object-orient languages in
-particular do.
+Rich Hickey designed Clojure so that it would specifically address the
+problems which arise from shared access to mutable state. In fact,
+Clojure embodies a very clear conception of state that makes it
+inherently safe for concurrency.
 
-In this section, you'll learn how Clojure treats the concept of state
-differently from object-oriented languages. (Though I use OO
-terminology, the explanation is more widely applicable.) You'll learn
-how this philosophical foundation makes Clojure inherently safer for
-concurrency. While there isn't any code involved, this is one of the
-most important sections in the book.
+You'll learn this philosophy in this section. To fully clarify it,
+I'll compare it to the philosophy embodied by object-oriented
+languages. By learning this philosophy, you'll be fully equipped to
+handle Clojure's remaining concurrency tools.
 
 By the way, this section is heavily inspired by Rich Hickey's talks,
 especially "Are We There Yet?"
@@ -814,57 +813,62 @@ possible terms:
 * What is there?
 * What is it like?
 
-Rich Hickey explains the difference between OOP and FP metaphysics by
-contrasting their explanations of what a river is. 
+To draw out the differences, let's go over two different ways of
+modeling a cuddle zombie. Unlike a regular zombie, a cuddle zombie
+does not want to devour your brains. It wants only to spoon you and
+maybe smell your neck. That makes its undead, decaying state all the
+more tragic.
 
-#### Imperative Programming
+#### Object-Oriented Metaphysics
 
-In imperative metaphysics, a river is something which actually exists in the
-world. I know, I know, I can hear what you're saying: "Uh... yeah?
-So?" But believe me, the accuracy of that statement has caused many a
-sleepless night for philosophers.
+In OO metaphysics, a cuddle zombie is something which actually exists
+in the world. I know, I know, I can hear what you're saying: "Uh...
+yeah? So?" But believe me, the accuracy of that statement has caused
+many a sleepless night for philosophers.
 
-The wrinkle is that the river is always changing. Its water never
-ceases to flow. In OOP terms, we would say that it has mutable state,
-and that its state is ever fluctuating. No matter how much the river
-changes, we still identify it as the same river.
+The wrinkle is that the cuddle zombie is always changing. Its
+unceasing hunger for cuddles grows fiercer with time. Its body
+slowly worsens (to put it as mildly as possible). In OO terms, we
+would say that the cuddle is a zombie with mutable state, and that its
+state is ever fluctuating. No matter how much the zombie changes, we
+still identify it as the same zombie.
 
-The fact that the state of the River Object and that Objects in
-general are never stable doesn't stop us from nevertheless treating
+The fact that the state of the Cuddle Zombie Object and that Objects
+in general are never stable doesn't stop us from nevertheless treating
 them as the fundamental building blocks of programs. In fact, this is
 seen as an advantage of OOP. It doesn't matter how the state changes,
 you can still interact with a stable interface and all will work as it
-should. An object can change, but to all observers it is still
-considered the same object.
+should.
 
-This conforms to our intuitive sense of the world. The position of the
-electrons of the coffee in my mug matters naught; the coffee still
-interacts with my taste buds in the way I expect.
+This conforms to our intuitive sense of the world. It doesn't matter
+how many fingers Undead Fred has left; curling up on the couch with
+him will still illicit the same soft coos of contentment.
 
-Finally, in OOP, objects do things. They act on each other. Again, this
-conforms to our intuitive sense of the world: change is the
+Finally, in OOP, objects do things. They act on each other. Again,
+this conforms to our intuitive sense of the world: change is the
 result of objects acting upon each other. A Person object pushes on a
 Door object and enters a House object.
 
-TODO you can visualize this as a box.
+You can visualize this as a box that only holds one thing at a time.
+The box is an object, and you change its state by replacing its
+contents.
 
 #### Functional Programming
 
-![FP Metaphysics](/assets/images/posts/fp-metaphysics.png)
+In FP metaphysics, we would say that we never encounter the same
+cuddle zombie twice. What we see as a discrete _thing_ which actually
+exists in the world independent of its mutations is in reality a
+succession of discrete, unchanging things.
 
-In FP metaphysics, we would say that we never step in the same river
-twice. What we see as a discrete _thing_ which actually exists in the
-world independent of its mutations is in reality a succession of
-discrete, unchanging things.
-
-The "river" is not a thing in and of itself; it's a concept that we
+The zombie is not a thing in and of itself; it's a concept that we
 superimpose on a succession of related phenomena. This concept is very
 useful - I won't belabor that point - but it is just a concept.
 
 What really exists are atoms (in the sense of atomic, unchanging,
-stable entities) and processes. The river is not a stable object;
-rather, it is a succession of related atoms which are generated by
-some kind of process.
+stable entities) and processes. The zombie is not an object which
+exists independently of the states flowing through it; rather, it is a
+succession of related atoms which are generated by some kind of
+process.
 
 These atoms don't act upon each other and they can't be changed. They
 can't _do_ anything. Change is not the result of one object acting on
