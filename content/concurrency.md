@@ -767,42 +767,25 @@ power concurrency tools.
 
 ## Stateless Concurrency
 
+
 ## Escaping The Pit of Evil
 
 Literature on concurrency generally agrees that the Three Concurrency
 Goblins are all spawned from the same pit of evil: shared access to
 mutable state. You can see this in the Reference Cell discussion
-above: when two threads make uncoordinated changes to the reference
-cell the result is unpredictable.
+above. When two threads make uncoordinated changes to the reference
+cell, the result is unpredictable.
 
 Rich Hickey designed Clojure so that it would specifically address the
 problems which arise from shared access to mutable state. In fact,
 Clojure embodies a very clear conception of state that makes it
-inherently safe for concurrency.
+inherently safer for concurrency. It's safe all the way down to its
+*meta-freakin-physics*.
 
-You'll learn this philosophy in this section. To fully clarify it,
-I'll compare it to the philosophy embodied by object-oriented
-languages. By learning this philosophy, you'll be fully equipped to
-handle Clojure's remaining concurrency tools.
-
-By the way, this section is heavily inspired by Rich Hickey's talks,
-especially "Are We There Yet?"
-
-### Metaphysics, Programming, and You: Comparing OOP and FP
-
-The concept of "state" is inextricably related to the concepts of
-"value", "identity", "time", and "behavior". In order to understand
-state, you'll need to understand these concepts as well.
-
-In object-oriented programming languages, these concepts aren't
-well-defined, and the result is a fertile breeding ground for the
-Three Concurrency Goblins. By contrast, Clojure was designed with
-clear and explicit definitions of these concepts.
-
-To better understand the differences, let's compare the models of
-reality which underlie OOP and Clojure. It's this underlying
-difference which gives rise to their different approach to the
-concepts above.
+You'll learn Clojure's underlying metaphysics in this section. To
+fully illustrate it, I'll compare it to the metaphysics embodied by
+object-oriented languages. By learning this philosophy, you'll be
+fully equipped to handle Clojure's remaining concurrency tools.
 
 When talking about metaphysics things tend to get a little fuzzy, but
 hopefully this will all make sense.
@@ -832,8 +815,25 @@ The wrinkle is that the cuddle zombie is always changing. Its
 unceasing hunger for cuddles grows fiercer with time. Its body slowly
 deteriorates. In OO terms, we would say that the cuddle zombie is an
 object with mutable state, and that its state is ever fluctuating. No
-matter how much the zombie changes, we still identify it as the same
-zombie.
+matter how much the zombie changes, though, we still identify it as
+the same zombie. Here's how you might model a cuddle zombie in Ruby:
+
+```ruby
+class CuddleZombie
+  attr_reader :cuddle_hunger_level, :percent_deteriorated
+
+  def initialize(cuddle_hunger_level = 1, percent_deteriorated = 0)
+    self.cuddle_hunger_level = cuddle_hunger_level
+    self.percent_deteriorated = percent_deteriorated
+  end
+
+  def shuffle_speed
+    cuddle_hunger_level * (100 - percent_deteriorated)
+  end
+end
+```
+
+
 
 The fact that the state of the Cuddle Zombie Object and that Objects
 in general are never stable doesn't stop us from nevertheless treating
@@ -853,7 +853,8 @@ Door object and enters a House object.
 
 You can visualize this as a box that only holds one thing at a time.
 The box is an object, and you change its state by replacing its
-contents.
+contents. The object's identity doesn't change no matter how you
+change its state.
 
 #### Functional Programming
 
@@ -885,7 +886,12 @@ behavior.
 ### Value
 
 It's obvious that numbers like 3 and 6 and 42 are values. Numbers are
-stable, unchanging. They're immutable. Thus, programming with values
+stable, unchanging. They're immutable.
+
+But what about strings? Arrays? Hashes? In other programming
+languages, we might
+
+Thus, programming with values
 is inherently safe. There's no "shared access to mutable state" if
 you're dealing with values.
 
@@ -894,9 +900,8 @@ sense. You can create a class whose instances are composed of
 immutable components, but there is no high-level concept of immutable
 value implemented as a first class construct within the class.
 
-By contrast, Clojure emphasizes working with immutable values. All the
-built-in data structures are immutable. In the metaphysics discussion
-above, "values" correspond to "atoms".
+By contrast, Clojure has first-class support for working with
+immutable values. All the built-in data structures are immutable.
 
 ### Identity
 
