@@ -116,7 +116,7 @@ alerts her by beeping or vibrating, then you could say she's handling
 the "read next text message" operation **asynchronously**.
 
 
-### Concurrent Programmin, Parallel Programming
+### Concurrent Programming, Parallel Programming
 
 "Concurrent programming" and "parallel programming" refer to how you
 decompose a task into parallelizable sub-tasks and the techniques you
@@ -739,7 +739,7 @@ just shown here again so you don't have to flip back  and forth.
 `random-quote` simply grabs a quote and formats it.
 
 The interesting bits are in `snag-quotes-queued`. The point of the
-macro is to returns a form something along the lines of:
+macro is to returns a form that looks like:
 
 ```clojure
 (snag-quotes-queued 4 "quotes.txt")
@@ -764,6 +764,8 @@ program safer.
 In the rest of the chapter, you'll dive deeper into Clojure's
 philosophy and discover how the language's design enables even more
 power concurrency tools.
+
+## Stateless Concurrency
 
 ## Escaping The Pit of Evil
 
