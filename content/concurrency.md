@@ -801,62 +801,90 @@ possible terms:
 To draw out the differences, let's go over two different ways of
 modeling a cuddle zombie. Unlike a regular zombie, a cuddle zombie
 does not want to devour your brains. It wants only to spoon you and
-maybe smell your neck. That makes its undead, decaying state all the
-more tragic.
+maybe smell your neck. That makes its undead, shuffling, decaying
+state all the more tragic.
 
-#### Object-Oriented Metaphysics
+### Object-Oriented Metaphysics
 
 In OO metaphysics, a cuddle zombie is something which actually exists
 in the world. I know, I know, I can hear what you're saying: "Uh...
 yeah? So?" But believe me, the accuracy of that statement has caused
 many a sleepless night for philosophers.
 
-The wrinkle is that the cuddle zombie is always changing. Its
-unceasing hunger for cuddles grows fiercer with time. Its body slowly
-deteriorates. In OO terms, we would say that the cuddle zombie is an
+The wrinkle is that the cuddle zombie is always changing. Its body
+slowly deteriorates. Its unceasing hunger for cuddles grows fiercer
+with time. In OO terms, we would say that the cuddle zombie is an
 object with mutable state, and that its state is ever fluctuating. No
 matter how much the zombie changes, though, we still identify it as
-the same zombie. Here's how you might model a cuddle zombie in Ruby:
+the same zombie. Here's how you might model and interact with a cuddle
+zombie in Ruby:
 
 ```ruby
 class CuddleZombie
-  attr_reader :cuddle_hunger_level, :percent_deteriorated
+  # attr_accessor is just a shorthand way for creating getters and
+  # setters for the listed instance variables
+  attr_accessor :cuddle_hunger_level, :percent_deteriorated
 
   def initialize(cuddle_hunger_level = 1, percent_deteriorated = 0)
     self.cuddle_hunger_level = cuddle_hunger_level
     self.percent_deteriorated = percent_deteriorated
   end
+end
 
-  def shuffle_speed
-    cuddle_hunger_level * (100 - percent_deteriorated)
-  end
+fred = CuddleZombie.new(2, 3)
+fred.cuddle_hunger_level  # => 2
+fred.percent_deteriorated # => 3
+
+fred.cuddle_hunger_level = 3
+fred.cuddle_hunger_level # => 3
+```
+
+You can see that this is really just a fancy reference cell. It's
+subject to the same non-deterministic results in a multi-threaded
+environment. For example, if two threads both try to increment Fred's
+hunger level with something like `fred.cuddle_hunger_level =
+fred.cuddle_hunger_level + 1`, one of the increments could be lost.
+
+You program will be nondeterministic even if you're only performing
+*reads* on a separate thread. For example, suppose you're conducting
+research on cuddle zombie behavior. You want to log a zombie's hunger
+level whenever it reaches 50% deterioration. You could try to do this
+like so:
+
+```ruby
+if fred.percent_deteriorated >= 50
+  Thread.new { database_logger.log(fred.cuddle_hunger_level) }
 end
 ```
 
+Throwing a database write onto another thread could improve
+performance, but another thread could change `fred` before the write
+actually takes palce. You don't want your data to be inconsistent when
+recovering from the zombie apocalypse.
 
-
-The fact that the state of the Cuddle Zombie Object and that Objects
-in general are never stable doesn't stop us from nevertheless treating
-them as the fundamental building blocks of programs. In fact, this is
-seen as an advantage of OOP. It doesn't matter how the state changes,
-you can still interact with a stable interface and all will work as it
-should.
+Still, the fact that the state of the Cuddle Zombie Object and that
+Objects in general are never stable doesn't stop us from nevertheless
+treating them as the fundamental building blocks of programs. In fact,
+this is seen as an advantage of OOP. It doesn't matter how the state
+changes, you can still interact with a stable interface and all will
+work as it should.
 
 This conforms to our intuitive sense of the world. It doesn't matter
-how many fingers Undead Fred has left; curling up on the couch with
-him will still illicit the same soft coos of contentment.
+how many fingers Fred has left; curling up on the couch with him will
+still illicit the same soft coos of contentment.
 
-Finally, in OOP, objects do things. They act on each other. Again,
-this conforms to our intuitive sense of the world: change is the
-result of objects acting upon each other. A Person object pushes on a
-Door object and enters a House object.
+Finally, in OOP, objects do things. They act on each other, changing
+state all along the way. We call this behavior.. Again, this conforms
+to our intuitive sense of the world: change is the result of objects
+acting upon each other. A Person object pushes on a Door object and
+enters a House object.
 
 You can visualize this as a box that only holds one thing at a time.
 The box is an object, and you change its state by replacing its
 contents. The object's identity doesn't change no matter how you
 change its state.
 
-#### Functional Programming
+### Clojure Metaphysics
 
 In FP metaphysics, we would say that we never encounter the same
 cuddle zombie twice. What we see as a discrete _thing_ which actually
@@ -882,6 +910,11 @@ atom and b) we choose to associate the identity with the new atom.
 With this broad characterization under our belts, let's look more
 thoroughly at the concepts of value, identity, state, time, and
 behavior.
+
+NOTES
+- identity is reference, not name
+- you can dereference, work with that state: store it, whatever,
+  without worrying about it changing
 
 ### Value
 
