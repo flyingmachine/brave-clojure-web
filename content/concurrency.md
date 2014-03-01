@@ -784,8 +784,9 @@ inherently safer for concurrency. It's safe all the way down to its
 
 You'll learn Clojure's underlying metaphysics in this section. To
 fully illustrate it, I'll compare it to the metaphysics embodied by
-object-oriented languages. By learning this philosophy, you'll be
-fully equipped to handle Clojure's remaining concurrency tools.
+object-oriented languages. I'll also introduce a new type, Clojure's
+`atom`. By learning this philosophy, you'll be fully equipped to
+handle Clojure's remaining concurrency tools.
 
 When talking about metaphysics things tend to get a little fuzzy, but
 hopefully this will all make sense.
