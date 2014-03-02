@@ -946,6 +946,17 @@ current state:
 ; => {:cuddle-hunger-level 0, :percent-deteriorated 0}
 ```
 
+In our Ruby example above, I mentioned that your data could change
+when trying to log it on a separate thread. There's no danger of that
+when using atoms to manage state because each state is immutable.
+Here's how you could log a zombie's state:
+
+```clojure
+(let [zombie-state @fred]
+  (if (>= (:percent-deteriorated zombie-state) 50)
+    (future (log (:percent-deteriorated zombie-state)))))
+```
+
 To update the atom to refer to a new state, you use `swap!`. This
 might seem contradictory. You might be shouting at me, "You said atoms
 are unchanging!" Indeed, they are! Now, though, we're working with the
@@ -997,4 +1008,38 @@ You then call `swap!` with the additional arguments:
 ; => {:cuddle-hunger-level 11, :percent-deteriorated 0}
 ```
 
+Or you could express the whole thing using Clojure's core functions:
 
+```clojure
+(swap! fred update-in [:cuddle-hunger-level] + 10)
+; => {:cuddle-hunger-level 21, :percent-deteriorated 0}
+```
+
+This is all interesting and fun, but what happens if two separate
+threads call `(swap! fred increase-cuddle-hunger-level 1)`? Is it
+possible for one of the increments get "lost" the way it did in the
+Ruby example?
+
+The answer is no! `swap!` implements "compare-and-set" semantics,
+meaning it does the following internally:
+
+1. It reads the current state of the atom
+2. It then applies the update function to that state
+3. Next, it checks whether the value it read in step 1 is identical to
+   the atom's current value
+4. If it is, then `swap!` updates the atom to refer to the result of
+   step 2
+5. If it isn't, then `swap!` *retries*, going through the process
+   again with step 1.
+
+The result is that no swaps will ever get lost.
+
+Sometimes you'll want to update an atom without checking its current
+value. For example, you may develop a serum to "reset" a cuddle
+zombie's hunger level and deterioration. For those cases, there's the
+`reset!` function:
+
+```clojure
+(reset! fred {:cuddle-hunger-level 0
+              :percent-deteriorated 0})
+```
