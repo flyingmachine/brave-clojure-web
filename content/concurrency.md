@@ -765,9 +765,6 @@ In the rest of the chapter, you'll dive deeper into Clojure's
 philosophy and discover how the language's design enables even more
 power concurrency tools.
 
-## Stateless Concurrency
-
-
 ## Escaping The Pit of Evil
 
 Literature on concurrency generally agrees that the Three Concurrency
@@ -937,7 +934,12 @@ related values with an identity. Here's how you create one:
                  :percent-deteriorated 0}))
 ```
 
-To get an atom's current state, you dereference it:
+To get an atom's current state, you dereference it. Unlike futures,
+delays, and promises, dereferencing an atom (or any other reference
+type) will never block. When you dereference a reference type, it's
+like you're saying, "give me this identity's current state right now,"
+so it makes sense that the operation doesn't block. Here's Fred's
+current state:
 
 ```clojure
 @fred
@@ -949,11 +951,13 @@ might seem contradictory. You might be shouting at me, "You said atoms
 are unchanging!" Indeed, they are! Now, though, we're working with the
 atom *reference type*, a construct which refers to atomic values. From
 here on out we'll take "atom" to mean "atom reference type" and
-"value" to mean "unchanging entity.
+"value" to mean "unchanging entity."
 
-Swap receives as arguments an atom and a function to apply to the
-atom's current state in order to produce a new value, which becomes
-the atom's current state. The new value is returned when you swap:
+`swap!` receives an atom and a function as arguments. `swap!` applies
+the function to the atom's current state in order to produce a new
+value, and then updates the atom to refer to this new value. The new
+value is also returned. Here's how you might increase Fred's cuddle
+hunger level:
 
 ```clojure
 (swap! fred
@@ -969,6 +973,28 @@ Dereferencing `fred` will return the new state:
 ; => {:cuddle-hunger-level 1, :percent-deteriorated 0}
 ```
 
+In the example above, you passed `swap!` a function which only takes
+one argument (`state`). However, you can also pass `swap!` a function
+which takes multiple arguments. For example, you could create a
+function which takes two arguments: a zombie state and the amount by
+which to increase its cuddle hunger level:
+
+```clojure
+(defn increase-cuddle-hunger-level
+  [zombie-state increase-by]
+  (merge-with + zombie-state {:cuddle-hunger-level increase-by}))
+
+(increase-cuddle-hunger-level @fred 10)
+; => {:cuddle-hunger-level 11, :percent-deteriorated 0}
+```
+
+You then call `swap!` with the additional arguments:
+
+```clojure
+(swap! fred increase-cuddle-hunger-level 10)
+; => {:cuddle-hunger-level 11, :percent-deteriorated 0}
+@fred
+; => {:cuddle-hunger-level 11, :percent-deteriorated 0}
+```
 
 
-## Make it Stateless
