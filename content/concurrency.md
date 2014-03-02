@@ -927,13 +927,10 @@ How can we do this in Clojure, though? The tools we've introduced so
 far don't allow it. To handle change, Clojure uses *reference types*.
 Let's look at the simplest of these, the *atom*.
 
-### Atoms
+## Atoms
 
-Clojure atoms allow you to endow a succession of related values with
-an identity. This might seem a little confusing. You might be shouting
-at me "You said atoms are unchanging!" Indeed, they are! Now, though,
-we're working with the atom *reference type*, a construct which refers
-to atoms (value) and is not an atom itself. Here's how you create one:
+Clojure's atom reference type allows you to endow a succession of
+related values with an identity. Here's how you create one:
 
 ```clojure
 (def fred (atom {:cuddle-hunger-level 0
@@ -947,10 +944,16 @@ To get an atom's current state, you dereference it:
 ; => {:cuddle-hunger-level 0, :percent-deteriorated 0}
 ```
 
-To update the atom to refer to a new state, you use `swap!`. Swap
-receives as arguments an atom and a function to apply to the current
-atom's value in order to produce a new value, which becomes the atom's
-current state. The new value is returned when you swap:
+To update the atom to refer to a new state, you use `swap!`. This
+might seem contradictory. You might be shouting at me, "You said atoms
+are unchanging!" Indeed, they are! Now, though, we're working with the
+atom *reference type*, a construct which refers to atomic values. From
+here on out we'll take "atom" to mean "atom reference type" and
+"value" to mean "unchanging entity.
+
+Swap receives as arguments an atom and a function to apply to the
+atom's current state in order to produce a new value, which becomes
+the atom's current state. The new value is returned when you swap:
 
 ```clojure
 (swap! fred
@@ -965,13 +968,6 @@ Dereferencing `fred` will return the new state:
 @fred
 ; => {:cuddle-hunger-level 1, :percent-deteriorated 0}
 ```
-
-Clojure implements
-
-NOTES
-- identity is reference, not name
-- you can dereference, work with that state: store it, whatever,
-  without worrying about it changing
 
 
 
