@@ -1058,7 +1058,12 @@ meaning it does the following internally:
 
 The result is that no swaps will ever get lost.
 
-Sometimes you'll want to update an atom without checking its current
+One thing to note about `swap!`: atom updates happen synchronously.
+For example, if your update function calls `Thread/sleep 1000` for
+some reason, then the thread will block for at least a second while
+`swap!` completes.
+
+Lastly, sometimes you'll want to update an atom without checking its current
 value. For example, you may develop a serum to "reset" a cuddle
 zombie's hunger level and deterioration. For those cases, there's the
 `reset!` function:
@@ -1067,3 +1072,10 @@ zombie's hunger level and deterioration. For those cases, there's the
 (reset! fred {:cuddle-hunger-level 0
               :percent-deteriorated 0})
 ```
+
+And that covers all the core functionality for atoms! To recap: atoms
+implement Clojure's concept of state. They allow you to endow a series
+of immutable values with an identity. They offer a solution to the
+reference cell problem through their check-and-set semantics. They
+also allow you to work with past states without fear of them mutating
+in place.
