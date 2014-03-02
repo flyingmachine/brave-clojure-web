@@ -861,6 +861,17 @@ inconsistent when recovering from the zombie apocalypse. However,
 there's no way to hold on to the state of an object at a specific
 moment in time.
 
+Finally, there's no way to express an event that changes both
+`cuddle_hunger_level` and `percent_deteriorated` simultaneously. The
+result is that it's possible for `fred` to have an inconsistent state:
+
+```ruby
+fred.cuddle_hunger_level = fred.cuddle_hunger_level + 1
+# At this time, another thread could read fred's attributes and
+# "perceive" fred in an inconsistent state
+fred.percent_deteriorated = fred.percent_deteriorated + `
+```
+
 Still, the fact that the state of the Cuddle Zombie Object and that
 Objects in general are never stable doesn't stop us from treating them
 as the fundamental building blocks of programs. In fact, this is seen
@@ -911,6 +922,8 @@ as opposed to some other succession of related atoms.
 From this viewpoint, there's no such thing as "mutable state".
 Instead, "state" means "the value of an identity at a point in time."
 
+TODO explain a bit more how this is logical
+
 Here's how you might visualize atoms, process, identity, and state:
 
 TODO image goes here
@@ -937,19 +950,19 @@ related values with an identity. Here's how you create one:
 To get an atom's current state, you dereference it. Unlike futures,
 delays, and promises, dereferencing an atom (or any other reference
 type) will never block. When you dereference a reference type, it's
-like you're saying, "give me this identity's current state right now,"
-so it makes sense that the operation doesn't block. Here's Fred's
-current state:
+like you're saying, "give me this identity's state as it is right
+now," so it makes sense that the operation doesn't block. Here's
+Fred's current state:
 
 ```clojure
 @fred
 ; => {:cuddle-hunger-level 0, :percent-deteriorated 0}
 ```
 
-In our Ruby example above, I mentioned that your data could change
-when trying to log it on a separate thread. There's no danger of that
-when using atoms to manage state because each state is immutable.
-Here's how you could log a zombie's state:
+In our Ruby example above, I mentioned that data could change when
+trying to log it on a separate thread. There's no danger of that when
+using atoms to manage state because each state is immutable. Here's
+how you could log a zombie's state:
 
 ```clojure
 (let [zombie-state @fred]
@@ -984,10 +997,21 @@ Dereferencing `fred` will return the new state:
 ; => {:cuddle-hunger-level 1, :percent-deteriorated 0}
 ```
 
+Unlike Ruby, it's not possible for `fred` to be an inconsistent state.
+You can update both "attributes" at the same time:
+
+```clojure
+(swap! fred
+       (fn [state]
+         (merge-with + state {:cuddle-hunger-level 1
+                              :percent-deteriorated 1})))
+; => {:cuddle-hunger-level 2, :percent-deteriorated 1}
+```
+
 In the example above, you passed `swap!` a function which only takes
 one argument (`state`). However, you can also pass `swap!` a function
 which takes multiple arguments. For example, you could create a
-function which takes two arguments: a zombie state and the amount by
+function which takes two arguments, a zombie state and the amount by
 which to increase its cuddle hunger level:
 
 ```clojure
@@ -996,23 +1020,23 @@ which to increase its cuddle hunger level:
   (merge-with + zombie-state {:cuddle-hunger-level increase-by}))
 
 (increase-cuddle-hunger-level @fred 10)
-; => {:cuddle-hunger-level 11, :percent-deteriorated 0}
+; => {:cuddle-hunger-level 12, :percent-deteriorated 1}
 ```
 
 You then call `swap!` with the additional arguments:
 
 ```clojure
 (swap! fred increase-cuddle-hunger-level 10)
-; => {:cuddle-hunger-level 11, :percent-deteriorated 0}
+; => {:cuddle-hunger-level 12, :percent-deteriorated 1}
 @fred
-; => {:cuddle-hunger-level 11, :percent-deteriorated 0}
+; => {:cuddle-hunger-level 12, :percent-deteriorated 1}
 ```
 
-Or you could express the whole thing using Clojure's core functions:
+Or you could express the whole thing using Clojure's built-in functions:
 
 ```clojure
 (swap! fred update-in [:cuddle-hunger-level] + 10)
-; => {:cuddle-hunger-level 21, :percent-deteriorated 0}
+; => {:cuddle-hunger-level 22, :percent-deteriorated 1}
 ```
 
 This is all interesting and fun, but what happens if two separate
