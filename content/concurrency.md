@@ -1087,7 +1087,125 @@ reference cell and mutual exclusion problems through their
 check-and-set semantics. They also allow you to work with past states
 without fear of them mutating in place.
 
-Now let's have a look at the next reference type, *refs*!
+Beyond these core features, atoms also share two features with the
+other reference types. You can attach both *watches* and *validators*
+to atoms. Let's look at those now.
+
+## Watches and Validators
+
+Watches allow you to be super creepy and check in on your reference
+types' every move. Validators allow you to be super controlling and
+restrict what states are allowable. Both watches and validators are
+plain ol' functions.
+
+A watch is a function which takes four arguments: a key, the thing
+being watched, its previous state, and its new state. You can
+register any number of watches with a reference type.
+
+Let's say that a zombie's `shuffle-speed` (measured in shuffles per
+hour, or SPH) is dependent on its hunger level and deterioration:
+
+```clojure
+(defn shuffle-speed
+  [zombie]
+  (* (:cuddle-hunger-level zombie) (- 100 (:percent-deteriorated
+  zombie))))
+
+@fred
+; => {:cuddle-hunger-level 22, :percent-deteriorated 1}
+```
+
+You want to be alerted whenever its shuffle speed reaches the
+dangerous level of 5000 SPH. Otherwise you want to told that
+everything's OK. Here's a watch function you could use:
+
+```clojure
+(defn shuffle-alert
+  [key watched old-state new-state]
+  (let [sph (shuffle-speed new-state)]
+    (if (> sph 5000)
+      (do
+        (println "Run, you fool!")
+        (println "The zombie's SPH is now " sph)
+        (println "This message brought to your courtesy of " key))
+      (do
+        (println "All's well with " key)
+        (println "Cuddle hunger: " (:cuddle-hunger-level new-state))
+        (println "Percent deteriorated: " (:percent-deteriorated new-state))
+        (println "SPH: " sph)))))
+```
+
+Just attach it to fred with `add-watch`:
+
+```clojure
+;; General form of add-watch is (add-watch ref key watch-fn)
+(add-watch fred :fred-shuffle-alert shuffle-alert)
+(swap! fred update-in [:percent-detiorated] + 1)
+; => All's well with  :fred-shuffle-alert
+; => Cuddle hunger:  22
+; => Percent deteriorated:  3
+; => SPH:  2134
+
+(swap! fred update-in [:cuddle-hunger-level] + 30)
+; => Run, you fool!
+; => The zombie's SPH is now  5044
+; => This message brought to your courtesy of  :fred-shuffle-alert
+```
+
+This example watch function didn't use `watched` or `old-state`, but
+they're there for you if the need arises. Now let's cover
+validators.
+
+### Validators
+
+Validators let you specify what states are allowable for a reference.
+For example, here's a validator that you could use to ensure that a
+zombie's `:percent-deteriorated` was between 0 and 100:
+
+```clojure
+(defn percent-deteriorated-validator
+  [{:keys [percent-deteriorated]}]
+  (and (>= percent-deteriorated 0)
+       (<= percent-deteriorated 100)))
+```
+
+As you can see, the validator takes only one argument. When you add a
+validator to reference, then it will call this validator with the
+value that results from the update function. If the validator fails by
+returning false or throwing an exception, then the reference won't be
+changed to point to the proposed new state.
+
+You can attach a validator during atom creation:
+
+```clojure
+(def bobby
+  (atom
+   {:cuddle-hunger-level 0 :percent-deteriorated 0}
+   :validator percent-deteriorated-validator))
+(swap! bobby update-in [:percent-deteriorated] + 200)
+; => throws "Invalid reference state"
+```
+
+In this example, `percent-deteriorated-validator` returned false and
+the atom update failed. You can throw an exception to get a more
+descriptive error message:
+
+```clojure
+(defn percent-deteriorated-validator
+  [{:keys [percent-deteriorated]}]
+  (or (and (>= percent-deteriorated 0)
+           (<= percent-deteriorated 100))
+      (throw (IllegalStateException. "That's not mathy!"))))
+(def bobby
+  (atom
+   {:cuddle-hunger-level 0 :percent-deteriorated 0}
+   :validator percent-deteriorated-validator))
+(swap! bobby update-in [:percent-deteriorated] + 200)
+; => throws "IllegalStateException That's not mathy!"
+```
+
+Pretty great! Now let's look at refs.
+
 
 ## Refs
 
