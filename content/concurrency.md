@@ -861,15 +861,16 @@ inconsistent when recovering from the zombie apocalypse. However,
 there's no way to hold on to the state of an object at a specific
 moment in time.
 
-Finally, there's no way to express an event that changes both
-`cuddle_hunger_level` and `percent_deteriorated` simultaneously. The
-result is that it's possible for `fred` to have an inconsistent state:
+Finally, you have to take extra care to express a change to both
+`cuddle_hunger_level` and `percent_deteriorated` simultaneously. If
+you don't use extra precautions (mutual exclusion locks, which I won't
+cover) it's possible for `fred` to have an inconsistent state:
 
 ```ruby
 fred.cuddle_hunger_level = fred.cuddle_hunger_level + 1
 # At this time, another thread could read fred's attributes and
 # "perceive" fred in an inconsistent state
-fred.percent_deteriorated = fred.percent_deteriorated + `
+fred.percent_deteriorated = fred.percent_deteriorated + 1
 ```
 
 Still, the fact that the state of the Cuddle Zombie Object and that
@@ -997,7 +998,7 @@ Dereferencing `fred` will return the new state:
 ; => {:cuddle-hunger-level 1, :percent-deteriorated 0}
 ```
 
-Unlike Ruby, it's not possible for `fred` to be an inconsistent state.
+Unlike Ruby, it's not possible for `fred` to be in an inconsistent state.
 You can update both "attributes" at the same time:
 
 ```clojure
@@ -1076,6 +1077,14 @@ zombie's hunger level and deterioration. For those cases, there's the
 And that covers all the core functionality for atoms! To recap: atoms
 implement Clojure's concept of state. They allow you to endow a series
 of immutable values with an identity. They offer a solution to the
-reference cell problem through their check-and-set semantics. They
-also allow you to work with past states without fear of them mutating
-in place.
+reference cell and mutual exclusion problems through their
+check-and-set semantics. They also allow you to work with past states
+without fear of them mutating in place.
+
+Now let's have a look at the next reference type, *refs*!
+
+## Refs
+
+
+TODO race conditions
+TODO be more explicit about mutual exclusion relation to reference cells
