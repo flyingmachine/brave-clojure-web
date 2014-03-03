@@ -104,9 +104,10 @@ you'll learn apply directly to distributed programming.
 ### Blocking and Async
 
 One of the big use cases for concurrent programming is for
-**blocking** operations. "Blocking" really just means waiting and
-you'll most often hear it used in relation to I/O operations. Let's
-examine this using the Concurrent Lady Gaga example.
+**blocking** operations. "Blocking" really just means waiting for an
+operation to finish and you'll most often hear it used in relation to
+I/O operations. Let's examine this using the Concurrent Lady Gaga
+example.
 
 If Lady Gaga texts her interlocutor and then stands there with her
 phone in her hand, staring at the screen for a response, then you
@@ -800,7 +801,8 @@ To draw out the differences, let's go over two different ways of
 modeling a cuddle zombie. Unlike a regular zombie, a cuddle zombie
 does not want to devour your brains. It wants only to spoon you and
 maybe smell your neck. That makes its undead, shuffling, decaying
-state all the more tragic.
+state all the more tragic. How could you try to kill something that
+only wants love? Who's the *real* monster here?
 
 ### Object-Oriented Metaphysics
 
@@ -862,9 +864,13 @@ there's no way to hold on to the state of an object at a specific
 moment in time.
 
 Finally, you have to take extra care to express a change to both
-`cuddle_hunger_level` and `percent_deteriorated` simultaneously. If
-you don't use extra precautions (mutual exclusion locks, which I won't
-cover) it's possible for `fred` to have an inconsistent state:
+`cuddle_hunger_level` and `percent_deteriorated` simultaneously. You
+can do this using mutexes. I won't go into details, but basically
+mutexes are a way of manually addressing the mutual exclusion problem.
+In this case, the "resource" is the `fred` object and a mutex ensures
+that only one thread can access it at for the duration of the mutex.
+Without it, it's possible for `fred` to be viewed in an inconsistent
+state:
 
 ```ruby
 fred.cuddle_hunger_level = fred.cuddle_hunger_level + 1
@@ -1085,6 +1091,3 @@ Now let's have a look at the next reference type, *refs*!
 
 ## Refs
 
-
-TODO race conditions
-TODO be more explicit about mutual exclusion relation to reference cells
