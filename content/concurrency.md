@@ -1209,3 +1209,44 @@ Pretty great! Now let's look at refs.
 
 ## Refs
 
+Atoms are great for managing the state of independent identities.
+Sometimes, though, we need to express that an event should update the
+state of more than one identity simultaneously.
+
+The classic example of this is modeling sock gnome transactions. As we
+all know, sock gnomes take one of a pair of socks from clothes dryers
+worldwide. They use these socks to incubate their young. In return for
+this "gift", sock gnomes protect your home from El Chupacabra. If you
+haven't been visited by El Chupacabra lately, you have sock gnomes to
+thank.
+
+When modeling sock transfers, we need to express that a dryer has lost
+a sock and a gnome has gained a sock simultaneously. One moment, the
+sock belongs to the dryer; the next, it belongs to the gnome. The sock
+should never appear to belong to both the dryer and the gnome, nor
+should it appear to belong to neither.
+
+You can model this transfer with refs. Refs allow you to update the
+state of multiple identities using transaction semantics. Transactions
+are:
+
+* Atomic, meaning that all refs are updated or none of them are
+* Consistent, meaning that the refs always appear to have valid
+  states. A sock will always belong to a dryer or a gnome, but never
+  both or neither
+* Isolated, meaning that transactions behave as if they executed
+  serially; if two threads are simultaneously running transactions
+  which alter the same ref, then one transaction will retry. This is
+  similar to the "check-and-set" semantics of atoms.
+  
+
+You might recognize these as the "A", "C", and "I" in the "ACID"
+properties of database transactions. You can think of refs as giving
+you the same concurrency safety as database transactions, only with
+in-memory data.
+
+Here's how you could express sock transfer:
+
+```clojure
+
+```
