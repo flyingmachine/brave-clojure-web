@@ -1289,9 +1289,11 @@ can with atoms:
 ```
 
 Everything's in place for you to actually perform the transfer. The
-key function below is `dosync`. This defines the extent of your
-transaction. After that, we do some checks to ensure that the sock
-transferred as we expect:
+key functions below are `dosync` and `alter`. `dosync` defines the
+extent of your transaction, and `alter` specifies how the refs should
+be updated. After we perform the transfer, we do some checks to ensure
+that the sock transferred as we expect. I'll explain this code in more
+detail below:
 
 ```clojure
 (defn steal-sock
@@ -1318,4 +1320,14 @@ transferred as we expect:
 ;; ({:variety "passive-aggressive", :count 1})
 ```
 
-Cool!
+It worked! But what exactly happened? Let's break down `steal-sock`.
+
+First, `dosync`. Until now I've been talking about how refs allow you
+to express state changes using transaction semantics. `dosync` is how
+you initiate a transaction and everything within the body of `dosync`
+happens within the context of a transaction. That has a few
+implications:
+
+* If another thread updates one of the refs you're using before your
+
+Within `dosync`, you can use `alter` to specify how 
