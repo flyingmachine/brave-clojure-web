@@ -1245,8 +1245,77 @@ properties of database transactions. You can think of refs as giving
 you the same concurrency safety as database transactions, only with
 in-memory data.
 
-Here's how you could express sock transfer:
+Let's get to actually performing the sock tracksfer. First, you'll
+need to code up some sock-and-gnome creation technology:
 
 ```clojure
+(def sock-varieties
+  #{"darned" "argyle" "wool" "horsehair" "mulleted"
+    "passive-aggressive" "striped" "polka-dotted"
+    "athletic" "business" "power" "invisible" "gollumed"})
 
+(defn sock-count
+  [sock-variety count]
+  {:variety sock-variety
+   :count count})
+
+(defn generate-sock-gnome
+  "Create an initial sock gnome state with no socks"
+  [name]
+  {:name name
+   :socks #{}})
 ```
+
+Now you can create your actual refs. The gnome will have 0 socks. The
+dryer, on the other hand, will have a set of sock pairs generated from
+the set of sock varieties. Notice that you can deref refs just like
+can with atoms:
+
+```clojure 
+;; Here are our actual refs
+(def sock-gnome (ref (generate-sock-gnome "Barumpharumph")))
+(def dryer (ref {:name "LG 1337"
+                 :socks (set (map #(sock-count % 2) sock-varieties))}))
+
+(:socks @dryer)
+; =>
+#{{:variety "passive-aggressive", :count 2} {:variety "power", :count 2}
+  {:variety "athletic", :count 2} {:variety "business", :count 2}
+  {:variety "argyle", :count 2} {:variety "horsehair", :count 2}
+  {:variety "gollumed", :count 2} {:variety "darned", :count 2}
+  {:variety "polka-dotted", :count 2} {:variety "wool", :count 2}
+  {:variety "mulleted", :count 2} {:variety "striped", :count 2}
+  {:variety "invisible", :count 2}}
+```
+
+Everything's in place for you to actually perform the transfer. The
+key function below is `dosync`. This defines the extent of your
+transaction. After that, we do some checks to ensure that the sock
+transferred as we expect:
+
+```clojure
+(defn steal-sock
+  [gnome dryer]
+  (dosync
+   (when-let [pair (some #(if (= (:count %) 2) %) (:socks @dryer))]
+     (let [updated-count (sock-count (:variety pair) 1)]
+       (alter gnome update-in [:socks] conj updated-count)
+       (alter dryer update-in [:socks] disj pair)
+       (alter dryer update-in [:socks] conj updated-count)))))
+(steal-sock sock-gnome dryer)
+
+;; Your gnome may have stolen a different sock because socks are
+;; stored in an unordered set
+(:socks @sock-gnome)
+; => #{{:variety "passive-aggressive", :count 1}}
+
+;; Make sure all passive-aggressive socks are accounted for
+(defn similar-socks
+  [target-sock sock-set]
+  (filter #(= (:variety %) (:variety target-sock)) sock-set))
+
+(similar-socks (first (:socks @sock-gnome)) (:socks @dryer))
+;; ({:variety "passive-aggressive", :count 1})
+```
+
+Cool!

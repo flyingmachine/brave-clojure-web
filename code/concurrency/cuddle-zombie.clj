@@ -61,6 +61,6 @@
 (def bobby
   (atom
    {:cuddle-hunger-level 0 :percent-deteriorated 0}
-   :validator percent-deteriorated-validator))w
+   :validator percent-deteriorated-validator))
 
 (swap! bobby update-in [:percent-deteriorated] + 200)
