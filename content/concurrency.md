@@ -1446,3 +1446,14 @@ Now here's an example of unsafe commuting:
 ; => #{}
 ```
 
+The `1` was given to both `receiver-a` and `receiver-b`, which isn't
+valid. What's different about this example is that the function which
+are applied, essentially `#(conj % gift)` and `#(disj % gift)`, are
+derived from the state of `giver`. Once `giver` changes, the derived
+function is invalid but `commute` doesn't care and commits the result
+anyway.
+
+The lesson here is that, while `commute` can help speed up your
+programs, you have to be judicious in using it.
+
+That's it for refs!
