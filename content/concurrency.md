@@ -1098,6 +1098,8 @@ types' every move. Validators allow you to be super controlling and
 restrict what states are allowable. Both watches and validators are
 plain ol' functions.
 
+### Watches
+
 A watch is a function which takes four arguments: a key, the thing
 being watched, its previous state, and its new state. You can
 register any number of watches with a reference type.
@@ -1226,6 +1228,8 @@ sock belongs to the dryer; the next, it belongs to the gnome. The sock
 should never appear to belong to both the dryer and the gnome, nor
 should it appear to belong to neither.
 
+### Modeling Sock Transfers
+
 You can model this transfer with refs. Refs allow you to update the
 state of multiple identities using transaction semantics. Transactions
 are:
@@ -1278,6 +1282,8 @@ can with atoms:
                  :socks (set (map #(sock-count % 2) sock-varieties))}))
 
 (:socks @dryer)
+;; The order of your socks will probably be different because we're
+;; using an unordered set
 ; =>
 #{{:variety "passive-aggressive", :count 2} {:variety "power", :count 2}
   {:variety "athletic", :count 2} {:variety "business", :count 2}
@@ -1288,12 +1294,12 @@ can with atoms:
   {:variety "invisible", :count 2}}
 ```
 
-Everything's in place for you to actually perform the transfer. The
-key functions below are `dosync` and `alter`. `dosync` defines the
-extent of your transaction, and `alter` specifies how the refs should
-be updated. After we perform the transfer, we do some checks to ensure
-that the sock transferred as we expect. I'll explain this code in more
-detail below:
+Everything's in place for you to actually perform the transfer. We'll
+want to modify the `sock-gnome` ref to show that it has gained a sock
+and the `dryer` ref to show that it's lost a sock. You modify refs by
+using `alter`, and you must use `alter` within a transaction. `dosync`
+initiates a transaction and defines its extent; you put all
+transaction operations in its body:
 
 ```clojure
 (defn steal-sock
@@ -1320,14 +1326,123 @@ detail below:
 ;; ({:variety "passive-aggressive", :count 1})
 ```
 
-It worked! But what exactly happened? Let's break down `steal-sock`.
+There are a few things to note here. First, when you `alter` a ref the
+change isn't immediately visible outside of the current transaction.
+This is what lets you call `alter` on the `dryer` twice within a
+transaction without worrying about whether `dryer` will be read in an
+inconsistent state. Similarly, if you `alter` a ref and then deref it
+within the same transaction. Here's a toy example to demonstrate this
+idea of in-transaction state:
 
-First, `dosync`. Until now I've been talking about how refs allow you
-to express state changes using transaction semantics. `dosync` is how
-you initiate a transaction and everything within the body of `dosync`
-happens within the context of a transaction. That has a few
-implications:
+```clojure
+(def counter (ref 0))
+(future
+  (dosync
+   (alter counter inc)
+   (println @counter)
+   (Thread/sleep 500)
+   (alter counter inc)
+   (println @counter)))
+(Thread/sleep 250)
+(println @counter)
 
-* If another thread updates one of the refs you're using before your
+; => prints:
+1
+0
+2
+```
 
-Within `dosync`, you can use `alter` to specify how 
+The transaction will only try to commit its changes when it ends. The
+commit works similarly to the `compare-and-set` semantics of atoms.
+Each ref is checked to see whether it's changed since transaction
+started. If *any* of the refs have changed, then *none* of the refs
+are updated and the transaction is retried. For example, this order of
+events will result in Transaction A being retried:
+
+1. Transaction A: alter gnome
+2. Transaction B: alter gnome
+3. Transaction B: alter dryer
+4. Transaction B: alter dryer
+5. Transaction B: commit - succesfully updates gnome and dryer
+6. Transaction A: alter dryer
+7. Transaction A: alter dryer
+8. Transaction A: commit - fails because dryer and gnome have changed.
+   Retries.
+
+And there you have it! Save, easy, concurrent coordination of state
+changes. But that's not all! Refs have one more trick up their
+suspiciously long sleeve: `commute`.
+
+### Commute
+
+`commute` allows you to update update a ref's state within a
+transaction, just like `alter`. However, its behavior at commit time
+is complete different. Here's how `alter` behaves:
+
+1. Check pre-altered ref state against current state
+2. If the two differ, make the entire transaction retry
+3. Otherwise commit the altered ref state
+
+Whereas `commute` behaves like this:
+
+1. Run the commute function *again* using the *current* state
+2. Commit the result
+
+This can help improve performance by avoiding transaction retries, but
+it's important that you only use `commute` when you're sure that it's
+not possible for your refs to end up in an invalid state. Let's look
+at examples of safe and unsafe uses of commute.
+
+Here's an example of a safe use. The `sleep-print-update` returns the
+updated state, but also sleeps the specified number of milliseconds so
+that we can force transaction overlap. It prints the state received so
+that we can get insight into what's going on:
+
+```clojure
+(defn sleep-print-update
+  [sleep-time thread-name update-fn]
+  (fn [state]
+    (Thread/sleep sleep-time)
+    (println (str thread-name ": " state))
+    (update-fn state)))
+(def counter (ref 0))
+(future (dosync (commute counter (sleep-print-update 100 "Thread A" inc))))
+(future (dosync (commute counter (sleep-print-update 150 "Thread B" inc))))
+
+;=> prints:
+;=> Thread A: 0 ; at 100ms
+;=> Thread B: 0 ; at 150ms
+;=> Thread A: 0 ; at 200ms - counter updated immediately after
+;=> Thread B: 1 ; at 300ms
+```
+
+Notice that the last printed line reads `Thread B: 1`. That means that
+`sleep-print-update` is running against the current state of the
+counter, which is `1` at that point. If you deref `counter` you'll see
+that the value is `2`.
+
+Now here's an example of unsafe commuting:
+
+```clojure
+(def receiver-a (ref #{}))
+(def receiver-b (ref #{}))
+(def giver (ref #{1}))
+(future (dosync (let [gift (first (seq @giver))]
+                  (Thread/sleep 10)
+                  (commute receiver-a conj gift)
+                  (commute giver disj gift))))
+(future (dosync (let [gift (first (seq @giver))]
+                  (Thread/sleep 15)
+                  (commute receiver-b conj gift)
+                  (commute giver disj gift))))
+;; after 15 ms...
+@receiver-a
+; => #{1}
+
+@receiver-b
+; => #{1}
+
+@giver
+; => #{}
+```
+

@@ -42,3 +42,37 @@
   {:variety "polka-dotted", :count 2} {:variety "wool", :count 2}
   {:variety "mulleted", :count 2} {:variety "striped", :count 2}
   {:variety "invisible", :count 2}}
+
+(def counter (ref 0))
+(future
+  (dosync
+   (alter counter inc)
+   (println @counter)
+   (Thread/sleep 500)
+   (alter counter inc)
+   (println @counter)))
+(Thread/sleep 250)
+(println @counter)
+
+
+(defn sleep-print-update
+  [sleep-time thread-name update-fn]
+  (fn [state]
+    (Thread/sleep sleep-time)
+    (println (str thread-name ": " state))
+    (update-fn state)))
+(def counter (ref 0))
+(future (dosync (commute counter (sleep-print-update 100 "Thread A" inc))))
+(future (dosync (commute counter (sleep-print-update 150 "Thread B" inc))))
+
+(def receiver-a (ref #{}))
+(def receiver-b (ref #{}))
+(def giver (ref #{1}))
+(future (dosync (let [gift (first (seq giver))]
+                  (Thread/sleep 100)
+                  (commute receiver-a conj gift)
+                  (commute giver disj gift))))
+(future (dosync (let [gift (first (seq giver))]
+                  (Thread/sleep 150)
+                  (commute receiver-b conj gift)
+                  (commute giver disj gift))))
