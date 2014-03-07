@@ -1384,7 +1384,7 @@ is complete different. Here's how `alter` behaves:
 2. If the two differ, make the entire transaction retry
 3. Otherwise commit the altered ref state
 
-Whereas `commute` behaves like this:
+`commute`, on the other hand, behaves like this:
 
 1. Reach outside the transaction and read the ref's current state.
 1. Run the commute function *again* using the current state
@@ -1487,9 +1487,11 @@ and *dynamically bind* them. Let's look at dynamic binding first.
 When I first introduced `def`, I implored you to treat it as if its
 defining a constant. It turns out that vars are a little more flexible
 than that. You can create a *dynamic* var whose *binding* can be
-changed on a per-thread basis.
+changed. Let's look at what that actually means.
 
-Let's look at what that actually means. First, create a dynamic var:
+#### Creating and Binding Dynamic Vars
+
+First, create a dynamic var:
 
 ```clojure
 (def ^:dynamic *notification-address* "dobby@elf.org")
@@ -1511,46 +1513,163 @@ dynamic vars by using `binding`:
 "test@elf.org"
 ```
 
-Why would you want to do this send? Well, you might have a function
-which sends a notification email. In this example, we'll just return a
-string, but pretend that it actually sends the email:
+You can also stack bindings, just like you can with `let`:
 
 ```clojure
-(defn send-email
+(binding [*notification-address* "tester-1@elf.org"]
+  (println *notification-address*)
+  (binding [*notification-address* "tester-2@elf.org"]
+    (println *notification-address*))
+  (println *notification-address*))
+;; prints:
+; => tester-1@elf.org
+; => tester-2@elf.org
+; => tester-1@elf.org
+```
+
+Now that you know how to dynamically bind a var, how would you use
+this feature?
+
+#### Dynamic Var Uses
+
+Let's say you have a function which sends a notification email. In
+this example, we'll just return a string, but pretend that it actually
+sends the email:
+
+```clojure
+(defn notify
   [message]
   (str "TO: " *notification-address* "\n"
        "MESSAGE: " message))
-(send-email "I fell.")
+(notify "I fell.")
 ; => "TO: dobby@elf.org\nMESSAGE: I fell."
 ```
 
 What if you want to test this function? You don't want Dobby getting
-spammed every time your specs run. Binding to the rescue:
+spammed every time your specs run. `binding` to the rescue:
 
 ```clojure
 (binding [*notification-address* "test@elf.org"]
-  (send-email "test!"))
+  (notify "test!"))
 ; => "TO: test@elf.org\nMESSAGE: test!"
 ```
 
-Of course, you could have just defined `send-email` to take an email
-address as an argument. Sometimes that's the right choice. But dynamic
-variables are great for this kind of thing, too. You can expect to see
-them in others' libraries and even in Clojure's core libraries.
+Of course, you could have just defined `notify` to take an email
+address as an argument. That's often the right choice. Why would you
+want to use dynamic vars instead?
 
-If you access `*notification-address*` from a manually created thread,
-though, it will retain its original. Ironically, this prevents us from
-easily creating a proof in the REPL. This is because Clojure uses the
-`*out*` dynamic variable, which `println`
-
-
-
-
+Dynamic vars are most often used to name a resource that one or more
+functions target. In the example above, you can view the email address
+as a resource that you write to. In fact, Clojure comes with a ton of
+built-in dynamic vars for this purpose. `*out*`, for example,
+represents the standard output for print operations. In your program,
+you could re-bind `*out*` so that prints statements write to a file
+like so:
 
 ```clojure
-(binding [*notification-address* "test@elf.org"]
-  (future (wait 100 (println *notification-address*))))
-(println *notification-address*)
-; => dobby@elf.org
-; => test@elf.org
+(binding [*out* (clojure.java.io/writer "print-output")]
+  (println "A man who carries a cat by the tail learns 
+something he can learn in no other way.
+-- Mark Twain"))
+(slurp "print-output")
+; => A man who carries a cat by the tail learns
+; => something he can learn in no other way.
+; => -- Mark Twain
 ```
+
+It would be burdensome to have to pass an output destination to every
+invocation of `println`. Dynamic vars are a great way to specify a
+common resource while retaining the flexibility to change it on an
+ad-hoc basis.
+
+Dynamic vars are also often used for configuration. For example, the
+built-in var `*print-length*` allows you to specify how many items in
+a collection Clojure should print:
+
+```clojure
+(println ["Print" "all" "the" "things!"])
+; => [Print all the things!]
+
+(binding [*print-length* 1]
+  (println ["Print" "just" "one!"]))
+; => [Print ...]
+```
+
+Finally, it's possible to `set!` dynamic vars which have been bound.
+Whereas the examples we've seen so far allow you to convey information
+*in* to a function without having to pass in the information as an
+argument, `set!` allows you convey information *out* of a function
+without having to return it as an argument.
+
+For example, let's say you're a telepath who can only read minds
+*after* the knowledge you would gain ceases to be useful. You're
+trying to cross a bridge guarded by a troll who will eat you if you
+don't answer his "riddle". His riddle is, "What number between 1 and
+2 am I thinking of?" In the event that it devours you, you can at
+least die knowing what it was actually thinking:
+
+```clojure
+(def ^:dynamic *troll-thought* nil)
+(defn troll-riddle
+  [your-answer]
+  (let [number "man meat"]
+    (when (thread-bound? #'*troll-thought*)
+      (set! *troll-thought* number))
+    (if (= number your-answer)
+      "TROLL: You can cross the bridge!"
+      "TROLL: Time to eat you, succulent human!")))
+
+(binding [*troll-thought* nil]
+  (println (troll-riddle 2))
+  (println "DELICIOUS HUMAN: Oooooh! The answer was" *troll-thought*))
+
+; => TROLL: Time to eat you, succulent human!
+; => SUCCULENT HUMAN: Oooooh! The answer was man meat
+```
+
+There are probably real-world uses for this feature, too.
+
+#### Per-Thread Binding
+
+One final thing to note about binding: if you access a dynamically
+bound var from within a manually created thread, the var will evaluate
+to the *original* value. (If you're new to Java and Clojure, then you
+can probably skip this section and come back to you when you need it.)
+
+Ironically, this behavior prevents us from easily creating a fun
+demonstration in the REPL. This is because the REPL binds `*out*`.
+It's like all the code you run in the REPL is implicitly wrapped in
+something like `(binding [*out* repl-printer] your-code`. If you
+create a new thread then `*out*` won't be bound to the REPL printer.
+
+This example uses some some basic Java interop, but don't worry too
+much about it. You'll learn exactly what's going on in the Java
+chapter, but for now it should be understandable
+
+```clojure
+;; prints output to repl:
+(.write *out* "prints to repl")
+; => prints to repl
+
+;; doesn't print output to repl because *out* is not bound to repl printer:
+(.start (Thread. #(.write *out* "prints to standard out")))
+```
+
+You can work around this, though, with this goofy code:
+
+```clojure
+(let [out *out*]
+  (.start
+   (Thread. #(binding [*out* out]
+               (.write *out* "prints to repl from thread")))))
+```
+
+The let binding "captures" `*out*` so that we can then re-bind it in
+the child thread. It's goofy as hell. The point, though, is that
+bindings don't get passed on to *manually* created threads.
+
+They *do*, however, get passed on to futures. This is called *binding
+conveyance*. All throughout this chapter we've been printing from
+futures without any problem, for example.
+
+###

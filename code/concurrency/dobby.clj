@@ -7,10 +7,13 @@
 (println *notification-address*)
 
 
-(defn send-email
+(defn notify
   [message]
   (str "TO: " *notification-address* "\n"
        "MESSAGE: " message))
+
+(binding [*notification-address* "test@elf.org"]
+  (notify "test!"))
 
 (defn repl-printing-thread
   [thread-fn]
@@ -24,3 +27,28 @@
     .join)
   (println "I see the bound value:" *notification-address*))
 
+
+
+(binding [*out* (clojure.java.io/writer "print-output")]
+  (println "A man who carries a cat by the tail learns 
+something he can learn in no other way.
+-- Mark Twain"))
+
+
+(println ["Print" "all" "the" "items!"])
+(binding [*print-length* 1]
+  (println ["Print" "just" "one!"]))
+
+(def ^:dynamic *troll-thought* nil)
+(defn troll-riddle
+  [your-answer]
+  (let [number "man meat"]
+    (when (thread-bound? #'*troll-thought*)
+      (set! *troll-thought* number))
+    (if (= number your-answer)
+      "TROLL: You can cross the bridge!"
+      "TROLL: Time to eat you, succulent human!")))
+
+(binding [*troll-thought* nil]
+  (println (troll-riddle 2))
+  (println "SUCCULENT HUMAN: Oooooh! The answer was" *troll-thought*))
