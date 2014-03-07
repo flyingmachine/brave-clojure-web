@@ -1625,6 +1625,10 @@ least die knowing what it was actually thinking:
 
 ; => TROLL: Time to eat you, succulent human!
 ; => SUCCULENT HUMAN: Oooooh! The answer was man meat
+
+;; The var returns to its original value outside of `binding`:
+*troll-thought*
+; => nil
 ```
 
 There are probably real-world uses for this feature, too.
