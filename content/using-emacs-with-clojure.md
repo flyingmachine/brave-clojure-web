@@ -9,24 +9,21 @@ kind: documentation
 In this chapter you'll learn how to use Emacs to efficiently develop a
 Clojure application. You'll learn:
 
--   How to start a REPL process that's connected to Emacs
--   How to work with Emacs windows
--   A cornucopia of useful key bindings
-    -   How to evaluate an expression
-    -   How to compile the file you're editing
-    -   How to switch to the namespace of your current file
--   How to handle errors
--   Intro to Paredit
+*   How to start a REPL process that's connected to Emacs
+*   How to work with Emacs windows
+*   A cornucopia of useful key bindings
+    *   How to evaluate an expression
+    *   How to compile the file you're editing
+    *   How to switch to the namespace of your current file
+*   How to handle errors
+*   Intro to Paredit
 
 If you want to start digging in to Clojure code, please do skip
 ahead! You can always return later.
 
 ## Fire up your REPL!
 
-REPL stands for "Read-Eval-Print Loop", and a REPL is a great tool for
-quickly developing code.
-
-To connect Emacs to a REPL, we're going to use the Emacs package
+To connect Emacs to a REPL, you're going to use the Emacs package
 [CIDER](https://github.com/clojure-emacs/cider). If you followed the
 instructions in the previous chapter you should already have it
 installed, but you can also install it by running `M-x
@@ -45,7 +42,7 @@ starts a Clojure process with nrepl running and connects Emacs to it.
 After a short wait (it should be less than a minute), you should see
 something like this:
 
-![cider-jack-in](/images/using-emacs-with-clojure/nrepl-jack-in.png)
+![cider-jack-in](images/using-emacs-with-clojure/nrepl-jack-in.png)
 
 If you've never seen Emacs split into two halves like this, don't
 worry! We'll cover that in a second.
@@ -76,7 +73,7 @@ Emacs was invented in like, 1802 or something, so it uses terminology
 slightly different from what you're used to. When you ran
 `cider-jack-in` above, Emacs split its **frame** into two **windows**:
 
-![Frame and windows](/images/using-emacs-with-clojure/emacs-windows.png)
+![Frame and windows](images/using-emacs-with-clojure/emacs-windows.png)
 
 Here are a bunch of key bindings for working with windows:
 
@@ -122,7 +119,7 @@ Then do the following:
 Once you do this, you should see the text `Cleanliness is next to
 godliness` appear in the CIDER buffer:
 
-![keep it clean](/images/using-emacs-with-clojure/nrepl-eval-last-expression.png)
+![keep it clean](images/using-emacs-with-clojure/nrepl-eval-last-expression.png)
 
 The key binding `C-x C-e` runs the command
 `cider-eval-last-expression`. As the command suggests, this makes
@@ -132,7 +129,7 @@ then evaluates it.
 Now let's try to run the `-main` function so that we can let the world
 know that we're little tea pots:
 
-1. In the core.clj buffer, do `C-c M-n`. The prompt in the right
+1.  In the core.clj buffer, do `C-c M-n`. The prompt in the right
     window should now read `clojure-noob.core>`. `C-c M-n` sets the
     namespace to the namespace listed at the top of your current file,
     in this case `clojure-noob.core`. We haven't gone into detail
@@ -167,9 +164,9 @@ Finally, try this:
 
 CIDER should close the parenthis and evaluate the expression.
 
-The [CIDER README](https://github.com/clojure-emacs/cider) has a comprehensive list of key bindings which you
-can learn over time, but for now here's a summary of the key bindings
-we just went over:
+The [CIDER README](https://github.com/clojure-emacs/cider) has a
+comprehensive list of key bindings which you can learn over time, but
+for now here's a summary of the key bindings we just went over:
 
 ### Clojure Buffer Key Bindings
 
@@ -200,7 +197,7 @@ At the prompt, type this and hit enter:
 
 You should see something like this:
 
-![nrepl error](/images/using-emacs-with-clojure/nrepl-error.png)
+![nrepl error](images/using-emacs-with-clojure/nrepl-error.png)
 
 To get rid of the stack trace in the left window, do
 
