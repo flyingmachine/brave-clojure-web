@@ -940,6 +940,9 @@ can't _do_ anything. Change is not the result of one object acting on
 another. What we call "change" results when a) a process generates a new
 atom and b) we choose to associate the identity with the new atom.
 
+TODO explain how this lets you hold on to past. Give self fulfilling
+prophecy examaple.
+
 How can we do this in Clojure, though? The tools we've introduced so
 far don't allow it. To handle change, Clojure uses *reference types*.
 Let's look at the simplest of these, the *atom*.
@@ -1604,9 +1607,9 @@ without having to return it as an argument.
 For example, let's say you're a telepath who can only read minds
 *after* the knowledge you would gain ceases to be useful. You're
 trying to cross a bridge guarded by a troll who will eat you if you
-don't answer his "riddle". His riddle is, "What number between 1 and
-2 am I thinking of?" In the event that it devours you, you can at
-least die knowing what it was actually thinking:
+don't answer his "riddle". His riddle is, "What number between 1 and 2
+am I thinking of?" In the event that it devours you, you can at least
+die knowing what the troll was actually thinking:
 
 ```clojure
 (def ^:dynamic *troll-thought* nil)
@@ -1621,17 +1624,24 @@ least die knowing what it was actually thinking:
 
 (binding [*troll-thought* nil]
   (println (troll-riddle 2))
-  (println "DELICIOUS HUMAN: Oooooh! The answer was" *troll-thought*))
+  (println "SUCCULENT HUMAN: Oooooh! The answer was" *troll-thought*))
 
 ; => TROLL: Time to eat you, succulent human!
 ; => SUCCULENT HUMAN: Oooooh! The answer was man meat
 
-;; The var returns to its original value outside of `binding`:
+;; The var returns to its original value outside of binding:
 *troll-thought*
 ; => nil
 ```
 
-There are probably real-world uses for this feature, too.
+There are probably real-world uses for this feature, too. By the way,
+notice that you have to pass `#'*troll-thought*` (note the `#'`) and
+not `*troll-thought*` to the function `thread-bound?`. This is because
+`thread-bound?` takes the var itself as an argument, not the value it
+refers to.
+
+Now that you know the mechanics of dynamic binding, let's have a look
+at some its subtleties.
 
 #### Per-Thread Binding
 
@@ -1676,4 +1686,60 @@ They *do*, however, get passed on to futures. This is called *binding
 conveyance*. All throughout this chapter we've been printing from
 futures without any problem, for example.
 
-###
+That's it for dynamic binding. Let's turn our attention to the last
+var topic: altering their roots
+
+### Altering the Var Root
+
+When you create a new var, the initial value that you supply is its
+*root*:
+
+```clojure
+(def power-source "hair")
+```
+
+In this example, `"hair"` is the root value of `*power-source*`.
+Clojure lets you permanently change this root value with the function
+`alter-var-root`:
+
+```clojure
+(alter-var-root #'power-source (fn [_] "7-eleven parking lot"))
+power-source
+; => "7-eleven parking lot"
+```
+
+Like atoms and refs, you use a function to update the state of a var.
+In this case you're just returning a new string which bears no relation
+to the previous value.
+
+You'll hardly ever want to actually do this. You *especially* don't
+want to do this to perform simple variable assignment in the same way
+you would in a language like Ruby or Javascript.
+
+I've encountered one reasonable use of this behavior. It was in the
+"monger" library, an enjoyable MongoDB wrapper. When you first use
+Monger to connect to a MongoDB database, Monger uses `alter-var-root`
+to change the dynamic var `*mongodb-connection*` so that it points to
+the connection that was just created. This allows the code within the
+Monger library to target the `*mongodb-connection*` resource without
+knowing what its actual value will be.
+
+You can also temporarily alter a var's root with `with-redefs`. This
+works similarly to binding, except the alteration will appear in child
+threads. For example:
+
+```clojure
+(with-redefs [*out* *out*]
+        (doto (Thread. #(println "with redefs allows me to show up in the REPL"))
+          .start
+          .join))
+```
+
+This may be more appropriate than `bindings` for setting up a test
+environment. It's also more widely applicable, in that you can use it
+for any var, not just dynamic ones.
+
+Now you know all about vars! Try not to hurt yourself or anyone you
+know with them.
+
+
