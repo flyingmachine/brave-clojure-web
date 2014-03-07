@@ -783,7 +783,7 @@ inherently safer for concurrency. It's safe all the way down to its
 You'll learn Clojure's underlying metaphysics in this section. To
 fully illustrate it, I'll compare it to the metaphysics embodied by
 object-oriented languages. I'll also introduce a new type, Clojure's
-`atom`. By learning this philosophy, you'll be fully equipped to
+**atom**. By learning this philosophy, you'll be fully equipped to
 handle Clojure's remaining concurrency tools.
 
 When talking about metaphysics things tend to get a little fuzzy, but
@@ -1464,4 +1464,93 @@ anyway.
 The lesson here is that, while `commute` can help speed up your
 programs, you have to be judicious in using it.
 
-That's it for refs!
+And that should allow you to start using refs safely and sanely. They
+*do* have a few more nuances that I won't cover here. If you're
+curious about them, you can research the `ensure` function and the
+phenomenon *write skew*. That's it for refs!
+
+On to the final reference type that this book covers: *vars*.
+
+## Vars
+
+You've already learned a bit about vars in the chapter,
+[Organizing Your Project: a Librarians's Tale](/organization/).
+Briefly, vars are associations between symbols and objects. You create
+new vars with `def`.
+
+While vars aren't used to manage state in the same way as atoms and
+refs, they do have a couple tricks. You can alter their *roots*
+and *dynamically bind* them. Let's look at dynamic binding first.
+
+### Dynamic Binding
+
+When I first introduced `def`, I implored you to treat it as if its
+defining a constant. It turns out that vars are a little more flexible
+than that. You can create a *dynamic* var whose *binding* can be
+changed on a per-thread basis.
+
+Let's look at what that actually means. First, create a dynamic var:
+
+```clojure
+(def ^:dynamic *notification-address* "dobby@elf.org")
+```
+
+There are two things to notice. First, `^:dynamic`. This is how you
+signal to Clojure that a var is dynamic. Second, the var's name is
+surrounded in asterisks. Lispers call these *earmuffs*, which is
+adorable. Clojure requires you to enclose the names of dynamic vars in
+earmuffs. This helps signal the var's dynamicaltude to other
+programmers.
+
+Unlike regular vars, however, you can temporarily change the value of
+dynamic vars by using `binding`:
+
+```clojure
+(binding [*notification-address* "test@elf.org"]
+  *notification-address*)
+"test@elf.org"
+```
+
+Why would you want to do this send? Well, you might have a function
+which sends a notification email. In this example, we'll just return a
+string, but pretend that it actually sends the email:
+
+```clojure
+(defn send-email
+  [message]
+  (str "TO: " *notification-address* "\n"
+       "MESSAGE: " message))
+(send-email "I fell.")
+; => "TO: dobby@elf.org\nMESSAGE: I fell."
+```
+
+What if you want to test this function? You don't want Dobby getting
+spammed every time your specs run. Binding to the rescue:
+
+```clojure
+(binding [*notification-address* "test@elf.org"]
+  (send-email "test!"))
+; => "TO: test@elf.org\nMESSAGE: test!"
+```
+
+Of course, you could have just defined `send-email` to take an email
+address as an argument. Sometimes that's the right choice. But dynamic
+variables are great for this kind of thing, too. You can expect to see
+them in others' libraries and even in Clojure's core libraries.
+
+If you access `*notification-address*` from a manually created thread,
+though, it will retain its original. Ironically, this prevents us from
+easily creating a proof in the REPL. This is because Clojure uses the
+`*out*` dynamic variable, which `println`
+
+
+
+
+
+```clojure
+(binding [*notification-address* "test@elf.org"]
+  (future (wait 100 (println *notification-address*))))
+(println *notification-address*)
+; => dobby@elf.org
+; => test@elf.org
+```
