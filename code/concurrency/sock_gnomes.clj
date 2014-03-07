@@ -69,10 +69,10 @@
 (def receiver-b (ref #{}))
 (def giver (ref #{1}))
 (future (dosync (let [gift (first (seq @giver))]
-                  (Thread/sleep 100)
+                  (Thread/sleep 10)
                   (commute receiver-a conj gift)
                   (commute giver disj gift))))
 (future (dosync (let [gift (first (seq @giver))]
-                  (Thread/sleep 150)
+                  (Thread/sleep 15)
                   (commute receiver-b conj gift)
                   (commute giver disj gift))))

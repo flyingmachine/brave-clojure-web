@@ -1242,7 +1242,6 @@ are:
   serially; if two threads are simultaneously running transactions
   which alter the same ref, then one transaction will retry. This is
   similar to the "check-and-set" semantics of atoms.
-  
 
 You might recognize these as the "A", "C", and "I" in the "ACID"
 properties of database transactions. You can think of refs as giving
@@ -1331,8 +1330,8 @@ change isn't immediately visible outside of the current transaction.
 This is what lets you call `alter` on the `dryer` twice within a
 transaction without worrying about whether `dryer` will be read in an
 inconsistent state. Similarly, if you `alter` a ref and then deref it
-within the same transaction. Here's a toy example to demonstrate this
-idea of in-transaction state:
+within the same transaction, the deref will return the new state.
+Here's a toy example to demonstrate this idea of in-transaction state:
 
 ```clojure
 (def counter (ref 0))
@@ -1346,7 +1345,7 @@ idea of in-transaction state:
 (Thread/sleep 250)
 (println @counter)
 
-; => prints:
+;; prints:
 1
 0
 2
@@ -1354,10 +1353,10 @@ idea of in-transaction state:
 
 The transaction will only try to commit its changes when it ends. The
 commit works similarly to the `compare-and-set` semantics of atoms.
-Each ref is checked to see whether it's changed since transaction
-started. If *any* of the refs have changed, then *none* of the refs
-are updated and the transaction is retried. For example, this order of
-events will result in Transaction A being retried:
+Each ref is checked to see whether it's changed since you first tried
+to alter it. If *any* of the refs have changed, then *none* of the
+refs are updated and the transaction is retried. For example, this
+order of events will result in Transaction A being retried:
 
 1. Transaction A: alter gnome
 2. Transaction B: alter gnome
@@ -1379,24 +1378,29 @@ suspiciously long sleeve: `commute`.
 transaction, just like `alter`. However, its behavior at commit time
 is complete different. Here's how `alter` behaves:
 
-1. Check pre-altered ref state against current state
+1. Reach outside the transaction and read the ref's *current* state.
+2. Compare the current state to the state the ref started within
+   within the transaction.
 2. If the two differ, make the entire transaction retry
 3. Otherwise commit the altered ref state
 
 Whereas `commute` behaves like this:
 
-1. Run the commute function *again* using the *current* state
+1. Reach outside the transaction and read the ref's current state.
+1. Run the commute function *again* using the current state
 2. Commit the result
 
-This can help improve performance by avoiding transaction retries, but
-it's important that you only use `commute` when you're sure that it's
-not possible for your refs to end up in an invalid state. Let's look
-at examples of safe and unsafe uses of commute.
+As you can see, commute doesn't ever force a transaction retry. This
+can help improve performance, but it's important that you only use
+`commute` when you're sure that it's not possible for your refs to end
+up in an invalid state. Let's look at examples of safe and unsafe uses
+of commute.
 
-Here's an example of a safe use. The `sleep-print-update` returns the
-updated state, but also sleeps the specified number of milliseconds so
-that we can force transaction overlap. It prints the state received so
-that we can get insight into what's going on:
+Here's an example of a safe use. The `sleep-print-update` function
+returns the updated state, but also sleeps the specified number of
+milliseconds so that we can force transaction overlap. It prints the
+state which it's attempting to update so that we can get insight into
+what's going on:
 
 ```clojure
 (defn sleep-print-update
@@ -1408,18 +1412,22 @@ that we can get insight into what's going on:
 (def counter (ref 0))
 (future (dosync (commute counter (sleep-print-update 100 "Thread A" inc))))
 (future (dosync (commute counter (sleep-print-update 150 "Thread B" inc))))
+```
 
-;=> prints:
-;=> Thread A: 0 ; at 100ms
-;=> Thread B: 0 ; at 150ms
-;=> Thread A: 0 ; at 200ms - counter updated immediately after
-;=> Thread B: 1 ; at 300ms
+Here's a timeline of what prints:
+
+```
+Thread A: 0 | 100ms
+Thread B: 0 | 150ms
+Thread A: 0 | 200ms 
+Thread B: 1 | 300ms
 ```
 
 Notice that the last printed line reads `Thread B: 1`. That means that
-`sleep-print-update` is running against the current state of the
-counter, which is `1` at that point. If you deref `counter` you'll see
-that the value is `2`.
+`sleep-print-update` receives `1` as the argument for state the second
+time it runs. That makes sense, because Thread A has committed its
+result by that point. If you deref `counter` after the transactions
+run, you'll see that the value is `2`.
 
 Now here's an example of unsafe commuting:
 
