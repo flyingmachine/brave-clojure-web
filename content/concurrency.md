@@ -116,7 +116,6 @@ instead, she tucks her phone away so that she can drink until it
 alerts her by beeping or vibrating, then you could say she's handling
 the "read next text message" operation **asynchronously**.
 
-
 ### Concurrent Programming, Parallel Programming
 
 "Concurrent programming" and "parallel programming" refer to how you
@@ -1249,7 +1248,8 @@ are:
 You might recognize these as the "A", "C", and "I" in the "ACID"
 properties of database transactions. You can think of refs as giving
 you the same concurrency safety as database transactions, only with
-in-memory data.
+in-memory data. In case you were wondering, Clojure uses *Software
+Transaction Memory* (STM) to implement this behavior.
 
 Let's get to actually performing the sock tracksfer. First, you'll
 need to code up some sock-and-gnome creation technology:
@@ -1742,4 +1742,30 @@ for any var, not just dynamic ones.
 Now you know all about vars! Try not to hurt yourself or anyone you
 know with them.
 
+Clojure has one additional reference types, *agents*, but this book
+doesn't cover them.
+
+## Stateless Concurrency and Parallelism
+
+So far, this chapter has focused on mitigating the risks inherent in
+concurrent programming. You've learned about the dangers born of
+shared access to mutable state and how Clojure implements a
+re-conceptualization of state that helps you write concurrent programs
+safely.
+
+Clojure also excels at helping you parallelize stateless tasks. In
+this section you'll learn more about how Clojure's design allows for
+easier parallelization. You'll also learn about two tools, `pmap` and
+the `core.reducers` library, that give you parallelism virtually for
+free.
+
+### The Benefits of Stateless Functions
+
+First, a definition: by "stateless" I mean "side-effect free".
+"Stateless" just sounds better and it's more succinct to boot. As
+discussed in the
+[Functional Programming Chapter](/functional-programming), to perform
+a side effect is to change the association between a name and its
+value within a given scope. In other words, side effects mutate state.
+Hence: stateless = side-effect free.
 
