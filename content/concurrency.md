@@ -1745,7 +1745,7 @@ know with them.
 Clojure has one additional reference types, *agents*, but this book
 doesn't cover them.
 
-## Stateless Concurrency and Parallelism
+## Concurrency and Parallelism with Pure Functions
 
 So far, this chapter has focused on mitigating the risks inherent in
 concurrent programming. You've learned about the dangers born of
@@ -1753,19 +1753,30 @@ shared access to mutable state and how Clojure implements a
 re-conceptualization of state that helps you write concurrent programs
 safely.
 
-Clojure also excels at helping you parallelize stateless tasks. In
+Clojure also excels at helping you parallelize pure functions. In
 this section you'll learn more about how Clojure's design allows for
 easier parallelization. You'll also learn about two tools, `pmap` and
 the `core.reducers` library, that give you parallelism virtually for
 free.
 
-### The Benefits of Stateless Functions
+### The Benefits of Pure Functions
 
-First, a definition: by "stateless" I mean "side-effect free".
-"Stateless" just sounds better and it's more succinct to boot. As
-discussed in the
-[Functional Programming Chapter](/functional-programming), to perform
-a side effect is to change the association between a name and its
-value within a given scope. In other words, side effects mutate state.
-Hence: stateless = side-effect free.
+As discussed in the
+[Functional Programming Chapter](/functional-programming), pure
+functions always return the same result when called with the same
+arguments. They're also side-effect free, meaning that they will never
+change the association between a name and its value within a given
+scope. In other words, pure functions will never mutate state and they
+never rely on mutable state.
 
+It makes sense, then, that pure functions would be easy to
+parallelize. It's almost tautological: pure functions have no state,
+therefore you don't have use state management tools when you execute
+them concurrently. Since pure functions have no way of affecting each
+other, so there's no need for you to be concerned about the order in
+which they execute.
+
+### pmap
+
+
+### Reducers
