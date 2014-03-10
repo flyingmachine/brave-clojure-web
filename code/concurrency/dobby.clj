@@ -73,3 +73,10 @@ something he can learn in no other way.
   (.start
    (Thread. #(binding [*out* out]
                (.write *out* "prints to repl from thread")))))
+
+
+(def power-source "hair")
+(alter-var-root #'power-source (fn [_] "7-eleven parking lot"))
+
+(with-redefs [*out* *out*]
+  (.start (Thread. #(println "with redefs allows me to show up in the REPL"))))
