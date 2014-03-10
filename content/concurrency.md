@@ -1764,3 +1764,10 @@ concurrency virtually for free.
 
 ### pmap
 
+`map` is a perfect candidate for parallelization: all you're doing is
+deriving a new collection from an existing collection by applying a
+function to each element of the existing collection. There's no need
+to maintain state; each function application is completely
+independent.
+
+Clojure makes it easy to perform a parallel map with `pmap`.
