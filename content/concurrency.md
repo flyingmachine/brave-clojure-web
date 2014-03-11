@@ -1768,6 +1768,144 @@ concurrency virtually for free.
 deriving a new collection from an existing collection by applying a
 function to each element of the existing collection. There's no need
 to maintain state; each function application is completely
-independent.
+independent. 
 
-Clojure makes it easy to perform a parallel map with `pmap`.
+Clojure makes it easy to perform a parallel map with `pmap`. With
+`pmap`, Clojure takes care of running each application of the mapping
+function on a separate thread. In the example below, you call
+`clojure.string/lower-case` on a sequence of 3,000 random strings
+7,000 characters long:
+
+```clojure
+(def alphabet-length 26)
+;; vector of chars, A-Z
+(def letters (mapv (comp char (partial + 65)) (range alphabet-length)))
+
+(defn random-letter
+  "returns a random upper-case letter"
+  []
+  (get letters (int (rand alphabet-length))))
+
+(defn random-string
+  "returns a random string of specified length"
+  [length]
+  (apply str (take length (repeatedly random-letter))))
+
+(defn random-string-list
+  [list-length string-length]
+  (doall (take list-length (repeatedly (partial random-string string-length)))))
+
+(def orc-names (random-string-list 3000 7000))
+
+;; Use `dorun` to realize the lazy seq returned by map without
+;; printing the results in the REPL
+(time (dorun (map clojure.string/lower-case orc-names)))
+; => "Elapsed time: 270.182 msecs"
+(time (dorun (pmap clojure.string/lower-case orc-names)))
+; => "Elapsed time: 147.562 msecs"
+```
+
+The serial execution with `map` took about 1.8x longer than `pmap`.
+And all you had to do was add one extra letter! Your performance may
+even be better, depending on the number of cores your computer has;
+the above code was run on a dual-core machine.
+
+You might be wondering why the parallel version didn't take exactly
+half as long as the serial version. After all, it should take 2 cores
+only half as much time as a single core, shouldn't it? The reason is
+that there's always some overhead involved with creating and
+coordinating threads.
+
+Sometimes, in fact, the time taken by this overhead can dwarf the time
+of each function application, and `pmap` can actually take longer than
+`map`. Here's how you can visualize this:
+
+We can see this effect at work if we 20,000 abbreviated orc names, 300
+characters long:
+
+```clojure
+(def orc-name-abbrevs (random-string-list 20000 300))
+(time (dorun (map clojure.string/lower-case orc-name-abbevs)))
+; => "Elapsed time: 78.23 msecs"
+(time (dorun (pmap clojure.string/lower-case orc-name-abbrevs)))
+; => "Elapsed time: 124.727 msecs"
+```
+
+Now `pmap` actually takes 1.6 times *longer*.
+
+The solution to this problem is to increase the *grain size*, or the
+aamount of work done in a thread, of your parallel tasks. Here's how
+you can visualize an increased grain size:
+
+In order to actually accomplish this in Clojure, you can increase the
+grain size by making each thread apply `clojure.string/lower-case` to
+multiple elements instead of just one. You can do this using
+`partition-all`. `partition-all` takes a seq and divides it into seqs
+of the specified length:
+
+```clojure
+(def numbers [1 2 3 4 5 6 7 8 9 10])
+(partition-all 3 numbers)
+; => ((1 2 3) (4 5 6) (7 8 9) (10))
+```
+
+Now suppose you started out with code that looked like this:
+
+```clojure
+(pmap inc numbers)
+```
+
+In this case, you would say that the grain size is 1. Each thread
+applies `inc` to an element. Now suppose you changed the code to this:
+
+```clojure
+(pmap (fn [number-group] (doall (map inc number-group)))
+      (partition-all 3 numbers))
+; => ((2 3 4) (5 6 7) (8 9 10) (11))
+```
+
+There are a few things going on here. First, you've now increased the
+grain size to 3 because each thread now executes 3 applications of the
+`inc` function instead of 1. Second, notice that you have to call
+`doall` within the mapping function. This forces the lazy sequence
+returned by `(map inc number-group)` to be realized within the the
+thread. Lastly, we need to "un-group" the result. Here's how we can do
+that:
+
+```clojure
+(apply concat
+       (pmap (fn [number-group] (doall (map inc number-group)))
+             (partition-all 3 numbers)))
+```
+
+Using this technique, we can increase the grain size of the org name
+lower-caseification so that each thread runs
+`clojure.string/lower-case` on 1000 names instead of just 1:
+
+```clojure
+(time
+ (dorun
+  (apply concat
+         (pmap (fn [name] (doall (map clojure.string/lower-case name)))
+               (partition-all 1000 orc-name-abbrevs)))))
+; => "Elapsed time: 44.677 msecs"
+```
+
+And once again the parallel version takes nearly half the time. Just
+for fun, we can generalize this technique into a function called
+`ppmap`, for "partitioned pmap":
+
+```clojure
+(defn ppmap
+  "Partitioned pmap, for grouping map ops together to make parallel
+  overhead worthwhile"
+  [grain-size f & colls]
+  (apply concat
+   (apply pmap
+          (fn [& pgroups]
+            (doall (apply map f pgroups)))
+          (map (partial partition-all grain-size) colls))))
+(time (dorun (ppmap 1000 clojure.string/lower-case orc-name-abbevs)))
+; => "Elapsed time: 44.902 msecs"
+```
+
