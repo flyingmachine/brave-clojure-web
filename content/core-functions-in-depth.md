@@ -472,6 +472,7 @@ The first argument of `into` doesn't have to be empty:
 ; => {:favorite-emotion "gloomy" :sunlight-reaction "Glitter!"}
 
 (into ["cherry"] '("pine" "spruce"))
+; => ["cherry" "pine" "spruce"]
 ```
 
 And of course, both arguments can be the same type:
