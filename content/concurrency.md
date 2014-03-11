@@ -1893,7 +1893,8 @@ lower-caseification so that each thread runs
 
 And once again the parallel version takes nearly half the time. Just
 for fun, we can generalize this technique into a function called
-`ppmap`, for "partitioned pmap":
+`ppmap`, for "partitioned pmap. It can receive more than one
+collection, just like `map`:
 
 ```clojure
 (defn ppmap
@@ -1902,10 +1903,15 @@ for fun, we can generalize this technique into a function called
   [grain-size f & colls]
   (apply concat
    (apply pmap
-          (fn [& pgroups]
-            (doall (apply map f pgroups)))
+          (fn [& pgroups] (doall (apply map f pgroups)))
           (map (partial partition-all grain-size) colls))))
 (time (dorun (ppmap 1000 clojure.string/lower-case orc-name-abbevs)))
 ; => "Elapsed time: 44.902 msecs"
 ```
+
+I don't know about you, but I think this stuff is just fun. Let's have
+even more fun with the `core.reducers` library!
+
+### core.reducers
+
 
