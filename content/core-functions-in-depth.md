@@ -649,7 +649,7 @@ Here's how you might implement `complement`:
   (fn [& args]
     (not (apply fun args))))
 
-(def my-pos? (complement neg?))
+(def my-pos? (my-complement neg?))
 (my-pos? 1)  ; => true
 (my-pos? -1) ; => false
 ```
