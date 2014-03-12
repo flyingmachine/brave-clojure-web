@@ -56,7 +56,7 @@
        (r/map str->ints)
        (r/map ints->str)
        (r/map str->ints)
-       (r/map (partial r/fold +))))
+       (r/map (partial reduce +))))
 
 (defn time-fold
   []
