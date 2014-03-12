@@ -18,24 +18,46 @@
   [list-length string-length]
   (doall (take list-length (repeatedly (partial random-string string-length)))))
 
-(defn numeric-value
+(def orc-names (vec (random-string-list 1000 6000)))
+
+(defn str->ints
   [str]
   (map int str))
 
-(defn ->letters
+(defn ints->str
   [col]
   (apply str (map char col)))
 
-(defn generate-orc-password
-  [orc-name]
-  )
+(defn generate-orc-passwords
+  [orc-names]
+  (->> orc-names
+       (map str->ints)
+       (map ints->str)
+       (map str->ints)
+       (map (partial reduce +))))
 
-(defn int->letters
-  [i]
-  (apply str (map (comp char alpha-offset int) (str i))))
+(defn time-reduce
+  []
+  (time (reduce + (generate-orc-passwords orc-names))))
 
-(def orc-names (vec (random-string-list 1000 6000)))
+
+
+(defn rstr->ints
+  [str]
+  (r/map int str))
+
+(defn rints->str
+  [col]
+  (apply str (r/map char col)))
+
+(defn rgenerate-orc-passwords
+  [orc-names]
+  (->> orc-names
+       (r/map str->ints)
+       (r/map ints->str)
+       (r/map str->ints)
+       (r/map (partial r/fold +))))
 
 (defn time-fold
   []
-  (time (r/fold + (r/map numeric-value orc-names))))
+  (time (r/fold + (rgenerate-orc-passwords orc-names))))
