@@ -1914,4 +1914,4 @@ even more fun with the `core.reducers` library!
 
 ### core.reducers
 
-
+TODO show examples of orc names
