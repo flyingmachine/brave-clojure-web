@@ -1759,7 +1759,7 @@ state", therefore there are no risks to running the tasks concurrently
 and you don't have to bother with using any of the tools you just
 spent your time learning about. Clojure makes it easy for you to
 achieve concurrency here as well. In this section, you'll learn about
-two tools, `pmap` and the `core.reducers` library, which give you
+two tools, `pmap` and the *core.reducers* library, which give you
 concurrency virtually for free.
 
 ### pmap
@@ -1910,7 +1910,39 @@ collection, just like `map`:
 ```
 
 I don't know about you, but I think this stuff is just fun. Let's have
-even more fun with the `core.reducers` library!
+even more fun with the core.reducers library!
 
 ### core.reducers
 
+The *core.reducers* library re-implements many seq functions like
+`filter` so that they'll run in parallel. While this happens mostly
+transparently, there are a few things you need to know in order to use
+them correctly. In this section, you'll learn how to use the functions
+in this library.
+
+You'll also learn about the conceptual framework that underlies
+*core.reducers*. Whereas `pmap` is conceptually simple &mdash; run
+each mapping on a separate thread &mdash; the concepts behind
+core.reducers are a bit more complex, so I'll keep the discussion
+high-level.
+
+Overall, this section can be considered more advanced reading. It's
+not essential, especially not for someone just starting out with
+Clojure. Feel free to skip this section entirely, or else just read
+the "how-to" portion and skip the theoretical portion. However, my
+hope is that the conceptual portion will provide you with more insight
+into the functional way of thinking and the loopy ways that you can
+solve problems.
+
+#### How to Use core.reducers
+
+
+
+#### core.reducers Concepts
+
+## core.async
+
+* more parallelization
+* you're OK to not use it now
+* here's how to use it
+* here's a bit about how it works
