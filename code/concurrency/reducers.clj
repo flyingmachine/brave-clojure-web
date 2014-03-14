@@ -20,44 +20,38 @@
 
 (def orc-names (vec (random-string-list 1000 6000)))
 
-(defn str->ints
-  [str]
-  (map int str))
+(defn expected-progeny-for-orc
+  [name]
+  (apply + (map int (take 100 name))))
 
-(defn ints->str
-  [col]
-  (apply str (map char col)))
-
-(defn generate-orc-passwords
-  [orc-names]
+(defn filtered-expected-progeny
+  [orc-names regex-filter]
   (->> orc-names
-       (map str->ints)
-       (map ints->str)
-       (map str->ints)
-       (map (partial reduce +))))
+       (filter #(re-find regex-filter %))
+       (map expected-progeny-for-orc)))
 
 (defn time-reduce
   []
-  (time (reduce + (generate-orc-passwords orc-names))))
+  (time (reduce + (filtered-expected-progeny orc-names #"^A"))))
 
-
-
-(defn rstr->ints
-  [str]
-  (r/map int str))
-
-(defn rints->str
-  [col]
-  (apply str (r/map char col)))
-
-(defn rgenerate-orc-passwords
-  [orc-names]
+;;;
+(defn rfiltered-expected-progeny
+  [orc-names regex-filter]
   (->> orc-names
-       (r/map str->ints)
-       (r/map ints->str)
-       (r/map str->ints)
-       (r/map (partial reduce +))))
+       (r/filter #(re-find regex-filter %))
+       (r/map expected-progeny-for-orc)))
 
 (defn time-fold
   []
-  (time (r/fold + (rgenerate-orc-passwords orc-names))))
+  (time (r/fold + (rfiltered-expected-progeny orc-names #"^A"))))
+
+;;;
+(defn pfiltered-expected-progeny
+  [orc-names regex-filter]
+  (->> orc-names
+       (filter #(re-find regex-filter %))
+       (pmap expected-progeny-for-orc)))
+
+(defn time-pmap
+  []
+  (time (reduce + (pfiltered-expected-progeny orc-names #"^A"))))

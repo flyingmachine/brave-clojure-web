@@ -38,10 +38,12 @@
 
 
 (def orc-name-abbrevs (random-string-list 20000 300))
-(time (dorun (map clojure.string/lower-case orc-name-abbrevs)))
-(time (dorun (pmap clojure.string/lower-case orc-name-abbrevs)))
-(time
- (dorun
-  (apply concat
-         (pmap (fn [name] (doall (map clojure.string/lower-case name)))
-               (partition-all 1000 orc-name-abbrevs)))))
+(defn times
+  []
+  (time (dorun (map clojure.string/lower-case orc-name-abbrevs)))
+  (time (dorun (pmap clojure.string/lower-case orc-name-abbrevs)))
+  (time
+   (dorun
+    (apply concat
+           (pmap (fn [name] (doall (map clojure.string/lower-case name)))
+                 (partition-all 1000 orc-name-abbrevs))))))
