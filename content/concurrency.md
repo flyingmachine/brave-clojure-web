@@ -1945,7 +1945,22 @@ The first step in using core.reducers is to require it, of course:
 ```
 
 As mentioned above, the library works to gain efficiency by both
-making more functions parallelizable and 
+making more functions parallelizable and avoid creating intermediate
+collections.
+
+For parallelization, you use r/fold. This is basically like reduce,
+except parallel. There are a couple catches, though. First, it will
+only run in parallel for vectors and maps. Second, the function you
+pass to it has to have a special property - it has to produce an
+identity value with no arguments.
+
+For avoiding, you can use r/map and r/filter. These are called
+"reducers". You can create your own reducers as well, but that's
+beyond the scope of the book. The catch is that these don't actually
+return a value. They return a function which describes how to reduce a
+collection. You then have to actually reduce.
+
+Other functions rely on redue. into, for example.
 
 re-implements many familiar functions:
 `map`, `filter`, `drop`, `take`, `reduce` and a few others, and a few
