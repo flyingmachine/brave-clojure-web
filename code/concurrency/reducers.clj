@@ -34,6 +34,10 @@
   []
   (time (reduce + (filtered-expected-progeny orc-names #"^A"))))
 
+(defn time-fm
+  []
+  (time (dorun (filtered-expected-progeny orc-names #"^A"))))
+
 ;;;
 (defn rfiltered-expected-progeny
   [orc-names regex-filter]
@@ -44,6 +48,10 @@
 (defn time-fold
   []
   (time (r/fold + (rfiltered-expected-progeny orc-names #"^A"))))
+
+(defn time-rmf
+  []
+  (time (dorun (into [] (rfiltered-expected-progeny orc-names #"^A")))))
 
 ;;;
 (defn pfiltered-expected-progeny
@@ -60,3 +68,8 @@
 (defn bad+
   [x y]
   (+ x y))
+
+
+(defn divisible-by?
+  [x]
+  (fn [y] (zero? (mod y x))))

@@ -1940,8 +1940,8 @@ solve problems.
 
 
 As mentioned above, the library works to gain efficiency by both
-making more functions parallelizable and avoid creating intermediate
-collections.
+making more operations parallelizable and avoiding the creation of
+intermediate collections.
 
 For parallelization, you use `fold`. This works exactly like reduce,
 except parallel. There are a couple catches, though. First, it will
@@ -1996,7 +1996,7 @@ that function when it's called with no arguments:
 (str) ;=> ""
 ```
 
-So this wouldn't work:
+Meaning this wouldn't work:
 
 ```clojure
 (time (r/fold bad+ numbers))
@@ -2006,7 +2006,31 @@ So this wouldn't work:
 ; => user$bad-PLUS-  clojure.lang.AFn.throwArity (AFn.java:437)
 ```
 
+So that's parallelization. The other improvement is the elimination of
+intermediate collections. Here's a simple example:
 
+```clojure
+(def numbers (vec (take 1000000 (iterate inc 1))))
+
+;; Using clojure.core functions
+(time (dorun (filter identity (map identity numbers))))
+; => "Elapsed time: 105.743 msecs"
+
+;; Using core.reducers
+(time (dorun (into [] (r/filter identity (r/map identity numbers)))))
+; => "Elapsed time: 81.853 msecs"
+```
+
+In both examples, we're returning the same logical collection as we
+started with, the numbers from 1 to 1000000. The core.reducers
+example, however, took about 20% less time.
+
+One thing that sticks out is that the core.reducers version requires
+you to call `(into [])` on the result of `(r/filter identity (r/map
+identity numbers))` . This is because the `map` and `filter` functions
+don't actually return 
+
+One difference between
 
 For avoiding, you can use r/map and r/filter. These are called
 "reducers". You can create your own reducers as well, but that's
