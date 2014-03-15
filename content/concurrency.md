@@ -1936,8 +1936,7 @@ hope is that the conceptual portion will provide you with more insight
 into the functional way of thinking and the loopy ways that you can
 solve problems.
 
-#### How to Use core.reducers
-
+#### Parallel Reduce
 
 As mentioned above, the library works to gain efficiency by both
 making more operations parallelizable and avoiding the creation of
@@ -2006,8 +2005,36 @@ Meaning this wouldn't work:
 ; => user$bad-PLUS-  clojure.lang.AFn.throwArity (AFn.java:437)
 ```
 
-So that's parallelization. The other improvement is the elimination of
-intermediate collections. Here's a simple example:
+Clojure is able to do this by using the fork/join framework. That's an
+implementation detail that you don't actually need to care about.
+Here's what it looks like:
+
+TODO diagram
+
+#### No Intermediate Collections
+
+The other improvement core.reducers brings is the elimination of
+intermediate collections. What's that actually mean? To find out,
+let's have a look at this code:
+
+```clojure
+(def numbers (vec (take 1000000 (iterate inc 1))))
+(filter pos? (map identity numbers))
+```
+
+This code returns the same logical collection as you started with, the
+numbers 1 through 1,000,000. However, the core.reducers functions get
+thet there in a different way:
+
+TODO diagram
+
+As you can see, the clojure.core version of `map` returns a
+collection. This is the intermediate collection, and it gets passed to
+`filter`. The core.reducers versions, on the other hand, compose
+`map` and `filter` so that Clojure doesn't have to iterate through an
+intermediate collection.
+
+To actually run this, do the following:
 
 ```clojure
 (def numbers (vec (take 1000000 (iterate inc 1))))
@@ -2028,7 +2055,17 @@ example, however, took about 20% less time.
 One thing that sticks out is that the core.reducers version requires
 you to call `(into [])` on the result of `(r/filter identity (r/map
 identity numbers))` . This is because the `map` and `filter` functions
-don't actually return 
+don't return collections, unlike their `clojure.core` counterparts.
+
+Instead, they return what Rich Hickey calls "a recipe for a new
+collection". You can pass each of these recipes
+
+
+This recipe gets "cooked" once it passed
+to `reduce` as an argument. In this case, `into` actually relies on
+`reduce`.
+
+
 
 One difference between
 
