@@ -1938,21 +1938,75 @@ solve problems.
 
 #### How to Use core.reducers
 
-The first step in using core.reducers is to require it, of course:
-
-```clojure
-(require '[clojure.core.reducers :as r])
-```
 
 As mentioned above, the library works to gain efficiency by both
 making more functions parallelizable and avoid creating intermediate
 collections.
 
-For parallelization, you use r/fold. This is basically like reduce,
+For parallelization, you use `fold`. This works exactly like reduce,
 except parallel. There are a couple catches, though. First, it will
 only run in parallel for vectors and maps. Second, the function you
 pass to it has to have a special property - it has to produce an
-identity value with no arguments.
+identity value with no arguments. I'll explain "identity value" below.
+Here's an example of `fold` vs `reduce`.
+
+```clojure
+;; vector consisting of 1 through 1000000
+(def numbers (vec (take 1000000 (iterate inc 1))))
+
+(time (reduce + numbers))
+"Elapsed time: 43.264 msecs"
+
+(time (r/fold + numbers))
+"Elapsed time: 23.145 msecs"
+```
+
+These numbers were derived on a duo-core machine, and you can see that
+`fold` takes almost half as much time as `reduce`. If you pass `fold`
+a collection that's not a vector or map, then its performance is the
+same as `reduce`'s:
+
+```clojure
+;; vector consisting of 1 through 1000000
+(def numbers (doall (take 1000000 (iterate inc 1))))
+
+(time (reduce + numbers))
+"Elapsed time: 94.991 msecs"
+
+(time (r/fold + numbers))
+"Elapsed time: 95.237 msecs"
+```
+
+About identity values: an identity value is one which, when given as
+an argument in a binary function (a receiving two arguments), returns
+the other argument. For example, 0 is the identity value for addition.
+Add a number to 0 and the same number is returned:
+
+```clojure
+(+ 0 3)
+; => 3
+```
+
+The function you pass to `fold` has to return an identity value for
+that function when it's called with no arguments:
+
+```clojure
+(+) ;=> 0
+(*) ;=> 1
+(str) ;=> ""
+```
+
+So this wouldn't work:
+
+```clojure
+(time (r/fold bad+ numbers))
+
+;; throws exception:
+; => ArityException Wrong number of args (0) passed to:
+; => user$bad-PLUS-  clojure.lang.AFn.throwArity (AFn.java:437)
+```
+
+
 
 For avoiding, you can use r/map and r/filter. These are called
 "reducers". You can create your own reducers as well, but that's

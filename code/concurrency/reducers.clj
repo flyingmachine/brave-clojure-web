@@ -55,3 +55,8 @@
 (defn time-pmap
   []
   (time (reduce + (pfiltered-expected-progeny orc-names #"^A"))))
+
+
+(defn bad+
+  [x y]
+  (+ x y))
