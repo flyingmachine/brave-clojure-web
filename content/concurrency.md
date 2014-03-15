@@ -1914,8 +1914,10 @@ even more fun with the core.reducers library!
 
 ### core.reducers
 
-The *core.reducers* library re-implements many seq functions like
-`filter` so that they'll run in parallel. While this happens mostly
+The *core.reducers* library re-implements many core seq functions like
+`reduce`, `filter`, and `map` so that they'll run more efficiently by
+both a) running in parallel and b) avoid producing intermediate
+collections (more on that below). While this happens mostly
 transparently, there are a few things you need to know in order to use
 them correctly. In this section, you'll learn how to use the functions
 in this library.
@@ -1936,6 +1938,18 @@ solve problems.
 
 #### How to Use core.reducers
 
+The first step in using core.reducers is to require it, of course:
+
+```clojure
+(require '[clojure.core.reducers :as r])
+```
+
+As mentioned above, the library works to gain efficiency by both
+making more functions parallelizable and 
+
+re-implements many familiar functions:
+`map`, `filter`, `drop`, `take`, `reduce` and a few others, and a few
+others.
 
 
 #### core.reducers Concepts

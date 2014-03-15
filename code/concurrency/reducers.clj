@@ -18,11 +18,11 @@
   [list-length string-length]
   (doall (take list-length (repeatedly (partial random-string string-length)))))
 
-(def orc-names (vec (random-string-list 1000 6000)))
+(def orc-names (vec (random-string-list 80000 200)))
 
 (defn expected-progeny-for-orc
   [name]
-  (apply + (map int (take 100 name))))
+  (apply + (map int (take 20 name))))
 
 (defn filtered-expected-progeny
   [orc-names regex-filter]
