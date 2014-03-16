@@ -1745,7 +1745,7 @@ know with them.
 Clojure has one additional reference types, *agents*, but this book
 doesn't cover them.
 
-## Stateless Concurrency and Parallelism: pmap
+## Stateless Concurrency and Parallelism
 
 So far, this chapter has focused on mitigating the risks inherent in
 concurrent programming. You've learned about the dangers born of
@@ -1758,15 +1758,17 @@ independent of each other. There is no "shared access to mutable
 state", therefore there are no risks to running the tasks concurrently
 and you don't have to bother with using any of the tools you just
 spent your time learning about. Clojure makes it easy for you to
-achieve concurrency here as well. In this section and the next, you'll
-learn about two tools, `pmap` and the core.reducers library, which
-give you concurrency virtually for free.
+achieve concurrency here as well. In this section, you'll learn about
+two tools, `pmap` and the *core.reducers* library, which give you
+concurrency virtually for free.
 
-First, let's look at `pmap`. `map` is a perfect candidate for
-parallelization: all you're doing is deriving a new collection from an
-existing collection by applying a function to each element of the
-existing collection. There's no need to maintain state; each function
-application is completely independent.
+### pmap
+
+`map` is a perfect candidate for parallelization: all you're doing is
+deriving a new collection from an existing collection by applying a
+function to each element of the existing collection. There's no need
+to maintain state; each function application is completely
+independent.
 
 Clojure makes it easy to perform a parallel map with `pmap`. With
 `pmap`, Clojure takes care of running each application of the mapping
@@ -1953,7 +1955,7 @@ Here's an example of `fold` vs `reduce`.
 
 ```clojure
 ;; vector consisting of 1 through 1000000
-(def numbers (vec (take 1000000 (iterate inc 1))))
+(def numbers (vec (range 1000000)))
 
 (time (reduce + numbers))
 "Elapsed time: 43.264 msecs"
@@ -1969,7 +1971,7 @@ is the same as `reduce`'s:
 
 ```clojure
 ;; vector consisting of 1 through 1000000
-(def numbers (doall (take 1000000 (iterate inc 1))))
+(def numbers (vec (range 1000000)))
 
 (time (reduce + numbers))
 "Elapsed time: 94.991 msecs"
@@ -2023,11 +2025,17 @@ showing the differences, using this code as an example:
 (filter odd? (map inc numbers))
 ```
 
+TODO diagram
+
+This diagram deserves a caveat: it shows how Clojure would behave if
+`map` and `filter` didn't returned lazy sequences. Because they're
+both lazy functions, you get better p
+
 Here's an example which shows that you can get a performance
 improvement from using the core.reducers functions:
 
 ```clojure
-(def numbers (vec (take 1000000 (iterate inc 1))))
+(def numbers (vec (range 1000000)))
 
 ;; Using clojure.core functions
 (time (dorun (filter odd? (map inc numbers))))
@@ -2060,6 +2068,33 @@ There are two ideas underlying the core.reducers library:
 * Perform `reduce` in parallel using the "fork/join" concurrency
   strategy. This is implemented with `r/fold`
 * Treat collections as *reducibles* instead of *seqables*
+
+Let's first look at fork/join:
+
+#### fork/join
+
+Internally, `fold` is an implementation of `reduce` which relies on
+Java's fork/join framework. This can best be understood with diagrams
+to compare serial `reduce` to `fold` diagram. Here's a serial reduce:
+
+
+And here's a parallel reduce:
+
+###
+
+won't get into how it works:
+
+here's parallel reduce:
+
+here's how you can perform multiple collection functions more
+efficiently:
+
+* r/map
+* r/map and r/filter
+
+one benefit is that r/map and r/filter will work with r/fold:
+
+* r/fold r/map r/filter
 
 
 
