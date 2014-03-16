@@ -1745,7 +1745,7 @@ know with them.
 Clojure has one additional reference types, *agents*, but this book
 doesn't cover them.
 
-## Stateless Concurrency and Parallelism
+## Stateless Concurrency and Parallelism: pmap
 
 So far, this chapter has focused on mitigating the risks inherent in
 concurrent programming. You've learned about the dangers born of
@@ -1758,17 +1758,15 @@ independent of each other. There is no "shared access to mutable
 state", therefore there are no risks to running the tasks concurrently
 and you don't have to bother with using any of the tools you just
 spent your time learning about. Clojure makes it easy for you to
-achieve concurrency here as well. In this section, you'll learn about
-two tools, `pmap` and the *core.reducers* library, which give you
-concurrency virtually for free.
+achieve concurrency here as well. In this section and the next, you'll
+learn about two tools, `pmap` and the core.reducers library, which
+give you concurrency virtually for free.
 
-### pmap
-
-`map` is a perfect candidate for parallelization: all you're doing is
-deriving a new collection from an existing collection by applying a
-function to each element of the existing collection. There's no need
-to maintain state; each function application is completely
-independent. 
+First, let's look at `pmap`. `map` is a perfect candidate for
+parallelization: all you're doing is deriving a new collection from an
+existing collection by applying a function to each element of the
+existing collection. There's no need to maintain state; each function
+application is completely independent.
 
 Clojure makes it easy to perform a parallel map with `pmap`. With
 `pmap`, Clojure takes care of running each application of the mapping
@@ -1912,7 +1910,7 @@ collection, just like `map`:
 I don't know about you, but I think this stuff is just fun. Let's have
 even more fun with the core.reducers library!
 
-### core.reducers
+## core.reducers
 
 The *core.reducers* library re-implements many core seq functions like
 `reduce`, `filter`, and `map` so that they'll run more efficiently by
@@ -1925,8 +1923,7 @@ in this library.
 You'll also learn about the conceptual framework that underlies
 *core.reducers*. Whereas `pmap` is conceptually simple &mdash; run
 each mapping on a separate thread &mdash; the concepts behind
-core.reducers are a bit more complex, so I'll keep the discussion
-high-level.
+core.reducers are a bit more complex.
 
 Overall, this section can be considered more advanced reading. It's
 not essential, especially not for someone just starting out with
@@ -1936,7 +1933,12 @@ hope is that the conceptual portion will provide you with more insight
 into the functional way of thinking and the loopy ways that you can
 solve problems.
 
-#### Parallel Reduce
+In the text below, I'll often use the namespace alias `r` to refer to
+`clojure.core.reducers`. For example, I'll refer to
+`clojure.core.reducers/map` as `r/map`. I'll also refer to the
+"clojure.core.reducers" library as just "core.reducers".
+
+### Parallel Reduce
 
 As mentioned above, the library works to gain efficiency by both
 making more operations parallelizable and avoiding the creation of
@@ -1945,7 +1947,7 @@ intermediate collections.
 For parallelization, you use `fold`. This works exactly like reduce,
 except parallel. There are a couple catches, though. First, it will
 only run in parallel for vectors and maps. Second, the function you
-pass to it has to have a special property - it has to produce an
+pass to it has to have a special property; it has to produce an
 identity value with no arguments. I'll explain "identity value" below.
 Here's an example of `fold` vs `reduce`.
 
@@ -1960,10 +1962,10 @@ Here's an example of `fold` vs `reduce`.
 "Elapsed time: 23.145 msecs"
 ```
 
-These numbers were derived on a duo-core machine, and you can see that
-`fold` takes almost half as much time as `reduce`. If you pass `fold`
-a collection that's not a vector or map, then its performance is the
-same as `reduce`'s:
+These numbers were derived on a dual-core machine, and you can see
+that `fold` takes almost half as much time as `reduce`. If you pass
+`fold` a collection that's not a vector or map, then its performance
+is the same as `reduce`'s:
 
 ```clojure
 ;; vector consisting of 1 through 1000000
@@ -2005,84 +2007,61 @@ Meaning this wouldn't work:
 ; => user$bad-PLUS-  clojure.lang.AFn.throwArity (AFn.java:437)
 ```
 
-Clojure is able to do this by using the fork/join framework. That's an
-implementation detail that you don't actually need to care about.
-Here's what it looks like:
+In general, you don't have anything to lose by using `fold` instead of
+`reduce`. If a collection is foldable, you'll get a performance boost.
+Otherwise, it's just like using `reduce`.
 
-TODO diagram
 
-#### No Intermediate Collections
+### No Intermediate Collections
 
 The other improvement core.reducers brings is the elimination of
-intermediate collections. What's that actually mean? To find out,
-let's have a look at this code:
+intermediate collections. What's that actually mean? Here's a diagram
+showing the differences, using this code as an example:
 
 ```clojure
-(def numbers (vec (take 1000000 (iterate inc 1))))
-(filter pos? (map inc numbers))
+(def numbers [1 2 3 4])
+(filter odd? (map inc numbers))
 ```
 
-This code takes the numbers 1 through 1,000,000 and returns the
-numbers 2 through 1,000,001. Exciting! However, the core.reducers
-functions get thet there in a different way:
-
-TODO diagram
-
-As you can see, the clojure.core version of `map` returns a
-collection. This is the intermediate collection, and it gets passed to
-`filter`. The core.reducers versions, on the other hand, compose
-`map` and `filter` so that Clojure doesn't have to iterate through an
-intermediate collection.
-
-To actually run this, do the following:
+Here's an example which shows that you can get a performance
+improvement from using the core.reducers functions:
 
 ```clojure
 (def numbers (vec (take 1000000 (iterate inc 1))))
 
 ;; Using clojure.core functions
-(time (dorun (filter identity (map identity numbers))))
-; => "Elapsed time: 105.743 msecs"
+(time (dorun (filter odd? (map inc numbers))))
+"Elapsed time: 122.64 msecs"
 
 ;; Using core.reducers
-(time (dorun (into [] (r/filter identity (r/map identity numbers)))))
-; => "Elapsed time: 81.853 msecs"
+(time (dorun (into [] (r/filter odd? (r/map inc numbers)))))
+"Elapsed time: 91.455 msecs"
 ```
 
-In both examples, we're returning the same logical collection as we
-started with, the numbers from 1 to 1000000. The core.reducers
-example, however, took about 20% less time.
+As you can see, the core.reducers version took about 25% less time.
 
 One thing that sticks out is that the core.reducers version requires
-you to call `(into [])` on the result of `(r/filter identity (r/map
-identity numbers))` . This is because the `map` and `filter` functions
-don't return collections, unlike their `clojure.core` counterparts.
+you to call `(into [])` on the result of `(r/filter odd? (r/map inc
+numbers))`. This is because the `map` and `filter` functions don't
+return collections, unlike their `clojure.core` counterparts.
 
 Instead, they return what Rich Hickey calls "a recipe for a new
-collection". You can pass each of these recipes
+collection", a concept I'll explain in more detail below. The
+important thing to remember is that `r/map` and `r/filter` don't
+actually return collections. You have to "bake" these recipes with
+functions like `reduce`, `into` (which relies on `reduce` internally),
+`r/fold`, and `r/take`. If you'd like to better understand why this is
+necessary, read on:
+
+### core.reducers Concepts
+
+There are two ideas underlying the core.reducers library:
+
+* Perform `reduce` in parallel using the "fork/join" concurrency
+  strategy. This is implemented with `r/fold`
+* Treat collections as *reducibles* instead of *seqables*
 
 
-This recipe gets "cooked" once it passed
-to `reduce` as an argument. In this case, `into` actually relies on
-`reduce`.
-
-
-
-One difference between
-
-For avoiding, you can use r/map and r/filter. These are called
-"reducers". You can create your own reducers as well, but that's
-beyond the scope of the book. The catch is that these don't actually
-return a value. They return a function which describes how to reduce a
-collection. You then have to actually reduce.
-
-Other functions rely on redue. into, for example.
-
-re-implements many familiar functions:
-`map`, `filter`, `drop`, `take`, `reduce` and a few others, and a few
-others.
-
-
-#### core.reducers Concepts
 
 ## core.async
 
