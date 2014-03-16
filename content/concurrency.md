@@ -2019,12 +2019,12 @@ let's have a look at this code:
 
 ```clojure
 (def numbers (vec (take 1000000 (iterate inc 1))))
-(filter pos? (map identity numbers))
+(filter pos? (map inc numbers))
 ```
 
-This code returns the same logical collection as you started with, the
-numbers 1 through 1,000,000. However, the core.reducers functions get
-thet there in a different way:
+This code takes the numbers 1 through 1,000,000 and returns the
+numbers 2 through 1,000,001. Exciting! However, the core.reducers
+functions get thet there in a different way:
 
 TODO diagram
 
