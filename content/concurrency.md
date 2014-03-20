@@ -1,42 +1,28 @@
 ---
-title: Concurrency & Parallelism
-link_title: Concurrency & Parallelism
+title: State, Concurrency, and Parallelism
+link_title: State, Concurrency, and Parallelism
 kind: documentation
 draft: true
 ---
 
-One of Clojure's big selling points is its support for concurrent
-programming. In this chapter, you'll learn the following:
+In this chapter you learn about what concurrency and parallelism are
+and why they matter. You'll learn about the challenges programmers
+face when writing parallel programs and about how Clojure's design
+helps to mitigate them. Finally, you'll learn a big boatload of tools
+and techniques to write parallel programs yourself, including:
+futures, promises, delays, atoms, refs, vars, pmap, and core.reducers.
+Also, there will be zombies. Onward!
 
-* Intro to concurrency & parallelism
-    * Definitions
-    * Why should you care?
-* Easy concurrent ops
-* What are the dangers?
-* The Clojure model of state
-* Tool 1: Statelessness
-* Tool 2: Atomic updates
-* Tool 3: STM
-* Tool 4: core.async
-
-## Who Cares?
+## Why Parallel Programming Matters
 
 Why should you bother with any of this? The reason is that parallel
 programming is essential for writing performant applications on modern
 hardware. In recent years CPU designers have focused more on enabling
-parallel execution than on increasing clock speed. This is mostly
-because increasing clock speed requires exponentially more power,
-making it impractical. You can google "cpu power wall", "cpu memory
-wall" and "instruction-level parallelism wall" to find out more. As
-those creepy Intel bunnies continue smooshing more and more cores
+parallel execution by increasing the number of process in a machine
+than on increasing clock speed. This is mostly because increasing
+clock speed requires exponentially more power, making it impractical.
+As those creepy Intel bunnies continue smooshing more and more cores
 together, it's up to you and me to squueze performance out of them.
-
-Performance can be measured as both **latency**, or the total amount of
-time it takes to complete a task, and **throughput**, or the number of
-tasks a program completes per second. Parallelism can improve both, as
-this diagram shows:
-
-TODO: diagram serial vs parallel execution of tasks
 
 ## Concurrency and Parallelism Defined
 
@@ -47,7 +33,7 @@ typing out with your very own fingers. In this section I'll ignore
 those details and instead focus on the implementation-independent
 high-level concepts.
 
-### Managing Tasks vs. Executing Tasks Simultaneously
+### Managing Multiple Tasks vs. Executing Tasks Simultaneously
 
 **Concurrency** refers to *managing* more than one task at the same
 time. "Task" just means "something that needs to get done." We can
@@ -83,7 +69,7 @@ Clojure has many features which allow you to easily achieve
 parallelism. Whereas the Lady Gaga system achieves parallelism by
 simultaneously executing tasks on multiple hands, computer systems
 generally achieve parallelism by simultaneously executing tasks on
-multiple cores or processors.
+multiple processors.
 
 You can see from this definition that parallelism is a subclass of
 concurrency: in order to execute multiple tasks simultaneously, you
@@ -98,30 +84,34 @@ Gaga asking Beyoncé, "Please text this guy while I drink."
 
 I'm going to use "parallel" only to refer to cohabitating processors.
 While there are Clojure libraries that aid distributed programming,
-this book only covers parallel programming. That said, the concepts
-you'll learn apply directly to distributed programming.
+this book only covers parallel programming.
 
 ### Blocking and Async
 
 One of the big use cases for concurrent programming is for
 **blocking** operations. "Blocking" really just means waiting for an
 operation to finish and you'll most often hear it used in relation to
-I/O operations. Let's examine this using the Concurrent Lady Gaga
-example.
+I/O operations, like reading a file or waiting for an HTTP request to
+finish. Let's examine this using the Concurrent Lady Gaga example.
 
 If Lady Gaga texts her interlocutor and then stands there with her
-phone in her hand, staring at the screen for a response, then you
-could say that the "read next text message" operation is blocking. If,
-instead, she tucks her phone away so that she can drink until it
+phone in her hand, staring at the screen for a response and not
+drinking, then you would say that the "read next text message"
+operation is blocking and that these tasks are executing
+**synchronously**.
+
+If, instead, she tucks her phone away so that she can drink until it
 alerts her by beeping or vibrating, then you could say she's handling
-the "read next text message" operation **asynchronously**.
+the "read next text message" task **asynchronously**.
 
 ### Concurrent Programming, Parallel Programming
 
 "Concurrent programming" and "parallel programming" refer to how you
 decompose a task into parallelizable sub-tasks and the techniques you
 use to manage the kinds of risks that arise when your program executes
-more than one task at the same time.
+more than one task at the same time. For the rest of the chapter, I'll
+the two terms interchangeably because the risks are pretty much the
+same for both.
 
 To better understand those risks and how Clojure help you avoid them,
 let's examine how concurrency and parallelism are implemented in
@@ -142,8 +132,7 @@ placing them on **threads**.
 ### So What's a Thread?
 
 I'm glad you asked! Rather than giving a technical definition of a
-thread, though, I'm going to describe a useful mental model of how
-threads work.
+thread, though, I'm going to describe a model of how threads work.
 
 I think of a thread as an actual, physical piece of thread that's been
 threaded through a sequence of instructions. In my mind, the
@@ -151,10 +140,9 @@ instructions are marshmallows, because marshmallows are delicious. The
 processor executes these instructions in order. I envision this as an
 alligator consuming the instructions, because alligators love
 marshmallows (true fact!). So executing a program looks like a bunch
-of marshmallows strung out on a line with a pacifist alligator
-traveling down the line and eating them one by one.
-
-Here's a single-core processor executing a single-threaded program:
+of marshmallows strung out on a line with an alligator traveling down
+the line and eating them one by one. Here's a single-core processor
+executing a single-threaded program:
 
 TODO: add image here
 
@@ -186,10 +174,11 @@ order:
 
 TODO: image
 
-As with interleaving on a single core, there are no order guarantees
-so the program is nondeterministic. To make things even more fun, your
-programs will typically have more threads than cores, so each core
-will likely perform interleaving on multiple threads.
+As with interleaving on a single core, there are no guarantees for the
+overall execution order, so the program is nondeterministic. To make
+things even more fun, your programs will typically have more threads
+than cores, so each core will likely perform interleaving on multiple
+threads.
 
 ### The Three Goblins: Reference Cells, Mutual Exclusion, Dwarven Berserkers
 
@@ -284,19 +273,20 @@ You can create a future with the `future` macro. Try this in a REPL:
 (println "I'll print immediately")
 ```
 
-`Thread/sleep` tells the current thread to just sit on its ass and do
+`Thread/sleep` tells the current thread to just sit on its bum and do
 nothing for the specified number of milliseconds. Normally, if you
-evaluated `Thread/sleep` in your REPL you wouldn't be able to
-evaluate any other statements until the REPL was done sleeping; your
-REPL would be blocked. However, `future` throws your call to
-`Thread/sleep` into another thread, allowing the REPL's thread to
-continue, unblocked.
+evaluated `Thread/sleep` in your REPL you wouldn't be able to evaluate
+any other statements until the REPL was done sleeping; the thread
+executing your REPL would be blocked. However, `future` throws your
+call to `Thread/sleep` into another thread, allowing the REPL's thread
+to continue, unblocked.
 
 Futures differ from the values you're used to, like hashes and maps,
 in that you have to *dereference* them to obtain their value. The
 value of a future is the value of the last expression evaluated. You
 can dereference a future with either the `deref` function or the `@`
-reader macro. Try this out to use them both:
+reader macro. A future's body only executes once and its value gets
+cached. Try the following:
 
 ```clojure
 (let [result (future (println "this prints once")
@@ -310,8 +300,8 @@ reader macro. Try this out to use them both:
 ```
 
 Notice that the the string `"this prints once"` indeed only prints
-once, showing that the future's body runs only once and the result
-gets cached.
+once, showing that the future's body only ran once and the result got
+cached.
 
 Dereferencing a future will block if the future hasn't finished
 running:
@@ -350,7 +340,7 @@ Finally, you can interrogate a future to see if it's done running with
 ; => true
 ```
 
-Futures are a dead simple way to sprikle some concurrency on your
+Futures are a dead simple way to sprinkle some concurrency on your
 program. On their own, they give you the power to chuck tasks onto
 other threads, allowing you to increase performance. They don't
 protect you against The Three Concurrency Goblins, but you'll learn
@@ -394,9 +384,9 @@ exclusion problem in just a little bit.
 Alternatively, you can ignore the result. For example, you can use
 futures to write to a log file asynchronously.
 
-This kind of flexibility is pretty cool. Clojure also allows you to
-treat "task definition" and "requiring the result" independently with
-`delays` and `promises`. Onward!
+The flexibility that futures give you is pretty cool. Clojure also
+allows you to treat "task definition" and "requiring the result"
+independently with delays and promises. Onward!
 
 ### Delays
 
@@ -438,10 +428,18 @@ and notifies the owner as soon as the first one is up, as in the
 following:
 
 ```clojure
+(def gimli-headshots ["serious.jpg" "fun.jpg" "playful.jpg"])
+(defn email-user
+  [email-address]
+  (println "Sending headshot notification to" email-address))
+(defn upload-document
+  "Needs to be implemented"
+  [headshot]
+  true)
 (let [notify (delay (email-user "and-my-axe@gmail.com"))]
   (doseq [headshot gimli-headshots]
     (future (upload-document headshot)
-            @notify)))
+            (force notify))))
 ```
 
 In this example, Gimli will be grateful to know when the first
@@ -518,6 +516,7 @@ a function to test whether a product is satisfactory:
   result)
 
 (defn satisfactory?
+  "If the butter meets our criteria, return the butter, else return false"
   [butter]
   (and (<= (:price butter) 100)
        (>= (:smoothness butter) 97)
@@ -527,11 +526,29 @@ a function to test whether a product is satisfactory:
 The API call waits 1 second before returning a result to simulate the
 time it would take to perform an actual call.
 
-If you check each site serially, it could take more than 3 seconds to
-obtain a result, as the following code shows. Note that `time` prints
-the time taken to evaluate a form and `comp` composes functions:
+To show how long it will take to check site synchronously, we'll need
+to use the `some` function. `some` takes two arguments: a function and
+a collection. It applies the function to each element of the
+collection and returns the first truthy result, or nil if there are
+none:
 
 ```clojure
+(some odd? [2 3 4 5])
+; => true
+
+;; return the value which had the truthy result
+(some #(and (odd? %) %) [2 3 4 5])
+; => 3
+```
+
+When you check each site synchronously, it could take more than 3
+seconds to obtain a result, as the following code shows. Note that
+`time` prints the time taken to evaluate a form and `comp` composes
+functions, as discussed in the chapter "Functional Programming":
+
+```clojure
+(some odd? [2 2 2 1 3 5])
+
 (time (some (comp satisfactory? mock-api-call)
             [yak-butter-international butter-than-nothing baby-got-yak]))
 ; => "Elapsed time: 3002.132 msecs"
@@ -574,10 +591,10 @@ used to in JavaScript. Here's how to do it:
 ; => Here's some Ferengi wisdom: Whisper your way to success.
 ```
 
-In this example, you're creating a future that executes immediately.
-However, it's blocking because it's waiting for a value to be
-delivered to `ferengi-wisdom-promise`. After 100 milliseconds, you
-deliver the value and the `println` statement in the future runs.
+In this example, you're creating a future that begins executing
+immediately. However, it's blocking because it's waiting for a value
+to be delivered to `ferengi-wisdom-promise`. After 100 milliseconds,
+you deliver the value and the `println` statement in the future runs.
 
 Futures, delays, and promises are great, simple ways to manage
 concurrency in your application. In the next section, we'll look at
@@ -589,7 +606,9 @@ So far you've looked at some simple ways to combine futures, delays,
 and promises to make your concurrent programs a little safer. In this
 section, you'll use a macro to combine futures and promises in a
 slightly more complex manner. You might not necessarily ever use this
-code, but it'll show the power of these simple tools a bit more.
+code, but it'll show the power of these simple tools a bit more. It
+gets a little wonky with macros farther down; if that get's too crazy,
+just skip to the next section.
 
 Sometimes the best way to handle concurrent tasks is to re-serialize
 them. You can do that by placing your tasks onto a queue. In this
@@ -731,7 +750,6 @@ writing serially. Here's the final product. I'll walk through it below.
                            (append-to-file ~filename @~quote-gensym))]
     `(-> (future)
          ~@(take n (repeat queue-line)))))
-
 ```
 
 `append-to-file` and `format-quote` are the same as above, they're
@@ -784,9 +802,6 @@ fully illustrate it, I'll compare it to the metaphysics embodied by
 object-oriented languages. I'll also introduce a new type, Clojure's
 **atom**. By learning this philosophy, you'll be fully equipped to
 handle Clojure's remaining concurrency tools.
-
-When talking about metaphysics things tend to get a little fuzzy, but
-hopefully this will all make sense.
 
 As the ever-trusty
 [Wikipedia](http://en.wikipedia.org/wiki/Metaphysics) explains,
@@ -878,6 +893,8 @@ fred.cuddle_hunger_level = fred.cuddle_hunger_level + 1
 fred.percent_deteriorated = fred.percent_deteriorated + 1
 ```
 
+TODO maybe show inconsistent state event?
+
 Still, the fact that the state of the Cuddle Zombie Object and that
 Objects in general are never stable doesn't stop us from treating them
 as the fundamental building blocks of programs. In fact, this is seen
@@ -923,12 +940,9 @@ So, the zombie is not a thing in and of itself. It's a concept that we
 superimpose on a succession of related atoms. Identity is not
 inherent; it is an endowment. We humans choose to make this endowment
 because it's a handy way to *refer* to one succession of related atoms
-as opposed to some other succession of related atoms.
-
-From this viewpoint, there's no such thing as "mutable state".
-Instead, "state" means "the value of an identity at a point in time."
-
-TODO explain a bit more how this is logical
+as opposed to some other succession of related atoms. From this
+viewpoint, there's no such thing as "mutable state". Instead, "state"
+means "the value of an identity at a point in time."
 
 Here's how you might visualize atoms, process, identity, and state:
 
@@ -2070,11 +2084,4 @@ tools for creating your own reduction functions and for extending
 other data structures so that they can be reduced in parallel with
 `r/fold`. Additionally, the concepts behind core.reduce are
 fascinating and worth learning eventually. For now, though, you have
-everything you need to get started with core.reducers! 
-
-## core.async
-
-* more parallelization
-* you're OK to not use it now
-* here's how to use it
-* here's a bit about how it works
+everything you need to get started with core.reducers!

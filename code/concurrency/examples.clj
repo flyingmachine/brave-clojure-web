@@ -8,11 +8,23 @@
   (println "The result is: " @result)
   (println "It will be at least 3 seconds before I print"))
 
-
 (deref (future (Thread/sleep 1000) 0)
        10
        5)
 ; => 5
+
+(def gimli-headshots ["serious.jpg" "fun.jpg" "playful.jpg"])
+(defn email-user
+  [email-address]
+  (println "Sending headshot notification to" email-address))
+(defn upload-document
+  "Needs to be implemented"
+  [headshot]
+  true)
+(let [notify (delay (email-user "and-my-axe@gmail.com"))]
+  (doseq [headshot gimli-headshots]
+    (future (upload-document headshot)
+            (force notify))))
 
 (defmacro queue
   [queue & task]
