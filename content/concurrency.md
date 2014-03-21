@@ -5,26 +5,36 @@ kind: documentation
 draft: true
 ---
 
-In this chapter you learn about what concurrency and parallelism are
-and why they matter. You'll learn about the challenges programmers
-face when writing parallel programs and about how Clojure's design
-helps to mitigate them. Finally, you'll learn a big boatload of tools
-and techniques to write parallel programs yourself, including:
-futures, promises, delays, atoms, refs, vars, pmap, and core.reducers.
-Also, there will be zombies. Onward!
+In this chapter you what concurrency and parallelism are and why they
+matter. You'll learn about the challenges you'll face when writing
+parallel programs and about how Clojure's design helps to mitigate
+them. Finally, you'll learn a big boatload of tools and techniques for
+writing write parallel programs yourself, including: futures,
+promises, delays, atoms, refs, vars, pmap, and core.reducers. Also,
+there will be zombies. Onward!
 
 ## Why Parallel Programming Matters
 
 Why should you bother with any of this? The reason is that parallel
 programming is essential for writing performant applications on modern
-hardware. In recent years CPU designers have focused more on enabling
-parallel execution by increasing the number of process in a machine
-than on increasing clock speed. This is mostly because increasing
-clock speed requires exponentially more power, making it impractical.
-As those creepy Intel bunnies continue smooshing more and more cores
-together, it's up to you and me to squueze performance out of them.
+hardware. You've probably noticed that, in recent years, CPU clock
+speeds have barely increased. At the same time, dual-core and
+quad-core computers have become common.
 
-## Concurrency and Parallelism Defined
+This is mostly because increasing clock speed requires exponentially
+more power, making it impractical. This is a physical limitation that
+is unlikely to be overcome any time soon, if ever. Therefore, you can
+expect the trend of increasing cores on a single machine to continue
+&mdash; as will the expectation that you as a programmer will know how
+to make the most of modern hardware.
+
+Besides this practical consideration, I think you'll also find that
+parallel programming is actually fun and fascinating with Clojure.
+Learning these techniques will make you a better programmer overall,
+even if you don't actually write parallel programs for the near
+future.
+
+## Concurrency and Parallelism Concepts
 
 Concurrent and parallel programming involves a lot of messy details at
 all levels of program execution, from the hardware to the operating

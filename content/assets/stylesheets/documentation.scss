@@ -194,6 +194,7 @@ header {
 .announcement, footer {
   @include container;
   @include padding-leader;
+  @include padding-trailer;
   text-align: center;
   .signup {
     @include push(2);
@@ -399,6 +400,13 @@ table {
   }
   .ad {
     text-align: center;
+  }
+}
+
+.sticky .signup {
+  @include trailer;
+  input[type=text] {
+    width: 98px;
   }
 }
 

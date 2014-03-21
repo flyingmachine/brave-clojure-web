@@ -29,7 +29,7 @@
           Spending your nights pining for the next chapter of <em>Clojure for the Brave and True</em>? Then follow <a href="https://twitter.com/nonrecursive">@nonrecursive</a> or get email updates: 
           %input#mce-EMAIL.email{:name => "EMAIL", :placeholder => "email address", :required => "", :type => "email", :value => ""}/
           %input#mc-embedded-subscribe.button{:name => "subscribe", :type => "submit", :value => "Get Updates"}/
-        %p Can't bear to be without CFTBAT? <a href="https://leanpub.com/clojure-for-the-brave-and-true">Get the DRM-free PDF, epub, and mobi!</a>
+        // %p Can't bear to be without CFTBAT? <a href="https://leanpub.com/clojure-for-the-brave-and-true">Get the DRM-free PDF, epub, and mobi!</a>
 
     .page
       .content
@@ -65,6 +65,11 @@
     
       %nav
         .sticky
+          .signup
+            %form#mc-embedded-subscribe-form.validate{:action => "http://flyingmachinestudios.us1.list-manage.com/subscribe/post?u=60763b0c4890c24bd055f32e6&amp;id=0b40ffd1e1", :method => "post", :name => "mc-embedded-subscribe-form", :novalidate => "", :target => "_blank"}
+              %input#mce-EMAIL.email{:name => "EMAIL", :placeholder => "email address", :required => "", :type => "email", :value => ""}/
+              %input#mc-embedded-subscribe.button{:name => "subscribe", :type => "submit", :value => "Get Updates"}/
+              
           %a{:href => "https://twitter.com/share", :class => "twitter-share-button"}tweet bravely and truly
           :javascript
             !function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs')

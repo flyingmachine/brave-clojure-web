@@ -6,7 +6,6 @@ kind: documentation
 
 Expect the following over the coming months:
 
-* Concurrency
 * Debugging like a wise old man full of wisdom
 * Admiring Leiningen's mustache
 

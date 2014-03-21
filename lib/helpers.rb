@@ -1,23 +1,26 @@
 include Nanoc::Helpers::LinkTo
 
+CHAPTER_IDS_ORDERED = %w{
+  home
+  getting-started
+  basic-emacs
+  using-emacs-with-clojure
+  language-fundamentals-overview
+  do-things
+  core-functions-in-depth
+  functional-programming
+  organization
+  read-and-eval
+  writing-macros
+  concurrency
+  upcoming
+  resources
+  debugging
+  about
+}
+
 def chapter_order(item)
-  chapter_ids_ordered = %w{
-home
-getting-started
-basic-emacs
-using-emacs-with-clojure
-language-fundamentals-overview
-do-things
-core-functions-in-depth
-functional-programming
-organization
-read-and-eval
-writing-macros
-upcoming
-debugging
-about
-  }
-  chapter_ids_ordered.index(item.identifier.gsub("/", ""))
+  CHAPTER_IDS_ORDERED.index(item.identifier.gsub("/", ""))
 end
 
 def chapters
