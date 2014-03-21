@@ -2,8 +2,9 @@
 title: State, Concurrency, and Parallelism
 link_title: State, Concurrency, and Parallelism
 kind: documentation
-draft: true
 ---
+
+# State, Concurrency, and Parallelism
 
 In this chapter you what concurrency and parallelism are and why they
 matter. You'll learn about the challenges you'll face when writing
@@ -50,15 +51,15 @@ time. "Task" just means "something that needs to get done." We can
 illustrate concurrency with the song "Telephone" by Lady Gaga. Gaga
 sings,
 
-    I cannot text you with a drink in my hand, eh
+> I cannot text you with a drink in my hand, eh
 
 Here, she's explaining that she can only manage one task (drinking).
 She flat out rejects the suggestion that she manage more than one
 task. However, if she decided to process tasks concurrently, she would
 sing,
 
-    I will put down this drink to text you,
-    then put my phone away and continue drinking, eh
+> I will put down this drink to text you,
+> then put my phone away and continue drinking, eh
 
 In this hypothetical universe, Lady Gaga is *managing* two tasks:
 drinking and texting. However, she is not *executing* both tasks at
@@ -72,8 +73,8 @@ then switch back to her phone and type another word.
 time. If Madame Gaga were to execute her two tasks in parallel, she
 would sing:
 
-    I can text you with one hand
-    while I use the other to drink, eh
+> I can text you with one hand
+> while I use the other to drink, eh
 
 Clojure has many features which allow you to easily achieve
 parallelism. Whereas the Lady Gaga system achieves parallelism by

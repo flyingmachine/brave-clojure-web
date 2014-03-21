@@ -419,3 +419,17 @@ table {
 small {
   font-size: 75%;
 }
+
+blockquote {
+  background: #fde6e1;
+  border-left: 2px solid $orange;
+  padding-left: $gutter-width;
+  font-style: italic;
+  @include padding-leader(0.5);
+  @include padding-trailer(0.5);
+
+  p {
+    margin: 0;
+    white-space: pre-line;
+  }
+}
