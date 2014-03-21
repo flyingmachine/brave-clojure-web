@@ -32,3 +32,89 @@ and information is immutable
 ** using `atom`
 * Tactic three: STM
 * Tactic 4: core.async
+* core async
+** function chains make poor machines
+** support reactivity
+** callback api's are difficult
+** stop comunicating with each other
+** good programs made of processes and queues
+** queues when you have conveyance
+move something from one place to another
+** conveyance become first class
+** no threads, thus no queues in JS
+** alternative to thread per connection
+** the bad way: events/callbacks
+*** listenable futures, promises
+*** web of direct-connect relationships <- TODO diagram
+*** difficult to reason about or control flow
+*** fragmented logic - callback hell
+about breaking up pieces of logic into little handlers when the logic
+is actually all related
+
+divide up logic in a way that has nothing to do with reasoning,
+everything to do with the mechanism being used
+*** handler list visibility, monitoring, control difficult
+*** observables/rx etc only mitigate certain cases
+*** how do you manage two separate bits of logic with different event streams?
+shared state
+*** "objects are like marionettes where anybody can pull any string at any time"
+http://www.infoq.com/presentations/clojure-core-async
+8:09
+*** promises/callbacks can't model enduring relationships, just do a handoff
+** queues/channels!
+*** decouple producers and consumers
+producers and consumers don't know about each other
+*** first-class
+external, "a thing"
+*** enduring
+*** monitorable
+*** multi-reader/writer
+** idea is to make it easier to do longer-lasting async?
+** CSP
+*** first class channels
+the only way that processes interact with one another
+no shared state except the channels
+*** blocking semantics by default
+*** multi-reader, multi-writer
+*** pass endpoints around
+*** select/alt
+**** wait for any one of a set of IO ops
+**** including writes, timer
+** the challenge
+*** work for clojure and clojurescript
+*** so - can work in threadless env
+*** also allows real threads and real blocking
+*** macro-generated inversion of control
+thred relinquishing, thread pools, callbacks
+** core.async
+*** independent "threads" of activity
+handles blocking, using and not using thread pool
+write code that looks synchronous with blocking, but real thread is
+relinquished
+*** queue-like channels
+*** threads and blocking
+**** (thread body ...)
+real thread, real blocking
+**** (go body ...)
+IOC 'thread', state machine, 'parking'
+** channels
+*** queue-like
+*** multi-writer, multi-reader
+*** fundamentally blocking
+blocks on both sides: writer will wait for a reader, reader will wait
+for a writer
+** buffers
+*** fixed buffer will block puts when full
+*** fixed variants, never block
+policy about what to do when full
+sliding buffer, dropping buffer
+*** unbounded is bad, not supported
+** choice
+*** often useful to wait on multiple ops
+*** when you specify choices, only one of them will happen
+*** need more exploration
+** timeouts
+*** it's a channel that closes after msecs
+*** include take of timeout in alt(*)
+*** timeout channels can be shared
+** 
