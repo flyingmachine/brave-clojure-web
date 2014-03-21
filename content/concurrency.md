@@ -1954,7 +1954,7 @@ In the text below, I'll often use the namespace alias `r` to refer to
 `clojure.core.reducers/map` as `r/map`. I'll also refer to the
 "clojure.core.reducers" library as just "core.reducers".
 
-### Parallel Reduce
+#### Parallel Reduce
 
 core.reducers offers a parallel version of `reduce`, `fold`. Wherever
 you use `reduce`, you can just use `fold` instead. There are a couple
@@ -2026,7 +2026,7 @@ In general, you don't have anything to lose by using `fold` instead of
 `reduce`. If a collection is foldable, you'll get a performance boost.
 Otherwise, it's just like using `reduce`.
 
-### Faster Collection Functions
+#### Faster Collection Functions
 
 The other improvement core.reducers brings is that functions like
 `map` and `filter` will take less time when applied in succession. To
