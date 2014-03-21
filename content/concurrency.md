@@ -155,7 +155,7 @@ of marshmallows strung out on a line with an alligator traveling down
 the line and eating them one by one. Here's a single-core processor
 executing a single-threaded program:
 
-TODO: add image here
+![single thread](images/concurrency/single-thread.png)
 
 A thread can "spawn" a new thread. In a single-processor system, the
 processor switches back and forth between the threads (interleaving).
@@ -168,7 +168,7 @@ timeline of how their instructions could be executed. I've shaded the
 instructions on thread B to help distinguish them from the
 instructions on thread A.
 
-TODO: add image here
+![two threads, one processor](images/concurrency/two-threads-one-processor.png)
 
 Note that this is just a *possible* ordering of instruction execution.
 The processor could also have executed the instructions in the order,
@@ -183,7 +183,7 @@ thread to each core. This allows the computer to execute more than one
 thread simultaneously. Each core executes its thread's instructions in
 order:
 
-TODO: image
+![two threads, one processor](images/concurrency/two-threads-two-processors.png)
 
 As with interleaving on a single core, there are no guarantees for the
 overall execution order, so the program is nondeterministic. To make
@@ -255,10 +255,14 @@ Their rituaal proceeds thusly:
 4. Release both waraxes
 5. Go to 1
 
+![dwarven berserkers](images/concurrency/dwarven-berserkers.png)
+
 Following this ritual, it's entirely possible that all dwarven
 berserkers will pick up their left comfort stick and then block
 indefinitely waiting for the comfort stick to their right to become
-available, resulting in **deadlock**.
+available, resulting in **deadlock**. (By the way, in case you want to
+look at this phenomenon more, it's usually referred to as "the dining
+philosophers problem." But that's boring.)
 
 The takeaway here is that concurrent programming has the potential to
 be confusing and terrifying. But! With the right tools, it's
@@ -955,6 +959,14 @@ as opposed to some other succession of related atoms. From this
 viewpoint, there's no such thing as "mutable state". Instead, "state"
 means "the value of an identity at a point in time."
 
+This makes even more sense when you consider that, in your programs,
+you are dealing with *information* about the world. It doesn't make
+sense to say that information has changed; it only makes sense to say
+that you've received new information. At 12:00pm on Friday, Fred the
+Cuddle Zombie was in a state of 50% decayed. At 1:00pm, he was 60%
+decayed. These are both facts that you can process, and the
+introduction of a new fact does not invalidate a previous fact.
+
 Here's how you might visualize atoms, process, identity, and state:
 
 TODO image goes here
@@ -963,9 +975,6 @@ These atoms don't act upon each other and they can't be changed. They
 can't _do_ anything. Change is not the result of one object acting on
 another. What we call "change" results when a) a process generates a new
 atom and b) we choose to associate the identity with the new atom.
-
-TODO explain how this lets you hold on to past. Give self fulfilling
-prophecy examaple.
 
 How can we do this in Clojure, though? The tools we've introduced so
 far don't allow it. To handle change, Clojure uses *reference types*.
@@ -1861,6 +1870,8 @@ Now `pmap` actually takes 1.6 times *longer*.
 The solution to this problem is to increase the *grain size*, or the
 aamount of work done in a thread, of your parallel tasks. Here's how
 you can visualize an increased grain size:
+
+![two threads, one processor](images/concurrency/ppmap.png)
 
 In order to actually accomplish this in Clojure, you can increase the
 grain size by making each thread apply `clojure.string/lower-case` to
