@@ -2171,4 +2171,8 @@ of atoms produced by a process on which we impose an identity. You
 learned how to manage state in Clojure with atoms and refs, and you
 learned how to dynamically bind vars. Finally, you learned how to
 perform stateless computations more efficiently with pmap and
-core.reducers. Dang, son! You learned a lot!
+core.reducers. You learned a lot! High five!
+
+*P.S. I left core.async out of this chapter because it's already super
+long, and I'm not sure if it belongs in a book for beginners. If you'd
+like to see it added, let me know! Thanks!*
