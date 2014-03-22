@@ -999,10 +999,12 @@ related values with an identity. Here's how you create one:
 
 To get an atom's current state, you dereference it. Unlike futures,
 delays, and promises, dereferencing an atom (or any other reference
-type) will never block. When you dereference a reference type, it's
-like you're saying, "give me this identity's state as it is right
-now," so it makes sense that the operation doesn't block. Here's
-Fred's current state:
+type) will never block. When you deref futures, delays, and promises,
+it's like you're saying "I expect a value now, and I will wait until I
+get it," so it makes sense that the operation would block. When you
+dereference a reference type, however, it's like you're saying, "give
+me this identity's state as it is right now," so it makes sense that
+the operation doesn't block. Here's Fred's current state:
 
 ```clojure
 @fred
@@ -1012,12 +1014,12 @@ Fred's current state:
 In our Ruby example above, I mentioned that data could change when
 trying to log it on a separate thread. There's no danger of that when
 using atoms to manage state because each state is immutable. Here's
-how you could log a zombie's state:
+how you could "log" a zombie's state with `println`:
 
 ```clojure
 (let [zombie-state @fred]
   (if (>= (:percent-deteriorated zombie-state) 50)
-    (future (log (:percent-deteriorated zombie-state)))))
+    (future (println (:percent-deteriorated zombie-state)))))
 ```
 
 To update the atom to refer to a new state, you use `swap!`. This
@@ -1031,12 +1033,12 @@ here on out we'll take "atom" to mean "atom reference type" and
 the function to the atom's current state in order to produce a new
 value, and then updates the atom to refer to this new value. The new
 value is also returned. Here's how you might increase Fred's cuddle
-hunger level:
+hunger level by 1:
 
 ```clojure
 (swap! fred
-       (fn [state]
-         (merge-with + state {:cuddle-hunger-level 1})))
+       (fn [current-state]
+         (merge-with + current-state {:cuddle-hunger-level 1})))
 ; => {:cuddle-hunger-level 1, :percent-deteriorated 0}
 ```
 
@@ -1052,28 +1054,35 @@ You can update both "attributes" at the same time:
 
 ```clojure
 (swap! fred
-       (fn [state]
-         (merge-with + state {:cuddle-hunger-level 1
-                              :percent-deteriorated 1})))
+       (fn [current-state]
+         (merge-with + current-state {:cuddle-hunger-level 1
+                                      :percent-deteriorated 1})))
 ; => {:cuddle-hunger-level 2, :percent-deteriorated 1}
 ```
 
 In the example above, you passed `swap!` a function which only takes
-one argument (`state`). However, you can also pass `swap!` a function
-which takes multiple arguments. For example, you could create a
-function which takes two arguments, a zombie state and the amount by
+one argument, `current-state`. However, you can also pass `swap!` a
+function which takes multiple arguments. For example, you could create
+a function which takes two arguments, a zombie state and the amount by
 which to increase its cuddle hunger level:
 
 ```clojure
 (defn increase-cuddle-hunger-level
   [zombie-state increase-by]
   (merge-with + zombie-state {:cuddle-hunger-level increase-by}))
+```
 
+Let's test it out real quick on a zombie state. Note that this doesn't
+actually update `fred` because we're not using `swap!`. We're just
+calling the `increase-cuddle-hunger-level` function like any normal
+function call:
+
+```
 (increase-cuddle-hunger-level @fred 10)
 ; => {:cuddle-hunger-level 12, :percent-deteriorated 1}
 ```
 
-You then call `swap!` with the additional arguments:
+Now call `swap!` with the additional arguments:
 
 ```clojure
 (swap! fred increase-cuddle-hunger-level 10)
@@ -1082,7 +1091,21 @@ You then call `swap!` with the additional arguments:
 ; => {:cuddle-hunger-level 12, :percent-deteriorated 1}
 ```
 
-Or you could express the whole thing using Clojure's built-in functions:
+Or you could express the whole thing using Clojure's built-in
+functions. The `update-in` function takes three arguments: a
+collection, a vector for "navigating" the collection to a value, and a
+function to "update" that value. It can also take additional arguments
+which get passed to the update function. Here are a couple examples:
+
+```clojure
+(update-in {:a {:b 3}} [:a :b] inc)
+; => {:a {:b 4}}
+
+(update-in {:a {:b 3}} [:a :b] + 10)
+; => {:a {:b 13}}
+```
+
+Here's how you can use it to change Fred's state:
 
 ```clojure
 (swap! fred update-in [:cuddle-hunger-level] + 10)
