@@ -1170,17 +1170,14 @@ A watch is a function which takes four arguments: a key, the thing
 being watched, its previous state, and its new state. You can
 register any number of watches with a reference type.
 
-Let's say that a zombie's `shuffle-speed` (measured in shuffles per
+Let's say that a zombie's shuffle speed (measured in shuffles per
 hour, or SPH) is dependent on its hunger level and deterioration:
 
 ```clojure
 (defn shuffle-speed
   [zombie]
-  (* (:cuddle-hunger-level zombie) (- 100 (:percent-deteriorated
-  zombie))))
-
-@fred
-; => {:cuddle-hunger-level 22, :percent-deteriorated 1}
+  (* (:cuddle-hunger-level zombie)
+     (- 100 (:percent-deteriorated zombie))))
 ```
 
 You want to be alerted whenever its shuffle speed reaches the
