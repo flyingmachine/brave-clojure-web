@@ -912,11 +912,9 @@ state:
 ```ruby
 fred.cuddle_hunger_level = fred.cuddle_hunger_level + 1
 # At this time, another thread could read fred's attributes and
-# "perceive" fred in an inconsistent state
+# "perceive" fred in an inconsistent state unless you use a mutex
 fred.percent_deteriorated = fred.percent_deteriorated + 1
 ```
-
-TODO maybe show inconsistent state event?
 
 Still, the fact that the state of the Cuddle Zombie Object and that
 Objects in general are never stable doesn't stop us from treating them
