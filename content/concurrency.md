@@ -196,29 +196,30 @@ threads.
 To drive this point home, imagine the program in the image above
 includes the following pseudo instructions:
 
-| ID | Instruction |
-|----+-------------|
-| A1 | WRITE X = 0 |
-| A2 | READ X      |
-| A3 | PRINT X     |
-| B1 | WRITE X = 5 |
+| ID | Instruction     |
+|----+-----------------|
+| A1 | WRITE X = 0     |
+| A2 | READ X          |
+| A3 | WRITE X = X + 1 |
+| B1 | READ X          |
+| B2 | WRITE X = X + 1 |
 
-If the processor follows the order "A1, A2, A3, B1" then the program
-will print the number `0`. If it follows the order "A1, B1, A2, A3",
-then the program will print the number `5`. Even weirder, if the order
-is "A1, A2, B1, A3" then the program will print `0` even though `X`'s
-value is `5`.
+If the processor follows the order "A1, A2, A3, B1, B2" then `X`'s
+value will end up `2`, as you'd expect. If it follows the order "A1,
+A2, B1, A3, B2", `X`'s value will be `1`, as you can see here:
+
+![reference cell](images/concurrency/reference-cell.png)
 
 This little thought experiment demonstrates one of the three central
 challenges in concurrent programming, a.k.a "The Three Concurrency
-Goblins." We'll call this the "reference cell" problem. There are two
-other problems involved in concurrent programming: mutual exclusion
-and the dwarven berserkers problem.
+Goblins." We'll call this the "reference cell" problem.
 
-For mutual exclusion, imagine two threads are each trying to write the
-text of a different spell to a file. Without any way to claim
-exclusive write access to the file, the spell will end up garbled as
-the write instructions get interleaved. These two spells:
+There are two other problems involved in concurrent programming:
+mutual exclusion and the dwarven berserkers problem. For mutual
+exclusion, imagine two threads are each trying to write the text of a
+different spell to a file. Without any way to claim exclusive write
+access to the file, the spell will end up garbled as the write
+instructions get interleaved. These two spells:
 
     By the power invested in me
     by the state of California
@@ -872,7 +873,9 @@ You can see that this is really just a fancy reference cell. It's
 subject to the same non-deterministic results in a multi-threaded
 environment. For example, if two threads both try to increment Fred's
 hunger level with something like `fred.cuddle_hunger_level =
-fred.cuddle_hunger_level + 1`, one of the increments could be lost.
+fred.cuddle_hunger_level + 1`, one of the increments could be lost,
+just like in the example with two threads writing to `X` toward the
+beginning of the chapter.
 
 You program will be nondeterministic even if you're only performing
 *reads* on a separate thread. For example, suppose you're conducting
@@ -887,10 +890,15 @@ end
 ```
 
 ...but another thread could change `fred` before the write actually
-takes place. That would be unfortunate. You don't want your data to be
-inconsistent when recovering from the zombie apocalypse. However,
-there's no way to hold on to the state of an object at a specific
-moment in time.
+takes place. In the following diagram, it would be correct to write
+5 to the database, but 10 gets written instead (time is flowing from
+top to bottom):
+
+![inconsistent Fred](images/concurrency/fred-read.png)
+
+This would be unfortunate. You don't want your data to be inconsistent
+when recovering from the cuddle zombie apocalypse. However, there's no
+way to hold on to the state of an object at a specific moment in time.
 
 Finally, you have to take extra care to express a change to both
 `cuddle_hunger_level` and `percent_deteriorated` simultaneously. You
