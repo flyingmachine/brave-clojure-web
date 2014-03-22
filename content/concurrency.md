@@ -263,7 +263,9 @@ berserkers will pick up their left comfort stick and then block
 indefinitely waiting for the comfort stick to their right to become
 available, resulting in **deadlock**. (By the way, in case you want to
 look at this phenomenon more, it's usually referred to as "the dining
-philosophers problem." But that's boring.)
+philosophers problem." But that's boring.) This book doesn't discuss
+deadlock in much detail, but it's good to know the concept and its
+terminology.
 
 The takeaway here is that concurrent programming has the potential to
 be confusing and terrifying. But! With the right tools, it's
