@@ -1271,7 +1271,6 @@ descriptive error message:
 
 Pretty great! Now let's look at refs.
 
-
 ## Refs
 
 Atoms are great for managing the state of independent identities.
@@ -1309,8 +1308,13 @@ are:
 You might recognize these as the "A", "C", and "I" in the "ACID"
 properties of database transactions. You can think of refs as giving
 you the same concurrency safety as database transactions, only with
-in-memory data. In case you were wondering, Clojure uses *Software
-Transaction Memory* (STM) to implement this behavior.
+in-memory data.
+
+(In case you were wondering, Clojure uses *Software Transaction
+Memory* (STM) to implement this behavior. STM is really cool, but when
+you're starting with Clojure you don't need to know much about it. You
+only need to know how to make use of it. Which is what this section
+does.)
 
 Let's get to actually performing the sock tracksfer. First, you'll
 need to code up some sock-and-gnome creation technology:
