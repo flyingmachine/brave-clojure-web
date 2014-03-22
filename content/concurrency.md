@@ -2175,4 +2175,4 @@ core.reducers. You learned a lot! Awesome job!
 
 *P.S. I left core.async out of this chapter because it's already super
 long, and I'm not sure if it belongs in a book for beginners. If you'd
-like to see it added, let me know! Thanks!*
+like to see it covered, let me know! Thanks!*
