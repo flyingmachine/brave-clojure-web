@@ -953,15 +953,16 @@ stable as numbers.
 These atoms are produced by some metaphysical *process*. (This might
 sound hand-wavey, but that's because metaphysics is hand-wavey. You'll
 see how Clojure implements this idea in a minute.) For example, the
-"Next Zombie State" process gets applied to the atom CZ1 to produce
-atom CZ2. The process then gets applied to the atom CZ2 to produce
-atom CZ3, and so on.
+"Cuddle Zombie" process gets applied to the atom F1 to produce atom
+F2. The process then gets applied to the atom F2 to produce atom
+F3, and so on.
 
 So, the zombie is not a thing in and of itself. It's a concept that we
 superimpose on a succession of related atoms. Identity is not
 inherent; it is an endowment. We humans choose to make this endowment
 because it's a handy way to *refer* to one succession of related atoms
-as opposed to some other succession of related atoms. From this
+as opposed to some other succession of related atoms. "Fred" is a
+handy way to refer to "F1", "F2", "F3", and so on. From this
 viewpoint, there's no such thing as "mutable state". Instead, "state"
 means "the value of an identity at a point in time."
 
@@ -975,7 +976,7 @@ introduction of a new fact does not invalidate a previous fact.
 
 Here's how you might visualize atoms, process, identity, and state:
 
-TODO image goes here
+![FP metaphysics](images/concurrency/fp-metaphysics.png)
 
 These atoms don't act upon each other and they can't be changed. They
 can't _do_ anything. Change is not the result of one object acting on
