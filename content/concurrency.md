@@ -250,8 +250,8 @@ is placed between each pair of dwarves, like so:
 
 Their rituaal proceeds thusly:
 
-1. Pick up the *left* waraxe, if available
-2. Pick up the *right* waraxe, if available
+1. Pick up the *left* waraxe, when available
+2. Pick up the *right* waraxe, when available
 3. Comfort your neighbor with vigorous swings of your "comfort sticks"
 4. Release both waraxes
 5. Go to 1
