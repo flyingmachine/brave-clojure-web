@@ -1,10 +1,10 @@
 ---
-title: State, Concurrency, and Parallelism
-link_title: State, Concurrency, and Parallelism
+title: Concurrency, Parallelism, and State
+link_title: Concurrency, Parallelism, and State
 kind: documentation
 ---
 
-# State, Concurrency, and Parallelism
+# Concurrency, Parallelism, and State
 
 In this chapter you what concurrency and parallelism are and why they
 matter. You'll learn about the challenges you'll face when writing
