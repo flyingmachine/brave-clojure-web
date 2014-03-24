@@ -6,13 +6,13 @@ kind: documentation
 
 # Concurrency, Parallelism, and State. And Zombies.
 
-In this chapter you what concurrency and parallelism are and why they
-matter. You'll learn about the challenges you'll face when writing
-parallel programs and about how Clojure's design helps to mitigate
-them. Finally, you'll learn a big boatload of tools and techniques for
-writing parallel programs yourself, including: futures, promises,
-delays, atoms, refs, vars, pmap, and core.reducers. Also, there will
-be zombies. Onward!
+In this chapter you'll learn what concurrency and parallelism are and
+why they matter. You'll learn about the challenges you'll face when
+writing parallel programs and about how Clojure's design helps to
+mitigate them. Finally, you'll learn a big boatload of tools and
+techniques for writing parallel programs yourself, including: futures,
+promises, delays, atoms, refs, vars, pmap, and core.reducers. Also,
+there will be zombies. Onward!
 
 ## Why Parallel Programming Matters
 
