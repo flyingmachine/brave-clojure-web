@@ -121,8 +121,8 @@ the "read next text message" task **asynchronously**.
 decompose a task into parallelizable sub-tasks and the techniques you
 use to manage the kinds of risks that arise when your program executes
 more than one task at the same time. For the rest of the chapter, I'll
-the two terms interchangeably because the risks are pretty much the
-same for both.
+use the two terms interchangeably because the risks are pretty much
+the same for both.
 
 To better understand those risks and how Clojure help you avoid them,
 let's examine how concurrency and parallelism are implemented in
@@ -262,7 +262,7 @@ Following this ritual, it's entirely possible that all dwarven
 berserkers will pick up their left comfort stick and then block
 indefinitely waiting for the comfort stick to their right to become
 available, resulting in **deadlock**. (By the way, in case you want to
-look at this phenomenon more, it's usually referred to as "the dining
+look into this phenomenon more, it's usually referred to as "the dining
 philosophers problem." But that's boring.) This book doesn't discuss
 deadlock in much detail, but it's good to know the concept and its
 terminology.
