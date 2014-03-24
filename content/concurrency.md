@@ -248,7 +248,7 @@ comforting coffee klatch is to pick up their "comfort sticks"
 ("double-bladed waraxes") and scratch each others' backs. One waraxe
 is placed between each pair of dwarves, like so:
 
-Their rituaal proceeds thusly:
+Their ritual proceeds thusly:
 
 1. Pick up the *left* waraxe, when available
 2. Pick up the *right* waraxe, when available
