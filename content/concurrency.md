@@ -10,9 +10,9 @@ In this chapter you what concurrency and parallelism are and why they
 matter. You'll learn about the challenges you'll face when writing
 parallel programs and about how Clojure's design helps to mitigate
 them. Finally, you'll learn a big boatload of tools and techniques for
-writing write parallel programs yourself, including: futures,
-promises, delays, atoms, refs, vars, pmap, and core.reducers. Also,
-there will be zombies. Onward!
+writing parallel programs yourself, including: futures, promises,
+delays, atoms, refs, vars, pmap, and core.reducers. Also, there will
+be zombies. Onward!
 
 ## Why Parallel Programming Matters
 
@@ -679,7 +679,7 @@ interleaved. To ensure that you'll always be this lucky, you can use
 this macro:
 
 ```clojure
-(defmacro queue
+(defmacro enqueue
   [q concurrent-promise-name & work]
   (let [concurrent (butlast work)
         serialized (last work)]
@@ -690,17 +690,17 @@ this macro:
        ~concurrent-promise-name)))
 ```
 
-`queue` works by splitting a task into a concurrent and serialized
+`enqueue` works by splitting a task into a concurrent and serialized
 portion. It creates a future, which is what allows the concurrent
 portion to run concurrently. You can see this with `(future (deliver
 ~concurrent-promise-name (do ~@concurrent)))`. The next line, `(deref
 ~q)`, blocks the thread until `q` is done, preventing the serialized
 portion from running until the previous job in the queue is done.
 Finally, the macro returns a promise which can then be used in another
-call to `queue`.
+call to `enqueue`.
 
 To demonstrate that this works, you're going to pay homage to the
-British, since they invented queues. you'll use a queue to ensure that
+British, since they invented queues. You'll use a queue to ensure that
 the customary British greeting, "'Ello, gov'na! Pip pip! Cheerio!" is
 delivered in the correct order. This demonstration is going to involve
 an abundance of `sleep`ing, so here's a macro to do that more
@@ -727,13 +727,13 @@ order:
 ```
 
 This is the wrong greeting completely, though no British person would
-be so impolite as to correct you. Here's how you can `queue` it so as
-not to embarrass yourself:
+be so impolite as to correct you. Here's how you can `enqueue` it so
+as not to embarrass yourself:
 
 ```clojure
 (time @(-> (future (wait 200 (println "'Ello, gov'na!")))
-           (queue line (wait 400 "Pip pip!") (println @line))
-           (queue line (wait 100 "Cheerio!") (println @line))))
+           (enqueue saying (wait 400 "Pip pip!") (println @saying))
+           (enqueue saying (wait 100 "Cheerio!") (println @saying))))
 ; => 'Ello, gov'na!
 ; => Pip pip!
 ; => Cheerio!
@@ -763,11 +763,11 @@ writing serially. Here's the final product. I'll walk through it below.
 (defmacro snag-quotes-queued
   [n filename]
   (let [quote-gensym (gensym)
-        queue-line `(queue ~quote-gensym
-                           (random-quote)
-                           (append-to-file ~filename @~quote-gensym))]
+        queue `(enqueue ~quote-gensym
+                        (random-quote)
+                        (append-to-file ~filename @~quote-gensym))]
     `(-> (future)
-         ~@(take n (repeat queue-line)))))
+         ~@(take n (repeat queue)))))
 ```
 
 `append-to-file` and `format-quote` are the same as above, they're
@@ -1438,7 +1438,7 @@ order of events will result in Transaction A being retried:
 8. Transaction A: commit - fails because dryer and gnome have changed.
    Retries.
 
-And there you have it! Save, easy, concurrent coordination of state
+And there you have it! Safe, easy, concurrent coordination of state
 changes. But that's not all! Refs have one more trick up their
 suspiciously long sleeve: `commute`.
 
