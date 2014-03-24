@@ -781,17 +781,17 @@ macro is to returns a form that looks like:
 (snag-quotes-queued 4 "quotes.txt")
 ; => expands to:
 (-> (future)
-    (queue G__627 (random-quote) (append-to-file "quotes.txt" @G__627))
-    (queue G__627 (random-quote) (append-to-file "quotes.txt" @G__627))
-    (queue G__627 (random-quote) (append-to-file "quotes.txt" @G__627))
-    (queue G__627 (random-quote) (append-to-file "quotes.txt" @G__627)))
+    (enqueue G__627 (random-quote) (append-to-file "quotes.txt" @G__627))
+    (enqueue G__627 (random-quote) (append-to-file "quotes.txt" @G__627))
+    (enqueue G__627 (random-quote) (append-to-file "quotes.txt" @G__627))
+    (enqueue G__627 (random-quote) (append-to-file "quotes.txt" @G__627)))
 ```
 
 There are a couple things going on here. You have to "seed" the queue
-with a no-op future because `queue` expects a dereferenceable object
-as its first argument. Then, you just repeat instances of `(queue
+with a no-op future because `enqueue` expects a dereferenceable object
+as its first argument. Then, you just repeat instances of `(enqueue
 G__627 (random-quote) (append-to-file "quotes.txt" @G__627))`. This
-mirrors the way the British example above uses `queue`.
+mirrors the way the British example above uses `enqueue`.
 
 And that's it for futures, delays, and promises! This section has
 shown how you can combine them together to make your concurrent
