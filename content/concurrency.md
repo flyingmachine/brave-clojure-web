@@ -1,10 +1,10 @@
 ---
-title: Concurrency, Parallelism, and State
-link_title: Concurrency, Parallelism, and State
+title: Concurrency, Parallelism, and State. And Zombies.
+link_title: Concurrency, Parallelism, and State. And Zombies.
 kind: documentation
 ---
 
-# Concurrency, Parallelism, and State
+# Concurrency, Parallelism, and State. And Zombies.
 
 In this chapter you what concurrency and parallelism are and why they
 matter. You'll learn about the challenges you'll face when writing
