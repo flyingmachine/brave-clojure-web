@@ -26,7 +26,7 @@
     (future (upload-document headshot)
             (force notify))))
 
-(defmacro queue
+(defmacro enqueue
   [queue & task]
   `(future @~queue ~@task))
 
@@ -36,9 +36,9 @@
   `(do (Thread/sleep ~timeout) ~@body))
 
 (-> (future (wait 2000 (println 1)))
-    (queue (wait 1000 (println 2)))
-    (queue (wait 500 (println 3)))
-    (queue (wait 250 (println 4))))
+    (enqueue (wait 1000 (println 2)))
+    (enqueue (wait 500 (println 3)))
+    (enqueue (wait 250 (println 4))))
 
 ;; Yak butter
 
@@ -109,7 +109,7 @@
   [timeout & body]
   `(do (Thread/sleep ~timeout) ~@body))
 
-(defmacro queue
+(defmacro enqueue
   [q concurrent-promise-name & work]
   (let [concurrent (butlast work)
         serialized (last work)]
@@ -120,8 +120,8 @@
        ~concurrent-promise-name)))
 
 (time @(-> (future (wait 200 (println "'Ello, gov'na!")))
-           (queue line (wait 400 "Pip pip!") (println @line))
-           (queue line (wait 100 "Cheerio!") (println @line))))
+           (enqueue saying (wait 400 "Pip pip!") (println @saying))
+           (enqueue saying (wait 100 "Cheerio!") (println @saying))))
 
 (defn append-to-file
   [filename s]
@@ -138,8 +138,8 @@
 (defmacro snag-quotes-queued
   [n filename]
   (let [quote-gensym (gensym)
-        queue-line `(queue ~quote-gensym
-                           (random-quote)
-                           (append-to-file ~filename @~quote-gensym))]
+        queue `(enqueue ~quote-gensym
+                        (random-quote)
+                        (append-to-file ~filename @~quote-gensym))]
     `(-> (future)
-         ~@(take n (repeat queue-line)))))
+         ~@(take n (repeat queue)))))
