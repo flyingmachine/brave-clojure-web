@@ -7,9 +7,9 @@
                               :percent-deteriorated 1})))
 
 (swap! fred
-       (fn [state]
-         (merge-with + state {:cuddle-hunger-level 1
-                              :percent-deteriorated 1})))
+       (fn [current-state]
+         (merge-with + current-state {:cuddle-hunger-level 1
+                                      :percent-deteriorated 1})))
 
 (defn increase-cuddle-hunger-level
   [zombie-state increase-by]
@@ -17,13 +17,16 @@
 
 (swap! fred increase-cuddle-hunger-level 10)
 
+(update-in {:a {:b 3}} [:a :b] inc)
+
 (let [zombie-state @fred]
   (if (>= (:percent-deteriorated zombie-state) 50)
     (future (log (:percent-deteriorated zombie-state)))))
 
 (defn shuffle-speed
   [zombie]
-  (* (:cuddle-hunger-level zombie) (- 100 (:percent-deteriorated zombie))))
+  (* (:cuddle-hunger-level zombie)
+     (- 100 (:percent-deteriorated zombie))))
 
 
 

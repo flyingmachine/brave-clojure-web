@@ -1,14 +1,12 @@
 (def alphabet-length 26)
-;; seq of chars, A-Z
+
+;; vector of chars, A-Z
 (def letters (mapv (comp str char (partial + 65)) (range alphabet-length)))
-(defn random-letter
-  "returns a random upper-case letter"
-  []
-  (get letters (int (rand alphabet-length))))
+
 (defn random-string
   "returns a random string of specified length"
   [length]
-  (apply str (take length (repeatedly random-letter))))
+  (apply str (take length (repeatedly #(rand-nth letters)))))
 
 (defn random-string-list
   "returns a fully realized list of random strings"
