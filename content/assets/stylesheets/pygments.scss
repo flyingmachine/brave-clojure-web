@@ -1,3 +1,4 @@
+.code.pygments {color: white}
 .code.pygments  { border-left: 2px solid #999; background: #333; padding-left: 8px; margin-left: -10px; }
 .code.pygments .hll { background-color: #49483e }
 .code.pygments .c { color: #75715e } /* Comment */
@@ -7,10 +8,10 @@
 .code.pygments .n { color: #f8f8f2 } /* Name */
 .code.pygments .o { color: #f92672 } /* Operator */
 .code.pygments .p { color: #f8f8f2 } /* Punctuation */
-.code.pygments .cm { color: #75715e } /* Comment.Multiline */
-.code.pygments .cp { color: #75715e } /* Comment.Preproc */
-.code.pygments .c1 { color: #75715e } /* Comment.Single */
-.code.pygments .cs { color: #75715e } /* Comment.Special */
+.code.pygments .cm { color: #bbb } /* Comment.Multiline */
+.code.pygments .cp { color: #bbb } /* Comment.Preproc */
+.code.pygments .c1 { color: #bbb } /* Comment.Single */
+.code.pygments .cs { color: #bbb } /* Comment.Special */
 .code.pygments .ge { font-style: italic } /* Generic.Emph */
 .code.pygments .gs { font-weight: bold } /* Generic.Strong */
 .code.pygments .kc { color: #66d9ef } /* Keyword.Constant */
