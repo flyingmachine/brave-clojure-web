@@ -22,50 +22,126 @@ existential horror of being a seventeen-year-old for eternity.)
 
 In this chapter, you'll learn about Clojure's deep, dark,
 bloodthirsty, supernatur&ndash; \**cough*\* I mean, in this chapter,
-you'll learn about a couple of Clojure's underlying concepts. This
-will give you the grounding you need to read the documentation for
-functions you haven't used before and to understand what's happening
-when you give them a try.
+you'll learn about Clojure's underlying concept of "programming to
+abstractions", and about the sequence and collection abstractions.
+You'll also learn about lazy sequences. This will give you the
+grounding you need to read the documentation for functions you haven't
+used before and to understand what's happening when you give them a
+try.
 
-You'll also see usage examples of the functions you'll be reaching for
-the most. This will give you a solid foundation for writing your own
-code and reading and learning from others' projects.
+Next, you'll get more experience with the functions you'll be
+reaching for the most. You'll learn how to work with lists, vectors,
+maps and sets with the functions `map`, `reduce`, `into`, `conj`,
+`concat`, `some`, `filter`, `take`, `drop`, `sort`, `sort-by`,
+`reverse`, `identity`, `first`, `rest`, `assoc`, `dissoc`. You'll
+learn how to create new fucntions with `apply`, `partial`, `comp`, and
+`complement`. This will help you understand how to do things the
+Clojure way and it will give you a solid foundation for writing your
+own code and reading and learning from others' projects.
 
-By the end, you'll understand:
-
--   Programming to abstractions
-    -   The sequence abstraction
-    -   Lazy sequences
-    -   The collection abstraction
--   Often-used functions
-    -   map
-    -   into
-    -   conj
-    -   apply
-    -   partial
--   How to parse and query a CSV of vampire data
+Finally, you'll learn how to parse and query a CSV of vampire data in
+order to determine what nosferatu lurk in your hometown.
 
 ## Programming to Abstractions
 
-Clojure emphasizes *programming to abstractions*. Since this phrase
-doesn't mean anything without examples and explanation, let's explore
-it a bit.
+Clojure emphasizes *programming to abstractions*. This means that it
+allows you to use the same function on different data structures,
+treating data structures in the same logical manner regardless of
+their implementation. That summary is a little dense, so let's look at
+some examples.
 
-In general, programming to abstractions gives us power by letting us
-use libraries of functions on a data structure regardless of that data
-structure's implementation.
+### Using One Function on Different Data Structures
 
-Take the sequence abstraction. First, some terminology: if a data
-structure can be treated as a sequence, then we call that sequence a
-"seq" because it's shorter and hipper, and that's how it's referred to
-everywhere else.
+In the last chapter, you learned that the `map` function creates a
+lazy sequence by applying a function to every element in a collection.
+Lazy sequences are covered a little later in this chapter; for now,
+just think of them as lists. You can use `map` on vectors, lists, and
+sets:
 
-If a data structure takes part in the sequence abstraction then it can
-make use of the extensive seq library, which includes such superstar
-functions as `map`, `reduce`, `filter`, `distinct`, `group-by`, and
-dozens more. So, if you can treat a data structure as a seq then you
-get oodles of functionality for free. Vectors, maps, lists, and sets
-can all be treated as seqs.
+```clojure
+(defn titleize
+  [topic]
+  (str topic " for the Brave and True"))
+
+(map titleize ["Hamsters" "Ragnarok"])
+; => ("Hamsters for the Brave and True" "Ragnarok for the Brave and True")
+
+(map titleize '("Empathy" "Decorating"))
+; => ("Empathy for the Brave and True" "Decorating for the Brave and True")
+
+(map titleize #{"Elbows" "Soap Carving"})
+; => ("Soap Carving for the Brave and True" "Elbows for the Brave and True")
+```
+
+(Notice that the last example returns titles in a different order from
+how the topics were listed in the set literal. This is because sets
+aren't ordered.)
+
+This behavior might not seem remarkable. It's intuitive because lists
+and vectors both consist of a sequence of elements, and it makes sense
+that you should be able to use the same function to traverse the
+sequence and return a new result. Sets aren't a sequence because they
+aren't ordered, but you can still easily justify treating the set as a
+sequence.
+
+What's less obvious is that you can also use the `map` *function* on map
+*data structures*. When you do this, each key/value pair gets passed
+to the mapping function. In the example below, `label-key-val` uses
+argument destructuring, which we covered in the last chapter, to
+succinctly assign values to `key` and `val`.
+
+```clojure
+(defn label-key-val
+  [[key val]]
+  (str "key: " key ", val: " val))
+
+(map label-key-val {:name "Edward"
+                    :occupation "perennial high-schooler"})
+; => ("key: :name, val: Edward"
+      "key: :occupation, val: perennial high-schooler")
+```
+
+The map data structure clearly isn't a sequence of elements, but the
+`map` treats it like one. It might not be obvious why you would want
+to do this. One use is to transform a map by applying a function to
+each of the map's values:
+
+```clojure
+(map (fn [[key val]] [key (inc val)])
+     {:max 30 :min 10})
+; => ([:max 31] [:min 11])
+```
+
+Whoops! We forgot that the `map` function returns a list, not a map.
+Let's convert the list back into a map with `into`
+
+```clojure
+(into {}
+      (map (fn [[key val]] [key (inc val)])
+           {:max 30 :min 10}))
+; => {:max 31, :min 11}
+```
+
+The takeaway here is that you can use `map` on datasets which can be
+treated as logical sequences (a collection of elements which can be
+traversed one at a time), even if they're not actually sequences. This
+is because these data structures &ndash; vectors, lists, sets, and
+maps &ndash; take part in the *sequence abstraction*. Some quick
+terminology: in Clojure, we use the term *seq* to refer to these
+logical sequences.
+
+There's more: if a data structure takes part in the sequence
+abstraction then it can make use of the extensive seq library, which
+includes such superstar functions as `reduce`, `filter`, `distinct`,
+`group-by`, and dozens more. So, if you can treat a data structure as
+a seq then you get oodles of functionality for free.
+
+This is what's meant by "programming to abstractions." In general,
+programming to abstractions gives us power by letting us use libraries
+of functions on a data structure regardless of that data structure's
+implementation.
+
+### Distinguishing Abstraction and Implementation
 
 A data structure can take part in the sequence abstraction if it's
 possible to treat it as a *logical* list. "Logical" is emphasized in
@@ -104,13 +180,12 @@ There are three core functions that you can perform on a linked list:
 `first`, `rest`, and `cons`. Once those are implemented, you can
 implement `map`, `reduce`, `filter`, and so on top of them. Here's how
 we would implement and use `first`, `rest`, and `cons` with our
-Javascript example:
+Javascript example. Note that the parameter of `first` and `rest` is
+named "node". This might be confusing; you might think, "Ain't I
+getting the first element of a *list*? Well, you operate on the
+elements of a list one node at a time!
 
 ```javascript
-// Note that the parameter is named "node" here. This might be
-// confusing - you might think, "Ain't I getting the first element of
-// a *list*? Well, you operate on the elements of a list one node at
-// a time!
 var first = function(node) {
   return node.value;
 };
@@ -154,8 +229,11 @@ var map = function (list, transform) {
     return cons(transform(first(list)), map(rest(list), transform));
   }
 }
+```
 
-// Let's see it in action:
+Let's see it in action:
+
+```javascript
 first(
   map(node1, function (val) { return val + " mapped!"})
 );

@@ -1,3 +1,22 @@
+(defn titleize
+  [topic]
+  (str topic " for the Brave and True"))
+
+(map titleize ["Hamsters" "Ragnarok"])
+(map titleize '("Empathy" "Decorating"))
+(map titleize #{"Elbows" "Soap Carving"})
+
+(defn label-key-val
+  [[key val]]
+  (str "key: " key ", val: " val))
+
+(map label-key-val {:name "Edward"
+                    :occupation "perennial high-schooler"})
+
+(into {}
+      (map (fn [[key val]] [key (inc val)])
+           {:max 30 :min 10}))
+
 (defn vampire?
   [record]
   (instant-computation record))
