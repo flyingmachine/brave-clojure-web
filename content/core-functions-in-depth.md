@@ -44,11 +44,12 @@ order to determine what nosferatu lurk in your hometown.
 
 ## Programming to Abstractions
 
-Clojure emphasizes *programming to abstractions*. This means that it
-allows you to use the same function on different data structures,
-treating data structures in the same logical manner regardless of
-their implementation. That summary is a little dense, so let's look at
-some examples.
+In mosts Lisps, `map`, `reduce`, and related functions are designed to
+work list data structures. Clojure, however, emphasizes *programming
+to abstractions*. This means that it allows you to use the same
+function on different data structures, treating data structures in the
+same logical manner regardless of their implementation. That summary
+is a little dense, so let's look at some examples.
 
 ### Using One Function on Different Data Structures
 
@@ -123,35 +124,33 @@ Let's convert the list back into a map with `into`
 ```
 
 The takeaway here is that you can use `map` on datasets which can be
-treated as logical sequences (a collection of elements which can be
-traversed one at a time), even if they're not actually sequences. This
-is because these data structures &ndash; vectors, lists, sets, and
-maps &ndash; take part in the *sequence abstraction*. Some quick
-terminology: in Clojure, we use the term *seq* to refer to these
-logical sequences.
+treated as a logical sequence &mdash; a collection of elements which
+can be traversed one at a time &mdash; even if they're not actually
+sequences. (By the way, a "logical sequence" is often referred to
+simply as a "seq".) This is what's meant by "programming to
+abstractions." In this case, vectors, lists, sets, and maps all take
+part in the *sequence abstraction*, meaning that they can be treated
+as logical sequences even though they aren't implemented as lists,
+which would be required in other Lisps, or even as sequential data
+structures.
 
 There's more: if a data structure takes part in the sequence
 abstraction then it can make use of the extensive seq library, which
 includes such superstar functions as `reduce`, `filter`, `distinct`,
 `group-by`, and dozens more. So, if you can treat a data structure as
-a seq then you get oodles of functionality for free.
-
-This is what's meant by "programming to abstractions." In general,
+a seq then you get oodles of functionality for free. In general,
 programming to abstractions gives us power by letting us use libraries
 of functions on a data structure regardless of that data structure's
 implementation.
 
 ### Distinguishing Abstraction and Implementation
 
-A data structure can take part in the sequence abstraction if it's
-possible to treat it as a *logical* list. "Logical" is emphasized in
-"logical list" to distinguish it from the concrete implementation of a
-linked list. Let's implement a linked list in Javascript so that we
-can fully appreciate the distinction between the seq (logical list)
-abstraction and the concrete implementation of a linked list.
-
-In a linked list, nodes are linked in a linear sequence. Here's how
-you might create one in Javascript:
+To gain more insight into how "programming to abstractions" makes
+Clojure powerful, let's implement a linked list in Javascript so that
+we can fully appreciate the distinction between the seq (logical list)
+abstraction and the concrete implementation of a linked list. In a
+linked list, nodes are linked in a linear sequence. Here's how you
+might create one:
 
 ```javascript
 // "next" is null because this is the last node in the list
@@ -293,11 +292,11 @@ Now that we understand the general approach of programming to
 abstractions we can answer some of the questions we posed at the
 beginning of the chapter:
 
--   How come my map got turned into a list of vectors?
--   Why did `map` return what looks like a list when I gave it a vector?
--   Isn't Damon, my crush's hunky and troubled older brother, making
-    lots of creepy puns involving consuming my blood as food? What's up
-    with that?
+* How come my map got turned into a list of vectors?
+* Why did `map` return what looks like a list when I gave it a vector?
+* Isn't Damon, my crush's hunky and troubled older brother, making
+  lots of creepy puns involving consuming my blood as food? What's up
+  with that?
 
 ### Seq Functions Convert Data Structures to Seqs
 
@@ -321,15 +320,19 @@ Clojure functions often use the `seq` function to do this. From the
 If those details don't really make sense, don't worry about it too
 much. The important thing to know is that many functions will call
 `seq` on a collection argument before doing anything else. The `map`
-function does this, for example:
+function does this, for example. You can use the `identity` function
+to easily demonstrate this. All it does is return whatever was passed
+to it:
 
 ```clojure
-; identity returns whatever was passed to it
 (identity "Stefan Salvatore from Vampire Diaries")
 ; => "Stefan Salvatore from Vampire Diaries"
+```
 
-;; Map returns a new sequence consisting of the result of calling
-;; "identity" on each member of the sequence it was given
+If you call `map` with `identity` as the mapping function, you can see
+how a non-sequential data structure like a map gets converted to a seq:
+
+```
 (map identity {:name "Bill Compton" :occupation "Dead mopey guy"})
 ; => ([:name "Bill Compton"] [:occupation "Dead mopey guy"])
 ```
