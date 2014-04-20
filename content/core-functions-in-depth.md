@@ -347,43 +347,155 @@ sequence of vectors, each of which is a key/value pair:
 ; => ([:name "Bill Compton"] [:occupation "Dead mopey guy"])
 ```
 
-I wanted to point out this example in particular because it might be
-surprising and confusing. It was for me when I first started Clojure.
-Knowing these underlying mechanisms will save you from the kind of
-frustration and general mopiness of the kind of often seen among male
-vampires trying to retain their humanity.
+And that's why `map` treats your maps like lists of vectors! I wanted
+to point out this example in particular because it might be surprising
+and confusing. It was for me when I first started Clojure. Knowing
+these underlying mechanisms will save you from the kind of frustration
+and general mopiness of the kind of often seen among male vampires
+trying to retain their humanity.
 
-### Seq Functions Sometimes Return Lazy Seqs
+### Seq Function Examples
 
-Why do `map` and other functions return what looks like a list?
+Clojure's seq library is full of useful functions that you'll use all
+the time. Now that you have a deeper understanding of Clojure's sequence
+abstraction, let's look at these functions in detail. If you're new to
+Lisp and functional programming, some of these examples will be
+surprising and delightful.
+
+#### map
+
+You've seen many examples of `map` by now, but this section shows
+`map` doing two new things: taking multiple collections as arguments
+and taking a collection of functions as an argument.
+
+So far, you've only seen examples of `map` operating on one
+collection. In this case, the collection is the vector `[1 2 3]`:
 
 ```clojure
-(map identity {:name "Van Helsing" :occupation "Living angry guy"})
-; => ([:name "Van Helsing"] [:occupation "Living angry guy"])
+(map inc [1 2 3])
+; => (2 3 4)
 ```
 
+However, you can also give `map` multiple collections. Here's a simple
+example to show how this works:
+
+```clojure
+(map str ["a" "b" "c"] ["A" "B" "C"])
+; => ("aA" "bB" "cC")
+```
+
+It's as if `map` does the following:
+
+```clojure
+(list (str "a" "A") (str "b" "B") (str "c" "C"))
+```
+
+When you pass `map` multiple collections, then the elements of the
+first collection (`["a" "b" "c"]`) will be passed as the first
+argument of the mapping function (`str`), the elements of
+the second collection (`["A" "B" "C"]`) will be passed as the
+second argument, and so on. Therefore, it's important that your
+mapping function be able to take a number of arguments equal to the
+number of collections you're passing to `map`.
+
+The example below shows how you could use this capability if you were
+a vampire trying to curb your human consumption. You have two vectors,
+one representing human intake in liters and another representing
+critter intake for the past four days. The `unify-diet-data` function
+takes a single day's data for both human and critter feeding and
+unifies the two into a single map:
+
+```clojure
+(def human-consumption   [8.1 7.3 6.6 5.0])
+(def critter-consumption [0.0 0.2 0.3 1.1])
+(defn unify-diet-data
+  [human critter]
+  {:human human
+   :critter critter})
+
+(map unify-diet-data human-consumption critter-consumption)
+; => ({:human 8.1, :critter 0.0}
+      {:human 7.3, :critter 0.2}
+      {:human 6.6, :critter 0.3}
+      {:human 5.0, :critter 1.8})
+```
+
+Good job laying off the human!
+
+The second fun thing you can do with `map` is pass it a collection of
+functions. You could use this if you wanted to perform the same set of
+calculations on different collections of numbers. In the example
+below, the `stats` function iterates over a vector of functions,
+applying each function to `numbers`:
+
+```clojure
+(def sum #(reduce + %))
+(def avg #(/ (sum %) (count %)))
+(defn stats
+  [numbers]
+  (map #(% numbers) [sum count avg]))
+
+(stats [3 4 10])
+; => (17 3 17/3)
+
+(stats [80 1 44 13 6])
+; => (144 5 144/5)
+```
+
+#### reduce
+
+The last chapter covers how `reduce` processes each element in a
+sequence to build a result. This section just shows a couple ways to
+use it that might not be obvious.
+
+Earlier in this chapter you saw how you can use `map` on a map data
+structure to "update" its values. You can do the same thing with
+reduce:
+
+```clojure
+(reduce (fn [new-map [key val]]
+          (assoc new-map key (inc val)))
+        {}
+        {:max 30 :min 10})
+; => {:max 31, :min 11}
+```
+
+Another use for `reduce` is to filter out keys from a map based on
+their value:
+
+```clojure
+(reduce (fn [new-map [key val]]
+          (if (> val 4)
+            (assoc new-map key val)
+            new-map))
+        {}
+        {:human 4.1
+         :critter 3.9})
+; {:human 4.1}
+```
+
+
+
+### Lazy Seqs
+
 As we saw in the last section, `map` first calls `seq` on the
-collection you pass to it. So that's part of the answer &mdash; the
-functions which operate on seqs call `seq` on their arguments and
-don't bother to convert them back.
+collection you pass to it. But that's not the whole story. Many
+functions, like `map`, return a "lazy seq". A lazy seq is a seq whose
+members aren't computed until you try to access them. Computing a
+seq's members is called "realizing" the seq. Deferring the computation
+until the moment it's needed makes your programs more efficient.
 
-But that's not the whole story. Some functions, like `map`, return
-a "lazy seq". A lazy seq is a seq whose members aren't computed until
-you try to access them. Computing a seq's members is called
-"realizing" the seq.
+For example, pretend that you're part of a modern-day task force whose
+purpose is to identify vampires. Intelligence tells you that
 
-There are two reasons for lazy seqs. First, they're more efficient
-because they don't do unnecessary computations. For example, pretend
-that you're part of a modern-day task force whose purpose is to
-identify vampires. You know that there is a single vampire out a group
-of one million suspects. Your boss gives you a list of one million
-social security numbers and shouts, "Get it done, McFishwich!"
+You know that there is a single vampire out a
+group of one million suspects. Your boss gives you a list of one
+million social security numbers and shouts, "Get it done, McFishwich!"
 
 Here's one way that you could do that:
 
 ```clojure
 (defn vampire?
-  "Returns boolean"
   [record]
   (instant-computation record))
 
