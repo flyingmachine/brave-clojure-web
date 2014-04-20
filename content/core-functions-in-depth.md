@@ -29,15 +29,15 @@ grounding you need to read the documentation for functions you haven't
 used before and to understand what's happening when you give them a
 try.
 
-Next, you'll get more experience with the functions you'll be
-reaching for the most. You'll learn how to work with lists, vectors,
-maps and sets with the functions `map`, `reduce`, `into`, `conj`,
-`concat`, `some`, `filter`, `take`, `drop`, `sort`, `sort-by`,
-`reverse`, `identity`, `first`, `rest`, `assoc`, `dissoc`. You'll
-learn how to create new functions with `apply`, `partial`, `comp`, and
-`complement`. This will help you understand how to do things the
-Clojure way and it will give you a solid foundation for writing your
-own code and reading and learning from others' projects.
+Next, you'll get more experience with the functions you'll be reaching
+for the most. You'll learn how to work with lists, vectors, maps and
+sets with the functions `map`, `reduce`, `into`, `conj`, `concat`,
+`some`, `filter`, `take`, `drop`, `sort`, `sort-by`, `reverse`,
+`identity`, `first`, `rest`. You'll learn how to create new functions
+with `apply`, `partial`, `comp`, and `complement`. This will help you
+understand how to do things the Clojure way and it will give you a
+solid foundation for writing your own code and reading and learning
+from others' projects.
 
 Finally, you'll learn how to parse and query a CSV of vampire data in
 order to determine what nosferatu lurk in your hometown.
@@ -450,7 +450,7 @@ use it that might not be obvious.
 
 Earlier in this chapter you saw how you can use `map` on a map data
 structure to "update" its values. You can do the same thing with
-reduce:
+reduce.
 
 ```clojure
 (reduce (fn [new-map [key val]]
@@ -474,7 +474,89 @@ their value:
 ; {:human 4.1}
 ```
 
-#### take, drop, 
+#### take, drop, take-while, drop-while
+
+`take` and `drop` are straightforward. `take` returns the first n
+elements of a sequence, while `drop` returns the sequence but with the
+first `n` elements removed:
+
+```clojure
+(take 3 [1 2 3 4 5 6 7 8 9 10])
+; => (1 2 3)
+
+(drop 3 [1 2 3 4 5 6 7 8 9 10])
+; => (4 5 6 7 8 9 10)
+```
+
+Their cousins `take-while` and `drop-while` are a bit more interesting. Each
+takes a predicate function (a function those return value is evaluated
+for truth or falsity) to determine when it should stop taking or
+dropping. Suppose, for example, that you had a vector representing
+entries in your "food journal". Each entry has the year, month, and
+day, along with what you ate. To preserve space, we'll only include a
+few entries:
+
+```clojure
+(def food-journal
+  [{:year 2013 :month 1 :day 1 :human 5.3 :critter 2.3}
+   {:year 2013 :month 1 :day 2 :human 5.1 :critter 2.0}
+   {:year 2013 :month 2 :day 1 :human 4.9 :critter 2.1}
+   {:year 2013 :month 2 :day 2 :human 5.0 :critter 2.5}
+   {:year 2013 :month 3 :day 1 :human 4.2 :critter 3.3}
+   {:year 2013 :month 3 :day 2 :human 4.0 :critter 3.8}
+   {:year 2013 :month 4 :day 1 :human 3.7 :critter 3.9}
+   {:year 2013 :month 4 :day 2 :human 3.7 :critter 3.6}])
+```
+
+With `take-while`, you can retrieve just January and February's data.
+`take-while` traverse the given sequence (in this case,
+`food-journal`), applying the predicate function to each element.
+The example below uses the anonymous function `#(< (:month %) 3)` to
+test whether the journal entry's month is out of range. When
+`take-while` reaches the first March entry, the anonymous function
+returns false and `take-while` returns a sequence of every element it
+tested until that point:
+
+
+```clojure
+(take-while #(< (:month %) 3) food-journal)
+; => ({:year 2013 :month 1 :day 1 :human 5.3 :critter 2.3}
+      {:year 2013 :month 1 :day 2 :human 5.1 :critter 2.0}
+      {:year 2013 :month 2 :day 1 :human 4.9 :critter 2.1}
+      {:year 2013 :month 2 :day 2 :human 5.0 :critter 2.5})
+```
+
+The same idea applies with `drop-while`, except that it keeps dropping
+elements until one tests true:
+
+```clojure
+(drop-while #(< (:month %) 3) food-journal)
+; => ({:year 2013 :month 3 :day 1 :human 4.2 :critter 3.3}
+      {:year 2013 :month 3 :day 2 :human 4.0 :critter 3.8}
+      {:year 2013 :month 4 :day 1 :human 3.7 :critter 3.9}
+      {:year 2013 :month 4 :day 2 :human 3.7 :critter 3.6})
+```
+
+By using `take-while` and `drop-while` together, you can even get data
+for just February and March. In the example below, you first use
+`drop-while` to get rid of the January entries, then use `take-while`
+on the result to keep taking entries until you reach the first April
+entry:
+
+```clojure
+(take-while #(< (:month %) 4)
+            (drop-while #(< (:month %) 2) food-journal))
+; => ({:year 2013 :month 2 :day 1 :human 4.9 :critter 2.1}
+      {:year 2013 :month 2 :day 2 :human 5.0 :critter 2.5}
+      {:year 2013 :month 3 :day 1 :human 4.2 :critter 3.3}
+      {:year 2013 :month 3 :day 2 :human 4.0 :critter 3.8})
+```
+
+#### filter, some
+
+You can use `filter` to return all elements of a sequence
+
+
 
 ### Lazy Seqs
 
