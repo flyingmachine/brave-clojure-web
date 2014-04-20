@@ -34,7 +34,7 @@ reaching for the most. You'll learn how to work with lists, vectors,
 maps and sets with the functions `map`, `reduce`, `into`, `conj`,
 `concat`, `some`, `filter`, `take`, `drop`, `sort`, `sort-by`,
 `reverse`, `identity`, `first`, `rest`, `assoc`, `dissoc`. You'll
-learn how to create new fucntions with `apply`, `partial`, `comp`, and
+learn how to create new functions with `apply`, `partial`, `comp`, and
 `complement`. This will help you understand how to do things the
 Clojure way and it will give you a solid foundation for writing your
 own code and reading and learning from others' projects.
@@ -474,7 +474,7 @@ their value:
 ; {:human 4.1}
 ```
 
-
+#### take, drop, 
 
 ### Lazy Seqs
 
