@@ -626,6 +626,16 @@ example below, taken from clojuredocs.org, `count` is the key function:
 ; => ("c" "bb" "aaa")
 ```
 
+#### concat
+
+Finally, `concat` simply appends the members of sequence the end of
+another:
+
+```clojure
+(concat [1 2] [3 4])
+; => (1 2 3 4)
+```
+
 ### Lazy Seqs
 
 As we saw earlier, `map` first calls `seq` on the collection you pass
@@ -896,9 +906,9 @@ Learning to take advantage of Clojure's ability to accept functions as
 arguments and return functions as values is really fun, even if it
 takes some getting used to.
 
-Two of Clojure's functions, `apply` and `partial` might seem
-especially weird because they both accept **and** return functions.
-Let's unweird them.
+Three of Clojure's functions, `apply`, `partial`, and `comp`, might
+seem especially weird because they both accept **and** return
+functions. Let's unweird them.
 
 ### apply
 
@@ -968,7 +978,43 @@ how you might define `partial`:
 
 Ta-da!
 
-### Bonus Function: complement
+### comp
+
+Clojure allows you to *compose* functions with the `comp` function.
+Suppose you want to create a function that adds 1 to a number and then
+turn it into a string, because that's just kind of your thing. Here's
+how you would do it without `comp`:
+
+```clojure
+(defn strinc
+  [x]
+  (str (inc x)))
+(strinc 1)
+; => "2"
+```
+
+And here's how you would do it with `comp`:
+
+```clojure
+(def strinc (comp str inc))
+(strinc 1)
+; => "2"
+```
+
+Here's how you could implement `comp`:
+
+```clojure
+(defn my-comp
+  [& fns]
+  (let [fns (reverse fns)]
+    (fn [& args]
+      (reduce (fn [result f]
+                (f result))
+              (apply (first fns) args)
+              (rest fns)))))
+```
+
+### complement
 
 Here's one more function to demonstrate the usefulness and versatility
 of higher-order functions. Remember the `identify-vampire` function
