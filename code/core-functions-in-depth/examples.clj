@@ -44,43 +44,45 @@
          :critter 3.9})
 
 (def food-journal
-  [{:year 2013 :month 1 :day 1 :human 5.3 :critter 2.3}
-   {:year 2013 :month 1 :day 2 :human 5.1 :critter 2.0}
-   {:year 2013 :month 2 :day 1 :human 4.9 :critter 2.1}
-   {:year 2013 :month 2 :day 2 :human 5.0 :critter 2.5}
-   {:year 2013 :month 3 :day 1 :human 4.2 :critter 3.3}
-   {:year 2013 :month 3 :day 2 :human 4.0 :critter 3.8}
-   {:year 2013 :month 4 :day 1 :human 3.7 :critter 3.9}
-   {:year 2013 :month 4 :day 2 :human 3.7 :critter 3.6}])
+  [{:month 1 :day 1 :human 5.3 :critter 2.3}
+   {:month 1 :day 2 :human 5.1 :critter 2.0}
+   {:month 2 :day 1 :human 4.9 :critter 2.1}
+   {:month 2 :day 2 :human 5.0 :critter 2.5}
+   {:month 3 :day 1 :human 4.2 :critter 3.3}
+   {:month 3 :day 2 :human 4.0 :critter 3.8}
+   {:month 4 :day 1 :human 3.7 :critter 3.9}
+   {:month 4 :day 2 :human 3.7 :critter 3.6}])
 
 (take-while #(= (:month %) 2)
             (drop-while #(< (:month %) 2) food-journal))
 
+(filter #(< % 5) food-journal)
 
 (defn person
   [name occupation]
   {:name name
    :occupation occupation})
 
-(defn vampire?
-  [record]
-  (instant-computation record))
+(def vampire-database
+  {0 {:makes-blood-puns? false, :has-pulse? true  :name "McFishwich"}
+   1 {:makes-blood-puns? false, :has-pulse? true  :name "McMackson"}
+   2 {:makes-blood-puns? true,  :has-pulse? false :name "Damon Salvatore"}
+   3 {:makes-blood-puns? true,  :has-pulse? true  :name "Mickey Mouse"}})
 
 (defn vampire-related-details
   [social-security-number]
-  (ten-second-computation social-security-number))
+  (Thread/sleep 1000)
+  (get vampire-database social-security-number))
+
+(defn vampire?
+  [record]
+  (and (:makes-blood-puns? record)
+       (not (:has-pulse? record))))
 
 (defn identify-vampire
   [social-security-numbers]
-  (last (take-while #(not (vampire? %))
-                    (map vampire-related-details
-                         social-security-numbers))))
-
-(defn identify-vampire
-  [social-security-numbers]
-  (first (drop-while #(not (vampire? %))
-                     (map vampire-related-details
-                          social-security-numbers))))
+  (first (filter vampire?
+                 (map vampire-related-details social-security-numbers))))
 
 (defn snitch
   "Announce real identity to the world"

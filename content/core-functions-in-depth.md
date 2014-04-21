@@ -32,12 +32,11 @@ try.
 Next, you'll get more experience with the functions you'll be reaching
 for the most. You'll learn how to work with lists, vectors, maps and
 sets with the functions `map`, `reduce`, `into`, `conj`, `concat`,
-`some`, `filter`, `take`, `drop`, `sort`, `sort-by`, `reverse`,
-`identity`, `first`, `rest`. You'll learn how to create new functions
-with `apply`, `partial`, `comp`, and `complement`. This will help you
-understand how to do things the Clojure way and it will give you a
-solid foundation for writing your own code and reading and learning
-from others' projects.
+`some`, `filter`, `take`, `drop`, `sort`, `sort-by`, `identity`.
+You'll learn how to create new functions with `apply`, `partial`,
+`comp`, and `complement`. This will help you understand how to do
+things the Clojure way and it will give you a solid foundation for
+writing your own code and reading and learning from others' projects.
 
 Finally, you'll learn how to parse and query a CSV of vampire data in
 order to determine what nosferatu lurk in your hometown.
@@ -498,14 +497,14 @@ few entries:
 
 ```clojure
 (def food-journal
-  [{:year 2013 :month 1 :day 1 :human 5.3 :critter 2.3}
-   {:year 2013 :month 1 :day 2 :human 5.1 :critter 2.0}
-   {:year 2013 :month 2 :day 1 :human 4.9 :critter 2.1}
-   {:year 2013 :month 2 :day 2 :human 5.0 :critter 2.5}
-   {:year 2013 :month 3 :day 1 :human 4.2 :critter 3.3}
-   {:year 2013 :month 3 :day 2 :human 4.0 :critter 3.8}
-   {:year 2013 :month 4 :day 1 :human 3.7 :critter 3.9}
-   {:year 2013 :month 4 :day 2 :human 3.7 :critter 3.6}])
+  [{:month 1 :day 1 :human 5.3 :critter 2.3}
+   {:month 1 :day 2 :human 5.1 :critter 2.0}
+   {:month 2 :day 1 :human 4.9 :critter 2.1}
+   {:month 2 :day 2 :human 5.0 :critter 2.5}
+   {:month 3 :day 1 :human 4.2 :critter 3.3}
+   {:month 3 :day 2 :human 4.0 :critter 3.8}
+   {:month 4 :day 1 :human 3.7 :critter 3.9}
+   {:month 4 :day 2 :human 3.7 :critter 3.6}])
 ```
 
 With `take-while`, you can retrieve just January and February's data.
@@ -520,10 +519,10 @@ tested until that point:
 
 ```clojure
 (take-while #(< (:month %) 3) food-journal)
-; => ({:year 2013 :month 1 :day 1 :human 5.3 :critter 2.3}
-      {:year 2013 :month 1 :day 2 :human 5.1 :critter 2.0}
-      {:year 2013 :month 2 :day 1 :human 4.9 :critter 2.1}
-      {:year 2013 :month 2 :day 2 :human 5.0 :critter 2.5})
+; => ({:month 1 :day 1 :human 5.3 :critter 2.3}
+      {:month 1 :day 2 :human 5.1 :critter 2.0}
+      {:month 2 :day 1 :human 4.9 :critter 2.1}
+      {:month 2 :day 2 :human 5.0 :critter 2.5})
 ```
 
 The same idea applies with `drop-while`, except that it keeps dropping
@@ -531,10 +530,10 @@ elements until one tests true:
 
 ```clojure
 (drop-while #(< (:month %) 3) food-journal)
-; => ({:year 2013 :month 3 :day 1 :human 4.2 :critter 3.3}
-      {:year 2013 :month 3 :day 2 :human 4.0 :critter 3.8}
-      {:year 2013 :month 4 :day 1 :human 3.7 :critter 3.9}
-      {:year 2013 :month 4 :day 2 :human 3.7 :critter 3.6})
+; => ({:month 3 :day 1 :human 4.2 :critter 3.3}
+      {:month 3 :day 2 :human 4.0 :critter 3.8}
+      {:month 4 :day 1 :human 3.7 :critter 3.9}
+      {:month 4 :day 2 :human 3.7 :critter 3.6})
 ```
 
 By using `take-while` and `drop-while` together, you can even get data
@@ -546,72 +545,160 @@ entry:
 ```clojure
 (take-while #(< (:month %) 4)
             (drop-while #(< (:month %) 2) food-journal))
-; => ({:year 2013 :month 2 :day 1 :human 4.9 :critter 2.1}
-      {:year 2013 :month 2 :day 2 :human 5.0 :critter 2.5}
-      {:year 2013 :month 3 :day 1 :human 4.2 :critter 3.3}
-      {:year 2013 :month 3 :day 2 :human 4.0 :critter 3.8})
+; => ({:month 2 :day 1 :human 4.9 :critter 2.1}
+      {:month 2 :day 2 :human 5.0 :critter 2.5}
+      {:month 3 :day 1 :human 4.2 :critter 3.3}
+      {:month 3 :day 2 :human 4.0 :critter 3.8})
 ```
 
 #### filter, some
 
-You can use `filter` to return all elements of a sequence
+`filter` to return all elements of a sequence which test true for a
+predicate function. Here are the journal entries where human
+consumption is less than 5 liters:
 
+```clojure
+(filter #(< (:human %) 5) food-journal)
+; => ({:month 2 :day 1 :human 4.9 :critter 2.1}
+      {:month 3 :day 1 :human 4.2 :critter 3.3}
+      {:month 3 :day 2 :human 4.0 :critter 3.8}
+      {:month 4 :day 1 :human 3.7 :critter 3.9}
+      {:month 4 :day 2 :human 3.7 :critter 3.6})
+```
 
+You might be wondering why we didn't just use `filter` in the
+`take-while` and `drop-while` examples above. Indeed, filter would
+work. Here we're grabbing the January and February data, just like the
+`take-while` example:
+
+```clojure
+(filter #(< (:month %) 3) food-journal)
+; => ({:month 1 :day 1 :human 5.3 :critter 2.3}
+      {:month 1 :day 2 :human 5.1 :critter 2.0}
+      {:month 2 :day 1 :human 4.9 :critter 2.1}
+      {:month 2 :day 2 :human 5.0 :critter 2.5})
+```
+
+This is perfectly fine, but `filter` can end up processing all of your
+data. Since the food journal is already sorted by date, we know that
+`take-while` will return the data we want without having to examine
+any of the data we won't. Therefore, `take-while` can be more
+efficient.
+
+Often, you want to know whether a collection contains any values at
+all which test true for a predicate function. The `some` function does
+that, returning the first true value returned by a predicate function:
+
+```clojure
+(some #(> (:critter %) 5) food-journal)
+; => nil
+
+(some #(> (:critter %) 3) food-journal)
+; => true
+```
+
+You don't have any food journal entries where you consumed more than 5
+liters from critter sources, but you do have at least one where you
+consumed more than 3 liters. Notice that the return value in the
+second example is `true` and not the actual entry which produced the
+true value. Here's how you could return the entry:
+
+```clojure
+(some #(and (> (:critter %) 3) %) food-journal)
+; => {:month 3 :day 1 :human 4.2 :critter 3.3}
+```
+
+#### sort, sort-by
+
+You can sort elements in ascending order with `sort`:
+
+```clojure
+(sort [3 1 2])
+; => (1 2 3)
+```
+
+If your sorting needs are more complicated, you can use `sort-by`.
+`sort-by` uses a "key function" to determine the sort order. In the
+example below, taken from clojuredocs.org, `count` is the key function:
+
+```clojure
+(sort-by count ["aaa" "c" "bb"])
+; => ("c" "bb" "aaa")
+```
 
 ### Lazy Seqs
 
-As we saw in the last section, `map` first calls `seq` on the
-collection you pass to it. But that's not the whole story. Many
-functions, like `map`, return a "lazy seq". A lazy seq is a seq whose
-members aren't computed until you try to access them. Computing a
-seq's members is called "realizing" the seq. Deferring the computation
-until the moment it's needed makes your programs more efficient.
+As we saw earlier, `map` first calls `seq` on the collection you pass
+to it. But that's not the whole story. Many functions, including `map`
+and `filter`, return a "lazy seq". A lazy seq is a seq whose members
+aren't computed until you try to access them. Computing a seq's
+members is called "realizing" the seq. Deferring the computation until
+the moment it's needed makes your programs more efficient.
 
 For example, pretend that you're part of a modern-day task force whose
-purpose is to identify vampires. Intelligence tells you that
+purpose is to identify vampires. Intelligence tells you that there is
+only one active vampire in your city, and they've helpfully narrowed
+down the list of suspects to a million people. Your boss gives you a
+list of one million social security numbers and shouts, "Get it done,
+McFishwich!"
 
-You know that there is a single vampire out a
-group of one million suspects. Your boss gives you a list of one
-million social security numbers and shouts, "Get it done, McFishwich!"
-
-Here's one way that you could do that:
+Because the source code for this vampire-hunting technology is
+proprietary, I've stubbed it out to simulate the time it would take to
+perform this task. In the example below, you have a subset of a
+vampire database. You have a function, `vampire-related-details`,
+which takes 1 second to look up an entry from the database. Next, you
+have a function, `vampire?`, which returns a record if it passes the
+vampire test; otherwise it returns `false`. Finally,
+`identify-vampire` maps social security numbers to database records
+and then returns the first record which indicates vampirism:
 
 ```clojure
-(defn vampire?
-  [record]
-  (instant-computation record))
+(def vampire-database
+  {0 {:makes-blood-puns? false, :has-pulse? true  :name "McFishwich"}
+   1 {:makes-blood-puns? false, :has-pulse? true  :name "McMackson"}
+   2 {:makes-blood-puns? true,  :has-pulse? false :name "Damon Salvatore"}
+   3 {:makes-blood-puns? true,  :has-pulse? true  :name "Mickey Mouse"}})
 
 (defn vampire-related-details
-  "Looks up vampire related details in super sophisticated database"
   [social-security-number]
-  (ten-second-computation social-security-number))
+  (Thread/sleep 1000)
+  (get vampire-database social-security-number))
 
+(defn vampire?
+  [record]
+  (and (:makes-blood-puns? record)
+       (not (:has-pulse? record))
+       record))
 
-;; To understand the function below, you need to understand
-;; drop-while:
-(drop-while neg? [-1 -2 0 1 2])
-; => (0 1 2)
-
-;; The strategy here is to keep dropping members of a sequence if
-;; we know they're not a vampire. Then the first member of the
-;; remaining sequence is a vampire
 (defn identify-vampire
   [social-security-numbers]
-  (first (drop-while #(not (vampire? %))
-                     (map vampire-related-details
-                          social-security-numbers))))
+  (first (filter vampire?
+                 (map vampire-related-details social-security-numbers))))
 ```
 
-As you can see, it takes 10 seconds to pull up each potential
-vampire's details. A non-lazy implementation of this would apply
-`vampire-related-details` to every social security number before
-passing the result to `drop-while`. This would take 116 days (10
-million seconds), and half your city could be dead by then!
+A non-lazy implementation of `map` would first have to apply
+`vampire-related-details` to every member of `social-security-numbers`
+before passing the result to `filter`. Since you have 1 million
+suspects, this would take 12 days, and half your city could be dead by
+then! Of course, if the vampire is the last suspect it will still take
+that much time, but at least there's a good chance that it won't.
 
-Instead, since `map` returns a lazy seq, `vampire-related-details`
-doesn't get called until it's actually needed. At least, it's useful
-to think of it that way. Sometimes lazy seqs are chunked, meaning that
-they realize 32 members at a time:
+You can use the `time` function to display how much time it actually
+takes to find the vampire:
+
+```clojure
+(time (identify-vampire (range 0 1000000)))
+"Elapsed time: 32019.912 msecs"
+; => {:name "Damon Salvatore", :makes-blood-puns? true, :has-pulse? false}
+```
+
+Oooh! That's why Damon makes those creepy puns!
+
+Also it's odd that the expression took 32 seconds. You might have
+expected it to only take 3 seconds since Damon was the third suspect
+on the list, and it should therefore have only called
+`vampire-related-details` three times. In reality, Clojure "chunks"
+lazy sequences, realizing 32 members at a time:
 
 ```clojure
 (def identities
@@ -670,12 +757,8 @@ want to print every single real identity in the example above. In that
 case, you use `doall` on the seq. The purpose of `doall` is to realize
 the seq.
 
-And that covers lazy seqs! Now you'll know what the heck is going on
-next time you call `map` on a map!
-
-### About Those Creepy Puns
-
-He's a vampire, dammit! Why can't you see that!?!?
+And that covers lazy seqs! Now you know everything there is to know
+about the sequence abstraction!
 
 ## The Collection Abstraction
 
