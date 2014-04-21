@@ -34,7 +34,7 @@ for the most. You'll learn how to work with lists, vectors, maps and
 sets with the functions `map`, `reduce`, `into`, `conj`, `concat`,
 `some`, `filter`, `take`, `drop`, `sort`, `sort-by`, `identity`.
 You'll learn how to create new functions with `apply`, `partial`,
-`comp`, and `complement`. This will help you understand how to do
+and `complement`. This will help you understand how to do
 things the Clojure way and it will give you a solid foundation for
 writing your own code and reading and learning from others' projects.
 
@@ -906,9 +906,9 @@ Learning to take advantage of Clojure's ability to accept functions as
 arguments and return functions as values is really fun, even if it
 takes some getting used to.
 
-Three of Clojure's functions, `apply`, `partial`, and `comp`, might
-seem especially weird because they both accept **and** return
-functions. Let's unweird them.
+Two of Clojure's functions, `apply` and `partial`, might seem
+especially weird because they both accept **and** return functions.
+Let's unweird them.
 
 ### apply
 
@@ -977,42 +977,6 @@ how you might define `partial`:
 ```
 
 Ta-da!
-
-### comp
-
-Clojure allows you to *compose* functions with the `comp` function.
-Suppose you want to create a function that adds 1 to a number and then
-turn it into a string, because that's just kind of your thing. Here's
-how you would do it without `comp`:
-
-```clojure
-(defn strinc
-  [x]
-  (str (inc x)))
-(strinc 1)
-; => "2"
-```
-
-And here's how you would do it with `comp`:
-
-```clojure
-(def strinc (comp str inc))
-(strinc 1)
-; => "2"
-```
-
-Here's how you could implement `comp`:
-
-```clojure
-(defn my-comp
-  [& fns]
-  (let [fns (reverse fns)]
-    (fn [& args]
-      (reduce (fn [result f]
-                (f result))
-              (apply (first fns) args)
-              (rest fns)))))
-```
 
 ### complement
 
