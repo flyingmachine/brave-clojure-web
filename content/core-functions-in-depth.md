@@ -645,6 +645,8 @@ aren't computed until you try to access them. Computing a seq's
 members is called "realizing" the seq. Deferring the computation until
 the moment it's needed makes your programs more efficient.
 
+#### Demonstrating Lazy Seq Efficiency
+
 For example, pretend that you're part of a modern-day task force whose
 purpose is to identify vampires. Intelligence tells you that there is
 only one active vampire in your city, and they've helpfully narrowed
@@ -766,6 +768,61 @@ want to print every single real identity in the example above. In that
 case, you use `doall` on the seq. The purpose of `doall` is to realize
 the seq.
 
+#### Infinite Sequences
+
+One cool, useful capability that lazy seqs gives you is the ability to
+construct "infinite" sequences. This might not be obvious; so far,
+we've only worked with lazy sequences generated from vectors or lists
+which terminated.
+
+However, Clojure comes with a few functions to create infinite
+sequences. One easy way to create an infinite sequence is with
+`repeat`, which creates a sequence whose every member is the argument
+you pass:
+
+```clojure
+(concat (take 8 (repeat "na")) ["Batman!"])
+("na" "na" "na" "na" "na" "na" "na" "na" "Batman!")
+```
+
+There's also `repeatedly`, which will call the provided function for
+to generate each element in the sequence:
+
+```clojure
+(take 3 (repeatedly (fn [] (rand-int 10))))
+; => (1 4 0)
+```
+
+In general, you can think of lazy seqs as "recipes" for how to
+generate each element in the sequence, and these recipes don't have to
+specify an endpoint. Functions like `first` and `take`, which realize
+the lazy seq, have no way of knowing what will come next in a seq, and
+if the seq keeps providing elements, well, they'll just keep taking
+them. You can see this if you construct your own infinite sequence:
+
+```clojure
+(defn even-numbers
+  ([] (even-numbers 0))
+  ([n] (cons n (lazy-seq (even-numbers (+ n 2))))))
+
+(take 10 (even-numbers))
+; => (0 2 4 6 8 10 12 14 16 18)
+```
+
+This example is a bit mind-bending. It helps to remember that `cons`
+returns a new list with an element appended to the given list:
+
+```clojure
+(cons 0 '(2 4 6))
+; => (0 2 4 6)
+```
+
+In `even-numbers`, you're merely consing to a lazy list which includes
+a recipe for the next element rather than to a fully-realized list. If
+infinite lists are still foggy at this point, don't worry about it!
+Personally, it took me probably 6 months before I fully understood
+grokked infinite lazy seqs.
+
 And that covers lazy seqs! Now you know everything there is to know
 about the sequence abstraction!
 
@@ -773,13 +830,12 @@ about the sequence abstraction!
 
 The collection abstraction is closely related to the sequence
 abstraction. All of Clojure's core data structures &mdash; vectors,
-maps, lists and sets &mdash; take part in both abstractions. This
-makes complete sense when you think about it. (Think about it! Now!)
+maps, lists and sets &mdash; take part in both abstractions.
 
-They differ in that the sequence abstraction is "about" operating on
-members individually while the collection abstraction is "about" the
-data structure as a whole. For example, the collection functions
-`count`, `empty?`, and `every?` aren't about any individual
+The abstractions differ in that the sequence abstraction is "about"
+operating on members individually while the collection abstraction is
+"about" the data structure as a whole. For example, the collection
+functions `count`, `empty?`, and `every?` aren't about any individual
 element; they're about the whole.
 
 ```clojure
@@ -839,6 +895,7 @@ The first argument of `into` doesn't have to be empty:
 ; => {:favorite-emotion "gloomy" :sunlight-reaction "Glitter!"}
 
 (into ["cherry"] '("pine" "spruce"))
+; => ["cherry" "pine" "spruce"]
 ```
 
 And of course, both arguments can be the same type:
@@ -906,7 +963,7 @@ arguments and return functions as values is really fun, even if it
 takes some getting used to.
 
 Two of Clojure's functions, `apply` and `partial`, might seem
-especially weird because they both accept **and** return functions.
+especially weird because they both accept *and* return functions.
 Let's unweird them.
 
 ### apply
@@ -927,10 +984,11 @@ also define `into` in terms of `conj` by using `apply`:
 ```
 
 `apply` "explodes" a seqable data structure so that it can be passed
-to a function which expects a rest-param.
+to a function which expects a rest-param. For example, `max` takes a
+rest param. If you want to find the "max" element in a vector, you
+have to explode it with `apply`:
 
 ```clojure
-;; Max takes a rest-param, comparing all the arguments passed to it.
 ;; We pass only one argument and max returns it:
 (max [0 1 2])
 ; => [0 1 2]
@@ -940,7 +998,7 @@ to a function which expects a rest-param.
 ; => 2
 ```
 
-Ta-da!
+You'll often use `apply` like this.
 
 ### partial
 
@@ -962,8 +1020,8 @@ does:
 So, `partial` takes a function and any number of arguments. It then
 returns a new function. When you call the returned function, it calls the
 original function with the original arguments you supplied it along
-with the new arguments. Ugh that is an inelegant description. Here's
-how you might define `partial`:
+with the new arguments. To help clarify how `partial` works, here's
+how you might define it:
 
 ```clojure
 (defn my-partial
@@ -975,37 +1033,58 @@ how you might define `partial`:
 (add20 3) ; => 23
 ```
 
-Ta-da!
+In this example, the value of `add20` is the anonymous function
+returned by `my-partial`. This anonymous function is defined like
+this:
+
+```clojure
+(fn [& more-args]
+  (apply + (into '(20) more-args)))
+```
+
+If you're not used to partials, they might seem strange. In general,
+you want to use partials when you find yourself repeating the same
+combination of function and arguments in many different contexts. This
+toy examples how you could use `partial` to "specialize" a logger,
+creating a `warn` function:
+
+```clojure
+(defn lousy-logger
+  [log-level message]
+  (condp = log-level
+    :warn (clojure.string/lower-case message)
+    :emergency (clojure.string/upper-case message)))
+
+(def warn (partial lousy-logger :warn))
+
+(warn "Red light ahead")
+; => "red light ahead"
+```
 
 ### complement
 
-Here's one more function to demonstrate the usefulness and versatility
-of higher-order functions. Remember the `identify-vampire` function
-above? Here it is again so that you don't have to overexert your
-scrolling finger:
+Earlier you careated the `identify-vampire` function to find one
+vampire amidst a million people. What if you wanted to create a
+function to find all humans? Perhaps you want to send them thank-you
+card for not being an undead predator. Here's how you could do it:
 
 ```clojure
-(defn identify-vampire
+(defn identify-humans
   [social-security-numbers]
-  (first (drop-while #(not (vampire? %))
-                     (map vampire-related-details
-                          social-security-numbers))))
+  (filter #(not (vampire? %))
+          (map vampire-related-details social-security-numbers)))
 ```
 
-Look at the first argument to `drop-while`, `#(not (vampire? %))`.
-It's so common to want the *complement* (the negation) of a boolean
-function that there's a function for that:
+Look at the first argument to `filter`, `#(not (vampire? %))`. It's so
+common to want the *complement* (the negation) of a boolean function
+that there's a function, `complement` for that:
 
 ```clojure
-;; define complement
 (def not-vampire? (complement vampire?))
-
-;; change identify-vampire to use complemented function
-(defn identify-vampire
+(defn identify-humans
   [social-security-numbers]
-  (first (drop-while not-vampire?
-                     (map vampire-related-details
-                          social-security-numbers))))
+  (filter not-vampire?
+          (map vampire-related-details social-security-numbers)))
 ```
 
 Here's how you might implement `complement`:
@@ -1030,15 +1109,13 @@ allow you build up libraries of utility functions in a way which is
 impossible in most other languages. In aggregate, these utility
 functions make your life a lot easier.
 
-Ta-da!
-
 ## FWPD
 
 To pull everything together, let's write the beginnings of a
 sophisticated vampire data analysis program for the Forks, Washington
 Police Department (FWPD).
 
-The FWPD has a sophisticated new database technology called CSV
+The FWPD has a fancy new database technology called CSV
 (comma-separated values). Our job is to parse this state-of-the-art
 "csv" and analyze it for potential vampires. We'll do that by
 filtering on each suspect's "glitter index", a 0-10 prediction of the
@@ -1108,14 +1185,10 @@ Now it's time to get our hands dirty. Make your file
     ;; Now let's return a seq of {:name "X" :glitter-index 10}
     (map (fn [unmapped-row]
            ;; We're going to use map to associate each header with its
-           ;; column. Since map returns a seq, we use into to convert
+           ;; column. Since map returns a seq, we use "into" to convert
            ;; it into a map.
            (into {}
-                 ;; map can actually take multiple seq arguments. In
-                 ;; this case, we're passing a seq of headers and a
-                 ;; seq of cells. map applies the anonymous function
-                 ;; to headers[0], unmapped-row[0], then headers[1],
-                 ;; unmapped-row[1] and so forth
+                 ;; notice we're passing multiple collections to map
                  (map (fn [header column]
                         ;; associate the header with the converted column
                         [header ((get conversions header) column)])

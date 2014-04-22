@@ -84,6 +84,32 @@
   (first (filter vampire?
                  (map vampire-related-details social-security-numbers))))
 
+(defn even-numbers
+  ([] (even-numbers 0))
+  ([n] (cons n (lazy-seq (even-numbers (+ n 2))))))
+
+(fn [& more-args]
+  (apply + (into '(20) more-args)))
+
+(defn lousy-logger
+  [log-level message]
+  (condp = log-level
+    :warn (clojure.string/lower-case message)
+    :emergency (clojure.string/upper-case message)))
+
+(def warn (partial fake-logger :warn))
+
+(defn identify-humans
+  [social-security-numbers]
+  (filter vampire?
+          (map vampire-related-details social-security-numbers)))
+
+(def not-vampire? (complement vampire?))
+(defn identify-humans
+  [social-security-numbers]
+  (filter not-vampire?
+          (map vampire-related-details social-security-numbers)))
+
 (defn snitch
   "Announce real identity to the world"
   [identity]
