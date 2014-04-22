@@ -677,8 +677,7 @@ and then returns the first record which indicates vampirism:
 (defn vampire?
   [record]
   (and (:makes-blood-puns? record)
-       (not (:has-pulse? record))
-       record))
+       (not (:has-pulse? record))))
 
 (defn identify-vampire
   [social-security-numbers]
