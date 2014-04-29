@@ -34,7 +34,7 @@ suit your problem space, building up the language itself.
 
 Which is exactly what we'll do in this chapter. We'll thoroughly
 examine how to write macros starting with basic examples and moving up
-in complexity. We'll close by donnig our make-believe caps, pretending
+in complexity. We'll close by donning our make-believe caps, pretending
 that we run an online potion store and using macros to validate
 customer orders.
 
@@ -44,7 +44,7 @@ By the end of the chapter, you'll understand:
 * The tools used to write macros
     * quote
     * syntax quote
-    * unqoute
+    * unquote
     * unquote-splicing / the pinata tool
     * gensym
     * autogensym
@@ -70,7 +70,7 @@ Briefly:
 * Lists result in calls:
     * When performing a function call, each operand is fully evaluated
       and then passed to the function as an argument.
-    * Special form calls like `if`, `quote`, follow "special"
+    * Special form calls, like `if` and `quote`, follow "special"
       evaluation rules which implement core Clojure behavior
     * Macros take unevaluated data structures as arguments and return
       a data structure which is then evaluated using the rules above
@@ -119,7 +119,7 @@ example. `when` has the general form:
 ```
 
 You might think that `when` is a special form like `if`. Well guess
-what: it's not! Don't worry, no will blame you for thinking it is. In
+what: it's not! Don't worry, no one will blame you for thinking it is. In
 most other languages, conditional expressions are built into the
 language itself and you can't add your own. However, `when` is
 actually a macro:
@@ -237,7 +237,7 @@ masts Odysseus-style and look at how to write macro bodies.
 ## Building Lists for Evaluation
 
 Macro-writing is all about building a list to be evaluated by Clojure
-and it requires a kind of inversion to your thinking normal way of
+and it requires a kind of inversion to your normal way of
 thinking. In particular, you'll need to be extra careful about the
 difference between a *symbol* and its *value*.
 
@@ -305,8 +305,8 @@ sweating-to-the-80s
 '(+ 1 2)
 ; => (+ 1 2)
 
-'dr-jekyll-and-richad-simmons
-; => dr-jekyll-and-richad-simmons
+'dr-jekyll-and-richard-simmons
+; => dr-jekyll-and-richard-simmons
 ```
 
 We can see quoting at work in the `when` macro:
