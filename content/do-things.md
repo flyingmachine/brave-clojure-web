@@ -1075,8 +1075,8 @@ you destucture maps by providing a map as a parameter:
   (println (str "Treasure lng: " lng)))
 (announce-treasure-location {:lat 28.22 :lng 81.33})
 ; =>
-; Treasure lat: 100
-; Treasure lng: 50
+; Treasure lat: 28.22
+; Treasure lng: 81.33
 ```
 
 Let's look more at this line:
