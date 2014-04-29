@@ -722,7 +722,7 @@ lazy sequences, realizing 32 members at a time:
    {:alias "alias 31", :real "real 31"}
    {:alias "alias 32", :real "real 32"}
    {:alias "alias 33", :real "real 33"}
-   {:alias "alias 33", :real "real 34"}])
+   {:alias "alias 34", :real "real 34"}])
 
 (defn snitch
   "Announce real identity to the world"
