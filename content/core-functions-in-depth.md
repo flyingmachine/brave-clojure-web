@@ -192,7 +192,7 @@ var rest = function(node) {
   return node.next;
 };
 
-// Append a new node to the beginning of the list
+// Prepend a new node to the beginning of the list
 var cons = function(newValue, list) {
   return {
     value: newValue,
@@ -810,7 +810,7 @@ them. You can see this if you construct your own infinite sequence:
 ```
 
 This example is a bit mind-bending. It helps to remember that `cons`
-returns a new list with an element appended to the given list:
+returns a new list with an element prepended to the given list:
 
 ```clojure
 (cons 0 '(2 4 6))
@@ -1262,10 +1262,10 @@ anything else on the market. But how could you make it better? I
 suggest trying the following:
 
 -   Turn the result of your glitter filter into a list of names
--   Write a function, `append`, which will append a new suspect to your
-    list of suspects
+-   Write a function, `prepend`, which will add a new suspect to the 
+    beginning of your list of suspects
 -   Write a function, `validate`, which will check that `:name` and
-    `:glitter-index` are present when you `append`. Validate should
+    `:glitter-index` are present when you `prepend`. Validate should
     accept two arguments: a map of keywords to validating functions,
     similar to `conversions`, and the record to be validated
 -   Write a function which will take your list of maps and convert it
