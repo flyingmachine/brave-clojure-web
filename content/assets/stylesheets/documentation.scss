@@ -284,8 +284,8 @@ footer {
       display:block;
       a {
         @include adjust-font-size-to(18px, 1);
-        @include padding-trailer(.5, 18px);
-        @include padding-leader(.5, 18px);
+        @include padding-trailer(.25, 18px);
+        @include padding-leader(.25, 18px);
         display: block;
         color: #444;
         &:hover, &:visited {
