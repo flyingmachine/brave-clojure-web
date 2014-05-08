@@ -96,8 +96,6 @@ which to continue learning Clojure. You'll start by learning how to
 actually do things, and then take a step back to understand the
 underlying concepts.
 
-[Read "Clojure Language Fundamentals Overview"](/language-fundamentals-overview/)
-
 ### Do Things
 
 While you've undoubtedly heard of Clojure's awesome concurrency

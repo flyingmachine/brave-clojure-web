@@ -5,7 +5,6 @@ CHAPTER_IDS_ORDERED = %w{
   getting-started
   basic-emacs
   using-emacs-with-clojure
-  language-fundamentals-overview
   do-things
   core-functions-in-depth
   functional-programming
