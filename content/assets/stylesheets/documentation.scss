@@ -288,18 +288,16 @@ footer {
         @include padding-leader(.25, 18px);
         display: block;
         color: #444;
-        &:hover, &:visited {
+        &:visited {
           color: #444;
+        }
+
+        &:hover {
+          color: $orange;
         }
       }
     }
     
-    // > li.active-section > a,
-    > li > a:hover {
-      border-bottom: 1px solid #f26f53;
-      margin-bottom: -1px;
-    }
-
     >li li a {
       display: block;
       padding: 0 1em;
@@ -310,16 +308,6 @@ footer {
     
     // Sub navigation, e.g. 2.3 Susy
     ol {
-      a:hover, li.active > a {
-        &:before {
-          content: "→ ";
-          color: #f26f53;
-          font-weight: bold;
-          vertical-align: middle;
-          text-indent: -1em;
-        }
-      }
-
       ol {
         a { padding-left:2em; }
         // Even more nested nav, e.g. 2.3.1. Installation instructions
