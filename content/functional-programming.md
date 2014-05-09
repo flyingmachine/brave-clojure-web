@@ -6,20 +6,25 @@ kind: documentation
 
 # Functional Programming
 
-In this chapter, you'll begin to take your concrete experience with
-functions and data structures and integrate it in a new mindset, the
-functional programming mindset. By the end of this chapter, you'll
-have learned:
+So far, you've focused on familiarizing yourself with the tools that
+Clojure provides: immutable data structures, functions, abstractions,
+and so on. In this chapter, you'll begin learning how to think about
+your programming tasks in a way that makes the best use of those
+tools. You'll begin integrating your experience into a new mindset,
+the functional programming mindset.
 
--   What pure functions are and why they're important
--   Why immutability matters
--   How to transform immutable values
--   How disentangling data and functions gives you more power and
-    flexibility
--   Why it's powerful to program to a small set of data abstractions
+The core concepts you'll learn include: what pure functions are and
+why they're useful; how to work with immutable data structures and why
+they're superior to their mutable cousins; how disentangling data and
+functions gives you more power and flexibility, and why it's powerful
+to program to a small set of data abstractions. The result of shoving
+all this knowledge into your brain matter is that you'll have an
+entirely new approach to problem solving!
 
-The result of shoving all this knowledge into your brain matter is
-that you'll have an entirely new approach to problem solving!
+After going over these topics you'll put everything you've learned to
+use in order to write a terminal-based game based on an ancient mystic
+mind-training device which can now be found in Cracker Barrel
+restaurants across America: Peg Thing!
 
 ## Pure Functions, What and Why
 
