@@ -431,7 +431,7 @@ projects. I'll cover:
 
 ### The relationship between file paths and namespace names
 
-To kill to birds with one stone (or feed two birds with one seed,
+To kill two birds with one stone (or feed two birds with one seed,
 depending on how much of a hippie you are), our example will be used
 to catch the pesky international cheese thief by mapping the locations
 of his heists. Run the following:
