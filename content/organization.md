@@ -652,7 +652,7 @@ because `use` takes the same options as `refer` above:
 (= svg/points points)
 ; => true
 
-;; We can use the alias the reach latlng->point
+;; We can use the alias to reach latlng->point
 svg/latlng->point
 ; => no exception
 
@@ -943,12 +943,12 @@ In more detail:
 2. This is probably the trickiest bit, so bear with me. I'll go over
    the general purpose then deconstruct from the inside out.
 
-   `comparison-over-maps` is a function which returns a function. We
+   `comparator-over-maps` is a function which returns a function. We
    use it to construct the `min` and `max` functions below. `min`, for
    example, works like this:
 
    ```clojure
-   (min [{:a 1 :b 3} {:a 5 :b 0}]) ; => {:a 1 :b 0}`
+   (min [{:a 1 :b 3} {:a 5 :b 0}]) ; => {:a 1 :b 0}
    ```
 
     Here's how the returned function works:
