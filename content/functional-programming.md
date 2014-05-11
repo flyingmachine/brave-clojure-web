@@ -84,7 +84,7 @@ transparent:
 ```
 
 If a function relies on an immutable value, it's referentially
-transparent. The string ", Daniel-san" is immutable, so the
+transparent. The string ", Daniel-san" is immutable, so the following
 function is referentially transparent:
 
 ```clojure
@@ -141,9 +141,7 @@ perform them, which lets you put them on autopilot.
 ### Pure Functions Have No Side Effects
 
 To perform a side effect is to change the association between a name
-and its value within a given scope.
-
-For example, in Javscript:
+and its value within a given scope. For example, in Javscript:
 
 ```javascript
 var haplessObject = {
@@ -151,34 +149,35 @@ var haplessObject = {
 };
 
 var evilMutator = function(object){
-  object.emotion = "So emo :(";
+  object.emotion = "So emo :'(";
 }
 
 evilMutator(haplessObject);
 haplessObject.emotion;
-// => "So emo :("
+// => "So emo :'("
 ```
 
 Of course, your program has to have some side effects; it writes to a
 disk, which is changing the association between a filename and a
 collection of disk sectors; it changes the rgb values of your
-monitor's pixels, etc. Otherwise, there'd be no point in running it.
+monitor's pixels, and so on. Otherwise, there'd be no point in running
+it.
 
-The reason why side effects are potentially harmful is that they
-prevent us from being certain what the names in our code are referring
-to. This makes it difficult or impossible to know what our code is
-doing. It's very easy to end up wondering how a name came to be
-associated with a value and it's usually difficult to figure out why.
-
-When you call a function which doesn't have side effects, you only
-have to consider the relationship between the input and the output.
+The reason why side effects are potentially harmful, though, is that
+they prevent us from being certain what the names in our code are
+referring to. This makes it difficult or impossible to know what our
+code is doing. It's very easy to end up wondering how a name came to
+be associated with a value and it's usually difficult to figure out
+why. When you call a function which doesn't have side effects, you
+only have to consider the relationship between the input and the
+output, not the changes that could be rippling through your system.
 
 Functions which have side effects, however, place more of a burden on
 your mind grapes: now you have to worry about how the world is
 affected when you call the function. Not only that, every function
-which calls a side-effecting function gets "infected". It's another
-component which requires extra care and thought as you build your
-program.
+which depends on a side-effecting function gets "infected". It's
+another component which requires extra care and thought as you build
+your program.
 
 If you have any significant experience with a language like Ruby or
 Javascript, you've probably run into this problem. As an object gets
@@ -191,19 +190,17 @@ reason.
 
 Therefore, it's a good idea to look for ways to limit the use of side
 effects in your code. Think of yourself as an overeager bureaucrat,
-&mdash; let's call you Kafka Man &mdash; scrutinizing each side effect
+&mdash; let's call you Kafka Human &mdash; scrutinizing each side effect
 with your trusty BureauCorp clipboard in hand. Not only will this lead
 to better code, it's also sexy and dramatic!
 
 Luckily for you, Clojure makes your job easier by going to great
 lengths to limit side effects &mdash; all of its core data structures
 are immutable. You cannot change them in place no matter how hard you
-try!
-
-If you're unfamiliar with immutable data structures, you might feel
-like your favorite tool has been taken from you. How can you *do*
-anything without side effects? Well, guess what! That's What the next
-sections all about! How about this segue, eh? Eh?
+try! If you're unfamiliar with immutable data structures, however, you
+might feel like your favorite tool has been taken from you. How can
+you *do* anything without side effects? Well, guess what! That's What
+the next sections all about! How about this segue, eh? Eh?
 
 ## Living with Immutable Data Structures
 
@@ -220,9 +217,9 @@ Raise your hand if you've ever written something like this
 var wrestlers = getAlligatorWrestlers();
 var totalBites = 0;
 var l = wrestlers.length;
-// Side effect on i! Boo!
+// Side effect on i! Bad!
 for(var i=0; i < l; i++){
-  // Side effect on sum! Boo!
+  // Side effect on totalBites! Bad!
   totalBites += wrestlers[i].timesBitten;
 }
 ```
@@ -233,10 +230,10 @@ or this:
 var allPatients = getArkhamPatients();
 var analyzedPatients = [];
 var l = allPatients.length;
-// Side effect on i! Boo!
+// Side effect on i! Bad!
 for(var i=0; i < l; i++){
   if(allPatients[i].analyzed){
-    // Side effect on analyzedPatients! Boo!
+    // Side effect on analyzedPatients! Bad!
     analyzedPatients.push(allPatients[i]);
   }
 }
@@ -261,124 +258,86 @@ within the same scope:
 ```clojure
 (defn no-mutation
   [x]
-  ;; = is a boolean operation
-  (= x 3)
   (println x)
 
   ;; let creates a new scope
-  (let [x "Kafka Man"]
+  (let [x "Kafka Human"]
     (println x))
 
   ;; Exiting the let scope, x is the same
   (println x))
-(no-mutation "Existential Angst Woman")
+(no-mutation "Existential Angst Person")
 ; => 
-; Existential Angst Woman
-; Kafka Man
-; Existential Angst Woman
+; Existential Angst Person
+; Kafka Human
+; Existential Angst Person
 ```
 
 In Clojure, we can get around this apparent limitation through
-recursion:
+recursion. The following example shows the general approach to
+recursive problem-solving.
 
 ```clojure
 (defn sum
-  ;; Clojure allows overloading on arity. If you call sum with only
-  ;; one argument, it just calls the two-argument body with 0 as the
-  ;; second argument.
-  ([vals]
-     (sum vals 0))
+  ([vals] (sum vals 0)) ;; ~~~1~~~
   ([vals accumulating-total]
-     ;; rest returns the "tail" of vals, e.g. (rest [0 1]) => [1]
-     ;; thus "vals is eventually empty and we return the accumulating
-     ;; total
-     (if (empty? vals)
+     (if (empty? vals) ;; ~~~2~~~
        accumulating-total
-       ;; if vals isn't empty, i.e. we're still working our way
-       ;; through the sequence, then recur with the tail of vals
-       ;; and the sum of the first element of vals and the
-       ;; accumulating total.
        (sum (rest vals) (+ (first vals) accumulating-total)))))
+```
 
-(sum [39 5 1])
-; => 45
+This function takes two arguments, a collection to process (`vals`)
+and an accumulator (`accumulating-total`), and we use arity
+overloading (covered in "[Do Things](/do-things)") to provide a
+default value of 0 for `accumulating-total`. (1)
 
-;; This is what gets called recursively:
-(sum [39 5 1])
-; single-arity body calls 2-arity body
+Like all recursive solution, this function checks the argument it's
+processing against a base condition. In this case, we check whether
+`vals` is empty. If it is, we know that we've processed all the
+elements in the collection and so we return `accumulating-total`.
+
+If `vals` isn't empty it means we're still working our way through the
+sequence, so we recursively call `sum` with the "tail" of vals with
+`(rest vals)` and the sum of the first element of vals and the
+accumulating total with `(+ (first vals) accumulating-total)`. In this
+way, we build up `accumulating-total` and at the same time reduce
+`vals` until it reaches the base case of an empty collection.
+
+Here's what the recursive function call might look like:
+
+```clojure
+(sum [39 5 1]) ; single-arity body calls 2-arity body
 (sum [39 5 1] 0)
 (sum [5 1] 39)
 (sum [1] 44)
-(sum [] 45)
+(sum [] 45) ; base case is reached, so return accumulating-total
 ; => 45
 ```
 
 Each recursive call to `sum` creates a new scope where `vals` and
 `accumulating-total` are bound to different values, all without
 needing to alter the values originally passed to the function or
-perform any internal mutation.
+perform any internal mutation. As you can see, you can get along fine
+without mutation.
 
-Note, however, that you should generally use `loop` when doing
-recursion for performance reasons. This is because Clojure doesn't
-provide tail call optimization, a topic we will never bring up again!
-
-So here's how you'd do this with `loop`:
+One note: you should generally use `recur` when doing recursion for
+performance reasons. This is because Clojure doesn't provide tail call
+optimization, a topic we will never bring up again! So here's how
+you'd do this with `recur`:
 
 ```clojure
 (defn sum
   ([vals]
      (sum vals 0))
   ([vals accumulating-total]
-     (loop [vals vals
-            accumulating-total accumulating-total]
-       (if (empty? vals)
-         accumulating-total
-         (recur (rest vals) (+ (first vals) accumulating-total))))))
+     (if (empty? vals)
+       accumulating-total
+       (recur (rest vals) (+ (first vals) accumulating-total)))))
 ```
 
-This isn't too important if you're recursively operating on a small
-collection, but if your collection contains thousands or millions
-values then you will definitely need to whip out `loop`.
-
-Now let's try accumulation in Clojure. You'll notice that this is
-really similar to our hobbit symmetrizing code:
-
-```clojure
-(defn analyzed-patients
-  [patients]
-  (loop [remaining-patients patients
-         analyzed []]
-    (let [current-patient (first remaining-patients)]
-      (cond (empty? remaining-patients)
-            analyzed
-
-            ;; Note that conj produces a new value without mutating
-            ;; anything, unlike Javascript's array.push which alters
-            ;; the array
-            (analyzed? current-patient)
-            (recur (rest remaining-patients)
-                   (conj analyzed current-patient))
-
-            :else
-            (recur (rest remaining-patients)
-                   analyzed)))))
-```
-
-Hey check that out, we introduced a new form: `cond`. `cond` is like a
-multi-if, where you give it a series of if/then's and end it with an
-optional `:else`:
-
--   If there are no more remaining patients, return the
-    vector of analyzed patients.
--   If the current patient has been analyzed, recur. Bind
-    `remaining-patients` to a vector which consists of all patients
-    except the current one. Bind `analyzed` to a new vector which
-    includes the current vector of analyzed patients as well as the
-    current patient.
--   Otherwise recur. Bind `remaining-patients` same as above. Bind
-      `analyzed` to the existing vector of analyzed patients.
-
-As you can see, Clojure gets along fine without mutation.
+Using `recur` isn't too important if you're recursively operating on a
+small collection, but if your collection contains thousands or
+millions values then you will definitely need to whip out `recur`.
 
 One last thing! You might be thinking, "Wait a minute, what if I end
 up creating thousands of intermediate values? Doesn't this cause the
@@ -392,7 +351,10 @@ git! I don't know, google it!
 
 ### Functional Composition instead of Attribute Mutation
 
-Here's another way we might use mutation:
+Another way you might be used to using mutation is to build up the
+final state of an object. In the Ruby below example, the
+GlamourShotCaption object uses mutation to clean input by removing
+trailing spaces and capitalizing "lol":
 
 ```ruby
 class GlamourShotCaption
@@ -400,12 +362,6 @@ class GlamourShotCaption
   def initialize(text)
     @text = text
     clean!
-  end
-
-  def save!
-    File.open("read_and_feel_giddy.txt", "w+"){ |f|
-      f.puts text
-    }
   end
 
   private
@@ -416,28 +372,25 @@ class GlamourShotCaption
 end
 
 best = GlamourShotCaption.new("My boa constrictor is so sassy lol!  ")
-best.save!
+best.text
+; => "My boa constrictor is so sassy LOL!"
 ```
 
-`GlamourShotCaption` encapsulates the knowledge of how to clean and save
-a glamour shot caption. On creating a `GlamourShotCaption` object, you
+`GlamourShotCaption` encapsulates the knowledge of how to clean a
+glamour shot caption. On creating a `GlamourShotCaption` object, you
 assign text to an instance variable and progressively mutate it. So
-far so good, right? Here's how we might do this in Clojure:
+far so good, right? The example below shows how you might do this in
+Clojure. It uses `require` in order to allow you to access the string
+function library, a concept that will be covered in the next chapter.
 
 ```clojure
-;; We'll go over require soon
 (require '[clojure.string :as s])
-
-;; This uses the -> macro which we'll cover more in
-;; "Clojure Alchemy: Reading, Evaluation, and Macros"
 (defn clean
   [text]
-  (-> text
-      s/trim
-      (s/replace #"lol" "LOL")))
+  (s/replace (s/trim text) #"lol" "LOL"))
 
-(spit "read_and_feel_giddy.txt"
-      (clean "My boa constrictor is so sassy lol!  "))
+(clean "My boa constrictor is so sassy lol!  ")
+; => "My boa constrictor is so sassy LOL!"
 ```
 
 Easy peasy. No mutation required. Instead of progressively mutating an
@@ -451,17 +404,16 @@ structures.
 You also have to tightly couple methods with classes, thus limiting
 the reusability of the methods. In the Ruby example, you have to do
 extra work to reuse the `clean!` method. In Clojure, `clean` will work
-on any string at all. By decoupling functions and data and
-programaming to a small set of abstractions we end up with more
+on any string at all. By both a) decoupling functions and data and b)
+programming to a small set of abstractions, you end up with more
 reusable, composable code. You gain power and lose nothing.
 
 If you think that this is a trivial example and not realistic, then
 consider all the times you've created very simple Ruby classes which
 essentially act as decorated hashes, but which aren't allowed to take
-part in the hash abstraction without work.
-
-Anyway, the takeaway here is that you can just use function
-composition instead of a succession of mutations.
+part in the hash abstraction without work. The takeaway here is that
+you can just use function composition instead of a succession of
+mutations.
 
 Once you start using immutable data structures you'll quickly feel
 confident in your ability to get stuff done. Then, you'll feel even
