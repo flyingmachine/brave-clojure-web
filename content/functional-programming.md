@@ -28,11 +28,10 @@ restaurants across America: Peg Thing!
 
 ## Pure Functions, What and Why
 
-With the exception of `println`, all the functions we've used up till
-now have been pure functions:
+With the exception of `println` and `rand`, all the functions you've
+used up till now have been pure functions:
 
 ```clojure
-;; Pure functions:
 (get [:chumbawumba] 0)
 ; => :chumbawumba
 
@@ -43,9 +42,8 @@ now have been pure functions:
 ; => "wax on wax off"
 ```
 
-What makes them pure functions, and why does it matter?
-
-A function is pure if it meets two qualifications:
+What makes them pure functions, and why does it matter? A function is
+pure if it meets two qualifications:
 
 1.  It always returns the same result given the same arguments. This is
     called "referential transparency" and you can add it to your list of
@@ -56,17 +54,17 @@ A function is pure if it meets two qualifications:
 
 These qualities matter because they make it easier for us to reason
 about our programs. Pure functions are easier to reason about because
-they're completely isolated, concealing no dependencies on other parts
+they're completely isolated, unable to impact other parts
 of your system. When you use them, you don't have to ask yourself,
-"Ok, what could I break by calling this function?" You don't have to
-spend time hunting around your codebase and cramming additional
-information into your limited-capacity short-term memory.
+"What could I break by calling this function?" They're also
+consistent; you'll never find yourself trying to figure out why the
+passing a function the exact same arguments results in different
+return values.
 
 For example, when was the last time you fretted over adding two
 numbers? Pure functions are as stable and problem-free as arithmetic.
-They're like these stupendous, stable little bricks of functionality
+They're these stupendous, stable little bricks of functionality
 that you can confidently use as the foundation of your program.
-
 Let's look at referential transparency and lack-of-side-effects in
 more detail so that we'll know exactly what they are how they're
 helpful.
@@ -76,52 +74,61 @@ helpful.
 Referentially transparent functions always returns the same result
 when called with the same argument. In order to achieve this, they
 only rely on 1) their own arguments and 2) immutable values to
-determine their return value.
+determine their return value. Mathematical functions are referentially
+transparent:
+
 
 ```clojure
-;; Mathematical functions are referentially transparent
 (+ 1 2)
 ; => 3
+```
 
-;; If a function relies on an immutable value, it's referentially
-;; transparent. The string ", Daniel-san" is immutable, so the
-;; function is referentially transparent
+If a function relies on an immutable value, it's referentially
+transparent. The string ", Daniel-san" is immutable, so the
+function is referentially transparent:
+
+```clojure
 (defn wisdom
   [words]
   (str words ", Daniel-san"))
+(wisdom "Always bathe on Fridays")
+; => "Always bathe on Fridays, Daniel-san"
 ```
 
-By contrast, these functions do not yield the same result with the
-same arguments and, therefore, are not referentially transparent:
+By contrast, the following functions do not yield the same result with
+the same arguments and, therefore, are not referentially transparent.
+Any function which relies on a random number generator cannot be
+referentially transparent:
 
 ```clojure
-;; Any function which relies on a random number generator
-;; cannot be referentially transparent
-(defn random-judgment
-  [judgee]
+(defn year-end-evaluation
+  []
   (if (> (rand) 0.5)
-    (str judgee " is great!")
-    (str judgee " is terrible :(")))
+    "You get a raise!"
+    "Better luck next year!"))
+```
 
-;; If your functions reads from a file, it's not referentially
-;; transparent because the file's contents can change
-(defn file-analyzer
+If your function reads from a file, it's not referentially
+transparent because the file's contents can change. The function
+`analyze-file` below is not referentially transparent, but the
+function `analysis` is:
+
+```clojure
+(defn analysis
+  [text]
+  (str "Character count: " (count text)))
+
+(defn analyze-file
   [filename]
-  (let [contents (slurp filename)]
-    (analyze-file contents)))
-;; Note, however, that "analyze-file" could very well be referentially
-;; transparent - it could very well return the same result every time
-;; it's passed the same string.
+  (analysis (slurp filename)))
 ```
 
 When using a referentially transparent function, you never have to
 consider what possible external conditions could affect the return
-value of the function.
-
-This is especially important if your function is used multiple places
-or if it's nested deeply in a chain of function calls. In both cases,
-you can rest easy knowing that changes to external conditions won't
-cause your code to break.
+value of the function. This is especially important if your function
+is used multiple places or if it's nested deeply in a chain of
+function calls. In both cases, you can rest easy knowing that changes
+to external conditions won't cause your code to break.
 
 Another way to think about this is that reality is largely
 referentially transparent. This is what lets you form habits. If
