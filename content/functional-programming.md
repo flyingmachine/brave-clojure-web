@@ -190,8 +190,8 @@ try!
 
 If you're unfamiliar with immutable data structures, you might feel
 like your favorite tool has been taken from you. How can you *do*
-anything without side effects? Well, guess what! That's What the next
-sections all about! How about this segue, eh? Eh?
+anything without side effects? Well, guess what! That's what the next
+section's all about! How about this segue, eh? Eh?
 
 ## Living with Immutable Data Structures
 
