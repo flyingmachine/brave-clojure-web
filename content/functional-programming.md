@@ -598,6 +598,7 @@ overview, we'll look at the code in detail.
     (connect board max-pos pos neighbor destination)))
 
 (defn add-pos
+  "Pegs the position and performs connections"
   [board max-pos pos]
   (let [pegged-board (assoc-in board [pos :pegged] true)]
     (reduce (fn [new-board connector] (connector new-board max-pos pos))
@@ -773,9 +774,10 @@ overview, we'll look at the code in detail.
   (prompt-rows))
 ```
 
-The functions are separated into three sections by comment blocks: one
-section for creating the board, one for moving pegs, and one for
-handling i/o. Before all that, though, there's this:
+The functions are separated into four sections by comment blocks: one
+section for creating the board, one for moving pegs, one for
+representing the board textually and printing it, and one for handling
+input and game flow. Before all that, though, there's this:
 
 ```clojure
 (ns pegthing.core
@@ -992,10 +994,11 @@ between two positions:
  4 {:connections {1 2}}}
 ```
 
-This function uses recursion through `reduce` in order to
-progressively "build up" the final state of the board. Also notice
-that it also uses `in-bounds?` to check whether all positions being
-associated are valid.
+`connect` uses recursion through `reduce` in order to progressively
+"build up" the final state of the board. In the example above, you're
+reducing over the nested vectors `[[1 4] [4 1]]`. This is what allows
+you to return an updated board with both `pos` and `destination` (1
+and 4) pointing to each other in their connections.
 
 The anonymous function passed to `reduce` uses a function you haven't
 seen before, `assoc-in`. Whereas the function `get-in` lets you look
@@ -1010,12 +1013,103 @@ examples:
 (get-in {:cookie {:monster {:vocals "Finntroll"}}} [:cookie :monster])
 ; => {:vocals "Finntroll"}
 
-(assoc-in {:a {:b 1}} [:a :b] 2)
-; => {:a {:b 2}}
+(assoc-in {} [1 :connections 4] 2)
+; => {1 {:connections {4 2}}}
 ```
 
-In the first example, new, nested maps are created to accommodate all
-the keys provided.
+In these examples, you can see that, new, nested maps are created to
+accommodate all the keys provided.
+
+Another thing to notice about `connect` is that it uses `in-bounds?`
+to check whether all positions being associated are valid. Here's what
+would happen if you tried to connect out-of-bounds positions:
+
+```clojure
+(connect {} 15 7 11 16)
+; => {}
+```
+
+Now that you have a way to connect to positions, you need a way to
+figure out which positions to connect. That's handled by
+`connect-right`, `connect-down-left`, and `connect-down-right`. These
+functions each take a position and use a little triangle math to
+figure out which numbers to feed to `connect`. In case you're
+wondering why there aren't `connect-left`, `connect-up-left`, and
+`connect-up-right` functions, it's because the existing functions
+actually cover these cases because `connect` returns a board with the
+mutual connection established; when 4 "connects right" to 6, 6
+"connects left" to 4. Here are a couple examples:
+
+```clojure
+(connect-down-left {} 15 1)
+; =>
+{1 {:connections {4 2}
+ 4 {:connections {1 2}}}}
+
+(connect-down-right {} 15 3)
+; =>
+{3  {:connections {10 6}}
+ 10 {:connections {3 6}}}
+```
+
+The next function, `add-pos`, is interesting because it actually
+reduces on a vector of *functions*, applying each in turn to build up
+the resulting board. But first, it updates the board to indicated that
+a peg is in the given position:
+
+```clojure
+(defn add-pos
+  "Pegs the position and performs connections"
+  [board max-pos pos]
+  (let [pegged-board (assoc-in board [pos :pegged] true)]
+    (reduce (fn [new-board connector] (connector new-board max-pos pos))
+            pegged-board
+            [connect-right connect-down-left connect-down-right])))
+
+(add-pos {} 15 1)
+{1 {:connections {6 3, 4 2}, :pegged true}
+ 4 {:connections {1 2}}
+ 6 {:connections {1 3}}}
+```
+
+Reducing over functions like this is another way of chaining
+functions. To illustrate, here's another way of defining the `clean`
+function in the glamour shot example above:
+
+```clojure
+(defn clean
+  [text]
+  (reduce (fn [string string-fn] (string-fn string))
+          [s/trim #(s/replace % #"lol" "LOL")]))
+```
+
+Defining `clean` like this doesn't provide any benefits, but in
+`add-pos` it makes sense because each function takes multiple
+argument. If you didn't use reduce, your code could end up looking
+like this:
+
+
+```clojure
+(defn add-pos
+  "Pegs the position and performs connections"
+  [board max-pos pos]
+  (let [pegged-board (assoc-in board [pos :pegged] true)]
+    (connect-down-right
+     (connect-down-left
+      (connect-right pegged-board max-pos pos)
+      max-pos pos)
+     max-pos pos)))
+```
+
+That's pretty confusing! Reducing over a collection of functions is
+not something you'll do often, but it does demonstrate the versatility
+of functional programming.
+
+Last among our board creation functions is `new-board`. It's actually
+pretty straightforward, reducing over a collection of board positions
+to build up the final board.
+
+###
 
 ## Chapter Summary
 
