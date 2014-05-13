@@ -503,7 +503,7 @@ subsequent function call returns immediately:
 
 Pretty cool!
 
-## Peg Thing&reg;
+## Peg Thing
 
 Let's look at these ideas and techniques in a larger system. For the
 rest of the chapter, we'll create a terminal based game, Peg
@@ -552,6 +552,7 @@ overview, we'll look at the code in detail.
   (= n (last (take-while #(>= n %) tri))))
 
 (defn row-tri
+  "The triangular number at the end of row n"
   [n]
   (last (take n tri)))
 
@@ -723,6 +724,7 @@ overview, we'll look at the code in detail.
 
 (defn prompt-move
   [board]
+  (println "\nHere's your board:")
   (print-board board)
   (println "Move from where to where? Enter two letters:")
   (let [input (map letter->pos (characters-as-strings (get-input)))]
@@ -735,9 +737,7 @@ overview, we'll look at the code in detail.
 (defn successful-move
   [board]
   (if (can-move? board)
-    (do
-      (print-board board)
-      (prompt-move board))
+    (prompt-move board)
     (game-over board)))
 
 (defn game-over
@@ -753,24 +753,24 @@ overview, we'll look at the code in detail.
           (println "Bye!")
           (System/exit 0))))))
 
-(defn query-empty-peg
+(defn prompt-empty-peg
   [board]
   (println "Here's your board:")
   (print-board board)
   (println "Remove which peg? [e]")
   (prompt-move (remove-peg board (letter->pos (get-input "e")))))
 
-(defn query-rows
+(defn prompt-rows
   []
   (println "How many rows? [5]")
   (let [rows (get-input 5)
         board (new-board rows)]
-    (query-empty-peg board)))
+    (prompt-empty-peg board)))
 
 (defn -main
   [& args]
   (println "Get ready to play peg thing!")
-  (query-rows))
+  (prompt-rows))
 ```
 
 The functions are separated into three sections by comment blocks: one
@@ -793,8 +793,229 @@ program from the command line, and `(declare successful-move
 prompt-move game-over query-rows)` allows functions to refer to those
 names before they're defined. If that doesn't quite make sense yet,
 just skip it for now and trust that it will get covered soon.
- 
+
+### Playing
+
+To start Peg Thing, just run `lein run` in your terminal while in the
+project's root directory. That will present you with a prompt that
+looks like this:
+
+```
+Get ready to play peg thing!
+How many rows? [5]
+```
+
+You can enter in the number of rows the board will have, with 5 as the
+default. If you want 5 rows, just hit enter, otherwise type a number
+and hit enter. After you do that, you'll see this:
+
+```
+Here's your board:
+       a0
+      b0 c0
+    d0 e0 f0
+   g0 h0 i0 j0
+ k0 l0 m0 n0 o0
+Remove which peg? [e]
+```
+
+Each letter identifies a position on the board. The number `0`
+indicates that a position is filled. The prompt is asking you to enter
+the position of the first to peg to remove, with a default of `e`.
+After you remove the peg, this is what you'll see:
+
+```clojure
+Here's your board:
+       a0
+      b0 c0
+    d0 e- f0
+   g0 h0 i0 j0
+ k0 l0 m0 n0 o0
+Move from where to where? Enter two letters:
+```
+
+Notice that the `e` position now has a dash, `-`. This indicates that
+the position is empty. In order to move, you enter the position of the
+peg you want to "pick up" followed by the position of the empty
+position that you to place it in. If you enter `le`, for example,
+you'll get this:
+
+```clojure
+Here's your board:
+       a0
+      b0 c0
+    d0 e0 f0
+   g0 h- i0 j0
+ k0 l- m0 n0 o0
+Move from where to where? Enter two letters:
+```
+
+The game continues to prompt you for moves until no moves are
+available, whereupon it prompts you to play again.
+
+Now that you know how it's supposed to work, let's go through the code!
+
 ### Creating the Board
+
+There are many ways that you could represent the board, but in this
+case you're going to represent the board with a map with keys
+corresponding to each board position and values containing information
+about that positions connections. The map will also contain a `:rows`
+key, storing the total number of rows. Below is a board with each
+position numbered, followed by the data structure built to represent
+it:
+
+![Peg Thing Data Structure](images/functional-programming/peg-thing-data-structure.png)
+
+```clojure
+{1  {:pegged true, :connections {6 3, 4 2}},
+ 2  {:pegged true, :connections {9 5, 7 4}},
+ 3  {:pegged true, :connections {10 6, 8 5}},
+ 4  {:pegged true, :connections {13 8, 11 7, 6 5, 1 2}},
+ 5  {:pegged true, :connections {14 9, 12 8}},
+ 6  {:pegged true, :connections {15 10, 13 9, 4 5, 1 3}},
+ 7  {:pegged true, :connections {9 8, 2 4}},
+ 8  {:pegged true, :connections {10 9, 3 5}},
+ 9  {:pegged true, :connections {7 8, 2 5}},
+ 10 {:pegged true, :connections {8 9, 3 6}},
+ 11 {:pegged true, :connections {13 12, 4 7}},
+ 12 {:pegged true, :connections {14 13, 5 8}},
+ 13 {:pegged true, :connections {15 14, 11 12, 6 9, 4 8}},
+ 14 {:pegged true, :connections {12 13, 5 9}},
+ 15 {:pegged true, :connections {13 14, 6 10}},
+ :rows 5}
+```
+
+In the data structre, each position is associated with a map that
+reads something like:
+
+```clojure
+{:pegged true, :connections {6 3, 4 2}}
+```
+
+The meaning of `:pegged` is pretty clear &ndash; it represents whether
+that position has a peg in it. `:connections` is a little more
+cryptic. It's a map where each key identifies a *possible
+destination*, and each value represents *the position that would
+bejumped over*. So pegs in position 1, for example, can jump *to*
+position 6, *over* position 3. This might seem a little backwards, but
+you'll see the rationale for it later when you see examine how move
+validation is implemented.
+
+In order to get there, I'll walk through the code from top to bottom.
+This has the advantage that each bit of code will be fully
+understandable in itself, but the disadvantage of hiding the general
+approach taken. Therefore, I'll explain the general approach after all
+the code's been covered.
+
+The first few expressions deal with triangular numbers. Triangular
+numbers are generated by adding the first *n* natural numbers. The
+first triangular number is 1, the second is 3 (1 + 2), the third is 6
+(1 + 2 + 3), and so on. These numbers line up nicely with the position
+numbers at the end of every row on board, which will turn out to be
+a useful property. First, a function defines how to generate a lazy
+sequence of triangular numbers, as explained in the last chapter:
+
+```clojure
+(defn tri*
+  "Generates lazy sequence of triangular numbers"
+  ([] (tri* 0 1))
+  ([sum n]
+     (let [new-sum (+ sum n)]
+       (cons new-sum (lazy-seq (tri* new-sum (inc n)))))))
+```
+
+The next expresion "initializes" the function, actually creating the
+lazy sequence:
+
+```clojure
+(def tri (tri*))
+```
+
+You can verify that it actually works:
+
+```clojure
+(take 5 tri)
+; => (1 3 6 10 15)
+```
+
+And the next few functions operate on the sequence of triangular
+numbers. Here they are, along with example usage:
+
+```clojure
+(defn triangular?
+  "Is the number triangular? e.g. 1, 3, 6, 10, 15, etc"
+  [n]
+  (= n (last (take-while #(>= n %) tri))))
+(triangular? 5) ; => false
+(triangular? 6) ; => true
+
+(defn row-tri
+  "The triangular number at the end of row n"
+  [n]
+  (last (take n tri)))
+(row-tri 1) ; => 1
+(row-tri 2) ; => 3
+(row-tri 3) ; => 6
+
+(defn row-num
+  "Returns row number the position belongs to: pos 1 in row 1,
+  positions 2 and 3 in row 2, etc"
+  [pos]
+  (inc (count (take-while #(> pos %) tri))))
+(row-num 1) ; => 1
+(row-num 5) ; => 5
+```
+
+The next function, `in-bounds?` is used when figuring out whether or
+not to connect to positions. For example, if you have 5 rows then the
+max position is 15, but the math used to determine connections might
+try to connect position 7 with position 16. `in-bounds?` makes sure
+your program doesn't do anything outrageous like this.
+
+After that comes `connect`, used to actually form a mutual connection
+between two positions:
+
+```
+(defn connect
+  "Form a mutual connection between two positions"
+  [board max-pos pos neighbor destination]
+  (if (in-bounds? max-pos neighbor destination)
+    (reduce (fn [new-board [p1 p2]] (assoc-in new-board [p1 :connections p2] neighbor))
+            board
+            [[pos destination] [destination pos]])
+    board))
+
+(connect {} 15 1 2 4)
+; => 
+{1 {:connections {4 2}}
+ 4 {:connections {1 2}}}
+```
+
+This function uses recursion through `reduce` in order to
+progressively "build up" the final state of the board. Also notice
+that it also uses `in-bounds?` to check whether all positions being
+associated are valid.
+
+The anonymous function passed to `reduce` uses a function you haven't
+seen before, `assoc-in`. Whereas the function `get-in` lets you look
+up values in nested maps, `assoc-in` allows you to return a new map
+with the given value at the specified nesting. Here are a couple
+examples:
+
+```clojure
+(assoc-in {} [:cookie :monster :vocals] "Finntroll")
+; => {:cookie {:monster {:vocals "Finntroll"}}}
+
+(get-in {:cookie {:monster {:vocals "Finntroll"}}} [:cookie :monster])
+; => {:vocals "Finntroll"}
+
+(assoc-in {:a {:b 1}} [:a :b] 2)
+; => {:a {:b 2}}
+```
+
+In the first example, new, nested maps are created to accommodate all
+the keys provided.
 
 ## Chapter Summary
 
