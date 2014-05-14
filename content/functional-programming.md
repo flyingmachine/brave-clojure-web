@@ -246,7 +246,7 @@ elsewhere, as opposed to changing an object you've received.
 But Clojure's core data structures don't even allow these harmless
 mutations. So what can you do?
 
-Let's ignore the fact that you can easily use `map` and `reduce` to
+First, ignore the fact that you can easily use `map` and `reduce` to
 accomplish the work done above. In these situations &mdash; iterating
 over some collection to build a result &mdash; the functional
 alternative to mutation is recursion.
@@ -289,11 +289,11 @@ recursive problem-solving.
 This function takes two arguments, a collection to process (`vals`)
 and an accumulator (`accumulating-total`), and we use arity
 overloading (covered in "[Do Things](/do-things)") to provide a
-default value of 0 for `accumulating-total`. (1)
+default value of 0 for `accumulating-total` (1).
 
 Like all recursive solution, this function checks the argument it's
 processing against a base condition. In this case, we check whether
-`vals` is empty. If it is, we know that we've processed all the
+`vals` is empty (2). If it is, we know that we've processed all the
 elements in the collection and so we return `accumulating-total`.
 
 If `vals` isn't empty it means we're still working our way through the
@@ -395,18 +395,18 @@ function library, a concept that will be covered in the next chapter.
 
 Easy peasy. No mutation required. Instead of progressively mutating an
 object, you apply a chain of functions to an immutable value.
+Incidentally, recursion is just a special case of function chaining:
+you're just chaining the same function over and over.
 
 This example also starts to show the limitations of object-oriented
 programming. In OOP, one of the main purposes of classes is to provide
 data hiding &mdash; something that isn't necessary with immutable data
-structures.
-
-You also have to tightly couple methods with classes, thus limiting
-the reusability of the methods. In the Ruby example, you have to do
-extra work to reuse the `clean!` method. In Clojure, `clean` will work
-on any string at all. By both a) decoupling functions and data and b)
-programming to a small set of abstractions, you end up with more
-reusable, composable code. You gain power and lose nothing.
+structures. You also have to tightly couple methods with classes, thus
+limiting the reusability of the methods. In the Ruby example, you have
+to do extra work to reuse the `clean!` method. In Clojure, `clean`
+will work on any string at all. By both a) decoupling functions and
+data and b) programming to a small set of abstractions, you end up
+with more reusable, composable code. You gain power and lose nothing.
 
 If you think that this is a trivial example and not realistic, then
 consider all the times you've created very simple Ruby classes which
@@ -1370,10 +1370,10 @@ object.
 
 ## Chapter Summary
 
--   Pure functions are referentially transparent and side-effect free.
-    This makes them easy to reason about.
--   Try to keep your dirty, impure functions to a minimum.
--   In an immutable world, you use recursion instead of for/while and
-    function composition instead of successions of mutations
--   Pure functions allow powerful techniques like function composition
-    functions and memoization
+Pure functions are referentially transparent and side-effect free.
+This makes them easy to reason about. To get the most out of Clojure,
+try to keep your dirty, impure functions to a minimum. In an immutable
+world, you use recursion instead of for/while and function composition
+instead of successions of mutations. Pure functions allow powerful
+techniques like function composition functions and memoization.
+They're also super fun!
