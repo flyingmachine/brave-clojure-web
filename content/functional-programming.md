@@ -503,7 +503,7 @@ subsequent function call returns immediately:
 
 Pretty cool!
 
-## Peg Thing
+## Peg Thing&reg;
 
 Let's look at these ideas and techniques in a larger system. For the
 rest of the chapter, we'll create a terminal based game, Peg
@@ -515,7 +515,7 @@ If you're not familiar with the game, here are the mechanics. First,
 you start out with triangular board consisting of holes filled with
 pegs and with one hole missing a peg, like this:
 
-![Peg Thing Starting Board](images/functional-programming/peg-thing-starter.png)
+![Peg Thing Starting Board](images/functional-programming/peg-thing-starting.png)
 
 The object of the game is to remove as many pegs as possible and you
 do this by "jumping" over pegs. In the following diagram, peg A jumps
@@ -873,12 +873,12 @@ Now that you know how it's supposed to work, let's go through the code!
 ### Creating the Board
 
 There are many ways that you could represent the board, but in this
-case you're going to represent the board with a map with keys
-corresponding to each board position and values containing information
-about that positions connections. The map will also contain a `:rows`
-key, storing the total number of rows. Below is a board with each
-position numbered, followed by the data structure built to represent
-it:
+case you're going to represent the board with a map with numerical
+keys corresponding to each board position and values containing
+information about that positions connections. The map will also
+contain a `:rows` key, storing the total number of rows. Below is a
+board with each position numbered, followed by the data structure
+built to represent it:
 
 ![Peg Thing Data Structure](images/functional-programming/peg-thing-data-structure.png)
 
@@ -901,21 +901,26 @@ it:
  :rows 5}
 ```
 
-In the data structre, each position is associated with a map that
+You might be wondering why, when you play the game, each position is
+represented by a letter but here the positions are represented by
+numbers. Letters are for humans and numbers are for the data
+structure, and there are some conversion functions covered below.
+
+In the data structure, each position is associated with a map that
 reads something like:
 
 ```clojure
 {:pegged true, :connections {6 3, 4 2}}
 ```
 
-The meaning of `:pegged` is pretty clear &ndash; it represents whether
-that position has a peg in it. `:connections` is a little more
-cryptic. It's a map where each key identifies a *possible
-destination*, and each value represents *the position that would
-bejumped over*. So pegs in position 1, for example, can jump *to*
-position 6, *over* position 3. This might seem a little backwards, but
-you'll see the rationale for it later when you see examine how move
-validation is implemented.
+The meaning of `:pegged` is clear &ndash; it represents whether that
+position has a peg in it. `:connections` is a little more cryptic.
+It's a map where each key identifies a *possible destination*, and
+each value represents *the position that would bejumped over*. So pegs
+in position 1, for example, can jump *to* position 6, *over*
+position 3. This might seem a little backwards, but you'll see the
+rationale for it later when you see examine how move validation is
+implemented.
 
 In order to get there, I'll walk through the code from top to bottom.
 This has the advantage that each bit of code will be fully
