@@ -717,10 +717,12 @@ overview, we'll look at the code in detail.
 ;; Interaction
 ;;;;
 (defn letter->pos
+  "Converts a letter string to the corresponding position number"
   [letter]
   (inc (- (int (first letter)) alpha-start)))
 
 (defn get-input
+  "Waits for user to enter text and hit enter, then cleans the input"
   ([] (get-input nil))
   ([default]
      (let [input (clojure.string/trim (read-line))]
@@ -729,6 +731,8 @@ overview, we'll look at the code in detail.
          (clojure.string/lower-case input)))))
 
 (defn characters-as-strings
+  "Given a string, return a collection consisting of each indivisual
+  character"
   [string]
   (re-seq #"[a-zA-Z]" string))
 
@@ -1180,7 +1184,9 @@ is valid, which is what `valid-move?` does:
 
 Another nice benefit of having `valid-moves` return a map is that
 `valid-move?` can return the position of the peg that's jumped over
-The function `make-move` makes use of this:
+The function `make-move` makes use of this. By taking the time to
+construct a rich data structure, it's easier to perform useful
+operations:
 
 ```clojure
 (defn make-move
@@ -1240,7 +1246,127 @@ the char into a string. `pos-chars` is used by the function
 each row. The next few definitions, `ansi-styles`, `ansi`, and
 `colorize`, all deal with outputting colored text to the terminal.
 
+The next few functions, `render-pos`, `row-positions`, `row-padding`,
+and `render-row` are all concerned with creating strings to represent
+the board.
 
+```clojure
+(defn render-pos
+  [board pos]
+  (str (nth letters (dec pos))
+       (if (get-in board [pos :pegged])
+         (colorize "0" :blue)
+         (colorize "-" :red))))
+
+(defn row-positions
+  "Return all positions in the given row"
+  [row-num]
+  (range (inc (or (row-tri (dec row-num)) 0))
+         (inc (row-tri row-num))))
+
+(defn row-padding
+  "String of spaces to add to the beginning of a row to center it"
+  [row-num rows]
+  (let [pad-length (/ (* (- rows row-num) pos-chars) 2)]
+    (apply str (take pad-length (repeat " ")))))
+
+(defn render-row
+  [board row-num]
+  (str (row-padding row-num (:rows board))
+       (clojure.string/join " " (map (partial render-pos board) (row-positions row-num)))))
+```
+
+If you work from the bottom up, you can see that `render-row` caalls
+each of the above function to return the string representation of row.
+Notice the expression `(map (partial render-pos board) (row-positions
+row-num))`. This demonstrates a good use case for partials: applying
+the same function multiple times with one or more arguments "filled
+in".
+
+You'll also notice that `render-pos` uses a letter to identify each
+position, rather than a number. This is to save space a little in that
+it allows a 5-row board to be represented with only one character per
+position.
+
+Finally, `print-board` merely iterates over each row number with
+`doseq`, printing the string representation of that row. You use
+`doseq` when you want perform stateful operations on the elements of a
+collection.
+
+```clojure
+(defn print-board
+  [board]
+  (doseq [row-num (range 1 (inc (:rows board)))]
+    (println (render-row board row-num))))
+```
+
+### Interaction
+
+The last collection of functions handle player interaction. First,
+there's `letter->pos`, which converts a letter to the corresponding
+position number. This is necessary because the player identifies
+positions with letters, but internally they're represented by numbers.
+
+Next, the helper function `get-input` allows you to read and clean the
+player's input. You can also provide a default value, which is used if
+the player hits enter without typing anything.
+
+The next function, `characters-as-strings` is a tiny helper function
+used by `prompt-move` to all letters and discard non-alphabetic input:
+
+```clojure
+(characters-as-strings "a   b")
+; => ("a" "b")
+
+(characters-as-strings "a   cb")
+; => ("a" "c" "b")
+```
+
+Once `prompt-move` has read its input, it uses the following to act on
+the move:
+
+```clojure
+(if-let [new-board (make-move board (first input) (second input))]
+  (successful-move new-board)
+  (do
+    (println "\n!!! That was an invalid move :(\n")
+    (prompt-move board)))
+```
+
+Here, `make-move` returns nil if the player's move was invalid, and we
+use that information to inform her of her mistake. If the move is
+valid, however, the `new-board` gets passed off to `successful-move`,
+which hands control back over to `prompt-move` if there are still
+moves to be made:
+
+```clojure
+(defn successful-move
+  [board]
+  (if (can-move? board)
+    (prompt-move board)
+    (game-over board)))
+```
+
+In our board creation functions we saw how recursion was used to
+"build up" a value using immutable data structures. The same thing is
+happening here, only it involves two mutually recursive functions and
+some user input. No mutable attributes in sight!
+
+The rest of the functions (`game-over`, `prompt-empty-peg`,
+`prompt-rows` and `-main`) are pretty straightforward, using all the
+ideas we've covered so far, so I'm going to gloss right over them.
+Moving along!
+
+One final thing to note about the code as a whole: I tried as much as
+possible to separate pure functions from impure functions. This is a
+best practice for functional programming. By identifying the bits of
+functionality that are referentially transparent and side-effect free
+and placing those bits in their own functions, you're better able to
+reap the benefits of pure functions. These functions are not capable
+of causing bizarre bugs in unrelated parts of your program. They're
+easier to test and develop in the REPL because they only rely on the
+arguments you pass them, and not on some complicated hidden state
+object.
 
 ## Chapter Summary
 
