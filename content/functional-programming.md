@@ -16,7 +16,7 @@ the functional programming mindset.
 The core concepts you'll learn include: what pure functions are and
 why they're useful; how to work with immutable data structures and why
 they're superior to their mutable cousins; how disentangling data and
-functions gives you more power and flexibility, and why it's powerful
+functions gives you more power and flexibility; and why it's powerful
 to program to a small set of data abstractions. The result of shoving
 all this knowledge into your brain matter is that you'll have an
 entirely new approach to problem solving!
@@ -1281,7 +1281,7 @@ the board.
        (clojure.string/join " " (map (partial render-pos board) (row-positions row-num)))))
 ```
 
-If you work from the bottom up, you can see that `render-row` caalls
+If you work from the bottom up, you can see that `render-row` calls
 each of the above function to return the string representation of row.
 Notice the expression `(map (partial render-pos board) (row-positions
 row-num))`. This demonstrates a good use case for partials: applying
