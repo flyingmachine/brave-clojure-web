@@ -996,7 +996,7 @@ your program doesn't do anything outrageous like this.
 After that comes `connect`, used to actually form a mutual connection
 between two positions:
 
-```
+```clojure
 (defn connect
   "Form a mutual connection between two positions"
   [board max-pos pos neighbor destination]
