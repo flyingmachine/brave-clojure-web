@@ -6,38 +6,45 @@ kind: documentation
 
 # Clojure Alchemy: Reading, Evaluation, and Macros
 
-This chapter will explain how Clojure evaluates code. Understanding
-Clojure's evaluation will allow you to understand how macros work.
-Macros are one of the most powerful tools available to programmers,
-and many programmers decide to learn a Lisp so they can finally see
-what all the hoopla is about. I think that the programmer, author, and
-open source advocate Eric S. Raymond had macros in mind when he
+This chapter will explain how Clojure evaluates code. By learning how
+Clojure evaluates code, you'll gain a systematic understanding of the
+language. This is similar to the way that the periodic table of
+elements helps young chemistry students eveywhere understand the
+properties of atoms and why they react with each other as they do:
+elements in the same column behave similarly because they have the
+same nuclear charge. Without the periodic table and its underlying
+theory, high schoolers would be in the same position as the alchemists
+of yore, mixing stuff together randomly to see what blows up. With a
+deeper understanding of the elements, today's youth can know *why*
+stuff blows up. Right now, your alchemical elements are "form",
+"special form", "evaluates", and the like. This chapter will serve as
+your periodic table, and with it you'll be able to blow stuff up on
+purpose.
+
+Understanding Clojure's evaluation model will allow you to understand
+how macros work. Macros are one of the most powerful tools available
+to programmers, and many programmers decide to learn a Lisp so they
+can finally see what all the hoopla is about. I think that the
+programmer, author, and open source advocate Eric S. Raymond had
+macros in mind when he
 [wrote](http://www.catb.org/esr/faqs/hacker-howto.html#skills1), "LISP
 is worth learning for a different reason — the profound enlightenment
 experience you will have when you finally get it. That experience will
 make you a better programmer for the rest of your days, even if you
 never actually use LISP itself a lot."
 
-By learning how Clojure evaluates code, you'll also gain a systematic
-understanding of the language. This is similar to the way that the
-invention of the periodic table of elements allowed chemists to
-understand the underlying scheme governing the nature of elements and
-their relationships with each other. Before its introduction, chemists
-only understood how *small groups* of elements relate to each other.
-After its introduction, chemists understood how *all* the elements
-related to each other and could even predict the existence of
-undiscovered elements. Right now, your chemical elements are "form",
-"special form", "evaluates", and the like. This chapter will serve as
-your periodic table, and with it you'll be able to clearly see the
-relationships among Clojure's component parts.
-
 ## The Philosopher's Stone
 
-The philosopher's stone &mdash; the supreme obsession of alchemsists
-&mdash; was not just a wonder tool for transmuting base metals into
-gold; it was also a metaphor for transcending duality and reaching
-enlightenment. The key to Clojure enlightnment is that *Clojure
-evaluates data structures*. You can try this right now in a REPL:
+The philosopher's stone, along with the elixir of life and viagra, is
+one of the most well-known examples of alchemical lore, pursued for
+its ability to transmute lead into gold. Less known, however, is that
+alchemists also believed it would allow them to erase the apparent
+separation between themselves and God, transcending duality and
+reaching enlightenment. I don't think that's what Eric S. Raymond was
+talking about in the quote above, but when it comes to Clojure (and
+Lisps in general), reaching enlightenment also involves transcending
+duality. The key to Clojure enlightnment is that *Clojure evaluates
+data structures*. You can see this for yourself right now in a REPL:
 
 ```clojure
 (def addition-list (list + 1 2))
@@ -58,20 +65,20 @@ actually does anything consists of representations of lists!
 
 Clojure code consists of representations of lists. These
 representations are parsed by the **reader**, which produces the data
-structure that's then **evaluated**. This makes Clojure **homoiconic**:
-Clojure programs are represented by Clojure data structures. Overall,
-the read/eval process looks something like this:
+structure that's then **evaluated**. This makes Clojure
+**homoiconic**: Clojure programs are represented by Clojure data
+structures. Overall, the read/eval process looks something like this:
 
 ![read-eval](/images/read-eval/read-eval.png)
 
-To fully understand how what's going on here, we'll explore the
-reader and how it parses text to produce data structures. Then we'll
-learn about the rules employed when evaluating data structures.
-Finally, we'll tie everything together with an introduction to macros.
+To fully understand how what's going on here, we'll explore the reader
+and how it parses text to produce data structures. Then we'll learn
+about the rules employed when evaluating data structures. Finally,
+we'll tie everything together with an introduction to macros.
 
 ## The Reader
 
-We now know that Clojure evaluates data structures. Where do these
+You now know that Clojure evaluates data structures. Where do these
 data structures come from, though? For example, when you type the
 following in the REPL
 
@@ -81,31 +88,36 @@ following in the REPL
 
 you have not, in fact, written a data structure. You've written a
 sequence of unicode characters which *represents* a data structure.
+The **reader** is Clojure's bridge between the *textual
+representation* of a data structure and the data structure itself. In
+Clojure parlance, we call these representations **reader forms**. For
+example, remember that "REPL" stands for "read-eval-print-loop". The
+REPL is actually a running program which presents you with a prompt.
+You type characters into the prompt and hit enter. Then, Clojure
+*reads* the stream of characters, producing a data structure which it
+then evaluates.
 
-The reader is Clojure's bridge between the *textual representation* of
-a data structure and the data structure itself. In Clojure parlance,
-we call these representations **reader forms**.
-
-For example, Remember that "REPL" stands for "read-eval-print-loop".
-The REPL is actually a process which presents you with a prompt. You
-type characters into the prompt and hit enter. Then, Clojure *reads*
-the stream of characters, producing a data structure which it then
-evaluates:
+First, the REPL prompts you for text:
 
 ```clojure
-;; The REPL prompts you for text
 user>
+```
 
-;; You enter reader forms, or textual representations of data
-;; structures. In this case, you're entering a form which consists of
-;; a list data structure that contains three more forms: the "str"
-;; symbol and two strings.
+You enter reader forms, or textual representations of data structures.
+In the example below, you're entering a form which consists of a list
+data structure that contains three more forms: the `str` symbol and
+two strings.
+
+```
 user> (str "Hit me baby " "one more time")
+```
 
-;; After you hit enter, Clojure reads the forms and internally
-;; produces the corresponding data structures. It then evaluates the
-;; data structures. The textual representation of the result is then
-;; printed and you get:
+After you hit enter, Clojure reads the forms and internally produces
+the corresponding data structures. It then evaluates the data
+structures. The textual representation of the result is then printed
+and you get:
+
+```
 "Hit me baby one more time"
 ```
 
