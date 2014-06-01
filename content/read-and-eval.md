@@ -23,20 +23,13 @@ understanding of the language. This is similar to the way that the
 invention of the periodic table of elements allowed chemists to
 understand the underlying scheme governing the nature of elements and
 their relationships with each other. Before its introduction, chemists
-only understood how groups of elements relate to each other. After its
-introduction, chemists understood how all the elements related to each
-other and could even predict the existence of undiscovered elements.
-Right now, your alchemical elements are "form", "special form",
-"evaluates", and the like. This chapter will serve as your periodic
-table. By the end, you'll be able to clearly see the relationships
-among Clojure's component parts.
-
-Once you understand these fundamentals, you'll be ready to go full
-circle and obtain Clojure enlightenment, transcending code/data
-duality. With your own Clojure philosopher's stone in hand, you'll be
-able to work with one of the most powerful tools available to
-programmers: the macro. And thus you will become the most feared and
-respected programmers aliiiiiiiive!
+only understood how *small groups* of elements relate to each other.
+After its introduction, chemists understood how *all* the elements
+related to each other and could even predict the existence of
+undiscovered elements. Right now, your chemical elements are "form",
+"special form", "evaluates", and the like. This chapter will serve as
+your periodic table, and with it you'll be able to clearly see the
+relationships among Clojure's component parts.
 
 ## The Philosopher's Stone
 
