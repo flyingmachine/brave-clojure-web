@@ -205,7 +205,7 @@ header {
       background: $orange;
       color: white;
       border-radius: 2px;
-      padding: 5px;
+      padding: 0 7px;
       @include leader;
 
       &:hover {
