@@ -144,7 +144,7 @@ header {
   @include padding-leader(.5);
   @include padding-trailer(1);
   border-top: 2px solid #f26f53;
-  color: #f26f53;
+  color: $orange;
   border-bottom: 1px solid #eee;
   .title {    
     @include adjust-font-size-to(62px);
@@ -199,6 +199,19 @@ header {
   .signup {
     @include push(2);
     @include span-columns(8, 12);
+
+    .buy {
+      display: inline-block;
+      background: $orange;
+      color: white;
+      border-radius: 2px;
+      padding: 5px;
+      @include leader;
+
+      &:hover {
+        text-decoration: none;
+      }
+    }
   }
 }
 
