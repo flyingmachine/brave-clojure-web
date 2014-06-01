@@ -6,16 +6,30 @@ kind: documentation
 
 # Clojure Alchemy: Reading, Evaluation, and Macros
 
-By this point, you probably have a magical understanding of Clojure.
-In the same way that alchemists thought of each chemical substance as
-a force of nature with no rational relationship to other chemicals,
-your alchemical elements are "form", "special form", "evaluates", and
-the like.
+This chapter will explain how Clojure evaluates code. Understanding
+Clojure's evaluation will allow you to understand how macros work.
+Macros are one of the most powerful tools available to programmers,
+and many programmers decide to learn a Lisp so they can finally see
+what all the hoopla is about. I think that the programmer, author, and
+open source advocate Eric S. Raymond had macros in mind when he
+[wrote](http://www.catb.org/esr/faqs/hacker-howto.html#skills1), "LISP
+is worth learning for a different reason — the profound enlightenment
+experience you will have when you finally get it. That experience will
+make you a better programmer for the rest of your days, even if you
+never actually use LISP itself a lot."
 
-This chapter will serve as your periodic table. By the end, you'll be
-able to clearly see the relationships among Clojure's component parts.
-We'll get you to this understanding by explaining Clojure's
-fundamental mechanisms: reading and evaluation.
+By learning how Clojure evaluates code, you'll also gain a systematic
+understanding of the language. This is similar to the way that the
+invention of the periodic table of elements allowed chemists to
+understand the underlying scheme governing the nature of elements and
+their relationships with each other. Before its introduction, chemists
+only understood how groups of elements relate to each other. After its
+introduction, chemists understood how all the elements related to each
+other and could even predict the existence of undiscovered elements.
+Right now, your alchemical elements are "form", "special form",
+"evaluates", and the like. This chapter will serve as your periodic
+table. By the end, you'll be able to clearly see the relationships
+among Clojure's component parts.
 
 Once you understand these fundamentals, you'll be ready to go full
 circle and obtain Clojure enlightenment, transcending code/data
@@ -29,10 +43,8 @@ respected programmers aliiiiiiiive!
 The philosopher's stone &mdash; the supreme obsession of alchemsists
 &mdash; was not just a wonder tool for transmuting base metals into
 gold; it was also a metaphor for transcending duality and reaching
-enlightenment.
-
-The key to Clojure enlightnment is that *Clojure evaluates data
-structures*. You can try this right now in a REPL:
+enlightenment. The key to Clojure enlightnment is that *Clojure
+evaluates data structures*. You can try this right now in a REPL:
 
 ```clojure
 (def addition-list (list + 1 2))
