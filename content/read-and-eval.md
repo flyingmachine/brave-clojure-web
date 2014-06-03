@@ -6,20 +6,19 @@ kind: documentation
 
 # Clojure Alchemy: Reading, Evaluation, and Macros
 
-This chapter will explain how Clojure evaluates code. By learning how
-Clojure evaluates code, you'll gain a systematic understanding of the
-language. This is similar to the way that the periodic table of
-elements helps young chemistry students eveywhere understand the
-properties of atoms and why they react with each other as they do:
-elements in the same column behave similarly because they have the
-same nuclear charge. Without the periodic table and its underlying
-theory, high schoolers would be in the same position as the alchemists
-of yore, mixing stuff together randomly to see what blows up. With a
-deeper understanding of the elements, today's youth can know *why*
-stuff blows up. Right now, your alchemical elements are "form",
-"special form", "evaluates", and the like. This chapter will serve as
-your periodic table, and with it you'll be able to blow stuff up on
-purpose.
+This chapter will give you a systematic understanding of Clojure by
+explaining how it evaluates code. This is similar to the way that the
+periodic table of elements helps young chemistry students eveywhere
+understand the properties of atoms and why they react with each other
+as they do: elements in the same column behave similarly because they
+have the same nuclear charge. Without the periodic table and its
+underlying theory, high schoolers would be in the same position as the
+alchemists of yore, mixing stuff together randomly to see what blows
+up. With a deeper understanding of the elements, today's youth can
+know *why* stuff blows up. Right now, your alchemical elements are
+"form", "special form", "evaluates", and the like. This chapter will
+serve as your periodic table, and with it you'll be able to blow stuff
+up on purpose.
 
 Understanding Clojure's evaluation model will allow you to understand
 how macros work. Macros are one of the most powerful tools available
@@ -63,18 +62,17 @@ actually does anything consists of representations of lists!
 (map first '([0 1] [3 4])) ; <= that's a representation of a list, too!
 ```
 
-Clojure code consists of representations of lists. These
-representations are parsed by the **reader**, which produces the data
-structure that's then **evaluated**. This makes Clojure
+These representations are parsed by the **reader**, which produces the
+data structure that's then **evaluated**. This makes Clojure
 **homoiconic**: Clojure programs are represented by Clojure data
 structures. Overall, the read/eval process looks something like this:
 
 ![read-eval](/images/read-eval/read-eval.png)
 
-To fully understand how what's going on here, we'll explore the reader
-and how it parses text to produce data structures. Then we'll learn
-about the rules employed when evaluating data structures. Finally,
-we'll tie everything together with an introduction to macros.
+To fully show how what's going on here, I'll explain the reader
+and how it parses text to produce data structures. Then I'll reveal
+the rules employed when evaluating data structures. Finally, we'll tie
+everything together with an introduction to macros.
 
 ## The Reader
 
@@ -95,7 +93,7 @@ example, remember that "REPL" stands for "read-eval-print-loop". The
 REPL is actually a running program which presents you with a prompt.
 You type characters into the prompt and hit enter. Then, Clojure
 *reads* the stream of characters, producing a data structure which it
-then evaluates.
+evaluates.
 
 First, the REPL prompts you for text:
 
@@ -109,7 +107,7 @@ data structure that contains three more forms: the `str` symbol and
 two strings.
 
 ```
-user> (str "Hit me baby " "one more time")
+user> (str "To understand what recursion is," " you must first understand recursion")
 ```
 
 After you hit enter, Clojure reads the forms and internally produces
@@ -118,7 +116,7 @@ structures. The textual representation of the result is then printed
 and you get:
 
 ```
-"Hit me baby one more time"
+"To understand what recursion is, you must first understand recursion"
 ```
 
 The key takeaways here are:
@@ -131,17 +129,18 @@ The key takeaways here are:
     data structures.
 
 You can get a feel for the reader more directly by using `read-string`
-in the REPL:
+in the REPL. `read-string` will show you the data structures that your
+text gets converted to before they're evaluated. For example, the
+result of reading this reader form is a list with 3 members:
 
 ```clojure
-;; The result of reading this reader form is a list with 3 members
 (read-string "(+ 8 3)")
 ; => (+ 8 3)
 ```
 
 ## Reader Macros
 
-So far, we've seen a one-to-one mapping between reader forms and their
+So far, you've seen a one-to-one mapping between reader forms and their
 corresponding data structures:
 
 ```clojure
@@ -173,15 +172,12 @@ consisting of the `fn*` symbol, a vector containing a symbol, and a
 list containing three elements.
 
 To answer my own question: the reader used a **reader macro** to
-transform  `#(+ 1 %)`.
-
-Reader macros are not to be confused with macros, which you'll read
-about later in this chapter. Rather, reader macros are sets of rules
-for transforming text into data structures. Reader macros are
-designated by **macro characters**.
-
-Reader macros often allow us to represent data structures in more
-compact ways. For example:
+transform `#(+ 1 %)`. Reader macros are not to be confused with
+macros, which you'll read about later in this chapter. Rather, reader
+macros are sets of rules for transforming text into data structures.
+Reader macros are designated by **macro characters**. Reader macros
+often allow us to represent data structures in more compact ways. For
+example:
 
 ```clojure
 ;; The quote reader macro is designated by the single quote, '
@@ -193,10 +189,10 @@ compact ways. For example:
 ; => (clojure.core/deref var)
 ```
 
-Reader macros can also do crazy stuff like cause text to be ignored:
+Reader macros can also do crazy stuff like cause text to be ignored.
+The semicolon designates the single-line comment reader macro:
 
 ```clojure
-;; The humble semicolon designates the single-line comment reader macro
 (read-string "; ignore!\n(+ 1 2)")
 ; => (+ 1 2)
 ```
@@ -206,7 +202,7 @@ transforming text into data structures.
 
 ## Evaluation
 
-We already know that Clojure evaluates data structures:
+You already know that Clojure evaluates data structures:
 
 ```clojure
 (def addition-list (list + 1 2))
@@ -214,8 +210,8 @@ We already know that Clojure evaluates data structures:
 ; => 3
 ```
 
-In this section, we'll go over the rules which govern evaluation. Once
-you understand these rules, you'll finally be ready for macros! Yay!
+In this section, I'll go over the rules which govern evaluation. Once
+you understand these rules, you'll finally be ready for macros! Huzzah!
 
 ### These Things Evaluate to Themselves
 
@@ -257,50 +253,59 @@ the data structure itself.
 
 ### Symbols
 
-When we introduced symbols in the last chapter, we said it was OK to
-think "big whoop!" about them. Now it should be clearer why symbols
-are interesting: they're data structures, just the same as vectors,
-lists, strings, etc. Clojure wouldn't be able to evaluate symbols if
-they weren't data structures.
+When I introduced symbols, I said it was OK to think "big whoop!"
+about them. Now it should be clearer why symbols are interesting:
+they're data structures, just the same as vectors, lists, strings,
+etc. Clojure wouldn't be able to evaluate symbols if they weren't data
+structures.
 
-Clojure evaluates symbols by **resolving** them. We haven't gone over
-namespaces or packages, so we'll ignore those resolution rules for now
-&mdash; they're not at all complicated and you'll learn them easily
-when the time is right, young padawan.
+Clojure evaluates symbols by **resolving** them as described in the
+last chapter, "Organizing Your Project: a Librarian's Tale."
+Ultimately, a symbol resolves to either a *special form* or a *value*.
+I'll cover special forms in the next section. Let's look at some
+examples of symbols resolving to values.
 
-For now, though, it's enough to say that a symbol resolves to either a
-*special form* or a *value*.
-
-We'll discuss special forms in the next section. Let's look at some
-examples of symbols resolving to values:
+The symbol x is *bound* to 5. When the evaluator resolves x, it
+resolves it to the value 5:
 
 ```clojure
-;; The symbol x is *bound* to 5. When the evaluator resolves x, it
-;; resolves it to the value 5
 (let [x 5]
   (+ x 3))
 ; => 8
+```
 
-;; x is *mapped* to 15. Clojure resolves the symbol x to the value 15
+`x` is *mapped* to 15. Clojure resolves the *symbol* `x` to the
+*value* 15:
+
+```clojure
 (def x 15)
 (+ x 3)
 ; => 18
+```
 
-;; x is *mapped* 15, but we introduce a *local binding* of x to 5.
-;; x is resolved 5
+`x` is *mapped* to 15, but we introduce a *local binding* of `x` to 5.
+`x` is resolved to 5:
+
+```clojure
 (def x 15)
 (let [x 5]
   (+ x 3))
 ; => 8
+```
 
-;; The "closest" binding takes precedence
+The "closest" binding takes precedence:
+
+```clojure
 (let [x 5]
   (let [x 6]
     (+ x 3)))
 ; => 9
+```
 
-;; exclaim is *mapped* to a function. Within the function body,
-;; exclamation is *bound* to the argument passed to the function
+`exclaim` is *mapped* to a function. Within the function body,
+`exclamation` is *bound* to the argument passed to the function
+
+```clojure
 (defn exclaim
   [exclamation]
   (str exclamation "!"))
@@ -328,11 +333,11 @@ Otherwise, it is a *call* to the first element of the list:
 
 ### Function Calls
 
-We're familiar with function calls:
+We're familiar with function calls. In this example, the + symbol
+resolves to a function. The function is *called* with the arguments 1
+and 2:
 
 ```clojure
-;; The + symbol resolves to a function. The function is *called* with
-;; the arguments 1 and 2
 (+ 1 2)
 ; => 3
 ```
@@ -357,7 +362,7 @@ the following:
 3.  The value `1`
 4.  The value `2`
 
-`if` got resolved to the `if special form`. For the sake of brevity,
+`if` got resolved to the if special form. For the sake of brevity,
 we're going to say "the `if` special form" or even just `if` instead
 of "the special form whose symbol is `if`".
 
@@ -367,10 +372,11 @@ In resolving the list data structure, we *called* `if` with the
 In general, special forms are special because they implement core
 behavior that can't be implemented with functions. For example, when
 you call a function, each operand gets evaluated. With `if`, however,
-you don't want each operand to be evaluated.
+you don't want each operand to be evaluated, whereas functions always
+evaluate each argument.
 
-Another important special form is `quote`. When we introduced lists in
-the last chapter, we represented them like this:
+Another important special form is `quote`. You've seen lists
+represented like this:
 
 ```clojure
 '(a b c)
@@ -386,23 +392,25 @@ end up with:
 Normally, Clojure would try to resolve the `a` symbol and then *call*
 it because it's the first element of a list. The `quote` special form
 tells the evaluator "instead of evaluating my next data structure like
-normal, just return the data structure itself."
+normal, just return the data structure itself." In this case, you end
+up with a list consisting of the symbols `a`, `b`, and `c`, rather
+than the result of the value of `a` applied to the values of `b` and
+`c`.
 
 `def`, `let`, `loop`, `fn`, and `recur` are all special forms as well.
 You can see why - they don't get evaluated in the same way as
 functions.
 
-So, when Clojure evaluates a list data structure, it calls a function
+When Clojure evaluates a list data structure, it calls a function
 or a special form. It can also call macros, which we're now ready to
 learn about!
 
 ## Macros
 
-Macros actually behave very similarly to functions. They take
-arguments and return a value, just like a function would.
-
-What makes them interesting and powerful is the way they fit in to the
-evaluation process. Let's look at an example:
+Macros behave very similarly to functions. They take arguments and
+return a value, just like a function would. What makes them
+interesting and powerful is the way they fit in to the evaluation
+process. Let's look at an example:
 
 ```clojure
 (defmacro ignore-last-operand
@@ -441,10 +449,8 @@ difference is all in the way functions and macros are evaluated:
 Macros allow you to use the full power of Clojure to transform the
 data structures used to represent your program into completely
 different data structures which then get evaluated. They thus enable
-syntax abstraction.
-
-"Syntax abstraction" sounds a little too abstract (ha ha!), so let's
-explore that a little.
+syntax abstraction. "Syntax abstraction" sounds a little too abstract
+(ha ha!), so let's explore that a little.
 
 ## A Syntax Abstraction Example: The -> Macro
 
