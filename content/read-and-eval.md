@@ -333,7 +333,7 @@ Otherwise, it is a *call* to the first element of the list:
 
 ### Function Calls
 
-We're familiar with function calls. In this example, the + symbol
+You're familiar with function calls. In this example, the + symbol
 resolves to a function. The function is *called* with the arguments 1
 and 2:
 
@@ -354,8 +354,8 @@ You can also call *special forms*. For example:
 ; => 1
 ```
 
-In the above example, we evaluated a data structure which consisted of
-the following:
+In the above example, Clojure evaluated a data structure which
+consisted of the following:
 
 1.  The `if` symbol
 2.  The value `true`
@@ -395,21 +395,65 @@ tells the evaluator "instead of evaluating my next data structure like
 normal, just return the data structure itself." In this case, you end
 up with a list consisting of the symbols `a`, `b`, and `c`, rather
 than the result of the value of `a` applied to the values of `b` and
-`c`.
-
-`def`, `let`, `loop`, `fn`, and `recur` are all special forms as well.
-You can see why - they don't get evaluated in the same way as
-functions.
+`c`. `def`, `let`, `loop`, `fn`, `do`, and `recur` are all special
+forms as well. You can see why - they don't get evaluated in the same
+way as functions.
 
 When Clojure evaluates a list data structure, it calls a function
-or a special form. It can also call macros, which we're now ready to
-learn about!
+or a special form. It can also call *macros*.
 
 ## Macros
 
-Macros behave very similarly to functions. They take arguments and
-return a value, just like a function would. What makes them
-interesting and powerful is the way they fit in to the evaluation
+Hmm... Clojure programs are comprised of data structures... the same
+data structures that Clojure is capable of manipulating... wouldn't it
+be awesome if you could use Clojure to manipulate the data structures
+that comprise a Clojure program? Yes, yes it would! And guess what:
+you can do this with macros! Did your head just explode? Mine did!
+
+To get an idea of what macros do, let's look at some code. This
+example is *not* a macro. Rather, it merely shows that you can write
+code using infix notation and then use Clojure to transform it so that
+it will actually execute. First, create a list which represents infix
+addition:
+
+```clojure
+(read-string "(1 + 1)")
+; => (1 + 1)
+```
+
+Clojure will throw an exception if you try to make it evaluate this
+list:
+
+```clojure
+(eval (read-string "(1 + 1)"))
+; => ClassCastException java.lang.Long cannot be cast to clojure.lang.IFn
+```
+
+`read-string` returns a list, however, and you can just use Clojure to
+create a reorganized list that it *can* successfully evaluate:
+
+```clojure
+(let [infix (read-string "(1 + 1)")]
+  (list (second infix) (first infix) (last infix)))
+; => (+ 1 1)
+```
+
+If you `eval` this, then it returns 2, just like you'd expect:
+
+```clojure
+(eval
+ (let [infix (read-string "(1 + 1)")]
+   (list (second infix) (first infix) (last infix))))
+; => 2
+```
+
+This is cool, but it also seems inconvenient. That's where macros come
+in. Macros allow you to manipulate lists before Clojure evaluates
+them, except more conveniently. They behave very similarly to
+functions. They take arguments and return a value, just like a
+function would. Macro bodies behave exactly like function bodies, and
+you have your full program at your disposal within them. What makes
+them interesting and powerful is the way they fit in to the evaluation
 process. Let's look at an example:
 
 ```clojure
@@ -446,11 +490,12 @@ difference is all in the way functions and macros are evaluated:
     both times that list was then evaluated, resulting in the `+`
     function being called.
 
-Macros allow you to use the full power of Clojure to transform the
-data structures used to represent your program into completely
-different data structures which then get evaluated. They thus enable
-syntax abstraction. "Syntax abstraction" sounds a little too abstract
-(ha ha!), so let's explore that a little.
+Macros allow you to transform an arbitrary data structure like `(1 +
+1)` into one into one that can be evaluated by Clojure, `(+ 1 1)`.
+Thus, *you can use Clojure to extend itself* so that you write your
+program however you please. Macros thus enable syntax abstraction.
+"Syntax abstraction" sounds a little too abstract (ha ha!), so let's
+explore that a little.
 
 ## A Syntax Abstraction Example: The -> Macro
 
@@ -488,14 +533,12 @@ gets passed to `slurp`. The result of that gets passed to
 So these two functions are entirely equivalent. However, the second
 one can be easier understand because we can approach it from top to
 bottom, a direction we're used to. The `->` also has the benefit that
-we can leave out parentheses, which means there's less visual noise
-for our poor, strained eyes to contend with.
+we can leave out parentheses, which means there's less visual noise to
+contend with. This is a *syntactical abstraction* because it lets you
+write code in a syntax that's different from Clojure's built-in
+syntax, but which is preferable for human consumption.
 
-This is a *syntactical abstraction* because it lets us write code in a
-syntax that's different from Clojure's built-in syntax, but which is
-preferable for human consumption.
-
-Here's another syntax abstraction:
+Here's another syntax abstraction that lets you write code backwards:
 
 ```clojure
 (defmacro backwards
@@ -505,8 +548,7 @@ Here's another syntax abstraction:
 ; => "mamas don't let your babies grow up to be cowboys"
 ```
 
-As you can see, this lets us write expressions backwards. It's just a
-toy example, of course, but you get the idea: macros give us complete
-freedom to express programs however we want to.
+It's just a toy example, but you get the idea: macros give you
+complete freedom to express programs however we want to.
 
-In the next chapter we'll fully explore how to write macros. Fun!
+In the next chapter we'll fully explore how to write macros.
