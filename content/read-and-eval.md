@@ -52,8 +52,9 @@ data structures*. You can see this for yourself right now in a REPL:
 ```
 
 That's right, baby! Clojure just evaluated a list. `(list + 1 2)`
-returned a list, which was then passed to eval. When Clojure evaluated
-the list, it called the `+` function with `1` and `2` as arguments,
+returned a list, which was then passed to `eval`. When Clojure
+evaluated the list, it looked up the function corresponding to the `+`
+symbol, then called that function with `1` and `2` as arguments,
 returning `3`. And guess what: all the Clojure code you write that
 actually does anything consists of representations of lists!
 
@@ -176,15 +177,21 @@ transform `#(+ 1 %)`. Reader macros are not to be confused with
 macros, which you'll read about later in this chapter. Rather, reader
 macros are sets of rules for transforming text into data structures.
 Reader macros are designated by **macro characters**. Reader macros
-often allow us to represent data structures in more compact ways. For
-example:
+often allow us to represent data structures in more compact ways. The
+example below shows the quote reader macro, which expands to the quote
+special form:
 
 ```clojure
-;; The quote reader macro is designated by the single quote, '
 (read-string "'(a b c)")
 ; => (quote (a b c))
+```
 
-;; The deref reader macro is designated by @
+When the reader encounters the single quote, `'`, it expands it to a
+list whose first member is the symbol `quote` and whose second member
+is the data structure following the single quote. The deref reader
+macro, `@` works similarly:
+
+```
 (read-string "@var")
 ; => (clojure.core/deref var)
 ```
@@ -197,7 +204,7 @@ The semicolon designates the single-line comment reader macro:
 ; => (+ 1 2)
 ```
 
-So that's the reader! Your humble companion, toiling away at
+And that's the reader! Your humble companion, toiling away at
 transforming text into data structures.
 
 ## Evaluation
@@ -216,7 +223,7 @@ you understand these rules, you'll finally be ready for macros! Huzzah!
 ### These Things Evaluate to Themselves
 
 Strings, numbers, characters, `true`, `false`, `nil` and keywords evaluate
-to themselves:
+to themselves
 
 ```clojure
 ;; A string evaluates to itself
@@ -234,8 +241,9 @@ without `read-string`:
 This is a consequence of using the REPL. Once the data structure
 represented by `(eval "t")` gets evaluated, `"t"` itself has already
 gone through the read/eval process, yielding the string represented by
-`"t"`. For the time being, we're going to keep using `read-string`,
-however, to more clearly show that `eval` works on data structures.
+`"t"`. For the time being, however, we're going to keep using
+`read-string` to more clearly show that `eval` works on data
+structures.
 
 ```clojure
 (eval (read-string "true"))
@@ -248,25 +256,21 @@ however, to more clearly show that `eval` works on data structures.
 ; => :huzzah
 ```
 
-So, whenever Clojure evaluates these data structures, the result is
-the data structure itself.
+Whenever Clojure evaluates these data structures, the result is the
+data structure itself.
 
 ### Symbols
 
-When I introduced symbols, I said it was OK to think "big whoop!"
-about them. Now it should be clearer why symbols are interesting:
-they're data structures, just the same as vectors, lists, strings,
-etc. Clojure wouldn't be able to evaluate symbols if they weren't data
-structures.
+In the last chapter, you learned about how to associate symbols with
+values using `def`. In Clojure, symbols are data structures; if they
+weren't, Clojure wouldn't be able to evaluate them. Clojure evaluates
+symbols by **resolving** them, which you learned about in the last
+chapter as well.. Ultimately, a symbol resolves to either a *special
+form* or a *value*. I'll cover special forms in the next section.
+Let's look at some examples of symbols resolving to values.
 
-Clojure evaluates symbols by **resolving** them as described in the
-last chapter, "Organizing Your Project: a Librarian's Tale."
-Ultimately, a symbol resolves to either a *special form* or a *value*.
-I'll cover special forms in the next section. Let's look at some
-examples of symbols resolving to values.
-
-The symbol x is *bound* to 5. When the evaluator resolves x, it
-resolves it to the value 5:
+In this example, The symbol `x` is bound to 5. When the evaluator
+resolves x, it resolves it to the value 5:
 
 ```clojure
 (let [x 5]
@@ -274,7 +278,7 @@ resolves it to the value 5:
 ; => 8
 ```
 
-`x` is *mapped* to 15. Clojure resolves the *symbol* `x` to the
+Here, `x` is mapped to 15. Clojure resolves the *symbol* `x` to the
 *value* 15:
 
 ```clojure
@@ -283,8 +287,8 @@ resolves it to the value 5:
 ; => 18
 ```
 
-`x` is *mapped* to 15, but we introduce a *local binding* of `x` to 5.
-`x` is resolved to 5:
+Now `x` is mapped to 15, but we introduce a *local binding* of `x`
+to 5. `x` is resolved to 5:
 
 ```clojure
 (def x 15)
@@ -302,8 +306,9 @@ The "closest" binding takes precedence:
 ; => 9
 ```
 
-`exclaim` is *mapped* to a function. Within the function body,
-`exclamation` is *bound* to the argument passed to the function
+In this next example, `exclaim` is mapped to a function. Within the
+function body, `exclamation` is bound to the argument passed to the
+function
 
 ```clojure
 (defn exclaim
@@ -313,7 +318,15 @@ The "closest" binding takes precedence:
 ; => "Hadoken!"
 ```
 
-So in general, Clojure resolves a symbol by:
+Finally, in this last example, `map` and `inc` are both mapped to
+functions:
+
+```clojure
+(map inc [1 2 3])
+; => (2 3 4)
+```
+
+In general, Clojure resolves a symbol by:
 
 1.  Looking up whether the symbol names a special form. If it doesn't&#x2026;
 2.  Trying to find a local binding. If it doesn't&#x2026;
@@ -447,14 +460,14 @@ If you `eval` this, then it returns 2, just like you'd expect:
 ; => 2
 ```
 
-This is cool, but it also seems inconvenient. That's where macros come
-in. Macros allow you to manipulate lists before Clojure evaluates
-them, except more conveniently. They behave very similarly to
-functions. They take arguments and return a value, just like a
-function would. Macro bodies behave exactly like function bodies, and
-you have your full program at your disposal within them. What makes
-them interesting and powerful is the way they fit in to the evaluation
-process. Let's look at an example:
+This is cool, but it's also inconvenient. That's where macros come in.
+Macros allow you to manipulate lists before Clojure evaluates them,
+except more conveniently. They behave very similarly to functions.
+They take arguments and return a value, just like a function would.
+Macro bodies behave exactly like function bodies, and you have your
+full program at your disposal within them. What makes them interesting
+and powerful is the way they fit in to the evaluation process. Let's
+look at an example:
 
 ```clojure
 (defmacro ignore-last-operand
@@ -470,7 +483,7 @@ process. Let's look at an example:
 ; => 3
 ```
 
-Clearly, this isn't a function call! There is no way possible for a
+Clearly, this isn't a function call. There is no way possible for a
 function to "reach into" one of its operands and alter it. The
 difference is all in the way functions and macros are evaluated:
 
@@ -489,6 +502,8 @@ difference is all in the way functions and macros are evaluated:
     `ignore-last-operand` returned the list `(+ 1 2)` both times, and
     both times that list was then evaluated, resulting in the `+`
     function being called.
+
+
 
 Macros allow you to transform an arbitrary data structure like `(1 +
 1)` into one into one that can be evaluated by Clojure, `(+ 1 1)`.
@@ -530,13 +545,14 @@ You can read this as `path` gets passed to `io/resource`. The result
 gets passed to `slurp`. The result of that gets passed to
 `read-string`.
 
-So these two functions are entirely equivalent. However, the second
-one can be easier understand because we can approach it from top to
-bottom, a direction we're used to. The `->` also has the benefit that
-we can leave out parentheses, which means there's less visual noise to
-contend with. This is a *syntactical abstraction* because it lets you
-write code in a syntax that's different from Clojure's built-in
-syntax, but which is preferable for human consumption.
+These two ways of defining `read-resource` are entirely equivalent.
+However, the second one can be easier understand because we can
+approach it from top to bottom, a direction we're used to. The `->`
+also has the benefit that we can leave out parentheses, which means
+there's less visual noise to contend with. This is a *syntactical
+abstraction* because it lets you write code in a syntax that's
+different from Clojure's built-in syntax, but which is preferable for
+human consumption.
 
 Here's another syntax abstraction that lets you write code backwards:
 
