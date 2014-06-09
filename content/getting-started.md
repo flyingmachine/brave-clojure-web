@@ -144,8 +144,6 @@ this:
 (defn -main
   "I don't do a whole lot ... yet."
   [& args]
-  ;; work around dangerous default behaviour in Clojure
-  (alter-var-root #'*read-eval* (constantly false))
   (println "Hello, World!"))
 ```
 
@@ -161,7 +159,14 @@ Change line 9 so that it says this:
   (println "I'm a little teapot!"))
 ```
 
-Now, in your terminal, run this:
+Now, in your terminal, make sure you're in the `clojure-noob`
+directory:
+
+```sh
+cd clojure-noob
+```
+
+From here, you can run your Clojure program:
 
 ```sh
 lein run
