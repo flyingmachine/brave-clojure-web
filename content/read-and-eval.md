@@ -63,10 +63,12 @@ actually does anything consists of representations of lists!
 (map first '([0 1] [3 4])) ; <= that's a representation of a list, too!
 ```
 
-These representations are parsed by the **reader**, which produces the
-data structure that's then **evaluated**. This makes Clojure
-**homoiconic**: Clojure programs are represented by Clojure data
-structures. Overall, the read/eval process looks something like this:
+These representations are parsed by the **reader**, which produces
+list data structures that get transformed into new lists through
+**macro expansion**. The new lists are then **evaluated**. This makes
+Clojure **homoiconic**: you write Clojure programs using
+representations of Clojure data structures. You can visualize the
+evaluation process like this:
 
 ![read-eval](/images/read-eval/read-eval.png)
 
@@ -412,8 +414,8 @@ than the result of the value of `a` applied to the values of `b` and
 forms as well. You can see why - they don't get evaluated in the same
 way as functions.
 
-When Clojure evaluates a list data structure, it calls a function
-or a special form. It can also call *macros*.
+When Clojure evaluates a list data structure, it calls a function or a
+special form. It can also call *macros*.
 
 ## Macros
 
