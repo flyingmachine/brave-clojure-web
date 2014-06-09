@@ -984,7 +984,7 @@ numbers. Here they are, along with example usage:
   [pos]
   (inc (count (take-while #(> pos %) tri))))
 (row-num 1) ; => 1
-(row-num 5) ; => 5
+(row-num 5) ; => 3
 ```
 
 The next function, `in-bounds?` is used when figuring out whether or
