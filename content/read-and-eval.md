@@ -375,9 +375,9 @@ consisted of the following:
 3.  The value `1`
 4.  The value `2`
 
-`if` got resolved to the if special form. For the sake of brevity,
-we're going to say "the `if` special form" or even just `if` instead
-of "the special form whose symbol is `if`".
+`if` got resolved to the if special form. For the sake of brevity, I'm
+going to say "the `if` special form" or even just `if` instead of "the
+special form whose symbol is `if`".
 
 In resolving the list data structure, we *called* `if` with the
 *operands* `true`, `1`, and `2`.
