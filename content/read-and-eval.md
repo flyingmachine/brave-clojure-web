@@ -64,13 +64,12 @@ actually does anything consists of representations of lists!
 ```
 
 These representations are parsed by the **reader**, which produces
-list data structures that get transformed into new lists through
-**macro expansion**. The new lists are then **evaluated**. This makes
-Clojure **homoiconic**: you write Clojure programs using
+data structures. The data structures are then **evaluated**. This
+makes Clojure **homoiconic**: you write Clojure programs using
 representations of Clojure data structures. You can visualize the
 evaluation process like this:
 
-![read-eval](/images/read-eval/read-eval.png)
+![read-eval](/images/read-eval/simple-read-eval.png)
 
 To fully show how what's going on here, I'll explain the reader
 and how it parses text to produce data structures. Then I'll reveal
