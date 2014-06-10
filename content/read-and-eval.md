@@ -463,12 +463,12 @@ If you `eval` this, then it returns 2, just like you'd expect:
 
 This is cool, but it's also inconvenient. That's where macros come in.
 Macros allow you to manipulate lists before Clojure evaluates them,
-except more conveniently. They behave very similarly to functions.
-They take arguments and return a value, just like a function would.
-Macro bodies behave exactly like function bodies, and you have your
-full program at your disposal within them. What makes them interesting
-and powerful is the way they fit in to the evaluation process. Let's
-look at an example:
+except more conveniently. They work very similarly to functions. They
+take arguments and return a value, just like a function would. Macro
+bodies behave exactly like function bodies, and you have your full
+program at your disposal within them. What makes them interesting and
+powerful is the way they fit in to the evaluation process. Let's look
+at an example:
 
 ```clojure
 (defmacro ignore-last-operand
@@ -486,25 +486,26 @@ look at an example:
 
 Clearly, this isn't a function call. There is no way possible for a
 function to "reach into" one of its operands and alter it. The
-difference is all in the way functions and macros are evaluated:
+difference is all in the way functions and macros are evaluated.
 
-1.  When you call a function, each of its operands is evaluated before
-    being passed to the function as an argument. By contrast, when you
-    call a macro, the operands are *not* evaluated. In particular,
-    symbols are not resolved &mdash; they are passed as symbols. Lists
-    are not evaluated by calling a function, special form, or macro
-    &mdash; the unevaluated list data structure itself is passed in.
-    
-    In the above example, the macro `ignore-last-operand` receives the
-    list `(+ 1 2 10)` as its argument, *not* the value `13`.
+First, when you call a function, each of its operands is evaluated
+before being passed to the function as an argument. By contrast, when
+you call a macro, the operands are *not* evaluated. In particular,
+symbols are not resolved &mdash; they are passed as symbols. Lists are
+not evaluated by calling a function, special form, or macro &mdash;
+the unevaluated list data structure itself is passed in.
 
-2.  The data structure returned by a function is *not* evaluated, but
-    the data structure returned by a macro *is*. In the above example,
-    `ignore-last-operand` returned the list `(+ 1 2)` both times, and
-    both times that list was then evaluated, resulting in the `+`
-    function being called.
+In the above example, the macro `ignore-last-operand` receives the
+list `(+ 1 2 10)` as its argument, *not* the value `13`.
 
+Second, The data structure returned by a function is *not* evaluated,
+but the data structure returned by a macro *is*. In the above example,
+`ignore-last-operand` returned the list `(+ 1 2)` both times, and both
+times that list was then evaluated, resulting in the `+` function
+being called.
 
+The best way to think about this is to assume that there's a step in
+between reading and evaluation: the *macro expansion* phase.
 
 Macros allow you to transform an arbitrary data structure like `(1 +
 1)` into one into one that can be evaluated by Clojure, `(+ 1 1)`.
