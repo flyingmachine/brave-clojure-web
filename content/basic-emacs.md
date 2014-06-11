@@ -345,7 +345,7 @@ this section entirely! But you'll be missing out on some great stuff:
 - How to move through a buffer efficiently
 
 To get started, open up a new buffer in Emacs and name it
-"jack-handy". Then paste in the following text:
+"jack-handy". Then paste in the following text with `C-y`:
 
 ```
 If you were a pirate, you know what would be the one thing that would
