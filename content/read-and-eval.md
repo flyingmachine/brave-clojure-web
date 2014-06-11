@@ -473,8 +473,7 @@ at an example:
 ```clojure
 (defmacro ignore-last-operand
   [function-call]
-  (let [c (count function-call)]
-    (take (dec c) function-call)))
+  (butlast function-call))
 
 (ignore-last-operand (+ 1 2 10))
 ; => 3
@@ -493,26 +492,53 @@ before being passed to the function as an argument. By contrast, when
 you call a macro, the operands are *not* evaluated. In particular,
 symbols are not resolved &mdash; they are passed as symbols. Lists are
 not evaluated by calling a function, special form, or macro &mdash;
-the unevaluated list data structure itself is passed in.
+the unevaluated list data structure itself is passed in. In the above
+example, the macro `ignore-last-operand` receives the list `(+ 1 2
+10)` as its argument, *not* the value `13`.
 
-In the above example, the macro `ignore-last-operand` receives the
-list `(+ 1 2 10)` as its argument, *not* the value `13`.
+Second, the data structure returned by a function is *not* evaluated,
+but the data structure returned by a macro *is*. The process of
+determining the return value of a macro is called **macro expansion**,
+and you can use the function `macroexpand` to see what data structure
+a macro returns before that data structure is evaluated. Note that you
+have to quote the form that you pass to `macroexpand`:
 
-Second, The data structure returned by a function is *not* evaluated,
-but the data structure returned by a macro *is*. In the above example,
-`ignore-last-operand` returned the list `(+ 1 2)` both times, and both
-times that list was then evaluated, resulting in the `+` function
-being called.
+```clojure
+(macroexpand '(ignore-last-operand (+ 1 2 10)))
+; => (+ 1 2)
 
-The best way to think about this is to assume that there's a step in
-between reading and evaluation: the *macro expansion* phase.
+(macroexpand '(ignore-last-operand (+ 1 2 (println "look at me!!!"))))
+; => (+ 1 2)
+```
 
-Macros allow you to transform an arbitrary data structure like `(1 +
-1)` into one into one that can be evaluated by Clojure, `(+ 1 1)`.
-Thus, *you can use Clojure to extend itself* so that you write your
-program however you please. Macros thus enable syntax abstraction.
-"Syntax abstraction" sounds a little too abstract (ha ha!), so let's
-explore that a little.
+As you can see, both expansions result in the list `(+ 1 2)`. When
+this list is evaluated, as in the previous example, the result is `3`.
+
+The best way to think about this whole process is to picture a phase
+between reading and evaluation: the *macro expansion* phase. Below is
+an example of macro expansion with a new form, and below that is how
+you can visualize it:
+
+```clojure
+(when :in-doubt "something")
+; => "something"
+
+(macroexpand '(when :in-doubt "something"))
+; => (if :in-doubt (do "something"))
+
+(eval (macroexpand '(when :in-doubt "something")))
+; => "something"
+```
+
+![read-eval](/images/read-eval/read-eval.png)
+
+And that's how macros fit into the evaluation process. But why would
+you want to do this? The reason is that macros allow you to transform
+an arbitrary data structure like `(1 + 1)` into one into one that can
+be evaluated by Clojure, `(+ 1 1)`. Thus, *you can use Clojure to
+extend itself* so that you write your program however you please.
+Macros thus enable syntax abstraction. "Syntax abstraction" sounds a
+little too abstract (ha ha!), so let's explore that a little.
 
 ## A Syntax Abstraction Example: The -> Macro
 
@@ -523,22 +549,24 @@ For example, I use the following function in one of my projects:
 (defn read-resource
   "Read a resource into a string"
   [path]
-  (read-string (slurp (io/resource path))))
+  (read-string (slurp (clojure.java.io/resource path))))
 ```
 
 In order to understand the function body, you have to find the
-innermost form, in this case `(io/resource path)`, and then work your
-way outward from right to left to see how the result of each function
-gets passed to another function. This right-to-left flow is opposite
-to what Western programmers are used to.
-
-The `->` macro lets you rewrite the function like this:
+innermost form, in this case `(clojure.java.io/resource path)`, and
+then work your way outward from right to left to see how the result of
+each function gets passed to another function. This right-to-left flow
+is opposite to what Western programmers are used to. As you get used
+to writing in Clojure, this kind of code gets easier and easier to
+understand. Thankfully, though, we have the `->` macro, also known as
+the "threading" macro and the "stabby" macro. It lets you rewrite the
+above function like this:
 
 ```clojure
 (defn read-resource
   [path]
   (-> path
-      io/resource
+      clojure.java.io/resource
       slurp
       read-string))
 ```
@@ -567,6 +595,5 @@ Here's another syntax abstraction that lets you write code backwards:
 ```
 
 It's just a toy example, but you get the idea: macros give you
-complete freedom to express programs however we want to.
-
-In the next chapter we'll fully explore how to write macros.
+complete freedom to express programs however we want to. In the next
+chapter, you'll learn how to write macros. Onward!
