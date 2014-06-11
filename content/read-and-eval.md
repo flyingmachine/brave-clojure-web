@@ -8,7 +8,7 @@ kind: documentation
 
 This chapter will give you a systematic understanding of Clojure by
 explaining how it evaluates code. This is similar to the way that the
-periodic table of elements helps young chemistry students eveywhere
+periodic table of elements helps young chemistry students everywhere
 understand the properties of atoms and why they react with each other
 as they do: elements in the same column behave similarly because they
 have the same nuclear charge. Without the periodic table and its
@@ -42,7 +42,7 @@ separation between themselves and God, transcending duality and
 reaching enlightenment. I don't think that's what Eric S. Raymond was
 talking about in the quote above, but when it comes to Clojure (and
 Lisps in general), reaching enlightenment also involves transcending
-duality. The key to Clojure enlightnment is that *Clojure evaluates
+duality. The key to Clojure enlightenment is that *Clojure evaluates
 data structures*. You can see this for yourself right now in a REPL:
 
 ```clojure
