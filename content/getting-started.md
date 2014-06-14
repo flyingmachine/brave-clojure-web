@@ -212,8 +212,7 @@ experimenting with code. It presents you with a prompt and you type
 code into it. It then *reads* your input, *evaluates* it, *prints* the
 result, and *loops*, presenting you with a prompt again.
 
-The REPL is considered an essential tool for lisp developpment,
-development, and I strongly recommend you make use of it. It will let
+The REPL is considered an essential tool for lisp development, and I strongly recommend you make use of it. It will let
 you quickly check your understanding of the language and explore
 ideas.
 
