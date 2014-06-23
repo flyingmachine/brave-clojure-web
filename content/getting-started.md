@@ -103,6 +103,7 @@ This should create a directory structure that looks like this:
 | .gitignore
 | doc
 | | intro.md
+| LICENSE
 | project.clj
 | resources
 | README.md
@@ -188,10 +189,10 @@ this:
 
 ```sh
 lein uberjar
-java -jar target/clojure-noob-0.1.0-SNAPSHOT-standalone.jar
+java -jar target/uberjar/clojure-noob-0.1.0-SNAPSHOT-standalone.jar
 ```
 
-Look at that! `target/clojure-noob-0.1.0-SNAPSHOT-standalone.jar` is
+Look at that! `target/uberjar/clojure-noob-0.1.0-SNAPSHOT-standalone.jar` is
 your new, award-winning Clojure program which you can distribute and
 run on almost any platform! Awesome!
 

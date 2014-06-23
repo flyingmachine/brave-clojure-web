@@ -516,7 +516,7 @@ this (you'll add in more later):
 (defn latlng->point
   "Convert lat/lng map to comma-separated string" 
   [latlng]
-  (str (:lng latlng) "," (:lat latlng)))
+  (str (:lat latlng) "," (:lng latlng)))
 
 (defn points
   [locations]
