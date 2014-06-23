@@ -730,8 +730,6 @@ lazy sequences, realizing 32 members at a time:
   (println (:real identity))
   (:real identity))
 
-(map snitch [{:alias "Batman" :real "Bruce Wayne"}])
-
 (def revealed-identities (map snitch identities))
 (first revealed-identities)
 ;; The following gets printed
@@ -1039,7 +1037,7 @@ this:
 
 ```clojure
 (fn [& more-args]
-  (apply + (into '(20) more-args)))
+  (apply + (into [20] more-args)))
 ```
 
 If you're not used to partials, they might seem strange. In general,
@@ -1157,11 +1155,8 @@ Now it's time to get our hands dirty. Make your file
                         "Glitter Index" :glitter-index})
 
 (defn str->int
-  "If argument is a string, convert it to an integer"
   [str]
-  (if (string? str)
-    (read-string (re-find #"^-?\d+$" str))
-    str))
+  (Integer. str))
 
 ;; CSV is all text, but we're storing numeric data. We want to convert
 ;; it back to actual numbers.

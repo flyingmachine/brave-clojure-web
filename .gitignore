@@ -12,3 +12,4 @@ repl-port
 *.odt
 org/*.md
 quotes.txt
+.nrepl-port

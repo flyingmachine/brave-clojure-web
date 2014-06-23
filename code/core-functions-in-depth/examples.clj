@@ -1,3 +1,30 @@
+(seq '(1 2 3))
+(seq [1 2 3])
+1
+(rest '(1 2 3))
+; => (2 3)
+
+(seq #{1 2 3})
+; => 1
+(rest #{1 2 3})
+; => (2 3)
+
+(first {:a 1 :b 2 :c 3})
+; => [:a 1]
+(seq {:a 1 :b 2 :c 3})
+; => ([:c 3] [:b 2])
+
+
+(defn titleize
+  [topic]
+  (str topic " for the Brave and True"))
+
+(defn my-map
+  [f x]
+  (if-let [head (first x)]
+    (cons (f (first x)) (my-map f (rest x)))))
+
+
 (defn titleize
   [topic]
   (str topic " for the Brave and True"))
@@ -77,7 +104,8 @@
 (defn vampire?
   [record]
   (and (:makes-blood-puns? record)
-       (not (:has-pulse? record))))
+       (not (:has-pulse? record))
+       record))
 
 (defn identify-vampire
   [social-security-numbers]
