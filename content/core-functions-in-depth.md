@@ -1243,9 +1243,10 @@ glitter index:
 
 ```clojure
 (glitter-filter 3 (mapify (parse (slurp filename))))
-({:name "Edward Cullen", :glitter-index 10}
- {:name "Jacob Black", :glitter-index 3}
- {:name "Carlisle Cullen", :glitter-index 6})
+; =>
+; ({:name "Edward Cullen", :glitter-index 10}
+; {:name "Jacob Black", :glitter-index 3}
+; {:name "Carlisle Cullen", :glitter-index 6})
 ```
 
 You better go round up those sketchy characters!
