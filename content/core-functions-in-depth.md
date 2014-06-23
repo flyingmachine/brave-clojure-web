@@ -1061,7 +1061,7 @@ creating a `warn` function:
 
 ### complement
 
-Earlier you careated the `identify-vampire` function to find one
+Earlier you created the `identify-vampire` function to find one
 vampire amidst a million people. What if you wanted to create a
 function to find all humans? Perhaps you want to send them thank-you
 card for not being an undead predator. Here's how you could do it:
@@ -1257,7 +1257,7 @@ anything else on the market. But how could you make it better? I
 suggest trying the following:
 
 -   Turn the result of your glitter filter into a list of names
--   Write a function, `prepend`, which will add a new suspect to the 
+-   Write a function, `prepend`, which will add a new suspect to the
     beginning of your list of suspects
 -   Write a function, `validate`, which will check that `:name` and
     `:glitter-index` are present when you `prepend`. Validate should
