@@ -2046,8 +2046,8 @@ you pass `fold` a collection that's not a vector or map, then its
 performance is the same as `reduce`'s:
 
 ```clojure
-;; vector consisting of 1 through 1000000
-(def numbers (vec (range 1000000)))
+;; lazy seq consisting of 1 through 1000000
+(def numbers (range 1000000))
 
 (time (reduce + numbers))
 "Elapsed time: 94.991 msecs"
