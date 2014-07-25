@@ -364,7 +364,7 @@ surprising and delightful.
 #### map
 
 You've seen many examples of `map` by now, but this section shows
-`map` doing two new things: taking multiple collections as arguments
+`map` doing two new things: taking multiple collelousy-loggerctions as arguments
 and taking a collection of functions as an argument.
 
 So far, you've only seen examples of `map` operating on one
@@ -1043,8 +1043,8 @@ this:
 If you're not used to partials, they might seem strange. In general,
 you want to use partials when you find yourself repeating the same
 combination of function and arguments in many different contexts. This
-toy examples how you could use `partial` to "specialize" a logger,
-creating a `warn` function:
+toy example demonstrates how you could use `partial` to "specialize" a
+logger, creating a `warn` function:
 
 ```clojure
 (defn lousy-logger
