@@ -1146,6 +1146,7 @@ Now it's time to get our hands dirty. Make your file
   (:require [clojure.string :as s]))
 
 (def filename "suspects.csv")
+(def line-seperator (re-pattern (System/getProperty "line.separator")))
 
 ;; Later on we're going to be converting each row in the CSV into a
 ;; map, like {:name "Edward Cullen" :glitter-index 10}.
@@ -1167,7 +1168,7 @@ Now it's time to get our hands dirty. Make your file
   "Convert a csv into rows of columns"
   [string]
   (map #(s/split % #",")
-       (s/split string #"\n")))
+       (s/split string line-seperator)))
 
 (defn mapify
   "Return a seq of maps like {:name \"Edward Cullen\" :glitter-index 10}"
