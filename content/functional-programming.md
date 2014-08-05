@@ -1072,7 +1072,7 @@ mutual connection established; when 4 "connects right" to 6, 6
 
 The next function, `add-pos`, is interesting because it actually
 reduces on a vector of *functions*, applying each in turn to build up
-the resulting board. But first, it updates the board to indicated that
+the resulting board. But first, it updates the board to indicate that
 a peg is in the given position:
 
 ```clojure
