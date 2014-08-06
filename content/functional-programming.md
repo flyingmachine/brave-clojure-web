@@ -1189,7 +1189,7 @@ is valid, which is what `valid-move?` does:
 ```
 
 Another nice benefit of having `valid-moves` return a map is that
-`valid-move?` can return the position of the peg that's jumped over
+`valid-move?` can return the position of the peg that's jumped over.
 The function `make-move` makes use of this. By taking the time to
 construct a rich data structure, it's easier to perform useful
 operations:
