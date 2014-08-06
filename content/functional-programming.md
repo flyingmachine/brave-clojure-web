@@ -1318,7 +1318,8 @@ player's input. You can also provide a default value, which is used if
 the player hits enter without typing anything.
 
 The next function, `characters-as-strings` is a tiny helper function
-used by `prompt-move` to all letters and discard non-alphabetic input:
+used by `prompt-move` to split all letters and discard non-alphabetic
+input:
 
 ```clojure
 (characters-as-strings "a   b")
