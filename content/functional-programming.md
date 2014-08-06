@@ -1132,7 +1132,7 @@ to build up the final board.
 
 The next section of code deals with validating peg moves and actually
 performing the move. Many of the functions (`pegged?`, `remove-peg`,
-`add-peg`, `move-peg` are simple one-liners which need no further
+`add-peg`, `move-peg`) are simple one-liners which need no further
 explanation, so let's start with `valid-moves`.
 
 ```clojure
