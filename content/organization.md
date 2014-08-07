@@ -46,7 +46,7 @@ is, though. Libraries therefore record the association between an
 object's title and its address and provide tools for searching these
 records.
 
-For example, if you searched for "The Da Vinci Code" your
+For example, if you searched for "The Da Vinci Code" in your
 local library's database, it would return the address "813.54" to you
 (if it's using the Dewey Decimal System). Now you can efficiently
 navigate your library and locate the physical space where _The Da
