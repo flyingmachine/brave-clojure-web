@@ -477,7 +477,7 @@ path of the file where the namespace is declared, relative to the
 source code's root:
 
 * The source code's root is `src` in this case. In general, the root
-  is determine by the *classpath*, which is something I'll cover in a
+  is determined by the *classpath*, which is something I'll cover in a
   later chapter.
 * Dashes in namespace names correspond with underscores in the
   filesystem. `the-divine-cheese-code` is mapped to
