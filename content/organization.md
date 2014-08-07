@@ -402,7 +402,7 @@ cheese.taxonomy> (clojure.core/refer 'cheese.analysis :only ['private-function])
 ```
 
 So that's `refer`! `alias` is relatively simple by comparison. All it
-does it let you use a shorter namespace name when using a
+does is let you use a shorter namespace name when using a
 fully-qualified name:
 
 ```clojure
