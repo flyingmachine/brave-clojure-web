@@ -465,7 +465,7 @@ on the first line:
   (:gen-class))
 ```
 
-`ns` is the primary way you that create and manage namespaces within
+`ns` is the primary way that you create and manage namespaces within
 Clojure. I'm going to explain it fully shortly. For now, though, this
 line is very similar to the `in-ns` function we used above. It creates
 a namespace if it doesn't exist and then switches to it.
