@@ -1009,13 +1009,6 @@ With `svg.clj` all coded up, make `core.clj` look like this:
               :lat 41.90
               :lng 12.45}])
 
-(defn url
-  [filename]
-  (str "file:///"
-       (System/getProperty "user.dir")
-       "/"
-       filename))
-
 (defn template
   [contents]
   (str "<style>polyline { fill:none; stroke:#5881d8; stroke-width:3}</style>"
@@ -1028,7 +1021,7 @@ With `svg.clj` all coded up, make `core.clj` look like this:
          (xml 50 100)
          template
          (spit filename))
-    (browse/browse-url (url filename))))
+    (browse/browse-url filename)))
 ```
 
 Nothing too complicated going on here. Within `-main` you build up the
