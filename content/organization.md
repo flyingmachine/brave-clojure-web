@@ -966,7 +966,7 @@ In more detail:
         `the-divine-cheese-code.core/heists`, for example, then the
         result will be `{:lng 5.37, :lat 41.9}`.
 3. You use `comparator-over-maps` to create our comparison functions.
-   If you think of our drawing as being inscribed in a rectangle, than
+   If you think of our drawing as being inscribed in a rectangle, then
    `min` is the corner of the rectangle closest 0,0 and `max` is the
    corner fathest from it.
 4. `translate-to-00` works by finding the `min` of our locations and
