@@ -1,37 +1,3 @@
-(defn clean-chars
-  [text]
-  (reduce #(string/replace %1 (first %2) (second %2))
-          text
-          [[#"[‘`’¿]" "'"]
-           [#"[“]", "\""]
-           [#"[—]", "&mdash;"]
-           [#"•", "&bull;"]]))
-
-(defn clean-description
-  [description]
-  (if-not (empty? description)
-    (-> description
-        clean-chars
-        tidy
-        html->md)))
-
-(defn dirty-html->clean-md
-  [dirty-html]
-  (html->md (tidy (clean-chars dirty-html))))
-
-(defn two-comp
-  [f g]
-  (fn [& args]
-    (f (apply g args))))
-
-(defn sleepy-identity
-  "Returns the given value after 1 second"
-  [x]
-  (Thread/sleep 1000)
-  x)
-
-(def memo-sleep-identity (memoize sleepy-identity))
-
 (defn no-mutation
   [x]
   ;; = is a boolean operation
@@ -61,27 +27,47 @@
          acc
          (recur (rest vals) (+ (first vals) acc))))))
 
-(defn analyzed-patients
-  [patients]
-  (loop [remaining-patients patients
-         analyzed []]
-    (let [current-patient (first remaining-patients)]
-      (cond (empty? remaining-patients)
-            analyzed
-            
-            (analyzed? current-patient)
-            (recur (rest remaining-patients)
-                   (conj analyzed current-patient))
-
-            :else
-            (recur (rest remaining-patients)
-                   analyzed)))))
 
 (-> "My boa constrictor is so sassy lol!  "
     clojure.string/trim
     (str "!!!"))
 
-(spit "read_and_feel_giddy.txt"
-      (str 
-       (clojure.string/trim "My boa constrictor is so sassy lol!  ")
-       "!!!"))
+(defn abs
+  "Absolute value of a number"
+  [x]
+  (if (< x 0)
+    (* x -1)
+    x))
+
+(comp inc *)
+
+(def character
+  {:name "Smooches McCutes"
+   :attributes {:intelligence 10
+                :strength 4
+                :dexterity 5}})
+
+(def c-int (comp :intelligence :attributes))
+(def c-str (comp :strength :attributes))
+(def c-dex (comp :dexterity :attributes))
+
+
+(defn spell-slots
+  "Calculates number of spell slots based on intelligence"
+  [char]
+  (int (inc  (/ (c-int char) 2))))
+
+(def spell-slots-comp (comp int inc #(/ % 2) c-int))
+
+(defn two-comp
+  [f g]
+  (fn [& args]
+    (f (apply g args))))
+
+(defn sleepy-identity
+  "Returns the given value after 1 second"
+  [x]
+  (Thread/sleep 1000)
+  x)
+
+(def memo-sleep-identity (memoize sleepy-identity))
