@@ -476,7 +476,7 @@ example above it works perfectly.
 
 ### Promises
 
-Promises allow you to express the expectation of a result indepedently
+Promises allow you to express the expectation of a result independently
 of the task that should produce it and when that task should run. You
 create promises with `promise` and deliver a result to them with
 `deliver`. You obtain the result by dereferencing:
