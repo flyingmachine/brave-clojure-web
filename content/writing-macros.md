@@ -293,13 +293,13 @@ quoting:
 ; => +
 
 ;; Evaluating an unbound symbol raises an exception
-sweating-to-the-80s
-; => Unable to resolve symbol: sweating-to-the-80s in this context
+sweating-to-the-oldies
+; => Unable to resolve symbol: sweating-to-the-oldies in this context
 
 ;; quoting returns a symbol regardless of whether the symbol
 ;; has a value associated with it
-(quote sweating-to-the-80s)
-; => sweating-to-the-80s
+(quote sweating-to-the-oldies)
+; => sweating-to-the-oldies
 
 ;; The single quote character is a shorthand for (quote x)
 ;; This example works just like (quote (+ 1 2))
@@ -963,24 +963,22 @@ beginning of the chapter.
 
 ## Brews for the Brave and True
 
-When you began this chapter, I revealed a dream: to find some kind of
-drinkable that, once ingested, would temporarily give me the power and
-temperament of an 80's fitness guru, freeing me from the prison of
-inhibition and self-awareness. To keep such a magical liquid to
-myself, however, would be pure selfishness. I'm sure that someone,
-somewhere will invent such a thing so we might as well get to work on
-a system for selling this mythical potion. For the sake of this
-example, let's call this hypothetical concoction the "Brave and True
-Ale." The name just came to me for no reason whatsoever.
+At the beginning of this chapter, I revealed a dream: to find some
+kind of drinkable that, once ingested, would temporarily give me the
+power and temperament of an 80's fitness guru, freeing me from a
+prison of inhibition and self-awareness. I'm sure that someone,
+somewhere will someday invent such a thing, so we might as well get to
+work on a system for selling this mythical potion. For the sake of
+this example, let's call this hypothetical concoction the "Brave and
+True Ale." The name just came to me for no reason whatsoever.
 
 Before the orders come "pouring" in (pun! high five!), we'll need to
 have some validation in place. These orders will get converted to
-Clojure maps before we validate them. What I'm thinking is we want
-something like this:
+Clojure maps before we validate them. For now, we'll just focus on the
+shipping details of an order. What I'm thinking is we want to
+represent shipping details like this:
 
 ```clojure
-;; The shipping details of an order will be represented as a map.
-;; There are a couple invalid fields in this one.
 (def shipping-details
   {:name "Mitchard Blimmons"
    :address "134 Wonderment Ln"
@@ -988,12 +986,55 @@ something like this:
    :state "FL"
    :postal-code "32501"
    :email "mitchard.blimmonsgmail.com"})
+```
 
-;; Validations are comprise of a key which corresponds to the
-;; map to be validated and a vector of error message / validating
-;; function pairs. For example, :name has one validating function,
-;; not-empty, and if that validation fails we should get the "Please
-;; enter a name" error message
+There are a couple invalid fields in this map of shipping details
+(city is missing, email is missing the @ symbol), so it'll be perfect
+for testing the validation code.
+
+Next, we need to come up with some way to validate this data. Ideally,
+we want to be able to write code that looks like this:
+
+```clojure
+(validate shipping-details shipping-details-validations)
+; =>
+{:email ["Your email address doesn't look like an email address."]
+ :city ["Please enter a city"]}
+```
+
+That is, you should be able to call a function, `validate`, with the
+data that needs validation and some definition of how to validate it,
+and the result should be a map where each key corresponds to an
+invalid "field", and each value is a vector of validation messages for
+that field. You want to use vectors for the validation messages here
+so that you can return more than one.
+
+Let's look at `shipping-details-validations` first. Here's how you
+could represent validations for just the name and street address:
+
+```clojure
+(def shipping-details-validations
+  {:name
+   ["Please enter a name" not-empty]
+
+   :address
+   ["Please enter an address" not-empty]})
+```
+
+This is a map where each key is associated with a vector of error
+message / validating function pairs. For example, `:name` has one
+validating function, `not-empty`, and if that validation fails you
+should get the "Please enter a name" error message. This is how it
+should work once you've written the `validate` function:
+
+```clojure
+(validate {:address "123 Clinkenbeard Ct"})
+; => {:name ["Please enter a name"]}
+```
+
+Here's the full version of `shipping-details-validations`:
+
+```clojure
 (def shipping-details-validation
   {:name
    ["Please enter a name" not-empty]
@@ -1007,7 +1048,7 @@ something like this:
    :postal-code
    ["Please enter a postal code" not-empty
     
-    "Please enter a postal code that looks like a US postal code"
+    "Please enter a postal code that looks like a postal code"
     #(or (empty? %)
          (not (re-seq #"[^0-9-]" %)))]
 
@@ -1015,49 +1056,48 @@ something like this:
    ["Please enter an email address" not-empty
 
     "Your email address doesn't look like an email address"
-    (or (empty? %)
+    (or #(empty? %)
         #(re-seq #"@" %))]})
-
-;; Here's a hypothetical validation function applied to our data
-(validate shipping-details)
-; =>
-{:email ["Your email address doesn't look like an email address."]
- :city ["Please enter a city"]}
 ```
 
-So far so good, right? Now we just need to actually write out the
-`validate` function. After that we'll write a macro to aid with
-validation.
+Now we just need to actually write out the `validate` function. After
+that we'll write a macro to aid with validation.
 
 The `validate` function can be decomposed into two functions, one to
-apply validations to a single validation and return error messages
-and another to accumulate those error messages into a final map of
-error messages like the one we see above.
-
+apply validations to a single field and another to accumulate those
+error messages into a final map of error messages like the ones above.
 Here's a function for applying validations to a single value:
 
 ```clojure
 (defn error-messages-for
-  "return a seq of error messages
-   validation-check-groups is a seq of alternating messages and
-   validation checks"
-  [value validation-check-groups]
-  ;; Filter will return all validation check pairs that fail
-  ;; Then we map first over the resulting list, getting a seq
-  ;; of error messages
-  (map first (filter #(not ((second %) value))
-                     (partition 2 validation-check-groups))))
+  "return a seq of error messages"
+  [to-validate message-validator-pairs]
+  (map first (filter #(not ((second %) to-validate))
+                     (partition 2 message-validator-pairs))))
 
 (error-messages-for "" ["Please enter a city" not-empty])
 ; => ("Please enter a city")
 
-(error-messages-for "SHINE ON"
+(error-messages-for "shine bright like a diamond"
                     ["Please enter a postal code" not-empty
                      "Please enter a postal code that looks like a US postal code"
                      #(or (empty? %)
                           (not (re-seq #"[^0-9-]" %)))])
 ; => ("Please enter a postal code that looks like a US postal code")
 ```
+
+The first argument to `error-messages-for`, `to-validate`, what you
+want to validate of course. The second argument,
+`message-validator-pairs`, should be a seq with an even number of
+elemnts. This seq gets grouped in to pairs with `(partition 2
+message-validator-pairs)`. The first element of the pair should be an
+error message, like "Please enter a postal code" and "Please enter a
+postal code that looks like a US postal code" above. The second
+element of the pair should be a function, like
+`not-empty`. `error-messages-for` works by filtering out all
+error-message/validation pairs where the validation function returns
+true when applied to `to-validate`. It then uses `map first` to get
+the first element of each pair, the error message.
 
 Now we need to accumulate these error messages in a map:
 
@@ -1075,13 +1115,15 @@ Now we need to accumulate these error messages in a map:
           {}
           validations))
 
-(validate shipping-details shipping-details-validation)
+(validate shipping-details shipping-details-validations)
 ; =>
 {:email ("Your email address doesn't look like an email address")
  :city ("Please enter a city")}
 ```
 
-Success!
+Success! This works my reducing over `shipping-details-validations`,
+associating the error messages (if there are any) for each key of
+`shipping-details` into a final map of error messages.
 
 With our validation code in place, we can now validate records to our
 heart's content! Most often, validation will look something like this:
@@ -1127,17 +1169,14 @@ Not a *huge* difference, but it expresses our intention more
 succinctly. It's like asking someone to give you the bottle opener
 instead of saying "please give me the manual device for removing the
 temporary sealant from a glass container of liquid." Here's the
-implementation. Note points are floating in the ocean, like `~~~1~~~`:
+implementation.
 
 ```clojure
 (defmacro if-valid
   "Handle validation more concisely"
-  ;; ~~~1~~~
   [to-validate validations errors-name & then-else]
-  ;; ~~~2~~~
   `(let [~errors-name (validate ~to-validate ~validations)]
      (if (empty? ~errors-name)
-       ;; ~~~3~~~
        ~@then-else)))
 ```
 

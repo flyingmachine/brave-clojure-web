@@ -230,6 +230,12 @@
 {:email ["Your email address doesn't look like an email address."]
  :city ["Please enter a city"]}
 
+(defn error-messages-for
+  "return a seq of error messages"
+  [to-validate message-validator-pairs]
+  (map first (filter #(not ((second %) to-validate))
+                     (partition 2 message-validator-pairs))))
+
 
 (defn error-messages-for
   "return a seq of error messages
@@ -243,9 +249,9 @@
   "returns a map with a vec of errors for each key"
   [to-validate validations]
   (reduce (fn [errors validation]
-            (let [[fieldname validation-check-groups] validation
+            (let [[fieldname message-validator-pairs] validation
                   value (get to-validate fieldname)
-                  error-messages (error-messages-for value validation-check-groups)]
+                  error-messages (error-messages-for value message-validator-pairs)]
               (if (empty? error-messages)
                 errors
                 (assoc errors fieldname error-messages))))
