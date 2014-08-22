@@ -51,9 +51,14 @@ You should use the latest major version of Emacs, Emacs 24.
   they're problematic in the long run because they're set up so
   differently from standard Emacs that it's difficult to use the Emacs
   manual or follow along with tutorials
-- **Ubuntu**: Follow [these instructions](https://launchpad.net/~cassou/+archive/emacs)
-- **Windows**: You can find a binary [at the bottom of this page](http://ftp.gnu.org/gnu/emacs/windows/). I'd
-  love to find some better Windows instructions.
+- **Linux**: A recent version of Emacs is available directly from the package
+  manager of most Linux distributions. For **Ubuntu**, follow
+  [these instructions](https://launchpad.net/~cassou/+archive/emacs).
+- **Windows**: You can find a binary
+  [at the bottom of this page](http://ftp.gnu.org/gnu/emacs/windows/).
+  Alternatively, you can install Emacs with a
+  [single command](https://chocolatey.org/packages?q=emacs)
+  using [chocolatey](https://chocolatey.org/).
 
 After you're done installing Emacs, open it up. You should see
 something like this:
