@@ -1344,7 +1344,7 @@ because we're going to examine it in great detail:
   [part]
   (re-find #"^left-" (:name part)))
 
-(defn matching-part
+(defn make-matching-part
   [part]
   {:name (clojure.string/replace (:name part) #"^left-" "right-")
    :size (:size part)})
@@ -1359,7 +1359,7 @@ because we're going to examine it in great detail:
       (let [[part & remaining] remaining-asym-parts
             final-body-parts (conj final-body-parts part)]
         (if (needs-matching-part? part)
-          (recur remaining (conj final-body-parts (matching-part part)))
+          (recur remaining (conj final-body-parts (make-matching-part part)))
           (recur remaining final-body-parts))))))
 
 (symmetrize-body-parts asym-hobbit-body-parts)
@@ -1479,7 +1479,7 @@ so we can understand exactly what's going on:
 (let [[part & remaining] remaining-asym-parts
       final-body-parts (conj final-body-parts part)]
   (if (needs-matching-part? part)
-    (recur remaining (conj final-body-parts (matching-part part)))
+    (recur remaining (conj final-body-parts (make-matching-part part)))
     (recur remaining final-body-parts)))
 ```
 
@@ -1492,7 +1492,7 @@ expressions, it would be a mess! For example:
 (if (needs-matching-part? (first remaining-asym-parts))
   (recur (rest remaining-asym-parts)
          (conj (conj (conj final-body-parts part) (first remaining-asym-parts))
-               (matching-part (first remaining-asym-parts))))
+               (make-matching-part (first remaining-asym-parts))))
   (recur (rest remaining-asym-parts)
          (conj (conj final-body-parts part) (first remaining-asym-parts))))
 ```
@@ -1578,14 +1578,14 @@ the part's name starts with the string "left-":
 ; => false
 ```
 
-`matching-part` uses a regex to replace `"left-"` with `"right-"`:
+`make-matching-part` uses a regex to replace `"left-"` with `"right-"`:
 
 ```clojure
-(defn matching-part
+(defn make-matching-part
   [part]
   {:name (clojure.string/replace (:name part) #"^left-" "right-")
    :size (:size part)})
-(matching-part {:name "left-eye" :size 1})
+(make-matching-part {:name "left-eye" :size 1})
 ; => {:name "right-eye" :size 1}]
 ```
 
@@ -1619,7 +1619,7 @@ the ocean, like `~~~1~~~`:
   [part]
   (re-find #"^left-" (:name part)))
 
-(defn matching-part
+(defn make-matching-part
   [part]
   {:name (clojure.string/replace (:name part) #"^left-" "right-")
    :size (:size part)})
@@ -1635,7 +1635,7 @@ the ocean, like `~~~1~~~`:
       (let [[part & remaining] remaining-asym-parts ; ~~~4~~~
             final-body-parts (conj final-body-parts part)]
         (if (needs-matching-part? part) ; ~~~5~~~
-          (recur remaining (conj final-body-parts (matching-part part))) ; ~~~6~~~
+          (recur remaining (conj final-body-parts (make-matching-part part))) ; ~~~6~~~
           (recur remaining final-body-parts))))))
 ```
 
@@ -1657,8 +1657,8 @@ the ocean, like `~~~1~~~`:
 5.  Our growing sequence of `final-body-parts` already includes the
     body part we're currently examining, `part`. Here, we decide
     whether we need to add the matching body part to the list.
-6.  If so, then add the `matching-part` to `final-body-parts` and
-    recur. Otherwise, just recur.
+6.  If so, then add the result of `make-matching-part` to
+    `final-body-parts` and recur. Otherwise, just recur.
 
 If you're new to this kind of programming, this might take some time
 to puzzle out. Stick with it! Once you understand what's happening,
@@ -1729,7 +1729,7 @@ We could re-implement symmetrize as follows:
   (reduce (fn [final-body-parts part]
             (let [final-body-parts (conj final-body-parts part)]
               (if (needs-matching-part? part)
-                (conj final-body-parts (matching-part part))
+                (conj final-body-parts (make-matching-part part))
                 final-body-parts)))
           []
           asym-body-parts))
