@@ -1340,7 +1340,7 @@ introduces some ideas we haven't covered yet. Don't worry though,
 because we're going to examine it in great detail:
 
 ```clojure
-(defn has-matching-part?
+(defn needs-matching-part?
   [part]
   (re-find #"^left-" (:name part)))
 
@@ -1358,7 +1358,7 @@ because we're going to examine it in great detail:
       final-body-parts
       (let [[part & remaining] remaining-asym-parts
             final-body-parts (conj final-body-parts part)]
-        (if (has-matching-part? part)
+        (if (needs-matching-part? part)
           (recur remaining (conj final-body-parts (matching-part part)))
           (recur remaining final-body-parts))))))
 
@@ -1478,7 +1478,7 @@ so we can understand exactly what's going on:
 ;; Associate "final-body-parts" with the result of (conj final-body-parts part)
 (let [[part & remaining] remaining-asym-parts
       final-body-parts (conj final-body-parts part)]
-  (if (has-matching-part? part)
+  (if (needs-matching-part? part)
     (recur remaining (conj final-body-parts (matching-part part)))
     (recur remaining final-body-parts)))
 ```
@@ -1489,7 +1489,7 @@ names `part`, `remaining`, and `final-body-parts` we used the original
 expressions, it would be a mess! For example:
 
 ```clojure
-(if (has-matching-part? (first remaining-asym-parts))
+(if (needs-matching-part? (first remaining-asym-parts))
   (recur (rest remaining-asym-parts)
          (conj (conj (conj final-body-parts part) (first remaining-asym-parts))
                (matching-part (first remaining-asym-parts))))
@@ -1569,12 +1569,12 @@ In our symmetrizer, `re-find` returns true or false based on whether
 the part's name starts with the string "left-":
 
 ```clojure
-(defn has-matching-part?
+(defn needs-matching-part?
   [part]
   (re-find #"^left-" (:name part)))
-(has-matching-part? {:name "left-eye"})
+(needs-matching-part? {:name "left-eye"})
 ; => true
-(has-matching-part? {:name "neckbeard"})
+(needs-matching-part? {:name "neckbeard"})
 ; => false
 ```
 
@@ -1615,7 +1615,7 @@ the ocean, like `~~~1~~~`:
                              {:name "left-achilles" :size 1}
                              {:name "left-foot" :size 2}])
 
-(defn has-matching-part?
+(defn needs-matching-part?
   [part]
   (re-find #"^left-" (:name part)))
 
@@ -1634,7 +1634,7 @@ the ocean, like `~~~1~~~`:
       final-body-parts
       (let [[part & remaining] remaining-asym-parts ; ~~~4~~~
             final-body-parts (conj final-body-parts part)]
-        (if (has-matching-part? part) ; ~~~5~~~
+        (if (needs-matching-part? part) ; ~~~5~~~
           (recur remaining (conj final-body-parts (matching-part part))) ; ~~~6~~~
           (recur remaining final-body-parts))))))
 ```
@@ -1728,7 +1728,7 @@ We could re-implement symmetrize as follows:
   [asym-body-parts]
   (reduce (fn [final-body-parts part]
             (let [final-body-parts (conj final-body-parts part)]
-              (if (has-matching-part? part)
+              (if (needs-matching-part? part)
                 (conj final-body-parts (matching-part part))
                 final-body-parts)))
           []
