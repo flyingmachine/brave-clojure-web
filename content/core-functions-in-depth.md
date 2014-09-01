@@ -854,7 +854,7 @@ can be a bit confusing.
 
 ### Into
 
-One of the most import collection functions is `into`. As you now
+One of the most important collection functions is `into`. As you now
 know, many seq functions return a seq rather than the original data
 structure. You'll probably want to convert the return value back into
 the original value, and `into` lets you do that:
@@ -1063,7 +1063,7 @@ creating a `warn` function:
 
 Earlier you created the `identify-vampire` function to find one
 vampire amidst a million people. What if you wanted to create a
-function to find all humans? Perhaps you want to send them thank-you
+function to find all humans? Perhaps you want to send them a thank-you
 card for not being an undead predator. Here's how you could do it:
 
 ```clojure
@@ -1197,7 +1197,7 @@ Now it's time to get our hands dirty. Make your file
 ```
 
 Notice that we took out the `-main` function. This is because, for
-right now, we only care about running the above code in the REPL. Try
+now, we only care about running the above code in the REPL. Try
 this out in your REPL:
 
 ```clojure
