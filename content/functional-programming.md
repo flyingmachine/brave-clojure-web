@@ -919,7 +919,7 @@ It's a map where each key identifies a *possible destination*, and
 each value represents *the position that would bejumped over*. So pegs
 in position 1, for example, can jump *to* position 6, *over*
 position 3. This might seem a little backwards, but you'll see the
-rationale for it later when you see examine how move validation is
+rationale for it later when you examine how move validation is
 implemented.
 
 In order to get there, I'll walk through the code from top to bottom.
