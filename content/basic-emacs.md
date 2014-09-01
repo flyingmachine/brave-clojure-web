@@ -461,12 +461,12 @@ in action:
 2. Do `M-w`, which is bound to the `kill-ring-save` command. In
    general, `M-w` is like copying. It adds the region to the kill ring
    without deleting it
-3. Move point to the word "choreograpahy" on the last line
+3. Move point to the word "choreography" on the last line
 4. Do `M-d`, which is bound to the `kill-word` command. This adds
-   "choreograpahy" word to the kill ring and deletes it
+   "choreography" word to the kill ring and deletes it
 5. Do `C-y`. This will "yank" the text you just killed,
-   "choreograpahy", inserting it at point
-6. Do `M-y`. This will remove "choreograpahy" and yank the next item
+   "choreography", inserting it at point
+6. Do `M-y`. This will remove "choreography" and yank the next item
    on the kill ring, "Treasure"
 
 Here's a summary of useful kill/yank key bindings: 
