@@ -783,8 +783,8 @@ you pass:
 ("na" "na" "na" "na" "na" "na" "na" "na" "Batman!")
 ```
 
-There's also `repeatedly`, which will call the provided function for
-to generate each element in the sequence:
+There's also `repeatedly`, which will call the provided function to
+generate each element in the sequence:
 
 ```clojure
 (take 3 (repeatedly (fn [] (rand-int 10))))
