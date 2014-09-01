@@ -148,7 +148,7 @@ this:
   (println "Hello, World!"))
 ```
 
-Change line 9 so that it says this:
+Change line 7 so that it says this:
 
 ```clojure
 (ns clojure-noob.core
