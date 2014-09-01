@@ -416,7 +416,7 @@ unifies the two into a single map:
 ; => ({:human 8.1, :critter 0.0}
       {:human 7.3, :critter 0.2}
       {:human 6.6, :critter 0.3}
-      {:human 5.0, :critter 1.8})
+      {:human 5.0, :critter 1.1})
 ```
 
 Good job laying off the human!
