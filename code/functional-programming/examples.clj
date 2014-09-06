@@ -1,3 +1,15 @@
+;; def creates a binding in the global scope
+(def great-baby-name "Rosanthony")
+(println great-baby-name)
+; => "Rosanthony
+
+(let [great-baby-name "Bloodthunder"]
+  (println great-baby-name))
+; => "Bloodthunder"
+
+(println great-baby-name)
+; => "Rosanthony"
+
 (defn clean-chars
   [text]
   (reduce #(string/replace %1 (first %2) (second %2))
