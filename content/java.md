@@ -9,17 +9,26 @@ draft: true
 
 There comes a day in every Clojurist's life when she must venture
 forth from the sanctuary of pure functions and immutable data
-structures into the wild and barbaric land of Java. This treacherous
-journey is necessary because Clojure, as a language *hosted* on the
-Java Virtual Machine (JVM), has two fundamental
-characteristics. First, a Clojure application is a Java application
-from when you're compiling, deploying, and running it. Second, you
-need to use Java objects to get a lot of stuff done, like reading
-files and working with dates. In this way, Clojure is a bit like a
-utopian community plunked down in the middle non-utopian country. It's
-preferable to interact with the other members of the community, but
-every once in awhile you need to talk to the locals in order to get
-things done.
+structures into the wild and barbaric Land of Java. This treacherous
+journey is necessary because Clojure is hosted on the Java Virtual
+Machine (JVM), granting it two fundamental characteristics. First, a
+Clojure application is a Java application when you're compiling and
+running it. Second, you need to use Java objects to get a lot of stuff
+done, like reading files and working with dates. In this way, Clojure
+is a bit like a utopian community plunked down in the middle
+non-utopian country. It's preferable to interact with other utopians,
+but every once in a while you need to talk to the locals in order to
+get things done.
+
+If this chapter were a guide book for the Land of Java, it'd be
+somewhere between a phrasebook ("Where is the bathroom?") and a
+full-blown course on the local language and customs. It will give you
+an overview of what the JVM is, how it runs programs, and how to
+compile programs for it. It will also give you a tour of
+frequently-used Java classes and methods and explain how to interact
+with them from Clojure. More than that, it will show you how to think
+about and understand Java so that you can incorporate any Java library
+into your Clojure program.
 
 
 
