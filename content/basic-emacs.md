@@ -51,9 +51,14 @@ You should use the latest major version of Emacs, Emacs 24.
   they're problematic in the long run because they're set up so
   differently from standard Emacs that it's difficult to use the Emacs
   manual or follow along with tutorials
-- **Ubuntu**: Follow [these instructions](https://launchpad.net/~cassou/+archive/emacs)
-- **Windows**: You can find a binary [at the bottom of this page](http://ftp.gnu.org/gnu/emacs/windows/). I'd
-  love to find some better Windows instructions.
+- **Linux**: A recent version of Emacs is available directly from the package
+  manager of most Linux distributions. For **Ubuntu**, follow
+  [these instructions](https://launchpad.net/~cassou/+archive/emacs).
+- **Windows**: You can find a binary
+  [at the bottom of this page](http://ftp.gnu.org/gnu/emacs/windows/).
+  Alternatively, you can install Emacs with a
+  [single command](https://chocolatey.org/packages?q=emacs)
+  using [chocolatey](https://chocolatey.org/).
 
 After you're done installing Emacs, open it up. You should see
 something like this:
@@ -456,12 +461,12 @@ in action:
 2. Do `M-w`, which is bound to the `kill-ring-save` command. In
    general, `M-w` is like copying. It adds the region to the kill ring
    without deleting it
-3. Move point to the word "choreograpahy" on the last line
+3. Move point to the word "choreography" on the last line
 4. Do `M-d`, which is bound to the `kill-word` command. This adds
-   "choreograpahy" word to the kill ring and deletes it
+   "choreography" word to the kill ring and deletes it
 5. Do `C-y`. This will "yank" the text you just killed,
-   "choreograpahy", inserting it at point
-6. Do `M-y`. This will remove "choreograpahy" and yank the next item
+   "choreography", inserting it at point
+6. Do `M-y`. This will remove "choreography" and yank the next item
    on the kill ring, "Treasure"
 
 Here's a summary of useful kill/yank key bindings: 

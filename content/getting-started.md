@@ -148,7 +148,7 @@ this:
   (println "Hello, World!"))
 ```
 
-Change line 9 so that it says this:
+Change line 7 so that it says this:
 
 ```clojure
 (ns clojure-noob.core
@@ -275,7 +275,7 @@ REPL to build our knowledge of Clojure syntax and semantics.
 
 At this point you should have the basic knowledge you need to begin
 learning the Clojure language without having to fuss with tools. To
-learn how to interaact with Clojure with even more proficiency,
+learn how to interact with Clojure with even more proficiency,
 however, we'll cover Emacs in depth.
 
 If Emacs isn't your cup of tea, here are some resources for setting
