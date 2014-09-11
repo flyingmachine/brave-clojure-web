@@ -13,12 +13,12 @@ structures into the wild and barbaric Land of Java. This treacherous
 journey is necessary because Clojure is hosted on the Java Virtual
 Machine (JVM), granting it two fundamental characteristics. First, a
 Clojure application is a Java application when you're compiling and
-running it. Second, you need to use Java objects to get a lot of stuff
-done, like reading files and working with dates. In this way, Clojure
-is a bit like a utopian community plunked down in the middle
-non-utopian country. It's preferable to interact with other utopians,
-but every once in a while you need to talk to the locals in order to
-get things done.
+running it. Second, you need to use Java objects for core
+functionality like reading files and working with dates. In this way,
+Clojure is a bit like a utopian community plunked down in the middle
+of a non-utopian country. It's preferable to interact with other
+utopians, but every once in a while you need to talk to the locals in
+order to get things done.
 
 If this chapter were a guide book for the Land of Java, it'd be
 somewhere between a phrasebook ("Where is the bathroom?") and a
@@ -30,7 +30,59 @@ with them from Clojure. More than that, it will show you how to think
 about and understand Java so that you can incorporate any Java library
 into your Clojure program.
 
+# The JVM
 
+Developers use the term "JVM" to refer to a few different
+things. You'll hear them say, "Clojure runs on *the* JVM", and you'll
+also hear "Clojure programs run in *a* JVM". In the first case, "JVM"
+refers to an abstraction - the general movel of the Java Virtual
+Machine. In the second, it refers an instance that's actually running.
+Right now, we're only concerned with the JVM model; I'll point out
+when we're talking about running JVM processes.
+
+## The Java Bytecode Instruction Set
+
+To understand the Java Virtual Machine, let's first take a step back
+and review how plain-ol' machines (also known as *computers*)
+work. (I'm greatly, greatly, greatly simplifying how all this works,
+by th way.)  Deep in the cockles of a computer's heart is its CPU, and
+the CPU's job is to execute operations like "add" and "unsigned
+multiply", represented in assembly language by mnemonics like 'ADD"
+and "MUL". What operations are availabe depends on the CPU
+architecture (x86, ARMv7 and what have you) as part of the
+architecture's *instruction set*.
+
+Because it's no fun to program in assembly language, we humans have
+invented higher-level languages like C and C++ which get compiled into
+the instructions which a CPU will understand. Here's a diagram of the
+process:
+
+1. Compiler reads source code.
+2. Compiler outputs a file containing CPU instructions
+3. The computer executes those instructions
+
+The most important thing here is that, ultimately, programs have to be
+translated into CPU instructions.
+
+So, what is the Java Virtual Machine?  One hint is in "virtual
+machine" part of the
+name. [Here's what wikipedia says about virtual machines](http://en.wikipedia.org/wiki/Virtual_machine):
+
+    A virtual machine (VM) is a software implementation of a machine
+    (for example, a computer) that executes programs like a physical
+    machine.
+
+    ...A *process* virtual machine (also, language virtual machine) is
+    designed to run a single program, which means that it supports a
+    single process. Such virtual machines are usually closely suited
+    to one or more programming languages and built with the purpose of
+    providing program portability and flexibility (amongst other
+    things). An essential characteristic of a virtual machine is that
+    the software running inside is limited to the resources and
+    abstractions provided by the virtual machine—it cannot break out
+    of its virtual environment.
+
+All of this applies to the JVM: it's a software implementation
 
 # Notes
 
