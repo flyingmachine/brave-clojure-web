@@ -40,29 +40,38 @@ Machine. In the second, it refers an instance that's actually running.
 Right now, we're only concerned with the JVM model; I'll point out
 when we're talking about running JVM processes.
 
-## The Java Bytecode Instruction Set
+## Java Bytecode
 
 To understand the Java Virtual Machine, let's first take a step back
-and review how plain-ol' machines (also known as *computers*)
-work. (I'm greatly, greatly, greatly simplifying how all this works,
-by th way.)  Deep in the cockles of a computer's heart is its CPU, and
-the CPU's job is to execute operations like "add" and "unsigned
-multiply", represented in assembly language by mnemonics like 'ADD"
-and "MUL". What operations are availabe depends on the CPU
+and review how plain-ol' machines (also known as computers) work. Deep
+in the cockles of a computer's heart is its CPU, and the CPU's job is
+to execute operations like "add" and "unsigned multiply". These
+operations are represented in assembly language by mnemonics like
+"ADD" and "MUL". What operations are availabe depends on the CPU
 architecture (x86, ARMv7 and what have you) as part of the
 architecture's *instruction set*.
 
 Because it's no fun to program in assembly language, we humans have
-invented higher-level languages like C and C++ which get compiled into
-the instructions which a CPU will understand. Here's a diagram of the
-process:
+invented higher-level languages like C and C++, which get compiled
+into the instructions that a CPU will understand. Here's a diagram of
+the process:
 
 1. Compiler reads source code.
 2. Compiler outputs a file containing CPU instructions
 3. The computer executes those instructions
 
-The most important thing here is that, ultimately, programs have to be
-translated into CPU instructions.
+The most important thing here is that, ultimately, you have to
+translate programs into the instructions that a CPU will
+understand. The CPU doesn't care what programming language was used to
+produce the instructions, all it cares about is machine instructions.
+
+As a *virtual* machine, the JVM provides an isolated environment that
+acts like a computer but that runs as a process on top of a host
+machine. The JVM provides its own instruction set, Java bytecode. Just
+as a CPU doesn't care how machine instructions are generated, the JVM
+doesn't care how bytecode gets created. A running JVM process reads
+bytecode and translates it on the fly into the machine code that its
+host will understand, a process called just-in-time compilation.
 
 So, what is the Java Virtual Machine?  One hint is in "virtual
 machine" part of the
