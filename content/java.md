@@ -36,9 +36,9 @@ Developers use the term "JVM" to refer to a few different
 things. You'll hear them say, "Clojure runs on *the* JVM", and you'll
 also hear "Clojure programs run in *a* JVM". In the first case, "JVM"
 refers to an abstraction - the general movel of the Java Virtual
-Machine. In the second, it refers an instance that's actually running.
-Right now, we're only concerned with the JVM model; I'll point out
-when we're talking about running JVM processes.
+Machine. In the second, it refers to a process, an instance of a
+running program.  Right now, we're only concerned with the JVM model;
+I'll point out when we're talking about running JVM processes.
 
 ## Java Bytecode
 
@@ -66,12 +66,25 @@ understand. The CPU doesn't care what programming language was used to
 produce the instructions, all it cares about is machine instructions.
 
 As a *virtual* machine, the JVM provides an isolated environment that
-acts like a computer but that runs as a process on top of a host
-machine. The JVM provides its own instruction set, Java bytecode. Just
-as a CPU doesn't care how machine instructions are generated, the JVM
-doesn't care how bytecode gets created. A running JVM process reads
-bytecode and translates it on the fly into the machine code that its
-host will understand, a process called just-in-time compilation.
+acts like a computer but that exists as a process. The JVM provides
+its own instruction set, Java bytecode. Usually, when you compile
+programs you store the result as a ".jar" (java archive)
+file. However, just as a CPU doesn't care how machine instructions are
+generated, the JVM doesn't care how bytecode gets created. It doesn't
+care if you used Scala, JRuby, Clojure, or even Java to create Java
+bytecode. A running JVM executes bytecode by translating it on the fly
+into the machine code that its host will understand, a process called
+just-in-time compilation. While a JVM *can* run multiple applications,
+in practice you'll start one JVM process per application in order to
+safely isolate each execution environment. Here's a diagram:
+
+1. Compile to bytecode
+2. JVM reads bytecode
+3. JVM sends machine instructions
+
+When someone says that Clojure runs on the JVM, then, one of the
+things they mean is that Clojure programs get compiled to Java
+bytecode and JVM processes execute them.
 
 So, what is the Java Virtual Machine?  One hint is in "virtual
 machine" part of the
@@ -115,6 +128,8 @@ All of this applies to the JVM: it's a software implementation
             * System: getenv, exit, etc
     * the ops perspective
         * what it means to execute a java program (bytecode, jvm)
+        * JVM as a platform (lots of library, analogous to GNU on
+          linux)
         * compiling to bytecode
         * classpath
         * the ecosystem around java programs
