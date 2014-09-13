@@ -68,7 +68,7 @@ produce the instructions, all it cares about is machine instructions.
 As a *virtual* machine, the JVM provides an isolated environment that
 acts like a computer but that exists as a process. The JVM provides
 its own instruction set, Java bytecode. Usually, when you compile
-programs you store the result as a ".jar" (java archive)
+programs you store the result as a JAR (Java archive)
 file. However, just as a CPU doesn't care how machine instructions are
 generated, the JVM doesn't care how bytecode gets created. It doesn't
 care if you used Scala, JRuby, Clojure, or even Java to create Java
@@ -84,27 +84,15 @@ safely isolate each execution environment. Here's a diagram:
 
 When someone says that Clojure runs on the JVM, then, one of the
 things they mean is that Clojure programs get compiled to Java
-bytecode and JVM processes execute them.
+bytecode and JVM processes execute them. This matters for a couple
+reasons.
 
-So, what is the Java Virtual Machine?  One hint is in "virtual
-machine" part of the
-name. [Here's what wikipedia says about virtual machines](http://en.wikipedia.org/wiki/Virtual_machine):
+First, your Clojure program is a Java program from an operations
+perspective. If your organization only runs Java stuff...
 
-    A virtual machine (VM) is a software implementation of a machine
-    (for example, a computer) that executes programs like a physical
-    machine.
+## The JVM as a platform
 
-    ...A *process* virtual machine (also, language virtual machine) is
-    designed to run a single program, which means that it supports a
-    single process. Such virtual machines are usually closely suited
-    to one or more programming languages and built with the purpose of
-    providing program portability and flexibility (amongst other
-    things). An essential characteristic of a virtual machine is that
-    the software running inside is limited to the resources and
-    abstractions provided by the virtual machine—it cannot break out
-    of its virtual environment.
 
-All of this applies to the JVM: it's a software implementation
 
 # Notes
 
