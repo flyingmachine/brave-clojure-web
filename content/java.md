@@ -11,9 +11,9 @@ There comes a day in every Clojurist's life when she must venture
 forth from the sanctuary of pure functions and immutable data
 structures into the wild and barbaric Land of Java. This treacherous
 journey is necessary because Clojure is hosted on the Java Virtual
-Machine (JVM), granting it two fundamental characteristics. First, a
-Clojure application is a Java application when you're compiling and
-running it. Second, you need to use Java objects for core
+Machine (JVM), granting it two fundamental characteristics. First, you
+run Clojure applications the same way you run Java
+applications. Second, you need to use Java objects for core
 functionality like reading files and working with dates. In this way,
 Clojure is a bit like a utopian community plunked down in the middle
 of a non-utopian country. It's preferable to interact with other
@@ -61,36 +61,45 @@ the process:
 3. The computer executes those instructions
 
 The most important thing here is that, ultimately, you have to
-translate programs into the instructions that a CPU will
-understand. The CPU doesn't care what programming language was used to
-produce the instructions, all it cares about is machine instructions.
+translate programs into the instructions that a CPU will understand,
+and the CPU doesn't care what programming language was used to produce
+the instructions.
 
-As a *virtual* machine, the JVM provides an isolated environment that
-acts like a computer but that exists as a process. The JVM provides
-its own instruction set, Java bytecode. Usually, when you compile
-programs you store the result as a JAR (Java archive)
-file. However, just as a CPU doesn't care how machine instructions are
-generated, the JVM doesn't care how bytecode gets created. It doesn't
-care if you used Scala, JRuby, Clojure, or even Java to create Java
-bytecode. A running JVM executes bytecode by translating it on the fly
-into the machine code that its host will understand, a process called
-just-in-time compilation. While a JVM *can* run multiple applications,
-in practice you'll start one JVM process per application in order to
-safely isolate each execution environment. Here's a diagram:
+The JVM is analagous to a CPU in that it also executes low-level
+instructions, called Java bytecode. As a *virtual* machine, though,
+it's implemented as software rather than hardware. A running JVM
+executes bytecode by translating it on the fly into the machine code
+that its host will understand, a process called just-in-time
+compilation.
+
+For a program to run on the JVM, then, it has to get compiled to Java
+bytecode. Usually, when you compile programs you store the result as a
+JAR (Java archive) file. Just as a CPU doesn't care how machine
+instructions are generated, the JVM doesn't care how bytecode gets
+created. It doesn't care if you used Scala, JRuby, Clojure, or even
+Java to create Java bytecode. Here's a diagram:
 
 1. Compile to bytecode
 2. JVM reads bytecode
 3. JVM sends machine instructions
 
-When someone says that Clojure runs on the JVM, then, one of the
-things they mean is that Clojure programs get compiled to Java
-bytecode and JVM processes execute them. This matters for a couple
-reasons.
+So when someone says that Clojure runs on the JVM, one of the things
+they mean is that Clojure programs get compiled to Java bytecode and
+JVM processes execute them. This matters because you treat Clojure
+programs the same as Java programs from an operations perspective. You
+compile them to JAR files and run them using the `java` command. If a
+client needs a program that runs on the JVM, you could secretly write
+it in Clojure instead of Java and they would be none the wiser. Seen
+from the outside, you can't tell the difference between a Java and a
+Clojure program any more than you can tell the difference between a C
+and a C++ program.
 
-First, your Clojure program is a Java program from an operations
-perspective. If your organization only runs Java stuff...
+Let's go ahead and actually create a simple Java program and then take
+a peek at Clojure's Java implementation. This will help you feel much
+more comfortable with the JVM, and it will prepare you for the
+upcoming section on Java interop.
 
-## The JVM as a platform
+# Compiling and Running a Java Program
 
 
 
