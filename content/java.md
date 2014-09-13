@@ -40,8 +40,6 @@ Machine. In the second, it refers to a process, an instance of a
 running program.  Right now, we're only concerned with the JVM model;
 I'll point out when we're talking about running JVM processes.
 
-## Java Bytecode
-
 To understand the Java Virtual Machine, let's first take a step back
 and review how plain-ol' machines (also known as computers) work. Deep
 in the cockles of a computer's heart is its CPU, and the CPU's job is
@@ -94,12 +92,158 @@ from the outside, you can't tell the difference between a Java and a
 Clojure program any more than you can tell the difference between a C
 and a C++ program.
 
+# Compiling and Running a Java Program
+
 Let's go ahead and actually create a simple Java program and then take
 a peek at Clojure's Java implementation. This will help you feel much
 more comfortable with the JVM, and it will prepare you for the
 upcoming section on Java interop.
 
-# Compiling and Running a Java Program
+## Hello World
+
+Go ahead and create new directory called "phrasebook". Within that
+directory, create a file named `PiratePhrases.java`, and write the
+following in it:
+
+```java
+public class PiratePhrases
+{
+    public static void main(String[] args)
+    {
+        System.out.println("Shiver me timbers!!!");
+    }
+}
+```
+
+This defines a very simple program which will print the phrase "Shiver
+me timbers!!!" (which is how pirates say "Hello, world!") to your
+terminal when you run it. Now, in your terminal, compile this source
+code with the command `javac PiratePhrases.java`. If you typed
+everything correctly *and* you're pure of heart, you should see a file
+named `PiratePhrases.class`:
+
+```bash
+$ ls
+PiratePhrases.class PiratePhrases.java
+```
+
+You've just compiled your first Java program, son! Now run it with
+`java PiratePhrases`. You should see:
+
+```
+Shiver me timbers!!!
+```
+
+What's happening here is you used the Java compiler, `javac`, to
+create a Java class file, `PiratePhrases.class`. This file is packed
+with oodles (well, for program this size, maybe only one oodle) of
+Java bytecode.
+
+When you ran `java PiratePhrases`, the JVM first looked on your
+*classpath* for a class named `PiratePhrases`. You can think of the
+classpath as the list of filesystem paths that the JVM will search in
+order to find a file which defines a class.  Also, by default, the
+`classpath` includes the directory `.`, or the current directory. Try
+running `java -classpath /tmp PiratePhrases` and you will get an
+error, even though `PiratePhrases.class` is right there in your
+current directory.
+
+In Java, you're only allowed to have one public class per file and the
+filename and class name must be the same. This is how `java` knows to
+try looking in `PiratePhrases.class` for the ShiverMeTimbers class's
+bytecode. After `java` found the bytecode for the `PiratePhrases`
+class, it executed that class's `main` method. Java's kind of like C
+that way, in that whenever you say "run something, and use this class
+as your entry point", it always will run that class's `main`
+method. Which means that that method has to be `public`, as you can
+see above.
+
+In the next section you'll learn about handling program code that's
+spread over more than one file. If you don't remove your socks now,
+they're liable to get knocked off!
+
+## Packages and Imports
+
+In this section, you'll learn about how Java handles programs which
+are spread over more than one file. You'll also learn how to use Java
+libraries. Once again, we'll look at both compiling and running a
+program. This section has direct implications for Clojure, where
+you'll the same ideas and terminology to interact with Java libraries.
+
+First, a couple definitions:
+
+* **package:** Similar to Clojure's namespaces, packages provide code
+  organization. The directory that a Java file lives in must mirror
+  the package it belongs to. If a file has the line `package
+  com.shapemaster` in it, then it must be located at `com/shapemaster`
+  somewhere on your classpath.
+* **import:** Java allows you to import classes, which basically means
+  that you can refer to them without using their namespace prefix. So,
+  if you have a class in `com.shapemaster` named `Square`, you could
+  write `import com.shapemaster.Square;` or `import com.shapemaster.*;`
+  at the top of a `.java` file so that you can use `Square` in your
+  code instead of `com.shapemaster.Square`. You'll see this
+  illustrated below.
+
+Now it's time to try out `package` and `import`. To start, you'll
+create three files. First, create PirateConversation.java:
+
+```java
+import pirate_phrases.*;
+
+public class PirateConversation
+{
+    public static void main(String[] args)
+    {
+        Greetings greetings = new Greetings();
+        greetings.hello();
+
+        Farewells farewells = new Farewells();
+        farewells.goodbye();
+    }
+}
+```
+
+The first line, `import pirate_phrases.*;`, imports all classes in the
+`pirate_phrases` package, which will contain the `Greetings` and
+`Farewells` classes. Let's create those now. First create the
+directory `pirate_phrases`. Then, create `Greetings.java` within that
+and write the following:
+
+```java
+package pirate_phrases;
+
+public class Greetings
+{
+    public static void hello()
+    {
+        System.out.println("Shiver me timbers!!!");
+    }
+}
+```
+
+Now create `Farewells.java` within the `pirate_phrases` directory:
+
+```java
+package pirate_phrases;
+
+public class Farewells
+{
+    public static void goodbye()
+    {
+        System.out.println("A fair turn of the tide ter ye thar, ye bootlick slimebuckle!");
+    }
+}
+```
+
+If you navigate back to the parent directory of `pirate_phrases` and
+run `javac PiratePhrases.java` followed by `java PiratePhrases`, you
+should see this:
+
+```java
+Shiver me timbers!!!
+A fair turn of the tide ter ye thar, ye bootlick slimebuckle!
+```
 
 
 
