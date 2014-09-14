@@ -90,14 +90,17 @@ client needs a program that runs on the JVM, you could secretly write
 it in Clojure instead of Java and they would be none the wiser. Seen
 from the outside, you can't tell the difference between a Java and a
 Clojure program any more than you can tell the difference between a C
-and a C++ program.
+and a C++ program. Clojure allows you to be productive *and* sneaky.
 
 # Compiling and Running a Java Program
 
-Let's go ahead and actually create a simple Java program and then take
-a peek at Clojure's Java implementation. This will help you feel much
-more comfortable with the JVM, and it will prepare you for the
-upcoming section on Java interop.
+I think it's time to see how all of this works with real code. In this
+section, you'll build a simple pirate phrasebook using Java. This will
+help you feel much more comfortable with the JVM, it will prepare you
+for the upcoming section on Java interop, and it will prove invaluable
+should a scallywag ever attempt to scuttle your booty on the high
+seas. To tie it all together, you'll take a peek at some of Clojure's
+Java implementation.
 
 ## Hello World
 
@@ -142,11 +145,10 @@ Java bytecode.
 When you ran `java PiratePhrases`, the JVM first looked on your
 *classpath* for a class named `PiratePhrases`. You can think of the
 classpath as the list of filesystem paths that the JVM will search in
-order to find a file which defines a class.  Also, by default, the
-`classpath` includes the directory `.`, or the current directory. Try
-running `java -classpath /tmp PiratePhrases` and you will get an
-error, even though `PiratePhrases.class` is right there in your
-current directory.
+order to find a file which defines a class. By default, the classpath
+includes the directory you're in when you run `java`. Try running
+`java -classpath /tmp PiratePhrases` and you will get an error, even
+though `PiratePhrases.class` is right there in your current directory.
 
 In Java, you're only allowed to have one public class per file and the
 filename and class name must be the same. This is how `java` knows to
@@ -206,9 +208,10 @@ public class PirateConversation
 
 The first line, `import pirate_phrases.*;`, imports all classes in the
 `pirate_phrases` package, which will contain the `Greetings` and
-`Farewells` classes. Let's create those now. First create the
-directory `pirate_phrases`. Then, create `Greetings.java` within that
-and write the following:
+`Farewells` classes. Let's create those now. First, create the
+directory `pirate_phrases`. This is needed because Java package names
+correspond to filesystem directories. Then, create `Greetings.java`
+within `pirate_phrases` and write the following:
 
 ```java
 package pirate_phrases;
