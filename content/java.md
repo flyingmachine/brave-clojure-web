@@ -125,7 +125,7 @@ code with the command `javac PiratePhrases.java`. If you typed
 everything correctly *and* you're pure of heart, you should see a file
 named `PiratePhrases.class`:
 
-```bash
+```sh
 $ ls
 PiratePhrases.class PiratePhrases.java
 ```
@@ -248,7 +248,158 @@ Shiver me timbers!!!
 A fair turn of the tide ter ye thar, ye bootlick slimebuckle!
 ```
 
+And thar she blows, dear reader. Thar she blows indeed.
 
+One thing to note is that, when you're compiling a Java program, Java
+searches your classpath for packages. You can see this if you do the
+following:
+
+```java
+cd pirate_phrases
+javac ../PirateConversation.java
+```
+
+Boom! The Java compiler just told you to hang your head in shame, and
+maybe weep a little:
+
+```
+../PirateConversation.java:1: error: package pirate_phrases does not exist
+import pirate_phrases.*;
+^
+```
+
+It thinks that the `pirate_phrases` package doesn't exist. But that's
+stupid, right? I mean, you're in the `pirate_phrases` directory and
+everything!
+
+What's happening here is that the default classpath only includes the
+directory, which in this case is `pirate_phrases`. It's like `javac`
+is trying to find the directory
+`phrasebook/pirate_phrases/pirate_phrases`. Without changing
+directories, try running `javac ../PirateConversation.java -classpath
+../`. Shiver me timbers, it works!
+
+If you feel like breaking things some more, you'll find that moving
+either of the .class files in the `pirate_phrases` directory to
+another directory will also result in a classpath error. 
+
+To sum things up: packages organize code and require a matching
+directory structure. Importing classes allows you to "de-namespace"
+them. `javac` and `java` find packages using the classpath.
+
+## JAR Files
+
+JAR files allow you to bundle all your .class files into one single
+file. Navigate to your `phrasebook` directory and run the following:
+
+```sh
+jar cvfe conversation.jar PirateConversation PirateConversation.class
+pirate_phrases/*.class
+java -jar conversation.jar
+```
+
+This displays the pirate conversation correctly. You bundled all the
+class files into `conversation.jar`. You also indicated that the
+`PirateConversation` class is the "entry point" with the `e` flag. The
+"entry point" is the class that contains the `main` method which
+should be executed when the JAR as a whole is run, and `jar` stores
+this information in the file `META-INF/MANIFEST.MF` within the JAR
+file. If you were to read that file, it would contain this line:
+
+```
+Main-Class: PirateConversation
+```
+
+By the way, when you execute JAR files, you don't have to worry what
+directory you're in in relation to the file. You could change to the
+`pirate_phrases` directory and run `java -jar ../conversation.jar` and
+it would work fine. The reason is that the JAR file maintains the
+directory structure. You can see its contents with `jar tf
+conversation.jar`, which outputs:
+
+```
+META-INF/
+META-INF/MANIFEST.MF
+PirateConversation.class
+pirate_phrases/Farewells.class
+pirate_phrases/Greetings.class
+```
+
+One more fun fact about JARs: they're really just zip files with a
+".jar" extension. You can treat them the same as any other zip file.
+
+## clojure.jar
+
+Let's pull all of this together with some Clojure! Download
+[the 1.6.0 stable release](http://central.maven.org/maven2/org/clojure/clojure/1.6.0/clojure-1.6.0.jar)
+and run it:
+
+```sh
+java -jar clojure-1.6.0.jar
+```
+
+You should see that most soothing of sights, the Clojure REPL. So, how
+did it actually start up? Let's have a look at `META-INF/MANIFEST.MF`
+in the jar file:
+
+```
+Manifest-Version: 1.0
+Archiver-Version: Plexus Archiver
+Created-By: Apache Maven
+Built-By: hudson
+Build-Jdk: 1.6.0_20
+Main-Class: clojure.main
+```
+
+It looks like `clojure.main` is specified as the entry point. Where
+does this class come from? Well, have a look at
+[clojure/main.java on github](https://github.com/clojure/clojure/blob/master/src/jvm/clojure/main.java):
+
+```java
+/**
+ *   Copyright (c) Rich Hickey. All rights reserved.
+ *   The use and distribution terms for this software are covered by the
+ *   Eclipse Public License 1.0 (http://opensource.org/licenses/eclipse-1.0.php)
+ *   which can be found in the file epl-v10.html at the root of this distribution.
+ *   By using this software in any fashion, you are agreeing to be bound by
+ * 	 the terms of this license.
+ *   You must not remove this notice, or any other, from this software.
+ **/
+
+package clojure;
+
+import clojure.lang.Symbol;
+import clojure.lang.Var;
+import clojure.lang.RT;
+
+public class main{
+
+final static private Symbol CLOJURE_MAIN = Symbol.intern("clojure.main");
+final static private Var REQUIRE = RT.var("clojure.core", "require");
+final static private Var LEGACY_REPL = RT.var("clojure.main", "legacy-repl");
+final static private Var LEGACY_SCRIPT = RT.var("clojure.main", "legacy-script");
+final static private Var MAIN = RT.var("clojure.main", "main");
+
+public static void legacy_repl(String[] args) {
+    REQUIRE.invoke(CLOJURE_MAIN);
+    LEGACY_REPL.invoke(RT.seq(args));
+}
+
+public static void legacy_script(String[] args) {
+    REQUIRE.invoke(CLOJURE_MAIN);
+    LEGACY_SCRIPT.invoke(RT.seq(args));
+}
+
+public static void main(String[] args) {
+    REQUIRE.invoke(CLOJURE_MAIN);
+    MAIN.applyTo(RT.seq(args));
+}
+}
+```
+
+As you can see, the class `main` is defined. It belongs to the package
+`clojure` and defines a `public static main` method. This is all Java
+needs to run a program.
 
 # Notes
 

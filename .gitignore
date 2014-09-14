@@ -14,3 +14,4 @@ org/*.md
 quotes.txt
 .nrepl-port
 code/**/*.class
+code/**/*.jar
