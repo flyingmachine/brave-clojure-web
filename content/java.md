@@ -338,9 +338,9 @@ and run it:
 java -jar clojure-1.6.0.jar
 ```
 
-You should see that most soothing of sights, the Clojure REPL. So, how
-did it actually start up? Let's have a look at `META-INF/MANIFEST.MF`
-in the jar file:
+You should see that most soothing of sights, the Clojure REPL. How did
+it actually start up? Let's have a look at `META-INF/MANIFEST.MF` in
+the jar file:
 
 ```
 Manifest-Version: 1.0
@@ -397,9 +397,22 @@ public static void main(String[] args) {
 }
 ```
 
-As you can see, the class `main` is defined. It belongs to the package
-`clojure` and defines a `public static main` method. This is all Java
-needs to run a program.
+As you can see, the file defines a class named `main`. It belongs to
+the package `clojure` and defines a `public static main` method, and
+the JVM is completely happy to use it as an entry point.
+
+Seen this way, Clojure is a JVM program just like any other. This
+isn't meant to be an in-depth Java tutorial, but I hope that it helps
+clear up what's meant when programmers talk about Clojure "running on
+the JVM" or being a "hosted" language. In the next section, you'll be
+treated to more clearings up as you learn about how to use Java
+libraries within your Clojure project.
+
+# Java Interop
+
+Clojure opted for direct interop rather than hiding / using a DSL
+
+
 
 # Notes
 
@@ -408,13 +421,13 @@ needs to run a program.
 * Two perspectives:
     * the java objects perspective
         * Quick Java intro
+        * importing
         * instantiating
         * calling methods 
             * dot op
             * doto
         * class methods
         * navigating documentation
-        * importing
         * commonly used classes
             * File
             * Date
@@ -428,3 +441,5 @@ needs to run a program.
         * compiling to bytecode
         * classpath
         * the ecosystem around java programs
+
+* compiling a clojure program yourself
