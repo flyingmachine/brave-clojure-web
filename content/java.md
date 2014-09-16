@@ -100,7 +100,7 @@ help you feel much more comfortable with the JVM, it will prepare you
 for the upcoming section on Java interop, and it will prove invaluable
 should a scallywag ever attempt to scuttle your booty on the high
 seas. To tie it all together, you'll take a peek at some of Clojure's
-Java implementation.
+Java code.
 
 ## Hello World
 
@@ -120,8 +120,54 @@ public class PiratePhrases
 
 This defines a very simple program which will print the phrase "Shiver
 me timbers!!!" (which is how pirates say "Hello, world!") to your
-terminal when you run it. Now, in your terminal, compile this source
-code with the command `javac PiratePhrases.java`. If you typed
+terminal when you run it. It consists of a class, `PiratePhrases`, and
+a static method belonging to that class, `main`. Static methods are
+essentially class methods.
+
+### Object-Oriented Programming in the World's Tiniest Nutshell
+
+If you're unfamiliar with object-oriented programming, here's the
+two-minute lowdown. The central players in OOP are *classes*,
+*objects*, and *methods*. Let's look at each of these in depth.
+
+I think of objects as really, really, ridiculously dumb
+androids. They're the kind of android that would never inspire moral
+or philosophical debate about the ethics of relegating sentient
+creatures to perpetual servitude. These androids do two things: they
+respond to a commands and they maintian data for me. (In my
+imagination they do this by writing stuff down on little Hello Kitty
+clipboards.) Both the set of commands the android understands and the
+set of data it maintains is determined by the factory that makes the
+android. In this metaphor, commands correspond to methods and the
+factories correspond classes. For example, you might have a
+`ScaryClown` factory producing androids that respond to the command
+`makeBalloonArt`. The android keeps track of the number of balloons it
+has, and it can report that number with the command `balloonCount` and
+receive any number of balloons with `receiveBalloons`. Here's how you
+might interact a Java object representing Belly Rubs the Clown:
+
+```java
+ScaryClown bellyRubsTheClown = new ScaryClown();
+bellyRubsTheClown.balloonCount();
+// => 0
+
+bellyRubsTheClown.receiveBalloons(2);
+bellyRubsTheClown.balloonCount();
+// => 2
+
+bellyRubsTheClown.makeBalloonArt();
+// => "Belly Rubs makes a balloon shaped like a clown, because Belly Rubs
+// => is trying to scare you and nothing is scarier than clowns."
+```
+
+One final aspect of OOP, or at least of Java, is that you can also
+send commands to the factory themselves. In real-life terms, you would
+say that classes also have methods.
+ 
+### Back to the Pirate Example
+
+Back to our example! In your terminal, compile the PiratePhrases
+source code with the command `javac PiratePhrases.java`. If you typed
 everything correctly *and* you're pure of heart, you should see a file
 named `PiratePhrases.class`:
 
@@ -405,14 +451,21 @@ Seen this way, Clojure is a JVM program just like any other. This
 isn't meant to be an in-depth Java tutorial, but I hope that it helps
 clear up what's meant when programmers talk about Clojure "running on
 the JVM" or being a "hosted" language. In the next section, you'll be
-treated to more clearings up as you learn about how to use Java
-libraries within your Clojure project.
+treated to more clearings up as you learn how to use Java libraries
+within your Clojure project.
+
+TODO more detail about the JVM being hosted: GC, threads
+TODO segue into next chapter, implementation in terms of JVM
+abstractions
+TODO mention that leiningen handles building jar files and classpaths
+for you
+TODO mention that you might run into classpath problems and that the
+cp discussion is meant to give you more insight into what's going on
 
 # Java Interop
 
-Clojure opted for direct interop rather than hiding / using a DSL
-
-
+Clojure makes it very easy for you to interact with Java classes and
+objects. 
 
 # Notes
 
