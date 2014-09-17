@@ -130,23 +130,25 @@ essentially class methods.
 
 If you're unfamiliar with object-oriented programming, here's the
 two-minute lowdown. The central players in OOP are *classes*,
-*objects*, and *methods*. Let's look at each of these in depth.
+*objects*, and *methods*.
 
 I think of objects as really, really, ridiculously dumb
 androids. They're the kind of android that would never inspire moral
 or philosophical debate about the ethics of relegating sentient
 creatures to perpetual servitude. These androids do two things: they
-respond to a commands and they maintian data for me. (In my
-imagination they do this by writing stuff down on little Hello Kitty
-clipboards.) Both the set of commands the android understands and the
-set of data it maintains is determined by the factory that makes the
-android. In this metaphor, commands correspond to methods and the
-factories correspond classes. For example, you might have a
-`ScaryClown` factory producing androids that respond to the command
-`makeBalloonArt`. The android keeps track of the number of balloons it
-has, and it can report that number with the command `balloonCount` and
-receive any number of balloons with `receiveBalloons`. Here's how you
-might interact a Java object representing Belly Rubs the Clown:
+respond to commands and they maintian data for me. (In my imagination
+they do this by writing stuff down on little Hello Kitty clipboards.)
+Both the set of commands the android understands and the set of data
+it maintains is determined by the factory that makes the android. In
+this metaphor, commands correspond to methods and the factories
+correspond classes. For example, you might have a `ScaryClown` factory
+producing androids that respond to the command `makeBalloonArt`. The
+android keeps track of the number of balloons it has by writing down
+the number on its clipboard, then erasing that number and writing a
+new one whenever the number of balloons it carries changes. It can
+report that number with the command `balloonCount` and receive any
+number of balloons with `receiveBalloons`. Here's how you might
+interact a Java object representing Belly Rubs the Clown:
 
 ```java
 ScaryClown bellyRubsTheClown = new ScaryClown();
@@ -466,10 +468,58 @@ cp discussion is meant to give you more insight into what's going on
 
 # Java Interop
 
+One of Rich Hickey's design goals for Clojure was to create a
+*practical* language, and for that reason Clojure was designed to make
+it straightforward for you to interact with Java classes and
+objects. That way, you can make use both of Java's extensive native
+functionality and its enormous ecosystem. The ability to use Java
+classes, objects, and methods is called *Java Interop*. In this
+section, you'll learn how to use Clojure' interop syntax, how to
+import Java packages, and how to use the most-frequently used Java
+classes.
 
+## Interop Syntax
 
-Clojure makes it very easy for you to interact with Java classes and
-objects. You're not meant to shy away from using Java.
+Interacting with Java objects and classes is straighforward. Let's
+start with object interop syntax.
+
+You can call methods on an object using `(.methodName object)`. For
+example, since all Clojure strings are implemented as Java strings,
+you can call Java methods on them:
+
+```clojure
+(.toUpperCase "By Bluebeard's bananas!")
+; => "BY BLUEBEARD'S BANANAS!"
+
+(.indexOf "Let's synergize our bleeding edges" "y")
+; => 7
+```
+
+These are equivalent to:
+
+```java
+"By Bluebeard's bananas!".toUpperCase()
+"Let's synergize our bleeding edges".indexOf("y")
+```
+
+Notice that Clojure's syntax allows you to pass arguments to Java
+methods. In the example above, you passed the argument `"y"` to the
+`indexOf` method.
+
+You can also call static methods on classes and access classes' static
+fields. Observe!
+
+```clojure
+(Math/abs -3)
+; => 3
+
+Math/PI
+; => 3.141592653589793
+```
+
+In the first example, you called the `abs` static method on the
+`java.lang.Math` class, and in the second you accessed that class's
+`PI` static field.
 
 # Notes
 
@@ -491,6 +541,7 @@ objects. You're not meant to shy away from using Java.
             * Readers
             * Writers
             * System: getenv, exit, etc
+        * nice clojure interfaces for java libraries
     * the ops perspective
         * what it means to execute a java program (bytecode, jvm)
         * JVM as a platform (lots of library, analogous to GNU on
