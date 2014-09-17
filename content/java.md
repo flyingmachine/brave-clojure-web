@@ -11,14 +11,16 @@ There comes a day in every Clojurist's life when she must venture
 forth from the sanctuary of pure functions and immutable data
 structures into the wild and barbaric Land of Java. This treacherous
 journey is necessary because Clojure is hosted on the Java Virtual
-Machine (JVM), granting it two fundamental characteristics. First, you
-run Clojure applications the same way you run Java
+Machine (JVM), granting it three fundamental characteristics. First,
+you run Clojure applications the same way you run Java
 applications. Second, you need to use Java objects for core
-functionality like reading files and working with dates. In this way,
-Clojure is a bit like a utopian community plunked down in the middle
-of a non-utopian country. It's preferable to interact with other
-utopians, but every once in a while you need to talk to the locals in
-order to get things done.
+functionality like reading files and working with dates. Third, Java
+has a vast and wondrous ecosystem of incredible libraries, and Clojure
+makes it painless for you to use them. In this way, Clojure is a bit
+like a utopian community plunked down in the middle of a non-utopian
+country. It's preferable to interact with other utopians, but every
+once in a while you need to talk to the locals in order to get things
+done.
 
 If this chapter were a guide book for the Land of Java, it'd be
 somewhere between a phrasebook ("Where is the bathroom?") and a
@@ -35,7 +37,7 @@ into your Clojure program.
 Developers use the term "JVM" to refer to a few different
 things. You'll hear them say, "Clojure runs on *the* JVM", and you'll
 also hear "Clojure programs run in *a* JVM". In the first case, "JVM"
-refers to an abstraction - the general movel of the Java Virtual
+refers to an abstraction - the general model of the Java Virtual
 Machine. In the second, it refers to a process, an instance of a
 running program.  Right now, we're only concerned with the JVM model;
 I'll point out when we're talking about running JVM processes.
@@ -464,8 +466,10 @@ cp discussion is meant to give you more insight into what's going on
 
 # Java Interop
 
+
+
 Clojure makes it very easy for you to interact with Java classes and
-objects. 
+objects. You're not meant to shy away from using Java.
 
 # Notes
 
