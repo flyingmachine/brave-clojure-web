@@ -521,6 +521,30 @@ In the first example, you called the `abs` static method on the
 `java.lang.Math` class, and in the second you accessed that class's
 `PI` static field.
 
+All of these examples (except `Math/PI`) use macros which expand to
+use the *dot special form*. In general, you won't need to use the dot
+special form unless you want to write your own macros to interact with
+Java objects and classes. Nevertheless, here is each example followed
+by its macroexpansion:
+
+```clojure
+(macroexpand-1 '(.toUpperCase "By Bluebeard's bananas!"))
+; => (. "By Bluebeard's bananas!" toUpperCase)
+
+(macroexpand-1 '(.indexOf "Let's synergize our bleeding edges" "y"))
+; => (. "Let's synergize our bleeding edges" indexOf "y")
+
+(macroexpand-1 '(Math/abs -3))
+; => (. Math abs -3)
+```
+
+The general form of the dot operator is:
+
+```clojure
+(. object-or-classname-symbol method-or-member-symbol optional-args*)
+```
+
+
 # Notes
 
 * You use local building materials (protocols, interfaces, file and
