@@ -458,14 +458,6 @@ the JVM" or being a "hosted" language. In the next section, you'll be
 treated to more clearings up as you learn how to use Java libraries
 within your Clojure project.
 
-TODO more detail about the JVM being hosted: GC, threads
-TODO segue into next chapter, implementation in terms of JVM
-abstractions
-TODO mention that leiningen handles building jar files and classpaths
-for you
-TODO mention that you might run into classpath problems and that the
-cp discussion is meant to give you more insight into what's going on
-
 # Java Interop
 
 One of Rich Hickey's design goals for Clojure was to create a
@@ -549,7 +541,7 @@ you're interested in exploring it further you can look at
 [clojure.org's documentation on Java interop](http://clojure.org/java_interop#Java
 Interop-The Dot special form).
 
-## Creating and Mutate Instances
+## Creating and Mutating Instances
 
 The previous section showed you how to call methods on objects that
 already exist. This section will show you how to create new objects
@@ -569,11 +561,116 @@ There are two ways to create a new object: `(new ClassName optional-args*)` and
 ; => "To Davey Jones' Locker with ye hardies"
 ```
 
-* new / ClassName.
-* doto
-* set!
+To modify an object, you can just call methods on it like you did in
+the last section. To show this, let's use `java.util.Stack`. This
+class represents a last-in-first-out stack of objects. Here's how you
+might add an object to it:
+
+```clojure
+(java.util.Stack.)
+; => []
+
+(let [stack (java.util.Stack.)]
+  (.push stack "Latest episode of Game of Fancy Chairs, ho!")
+  stack)
+; => ["Latest episode of Game of Fancy Chairs, ho!"]
+```
+
+There are a couple interesting things here. First, you need to create
+a `let` binding for `stack` and add it as the last expression in the
+let form. If you didn't do that, then the value of the overall
+expression would be the string `"Latest episode of Game of Fancy
+Chairs, ho!"`, because that's the return value of `push`, as you can
+see here:
+
+```clojure
+(.push (java.util.Stack.) "Latest episode of Game of Fancy Chairs, ho!")
+; => "Latest episode of Game of Fancy Chairs, ho!"
+```
+
+Second, Clojure prints the stack with square brackets, the same as it
+does a vector. It's not a vector, but it is a seqable data structure:
+
+```clojure
+(let [stack (java.util.Stack.)]
+  (.push stack "Latest episode of Game of Fancy Chairs, ho!")
+  (first stack))
+; => "Latest episode of Game of Fancy Chairs, ho!"
+```
+
+That has nothing to do with mutating Java objects, but it *is* a nice
+example of how Clojure's philosophy of programming to abstractions
+makes your code flexible. Anyway, back to the topic at hand, me
+mateys!
+
+Clojure provides the `doto` macro, which allows you to execute
+multiple methods on the same object more succinctly:
+
+```clojure
+(doto (java.util.Stack.)
+  (.push "Latest episode of Game of Fancy Chairs, ho!")
+  (.push "Whoops, I meant 'Land, ho!'"))
+; => ["Latest episode of Game of Fancy Chairs, ho!" "Whoops, I meant 'Land, ho!'"]
+```
+
+The `doto` macro returns the object itself rather than the return
+value of any of the method calls, and it's easier to understand. If
+you expand it, you can see its structure is identical to the `let`
+expression from a few examples ago:
+
+```clojure
+(macroexpand-1
+ '(doto (java.util.Stack.)
+    (.push "Latest episode of Game of Fancy Chairs, ho!")
+    (.push "Whoops, I meant 'Land, ho!'")))
+; => (clojure.core/let
+; =>  [G__2876 (java.util.Stack.)]
+; =>  (.push G__2876 "Latest episode of Game of Fancy Chairs, ho!")
+; =>  (.push G__2876 "Whoops, I meant 'Land, ho!'")
+; =>  G__2876)
+```
+
+Convenient!
 
 ## Importing
+
+Importing in Clojure has the same effect as it does in Java: you get
+to use classes without having to type out their entire package
+prefix:
+
+```clojure
+(import java.util.Stack)
+(Stack.)
+; => []
+```
+
+You can also import multiple classes at once using the general form
+
+```clojure
+(import [package.name1 ClassName1 ClassName2]
+        [package.name2 ClassName3 ClassName4])
+```
+
+For example:
+
+```clojure
+(import [java.util Date Stack]
+        [java.net Proxy URI])
+
+(Date.)
+; => #inst "2014-09-19T20:40:02.733-00:00"
+```
+
+Usually, though, you'll do all your importing in the `ns` macro, like
+this:
+
+```clojure
+(ns pirate.talk
+  (:import [java.util Date Stack]
+           [java.net Proxy URI]))
+```
+
+And that's how you import classes!
 
 # Common Classes
 
@@ -617,3 +714,12 @@ There are two ways to create a new object: `(new ClassName optional-args*)` and
         * the ecosystem around java programs
 
 * compiling a clojure program yourself
+
+
+TODO more detail about the JVM being hosted: GC, threads
+TODO segue into next chapter, implementation in terms of JVM
+abstractions
+TODO mention that leiningen handles building jar files and classpaths
+for you
+TODO mention that you might run into classpath problems and that the
+cp discussion is meant to give you more insight into what's going on
