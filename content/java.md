@@ -538,12 +538,54 @@ by its macroexpansion:
 ; => (. Math abs -3)
 ```
 
-The general form of the dot operator is:
+You can think of the general form of the dot operator as:
 
 ```clojure
-(. object-or-classname-symbol method-or-member-symbol optional-args*)
+(. object-expr-or-classname-symbol method-or-member-symbol optional-args*)
 ```
 
+There are a few more details to the dot operator than that, and if
+you're interested in exploring it further you can look at
+[clojure.org's documentation on Java interop](http://clojure.org/java_interop#Java
+Interop-The Dot special form).
+
+## Creating and Mutate Instances
+
+The previous section showed you how to call methods on objects that
+already exist. This section will show you how to create new objects
+and how to conveniently mutate them.
+
+There are two ways to create a new object: `(new ClassName optional-args*)` and
+`(ClassName. optional-args*)`:
+
+```clojure
+(String.)
+; => ""
+
+(new String)
+; => ""
+
+(String. "To Davey Jones' Locker with ye hardies")
+; => "To Davey Jones' Locker with ye hardies"
+```
+
+* new / ClassName.
+* doto
+* set!
+
+## Importing
+
+# Common Classes
+
+## System
+
+## Date
+
+## File
+
+## Readers
+
+## Writers
 
 # Notes
 
