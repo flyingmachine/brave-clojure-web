@@ -670,13 +670,80 @@ this:
            [java.net Proxy URI]))
 ```
 
-And that's how you import classes!
+And that's how you import classes! Pretty easy. To make life even
+easier, Clojure automatically imports the classes in `java.lang`,
+including `java.lang.String` and `java.lang.Math`, which is why you
+were able to use `String` and `Math` without a preceding package name.
 
-# Common Classes
+# Commonly Used Java Classes
+
+To round things out, let's take a quick tour of commonly used Java
+classes.
 
 ## System
 
+From the
+[Java 8 API docs](http://docs.oracle.com/javase/8/docs/api/java/lang/System.html):
+
+    The System class contains several useful class fields and
+    methods. It cannot be instantiated.
+    
+    Among the facilities provided by the System class are standard
+    input, standard output, and error output streams; access to
+    externally defined properties and environment variables; a means
+    of loading files and libraries; and a utility method for quickly
+    copying a portion of an array.
+
+The most useful methods and members are `exit`, `getenv`,
+`getProperty`. You might recognize `System/exit` from the
+[Functional Programming chapter](/functional-programming), where you
+used it to exit the Peg Thing game. `System/exit` terminates the
+current program, and you can pass it a status code as an argument. (If
+you're not familiar with status codes, I recommend
+[Wikipedia's "Exit status" article](http://en.wikipedia.org/wiki/Exit_status).
+
+`System/getenv` will return your system's environment variables as a
+map:
+
+```clojure
+(System/getenv)
+{"USER" "the-incredible-bulk"
+ "JAVA_ARCH" "x86_64"}
+```
+
+`System/getProperty` returns a JVM property:
+
+```clojure
+(System/getProperty "user.dir")
+; => "/Users/dabulk/projects/dabook"
+
+(System/getProperty "java.version")
+; => "1.7.0_17"
+```
+
+The first call returned the directory that the JVM was started from,
+and the second of course returned the version of the JVM.
+
 ## Date
+
+I won't go into too much detail about the `java.util.Date` class
+because
+[the online api documentation](http://docs.oracle.com/javase/7/docs/api/java/util/Date.html)
+is already thorough. As a Clojure developer, though, there are three
+things you should know about. First, Clojure allows you to represent
+dates as literals using a form like this:
+
+```clojure
+#inst "2014-09-19T20:40:02.733-00:00"
+```
+
+In fact, you saw that exact date just a few paragraphs ago. Second,
+you need to use the `java.util.DateFormat` class if you want to
+customize how you convert dates to strings or if you want to convert
+strings to dates. Lastly, if you're doing things like comparing dates
+or trying to add minutes, hours, or other units of time to a date,
+then you should use the immensely useful
+[`clj-time`](https://github.com/clj-time/clj-time) library.
 
 ## File
 
