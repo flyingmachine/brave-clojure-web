@@ -43,43 +43,53 @@ I'll point out when we're talking about running JVM processes.
 To understand the Java Virtual Machine, let's first take a step back
 and review how plain-ol' machines (also known as computers) work. Deep
 in the cockles of a computer's heart is its CPU, and the CPU's job is
-to execute operations like "add" and "unsigned multiply". These
-operations are represented in assembly language by mnemonics like
-"ADD" and "MUL". What operations are availabe depends on the CPU
-architecture (x86, ARMv7 and what have you) as part of the
-architecture's *instruction set*.
+to execute operations like "add" and "unsigned multiply". You've
+probably heard about programmers encoding these instructions on punch
+cards or in light bulbs or in the sacred cracks of a tortoise shell
+when thrown into a fire, or *whatever*, but nowadays these operations
+are represented in assembly language by mnemonics like "ADD" and
+"MUL". What operations are availabe depends on the CPU architecture
+(x86, ARMv7 and what have you) as part of the architecture's
+*instruction set*.
 
 Because it's no fun to program in assembly language, we humans have
 invented higher-level languages like C and C++, which get compiled
-into the instructions that a CPU will understand. Here's a diagram of
-the process:
+into the instructions that a CPU will understand. Broadly speaking,
+the process is:
 
 1. Compiler reads source code.
-2. Compiler outputs a file containing CPU instructions
-3. The computer executes those instructions
+2. Compiler outputs a file containing machine instructions
+3. The CPU executes those instructions
+
+![compilation](images/java/compilation.png)
 
 The most important thing here is that, ultimately, you have to
 translate programs into the instructions that a CPU will understand,
 and the CPU doesn't care what programming language was used to produce
 the instructions.
 
-The JVM is analagous to a CPU in that it also executes low-level
+The JVM is analagous to a computer in that it also executes low-level
 instructions, called Java bytecode. As a *virtual* machine, though,
 it's implemented as software rather than hardware. A running JVM
 executes bytecode by translating it on the fly into the machine code
 that its host will understand, a process called just-in-time
-compilation.
+compilation. (The JVM is like a computer in other ways, too. For
+example, it implements its own memory model. Those details are too
+advanced for this book, though.)
 
 For a program to run on the JVM, then, it has to get compiled to Java
 bytecode. Usually, when you compile programs you store the result as a
 JAR (Java archive) file. Just as a CPU doesn't care how machine
 instructions are generated, the JVM doesn't care how bytecode gets
 created. It doesn't care if you used Scala, JRuby, Clojure, or even
-Java to create Java bytecode. Here's a diagram:
+Java to create Java bytecode. Broadly speaking, the process is:
 
-1. Compile to bytecode
-2. JVM reads bytecode
-3. JVM sends machine instructions
+1. Java compiler reads source code
+1. Compiler outputes bytecode, often to a JAR file
+2. JVM executes bytecode
+3. JVM sends machine instructions to the CPU
+
+![java compilation](images/java/java-compilation.png)
 
 So when someone says that Clojure runs on the JVM, one of the things
 they mean is that Clojure programs get compiled to Java bytecode and
