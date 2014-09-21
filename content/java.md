@@ -29,7 +29,7 @@ and methods and explain how to interact with them from Clojure. More
 than that, it will show you how to think about and understand Java so
 that you can incorporate any Java library into your Clojure program.
 
-# The JVM
+## The JVM
 
 Developers use the term "JVM" to refer to a few different
 things. You'll hear them say, "Clojure runs on *the* JVM", and you'll
@@ -102,7 +102,7 @@ from the outside, you can't tell the difference between a Java and a
 Clojure program any more than you can tell the difference between a C
 and a C++ program. Clojure allows you to be productive *and* sneaky.
 
-# Compiling and Running a Java Program
+## Compiling and Running a Java Program
 
 I think it's time to see how all of this works with real code. In this
 section, you'll build a simple pirate phrasebook using Java. This will
@@ -112,7 +112,7 @@ should a scallywag ever attempt to scuttle your booty on the high
 seas. To tie it all together, you'll take a peek at some of Clojure's
 Java code.
 
-## Hello World
+### Hello World
 
 Go ahead and create new directory called "phrasebook". Within that
 directory, create a file named `PiratePhrases.java`, and write the
@@ -134,7 +134,7 @@ terminal when you run it. It consists of a class, `PiratePhrases`, and
 a static method belonging to that class, `main`. Static methods are
 essentially class methods.
 
-### Object-Oriented Programming in the World's Tiniest Nutshell
+#### Object-Oriented Programming in the World's Tiniest Nutshell
 
 If you're unfamiliar with object-oriented programming, here's the
 two-minute lowdown. The central players in OOP are *classes*,
@@ -191,7 +191,7 @@ Math.abs(-50)
 // => -50
 ```
  
-### Back to the Pirate Example
+#### Back to the Pirate Example
 
 Back to our example! In your terminal, compile the PiratePhrases
 source code with the command `javac PiratePhrases.java`. If you typed
@@ -240,7 +240,7 @@ In the next section you'll learn about handling program code that's
 spread over more than one file. If you don't remove your socks now,
 they're liable to get knocked off!
 
-## Packages and Imports
+### Packages and Imports
 
 In this section, you'll learn about how Java handles programs which
 are spread over more than one file and you'll learn how to use Java
@@ -362,7 +362,7 @@ To sum things up: packages organize code and require a matching
 directory structure. Importing classes allows you to "de-namespace"
 them. `javac` and `java` find packages using the classpath.
 
-## JAR Files
+### JAR Files
 
 JAR files allow you to bundle all your .class files into one single
 file. Navigate to your `phrasebook` directory and run the following:
@@ -403,7 +403,7 @@ pirate_phrases/Greetings.class
 One more fun fact about JARs: they're really just zip files with a
 ".jar" extension. You can treat them the same as any other zip file.
 
-## clojure.jar
+### clojure.jar
 
 Now you're ready to get a peek at how Clojure works under the hood!
 Download
@@ -484,7 +484,7 @@ helps clear up what's meant when programmers talk about Clojure
 section, you'll be treated to more clearings up as you learn how to
 use Java libraries within your Clojure project.
 
-# Java Interop
+## Java Interop
 
 One of Rich Hickey's design goals for Clojure was to create a
 *practical* language, and for that reason Clojure was designed to make
@@ -496,7 +496,7 @@ section, you'll learn how to use Clojure' interop syntax, how to
 import Java packages, and how to use the most-frequently used Java
 classes.
 
-## Interop Syntax
+### Interop Syntax
 
 Interacting with Java objects and classes is straighforward. Let's
 start with object interop syntax.
@@ -567,7 +567,7 @@ you're interested in exploring it further you can look at
 [clojure.org's documentation on Java interop](http://clojure.org/java_interop#Java
 Interop-The Dot special form).
 
-## Creating and Mutating Instances
+### Creating and Mutating Instances
 
 The previous section showed you how to call methods on objects that
 already exist. This section will show you how to create new objects
@@ -660,7 +660,7 @@ expression from a few examples ago:
 
 Convenient!
 
-## Importing
+### Importing
 
 Importing in Clojure has the same effect as it does in Java: you get
 to use classes without having to type out their entire package
@@ -703,12 +703,12 @@ easier, Clojure automatically imports the classes in `java.lang`,
 including `java.lang.String` and `java.lang.Math`, which is why you
 were able to use `String` without a preceding package name.
 
-# Commonly Used Java Classes
+## Commonly Used Java Classes
 
 To round things out, let's take a quick tour of the Java classes that
 you're most likely to use.
 
-## System
+### System
 
 From the
 [Java 8 API docs](http://docs.oracle.com/javase/8/docs/api/java/lang/System.html):
@@ -752,7 +752,7 @@ map:
 The first call returned the directory that the JVM was started from,
 and the second of course returned the version of the JVM.
 
-## Date
+### Date
 
 Java has good tools for working with dates. I won't go into too much
 detail about the `java.util.Date` class because
@@ -773,7 +773,7 @@ or trying to add minutes, hours, or other units of time to a date,
 then you should use the immensely useful
 [`clj-time`](https://github.com/clj-time/clj-time) library.
 
-## Files and IO
+### Files and IO
 
 In this section, you'll learn about Java's approach to IO and you'll
 learn how Clojure simplifies it. The
@@ -882,7 +882,7 @@ docs, the
 docs, or the
 [java.io package](http://docs.oracle.com/javase/7/docs/api/java/io/package-summary.html) docs.
 
-# Summary
+## Summary
 
 In this chapter, you learned what it means for Clojure to be hosted on
 the JVM. Clojure programs get compiled to Java bytecode and executed
@@ -890,7 +890,7 @@ within a JVM process. Clojure programs also have access to Java
 libraries, and you can easily interact with them using Clojure's
 interop facilities.
 
-# Resources
+## Resources
 
 * [The Java Virtual Machine and Compilers Explained](https://www.youtube.com/watch?v=XjNwyXx2os8)
 * [clojure.java.io](https://clojure.github.io/clojure/clojure.java.io-api.html)
