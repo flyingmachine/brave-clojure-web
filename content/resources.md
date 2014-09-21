@@ -25,3 +25,9 @@ Here are some super spiffy online resources:
 
 * [Clojure Cheat Sheet](http://clojure.org/cheatsheet)
 * [ClojureBridge Community Docs](http://clojurebridge.github.io/community-docs/)
+
+## Community
+
+* [r/clojure on reddit](http://www.reddit.com/r/clojure)
+* [google plus](https://plus.google.com/communities/103410768849046117338)
+* [clojure.org list of community links](http://clojure.org/community)

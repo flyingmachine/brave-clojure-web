@@ -22,15 +22,13 @@ country. It's preferable to interact with other utopians, but every
 once in a while you need to talk to the locals in order to get things
 done.
 
-If this chapter were a guide book for the Land of Java, it'd be
-somewhere between a phrasebook ("Where is the bathroom?") and a
-full-blown course on the local language and customs. It will give you
-an overview of what the JVM is, how it runs programs, and how to
-compile programs for it. It will also give you a tour of
-frequently-used Java classes and methods and explain how to interact
-with them from Clojure. More than that, it will show you how to think
-about and understand Java so that you can incorporate any Java library
-into your Clojure program.
+This chapter is like a cross between a phrasebook and cultural
+introduction for the Land of Java. It will give you an overview of
+what the JVM is, how it runs programs, and how to compile programs for
+it. It will also give you a brief tour of frequently-used Java classes
+and methods and explain how to interact with them from Clojure. More
+than that, it will show you how to think about and understand Java so
+that you can incorporate any Java library into your Clojure program.
 
 # The JVM
 
@@ -164,9 +162,24 @@ bellyRubsTheClown.makeBalloonArt();
 // => is trying to scare you and nothing is scarier than clowns."
 ```
 
+This example shows to create a new object, `bellyRubsTheClown`, using
+the `ScaryClown` class. It also shows how to call methods on the
+object (`balloonCount`, `receiveBalloons`, and `makeBalloonArt`),
+presumably so that you can terrify children. A cynical person might
+say that Java in itself is enough to terrify children, and if you find
+such a person I recommend making them a balloon art Xanax to help with
+their anxiety.
+
 One final aspect of OOP, or at least of Java, is that you can also
 send commands to the factory themselves. In real-life terms, you would
-say that classes also have methods.
+say that classes also have methods. For example, the built-in class
+`Math` has many class methods, including `Math.abs`, which returns the
+absolute value of a number:
+
+```clojure
+Math.abs(-50)
+// => -50
+```
  
 ### Back to the Pirate Example
 
@@ -234,8 +247,7 @@ First, a couple definitions:
   if you have a class in `com.shapemaster` named `Square`, you could
   write `import com.shapemaster.Square;` or `import com.shapemaster.*;`
   at the top of a `.java` file so that you can use `Square` in your
-  code instead of `com.shapemaster.Square`. You'll see this
-  illustrated below.
+  code instead of `com.shapemaster.Square`.
 
 Now it's time to try out `package` and `import`. To start, you'll
 create three files. First, create PirateConversation.java:
@@ -677,8 +689,8 @@ were able to use `String` and `Math` without a preceding package name.
 
 # Commonly Used Java Classes
 
-To round things out, let's take a quick tour of commonly used Java
-classes.
+To round things out, let's take a quick tour of the Java classes that
+you're most likely to use.
 
 ## System
 
@@ -726,8 +738,8 @@ and the second of course returned the version of the JVM.
 
 ## Date
 
-I won't go into too much detail about the `java.util.Date` class
-because
+Java has good tools for working with dates. I won't go into too much
+detail about the `java.util.Date` class because
 [the online api documentation](http://docs.oracle.com/javase/7/docs/api/java/util/Date.html)
 is already thorough. As a Clojure developer, though, there are three
 things you should know about. First, Clojure allows you to represent
@@ -745,48 +757,126 @@ or trying to add minutes, hours, or other units of time to a date,
 then you should use the immensely useful
 [`clj-time`](https://github.com/clj-time/clj-time) library.
 
-## File
+## Files and IO
 
-## Readers
+In this section, you'll learn about Java's approach to IO and you'll
+learn how Clojure simplifies it. The
+[`clojure.java.io`](https://clojure.github.io/clojure/clojure.java.io-api.html)
+namespace provides many handy functions for simplifying IO. This is
+great because Java IO isn't exactly straightforward. Since you'll
+probably want to perform IO at some point during your programming
+career, let's start wrapping our mind tentacles around it.
 
-## Writers
+Input/output involves *resources*, be they files, sockets, buffers, or
+whatever. Java has separate classes for reading a resource's
+contents, writings its contents, and for interacting with the
+resource's properties.
 
-# Notes
+For example, the `java.io.File` class is used to interact with a
+file's properties. Among other things, you can use it to check whether
+a file exists, to get the file's read/write/execute permissions, and
+to get its filesystem path:
 
-* You use local building materials (protocols, interfaces, file and
-  date objs, compiling, exec jar file)
-* Two perspectives:
-    * the java objects perspective
-        * Quick Java intro
-        * importing
-        * instantiating
-        * calling methods 
-            * dot op
-            * doto
-        * class methods
-        * navigating documentation
-        * commonly used classes
-            * File
-            * Date
-            * Readers
-            * Writers
-            * System: getenv, exit, etc
-        * nice clojure interfaces for java libraries
-    * the ops perspective
-        * what it means to execute a java program (bytecode, jvm)
-        * JVM as a platform (lots of library, analogous to GNU on
-          linux)
-        * compiling to bytecode
-        * classpath
-        * the ecosystem around java programs
+```clojure
+(let [file (java.io.File. "/")]
+  (println (.exists file))
+  (println (.canWrite file))
+  (println (.getPath file)))
+; => true
+; => false
+; => /
+```
 
-* compiling a clojure program yourself
+Noticeably missing from this list of capabilities are reading and
+writing. To read a file, you could use the `java.io.BufferedReader`
+class or perhaps `java.io.FileReader`. Likewise, you can use the
+`java.io.BufferedWriter` or `java.io.FileWriter` class for writing.
+There are other classes available for reading and writing as well, and
+which one you choose depends on your specific needs. Reader and Writer
+classes all have the same base set of methods for their interfaces;
+readers implement `read`, `close`, and more, while writers implement
+`append`, `write`, `close`, and `flush`. So, Java gives you a variety
+of tools for performing IO. A cynical person might say that Java gives
+you enough rope to hang yourself, and if you find such a person I hope
+you give them just enough arms to hug them.
 
+Either way, Clojure makes things easier for you. First, there's `spit`
+and `slurp`. Spit writes to a resource, and slurp reads from
+one. Here's an example of using them to write and read a file:
 
-TODO more detail about the JVM being hosted: GC, threads
-TODO segue into next chapter, implementation in terms of JVM
-abstractions
-TODO mention that leiningen handles building jar files and classpaths
-for you
-TODO mention that you might run into classpath problems and that the
-cp discussion is meant to give you more insight into what's going on
+```clojure
+(spit "/tmp/hercules-todo-list"
+"- kill dat lion brov
+- chop up what nasty snake thing")
+
+(slurp "/tmp/hercules-todo-list")
+
+; => "- kill dat lion brov
+; =>  - chop up what nasty snake thing"
+```
+
+You can also use these functions with objects representing resources
+other than files. The next example uses a `StringWriter`, which allows
+you to perform IO operations on a string:
+
+```clojure
+(let [s (java.io.StringWriter.)]
+  (spit s "- capture cerynian hind like for real")
+  (.toString s))
+; => "- capture cerynian hind like for real"
+```
+
+Naturally, you can also read from a `StringReader` with `slurp`:
+
+```clojure
+(let [s (java.io.StringReader. "- get erymanthian pig what with the tusks")]
+  (slurp s))
+; => "- get erymanthian pig what with the tusks"
+```
+
+Of course, you can also use the `read` and `write` methods for
+resources. It doesn't really make much of a difference which you use;
+`spit` and `slurp` are often convenient because they work with just a
+string representing a filesystem path or a URL.
+
+The `with-open` macro is another convenience: it implicitly closes a
+resource at the end of its body. There's also the `reader` function, a
+nice utility which, according to the `clojure.java.io` api docs,
+"attempts to coerce its argument to an open `java.io.Reader`." This is
+convenient when you don't want to use `slurp` because you don't want
+to try to read a resource in its entirety, and you don't want to
+figure out which Java class you need to use. You could use it along
+with `with-open` and the `line-seq` function if you're trying to read
+a file one line at a time:
+
+```clojure
+(with-open [todo-list-rdr (clojure.java.io/reader "/tmp/hercules-todo-list")]
+  (doseq [todo (line-seq todo-list-rdr)]
+    (println todo)))
+; => - kill dat lion
+; => - chop up nasty snake thing
+```
+
+That should be enough for you to get started with IO in Clojure. If
+you're trying to do something more sophisticated, definitely take a
+look at the
+[`clojure.java.io`](https://clojure.github.io/clojure/clojure.java.io-api.html)
+docs, the
+[java.nio.file package](http://docs.oracle.com/javase/7/docs/api/java/nio/file/package-summary.html)
+docs, or the
+[java.io package](http://docs.oracle.com/javase/7/docs/api/java/io/package-summary.html) docs.
+
+# Summary
+
+In this chapter, you learned what it means for Clojure to be hosted on
+the JVM. Clojure programs get compiled to Java bytecode and executed
+within a JVM process. Clojure programs also have access to Java
+libraries, and you can easily interact with them using Clojure's
+interop facilities.
+
+# Resources
+
+* [The Java Virtual Machine and Compilers Explained](https://www.youtube.com/watch?v=XjNwyXx2os8)
+* [clojure.java.io](https://clojure.github.io/clojure/clojure.java.io-api.html)
+* [clojure.org Java interop documentation](http://clojure.org/java_interop)
+* 

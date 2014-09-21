@@ -1201,7 +1201,7 @@ now, we only care about running the above code in the REPL. Try
 this out in your REPL:
 
 ```clojure
-;; slup reads a file
+;; slurp reads a file
 (mapify (parse (slurp filename)))
 ```
 
