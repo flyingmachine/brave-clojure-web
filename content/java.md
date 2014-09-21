@@ -78,11 +78,12 @@ example, it implements its own memory model. Those details are too
 advanced for this book, though.)
 
 For a program to run on the JVM, then, it has to get compiled to Java
-bytecode. Usually, when you compile programs you store the result as a
-JAR (Java archive) file. Just as a CPU doesn't care how machine
-instructions are generated, the JVM doesn't care how bytecode gets
-created. It doesn't care if you used Scala, JRuby, Clojure, or even
-Java to create Java bytecode. Broadly speaking, the process is:
+bytecode. Usually, when you compile programs the result is a ".class"
+file. Then you'll often package these files in JAR (Java archive)
+files. And just as a CPU doesn't care how machine instructions are
+generated, the JVM doesn't care how bytecode gets created. It doesn't
+care if you used Scala, JRuby, Clojure, or even Java to create Java
+bytecode. Broadly speaking, the process is:
 
 1. Java compiler reads source code
 1. Compiler outputes bytecode, often to a JAR file
@@ -141,22 +142,22 @@ two-minute lowdown. The central players in OOP are *classes*,
 *objects*, and *methods*.
 
 I think of objects as really, really, ridiculously dumb
-androids. They're the kind of android that would never inspire moral
-or philosophical debate about the ethics of relegating sentient
-creatures to perpetual servitude. These androids do two things: they
-respond to commands and they maintian data for me. (In my imagination
-they do this by writing stuff down on little Hello Kitty clipboards.)
-Both the set of commands the android understands and the set of data
-it maintains is determined by the factory that makes the android. In
-this metaphor, commands correspond to methods and the factories
-correspond classes. For example, you might have a `ScaryClown` factory
-producing androids that respond to the command `makeBalloonArt`. The
-android keeps track of the number of balloons it has by writing down
-the number on its clipboard, then erasing that number and writing a
-new one whenever the number of balloons it carries changes. It can
-report that number with the command `balloonCount` and receive any
-number of balloons with `receiveBalloons`. Here's how you might
-interact a Java object representing Belly Rubs the Clown:
+androids. They're the kind of android that would never inspire
+philosophical debate about the ethics of relegating sentient creatures
+to perpetual servitude. These androids do two things: they respond to
+commands and they maintian data for me. (In my imagination they do
+this by writing stuff down on little Hello Kitty clipboards.)  Both
+the set of commands the android understands and the set of data it
+maintains is determined by the factory that makes the android. In this
+metaphor, commands correspond to methods and the factories correspond
+classes. For example, you might have a `ScaryClown` factory producing
+androids that respond to the command `makeBalloonArt`. The android
+keeps track of the number of balloons it has by writing down the
+number on its clipboard, then erasing that number and writing a new
+one whenever the number of balloons it carries changes. It can report
+that number with the command `balloonCount` and receive any number of
+balloons with `receiveBalloons`. Here's how you might interact a Java
+object representing Belly Rubs the Clown:
 
 ```java
 ScaryClown bellyRubsTheClown = new ScaryClown();
@@ -177,8 +178,8 @@ the `ScaryClown` class. It also shows how to call methods on the
 object (`balloonCount`, `receiveBalloons`, and `makeBalloonArt`),
 presumably so that you can terrify children. A cynical person might
 say that Java in itself is enough to terrify children, and if you find
-such a person I recommend making them a balloon art Xanax to help with
-their anxiety.
+such a person I recommend making two balloon art arms and hugging them
+with them.
 
 One final aspect of OOP, or at least of Java, is that you can also
 send commands to the factory themselves. In real-life terms, you would
