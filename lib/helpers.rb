@@ -12,6 +12,7 @@ CHAPTER_IDS_ORDERED = %w{
   read-and-eval
   writing-macros
   concurrency
+  java
   upcoming
   resources
   debugging

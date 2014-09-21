@@ -2,10 +2,9 @@
 title: All the Java You Need
 link_title: All the Java You Need
 kind: documentation
-draft: true
 ---
 
-# All the Java You Need
+# All the Java You Need (to get started)
 
 There comes a day in every Clojurist's life when she must venture
 forth from the sanctuary of pure functions and immutable data
@@ -222,11 +221,14 @@ classpath as the list of filesystem paths that the JVM will search in
 order to find a file which defines a class. By default, the classpath
 includes the directory you're in when you run `java`. Try running
 `java -classpath /tmp PiratePhrases` and you will get an error, even
-though `PiratePhrases.class` is right there in your current directory.
+though `PiratePhrases.class` is right there in your current
+directory. You can have multiple paths on your classpath by separating
+them with colons. For example, the classpath `/tmp:/var/maven:.`
+includes the `/tmp`, `/var/maven`, and `.` directories.
 
 In Java, you're only allowed to have one public class per file and the
 filename and class name must be the same. This is how `java` knows to
-try looking in `PiratePhrases.class` for the ShiverMeTimbers class's
+try looking in `PiratePhrases.class` for the PiratePhrases class's
 bytecode. After `java` found the bytecode for the `PiratePhrases`
 class, it executed that class's `main` method. Java's kind of like C
 that way, in that whenever you say "run something, and use this class
@@ -241,7 +243,7 @@ they're liable to get knocked off!
 ## Packages and Imports
 
 In this section, you'll learn about how Java handles programs which
-are spread over more than one file. You'll also learn how to use Java
+are spread over more than one file and you'll learn how to use Java
 libraries. Once again, we'll look at both compiling and running a
 program. This section has direct implications for Clojure, where
 you'll the same ideas and terminology to interact with Java libraries.
@@ -307,7 +309,7 @@ public class Farewells
 {
     public static void goodbye()
     {
-        System.out.println("A fair turn of the tide ter ye thar, ye bootlick slimebuckle!");
+        System.out.println("A fair turn of the tide ter ye thar, ye magnificent sea friend!!");
     }
 }
 ```
@@ -316,9 +318,9 @@ If you navigate back to the parent directory of `pirate_phrases` and
 run `javac PiratePhrases.java` followed by `java PiratePhrases`, you
 should see this:
 
-```java
+```
 Shiver me timbers!!!
-A fair turn of the tide ter ye thar, ye bootlick slimebuckle!
+A fair turn of the tide ter ye thar, ye magnificent sea friend!!
 ```
 
 And thar she blows, dear reader. Thar she blows indeed.
@@ -327,7 +329,7 @@ One thing to note is that, when you're compiling a Java program, Java
 searches your classpath for packages. You can see this if you do the
 following:
 
-```java
+```sh
 cd pirate_phrases
 javac ../PirateConversation.java
 ```
@@ -403,7 +405,8 @@ One more fun fact about JARs: they're really just zip files with a
 
 ## clojure.jar
 
-Let's pull all of this together with some Clojure! Download
+Now you're ready to get a peek at how Clojure works under the hood!
+Download
 [the 1.6.0 stable release](http://central.maven.org/maven2/org/clojure/clojure/1.6.0/clojure-1.6.0.jar)
 and run it:
 
@@ -472,21 +475,21 @@ public static void main(String[] args) {
 
 As you can see, the file defines a class named `main`. It belongs to
 the package `clojure` and defines a `public static main` method, and
-the JVM is completely happy to use it as an entry point.
+the JVM is completely happy to use it as an entry point. Seen this
+way, Clojure is a JVM program just like any other.
 
-Seen this way, Clojure is a JVM program just like any other. This
-isn't meant to be an in-depth Java tutorial, but I hope that it helps
-clear up what's meant when programmers talk about Clojure "running on
-the JVM" or being a "hosted" language. In the next section, you'll be
-treated to more clearings up as you learn how to use Java libraries
-within your Clojure project.
+This isn't meant to be an in-depth Java tutorial, but I hope that it
+helps clear up what's meant when programmers talk about Clojure
+"running on the JVM" or being a "hosted" language. In the next
+section, you'll be treated to more clearings up as you learn how to
+use Java libraries within your Clojure project.
 
 # Java Interop
 
 One of Rich Hickey's design goals for Clojure was to create a
 *practical* language, and for that reason Clojure was designed to make
 it straightforward for you to interact with Java classes and
-objects. That way, you can make use both of Java's extensive native
+objects. That way, you can make use both Java's extensive native
 functionality and its enormous ecosystem. The ability to use Java
 classes, objects, and methods is called *Java Interop*. In this
 section, you'll learn how to use Clojure' interop syntax, how to
@@ -510,7 +513,7 @@ you can call Java methods on them:
 ; => 7
 ```
 
-These are equivalent to:
+These are equivalent to the following Java:
 
 ```java
 "By Bluebeard's bananas!".toUpperCase()
@@ -525,10 +528,10 @@ You can also call static methods on classes and access classes' static
 fields. Observe!
 
 ```clojure
-(Math/abs -3)
+(java.lang.Math/abs -3)
 ; => 3
 
-Math/PI
+java.lang.Math/PI
 ; => 3.141592653589793
 ```
 
@@ -536,11 +539,11 @@ In the first example, you called the `abs` static method on the
 `java.lang.Math` class, and in the second you accessed that class's
 `PI` static field.
 
-All of these examples (except `Math/PI`) use macros which expand to
-use the *dot special form*. In general, you won't need to use the dot
-special form unless you want to write your own macros to interact with
-Java objects and classes. Nevertheless, here is each example followed
-by its macroexpansion:
+All of these examples (except `java.lang.Math/PI`) use macros which
+expand to use the *dot special form*. In general, you won't need to
+use the dot special form unless you want to write your own macros to
+interact with Java objects and classes. Nevertheless, here is each
+example followed by its macroexpansion:
 
 ```clojure
 (macroexpand-1 '(.toUpperCase "By Bluebeard's bananas!"))
@@ -574,15 +577,17 @@ There are two ways to create a new object: `(new ClassName optional-args*)` and
 `(ClassName. optional-args*)`:
 
 ```clojure
-(String.)
+(new String)
 ; => ""
 
-(new String)
+(String.)
 ; => ""
 
 (String. "To Davey Jones' Locker with ye hardies")
 ; => "To Davey Jones' Locker with ye hardies"
 ```
+
+Most people use the dot version, `(ClassName.)`.
 
 To modify an object, you can just call methods on it like you did in
 the last section. To show this, let's use `java.util.Stack`. This
@@ -594,9 +599,9 @@ might add an object to it:
 ; => []
 
 (let [stack (java.util.Stack.)]
-  (.push stack "Latest episode of Game of Fancy Chairs, ho!")
+  (.push stack "Latest episode of Game of Thrones, ho!")
   stack)
-; => ["Latest episode of Game of Fancy Chairs, ho!"]
+; => ["Latest episode of Game of Thrones, ho!"]
 ```
 
 There are a couple interesting things here. First, you need to create
@@ -607,8 +612,8 @@ Chairs, ho!"`, because that's the return value of `push`, as you can
 see here:
 
 ```clojure
-(.push (java.util.Stack.) "Latest episode of Game of Fancy Chairs, ho!")
-; => "Latest episode of Game of Fancy Chairs, ho!"
+(.push (java.util.Stack.) "Latest episode of Game of Thrones, ho!")
+; => "Latest episode of Game of Thrones, ho!"
 ```
 
 Second, Clojure prints the stack with square brackets, the same as it
@@ -616,9 +621,9 @@ does a vector. It's not a vector, but it is a seqable data structure:
 
 ```clojure
 (let [stack (java.util.Stack.)]
-  (.push stack "Latest episode of Game of Fancy Chairs, ho!")
+  (.push stack "Latest episode of Game of Thrones, ho!")
   (first stack))
-; => "Latest episode of Game of Fancy Chairs, ho!"
+; => "Latest episode of Game of Thrones, ho!"
 ```
 
 That has nothing to do with mutating Java objects, but it *is* a nice
@@ -631,9 +636,9 @@ multiple methods on the same object more succinctly:
 
 ```clojure
 (doto (java.util.Stack.)
-  (.push "Latest episode of Game of Fancy Chairs, ho!")
+  (.push "Latest episode of Game of Thrones, ho!")
   (.push "Whoops, I meant 'Land, ho!'"))
-; => ["Latest episode of Game of Fancy Chairs, ho!" "Whoops, I meant 'Land, ho!'"]
+; => ["Latest episode of Game of Thrones, ho!" "Whoops, I meant 'Land, ho!'"]
 ```
 
 The `doto` macro returns the object itself rather than the return
@@ -644,11 +649,11 @@ expression from a few examples ago:
 ```clojure
 (macroexpand-1
  '(doto (java.util.Stack.)
-    (.push "Latest episode of Game of Fancy Chairs, ho!")
+    (.push "Latest episode of Game of Thrones, ho!")
     (.push "Whoops, I meant 'Land, ho!'")))
 ; => (clojure.core/let
 ; =>  [G__2876 (java.util.Stack.)]
-; =>  (.push G__2876 "Latest episode of Game of Fancy Chairs, ho!")
+; =>  (.push G__2876 "Latest episode of Game of Thrones, ho!")
 ; =>  (.push G__2876 "Whoops, I meant 'Land, ho!'")
 ; =>  G__2876)
 ```
@@ -667,7 +672,7 @@ prefix:
 ; => []
 ```
 
-You can also import multiple classes at once using the general form
+You can also import multiple classes at once using this general form:
 
 ```clojure
 (import [package.name1 ClassName1 ClassName2]
@@ -696,7 +701,7 @@ this:
 And that's how you import classes! Pretty easy. To make life even
 easier, Clojure automatically imports the classes in `java.lang`,
 including `java.lang.String` and `java.lang.Math`, which is why you
-were able to use `String` and `Math` without a preceding package name.
+were able to use `String` without a preceding package name.
 
 # Commonly Used Java Classes
 
@@ -778,7 +783,7 @@ great because Java IO isn't exactly straightforward. Since you'll
 probably want to perform IO at some point during your programming
 career, let's start wrapping our mind tentacles around it.
 
-Input/output involves *resources*, be they files, sockets, buffers, or
+Input/output involves resources, be they files, sockets, buffers, or
 whatever. Java has separate classes for reading a resource's
 contents, writings its contents, and for interacting with the
 resource's properties.
@@ -818,12 +823,12 @@ one. Here's an example of using them to write and read a file:
 ```clojure
 (spit "/tmp/hercules-todo-list"
 "- kill dat lion brov
-- chop up what nasty snake thing")
+- chop up what nasty multi-headed snake thing")
 
 (slurp "/tmp/hercules-todo-list")
 
 ; => "- kill dat lion brov
-; =>  - chop up what nasty snake thing"
+; =>  - chop up what nasty multi-headed snake thing"
 ```
 
 You can also use these functions with objects representing resources
@@ -890,4 +895,4 @@ interop facilities.
 * [The Java Virtual Machine and Compilers Explained](https://www.youtube.com/watch?v=XjNwyXx2os8)
 * [clojure.java.io](https://clojure.github.io/clojure/clojure.java.io-api.html)
 * [clojure.org Java interop documentation](http://clojure.org/java_interop)
-* 
+* [Wikipedia's "Exit status" article](http://en.wikipedia.org/wiki/Exit_status).
