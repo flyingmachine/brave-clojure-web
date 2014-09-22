@@ -1,10 +1,10 @@
 ---
-title: Java for Clojurists
-link_title: Java for Clojurists
+title: Interacting with Java
+link_title: Interacting with Java
 kind: documentation
 ---
 
-# Java for Clojurists
+# Interacting with Java
 
 There comes a day in every Clojurist's life when she must venture
 forth from the sanctuary of pure functions and immutable data
