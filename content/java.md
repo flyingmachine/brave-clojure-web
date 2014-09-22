@@ -1,6 +1,6 @@
 ---
-title: All the Java You Need
-link_title: All the Java You Need
+title: Java for Clojurists
+link_title: Java for Clojurists
 kind: documentation
 ---
 
