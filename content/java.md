@@ -4,7 +4,7 @@ link_title: Java for Clojurists
 kind: documentation
 ---
 
-# All the Java You Need (to get started)
+# Java for Clojurists
 
 There comes a day in every Clojurist's life when she must venture
 forth from the sanctuary of pure functions and immutable data
