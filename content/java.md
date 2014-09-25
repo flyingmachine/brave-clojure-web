@@ -315,8 +315,8 @@ public class Farewells
 ```
 
 If you navigate back to the parent directory of `pirate_phrases` and
-run `javac PiratePhrases.java` followed by `java PiratePhrases`, you
-should see this:
+run `javac PirateConversation.java` followed by `java
+PirateConversation`, you should see this:
 
 ```
 Shiver me timbers!!!
@@ -869,8 +869,8 @@ a file one line at a time:
 (with-open [todo-list-rdr (clojure.java.io/reader "/tmp/hercules-todo-list")]
   (doseq [todo (line-seq todo-list-rdr)]
     (println todo)))
-; => - kill dat lion
-; => - chop up nasty snake thing
+; => - kill dat lion brov
+; => - chop up what nasty multi-headed snake thing
 ```
 
 That should be enough for you to get started with IO in Clojure. If
