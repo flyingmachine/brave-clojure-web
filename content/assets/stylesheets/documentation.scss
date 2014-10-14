@@ -202,19 +202,28 @@ header {
     p {
       margin-bottom: 0;
     }
-    .buy {
-      display: inline-block;
-      background: $orange;
-      color: white;
-      border-radius: 2px;
-      padding: 0 7px;
-      @include leader;
-
-      &:hover {
-        text-decoration: none;
-      }
-    }
   }
+}
+
+.buy {
+  display: inline-block;
+  background: $orange;
+  color: white;
+  border-radius: 2px;
+  padding: 0 7px;
+  @include leader;
+  &:visited {
+    color: white;
+  }
+  &:hover {
+    background: #f05b3b;
+    text-decoration: none;
+  }
+}
+
+nav .buy {
+  margin-top: 0;
+  @include trailer;
 }
 
 .announcement {
@@ -273,7 +282,7 @@ footer {
   @include at-breakpoint($M) {
     @include span-columns(3 omega,12);
     @include padding-leader;
-    opacity: 0.7;
+    opacity: 0.6;
     &:hover {
       opacity: 1;
     }
