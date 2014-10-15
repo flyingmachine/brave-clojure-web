@@ -46,7 +46,7 @@ is, though. Libraries therefore record the association between an
 object's title and its address and provide tools for searching these
 records.
 
-For example, if you searched for "The Da Vinci Code" your
+For example, if you searched for "The Da Vinci Code" in your
 local library's database, it would return the address "813.54" to you
 (if it's using the Dewey Decimal System). Now you can efficiently
 navigate your library and locate the physical space where _The Da
@@ -402,7 +402,7 @@ cheese.taxonomy> (clojure.core/refer 'cheese.analysis :only ['private-function])
 ```
 
 So that's `refer`! `alias` is relatively simple by comparison. All it
-does it let you use a shorter namespace name when using a
+does is let you use a shorter namespace name when using a
 fully-qualified name:
 
 ```clojure
@@ -465,7 +465,7 @@ on the first line:
   (:gen-class))
 ```
 
-`ns` is the primary way you that create and manage namespaces within
+`ns` is the primary way that you create and manage namespaces within
 Clojure. I'm going to explain it fully shortly. For now, though, this
 line is very similar to the `in-ns` function we used above. It creates
 a namespace if it doesn't exist and then switches to it.
@@ -477,7 +477,7 @@ path of the file where the namespace is declared, relative to the
 source code's root:
 
 * The source code's root is `src` in this case. In general, the root
-  is determine by the *classpath*, which is something I'll cover in a
+  is determined by the *classpath*, which is something I'll cover in a
   later chapter.
 * Dashes in namespace names correspond with underscores in the
   filesystem. `the-divine-cheese-code` is mapped to
@@ -966,7 +966,7 @@ In more detail:
         `the-divine-cheese-code.core/heists`, for example, then the
         result will be `{:lng 5.37, :lat 41.9}`.
 3. You use `comparator-over-maps` to create our comparison functions.
-   If you think of our drawing as being inscribed in a rectangle, than
+   If you think of our drawing as being inscribed in a rectangle, then
    `min` is the corner of the rectangle closest 0,0 and `max` is the
    corner fathest from it.
 4. `translate-to-00` works by finding the `min` of our locations and
@@ -1009,13 +1009,6 @@ With `svg.clj` all coded up, make `core.clj` look like this:
               :lat 41.90
               :lng 12.45}])
 
-(defn url
-  [filename]
-  (str "file:///"
-       (System/getProperty "user.dir")
-       "/"
-       filename))
-
 (defn template
   [contents]
   (str "<style>polyline { fill:none; stroke:#5881d8; stroke-width:3}</style>"
@@ -1028,7 +1021,7 @@ With `svg.clj` all coded up, make `core.clj` look like this:
          (xml 50 100)
          template
          (spit filename))
-    (browse/browse-url (url filename))))
+    (browse/browse-url filename)))
 ```
 
 Nothing too complicated going on here. Within `-main` you build up the

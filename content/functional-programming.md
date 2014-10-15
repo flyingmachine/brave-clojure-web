@@ -1072,7 +1072,7 @@ mutual connection established; when 4 "connects right" to 6, 6
 
 The next function, `add-pos`, is interesting because it actually
 reduces on a vector of *functions*, applying each in turn to build up
-the resulting board. But first, it updates the board to indicated that
+the resulting board. But first, it updates the board to indicate that
 a peg is in the given position:
 
 ```clojure
@@ -1098,6 +1098,7 @@ function in the glamour shot example above:
 (defn clean
   [text]
   (reduce (fn [string string-fn] (string-fn string))
+          text  
           [s/trim #(s/replace % #"lol" "LOL")]))
 ```
 
@@ -1131,7 +1132,7 @@ to build up the final board.
 
 The next section of code deals with validating peg moves and actually
 performing the move. Many of the functions (`pegged?`, `remove-peg`,
-`add-peg`, `move-peg` are simple one-liners which need no further
+`add-peg`, `move-peg`) are simple one-liners which need no further
 explanation, so let's start with `valid-moves`.
 
 ```clojure
@@ -1188,7 +1189,7 @@ is valid, which is what `valid-move?` does:
 ```
 
 Another nice benefit of having `valid-moves` return a map is that
-`valid-move?` can return the position of the peg that's jumped over
+`valid-move?` can return the position of the peg that's jumped over.
 The function `make-move` makes use of this. By taking the time to
 construct a rich data structure, it's easier to perform useful
 operations:
@@ -1317,7 +1318,8 @@ player's input. You can also provide a default value, which is used if
 the player hits enter without typing anything.
 
 The next function, `characters-as-strings` is a tiny helper function
-used by `prompt-move` to all letters and discard non-alphabetic input:
+used by `prompt-move` to split all letters and discard non-alphabetic
+input:
 
 ```clojure
 (characters-as-strings "a   b")

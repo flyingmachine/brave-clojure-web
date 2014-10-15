@@ -364,7 +364,7 @@ surprising and delightful.
 #### map
 
 You've seen many examples of `map` by now, but this section shows
-`map` doing two new things: taking multiple collections as arguments
+`map` doing two new things: taking multiple collelousy-loggerctions as arguments
 and taking a collection of functions as an argument.
 
 So far, you've only seen examples of `map` operating on one
@@ -818,8 +818,8 @@ returns a new list with an element prepended to the given list:
 In `even-numbers`, you're merely consing to a lazy list which includes
 a recipe for the next element rather than to a fully-realized list. If
 infinite lists are still foggy at this point, don't worry about it!
-Personally, it took me probably 6 months before I fully understood
-grokked infinite lazy seqs.
+Personally, it took me probably 6 months before I fully grokked
+infinite lazy seqs.
 
 And that covers lazy seqs! Now you know everything there is to know
 about the sequence abstraction!
@@ -1043,8 +1043,8 @@ this:
 If you're not used to partials, they might seem strange. In general,
 you want to use partials when you find yourself repeating the same
 combination of function and arguments in many different contexts. This
-toy examples how you could use `partial` to "specialize" a logger,
-creating a `warn` function:
+toy example demonstrates how you could use `partial` to "specialize" a
+logger, creating a `warn` function:
 
 ```clojure
 (defn lousy-logger
@@ -1146,6 +1146,7 @@ Now it's time to get our hands dirty. Make your file
   (:require [clojure.string :as s]))
 
 (def filename "suspects.csv")
+(def line-seperator (re-pattern (System/getProperty "line.separator")))
 
 ;; Later on we're going to be converting each row in the CSV into a
 ;; map, like {:name "Edward Cullen" :glitter-index 10}.
@@ -1167,7 +1168,7 @@ Now it's time to get our hands dirty. Make your file
   "Convert a csv into rows of columns"
   [string]
   (map #(s/split % #",")
-       (s/split string #"\n")))
+       (s/split string line-seperator)))
 
 (defn mapify
   "Return a seq of maps like {:name \"Edward Cullen\" :glitter-index 10}"
