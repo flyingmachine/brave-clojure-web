@@ -1,0 +1,1447 @@
+<div class="masthead">
+  <div class="container">
+    <div class="title">
+      CLOJURE<span> for the </span>BRAVE<span> and </span>TRUE
+    </div>
+    <div class="subtitle">
+      <span>a practical guide for stouthearted beginners</span>
+    </div>
+  </div>
+  <div class="lambda">
+    λ
+  </div>
+</div>
+<div class="engage-me-please">
+  <div class="container">
+    <a href="https://leanpub.com/clojure-for-the-brave-and-true" class="buy">Buy the DRM-free PDF, epub, and mobi!</a>
+    <form action="http://flyingmachinestudios.us1.list-manage.com/subscribe/post?u=60763b0c4890c24bd055f32e6&amp;amp;id=0b40ffd1e1" class="validate" id="mc-embedded-subscribe-form" method="post" name="mc-embedded-subscribe-form" novalidate="" target="_blank">
+      <p>
+        Spending your nights pining for the next chapter of <em>Clojure for the Brave and True</em>? <br />Then follow <a href="https://twitter.com/nonrecursive">@nonrecursive</a> or subscribe for email updates:
+        <input class="email" id="mce-EMAIL" name="EMAIL" placeholder="email address" required="" type="email" value="">
+        <input class="button" id="mc-embedded-subscribe" name="subscribe" type="submit" value="Subscribe!">
+      </p>
+    </form>
+  </div>
+</div>
+
+<div class="page container">
+  <div class="content">
+    <h1>Do Things: a Clojure Language Crash Course</h1>
+    
+    <p>It's time to to learn how to actually <em>do things</em> with Clojure! Hot
+      damn!</p>
+    
+    <p>While you've undoubtedly heard of Clojure's awesome concurrency
+      support and other stupendous features, Clojure's most salient
+      characteristic is that it is a Lisp. In this chapter, you're going to
+      explore the elements which comprise this Lisp core: syntax, functions,
+      and data. This will provide you with a solid foundation for
+      representing and solving problems in Clojure.</p>
+    
+    <p>This groundwork will also allow you to write some super important
+      code. In the last section, you'll tie everything together by creating
+      a model of a hobbit and writing a function to hit it in a random spot.
+      Super! Important!</p>
+    
+    <p>As you go through the chapter, I recommend that you type out the
+      examples in a REPL and run them. Programming in a new language is a
+      skill, and, just like yodeling or synchronized swimming, you have to
+      practice it to learn it. By the way, "Synchronized Swimming for
+      Yodelers for the Brave and True" is due to be published in August of
+      20never. Check it out!</p>
+    
+    <h2 id="1__Syntax">1. Syntax</h2>
+    
+    <p>Clojure's syntax is simple. Like all Lisps, it employs a uniform
+      structure, a handful of special operators, and a constant supply of
+      parentheses delivered from the parenthesis mines hidden beneath the
+      Massachusetts Institute of Technology, where Lisp was born.</p>
+    
+    <h3 id="1_1__Forms">1.1. Forms</h3>
+    
+    <p>All Clojure code is written in a uniform structure. Clojure understands:</p>
+    
+    <ol>
+      <li>Literal representations of data structures like numbers, strings,
+        maps, and vectors</li>
+      <li>Operations</li>
+    </ol>
+    <p>We use the term <strong>form</strong> to refer to structurally valid code. These
+      literal representations are all valid forms:</p>
+    <div class="code pygments"><div class="highlight"><pre><span class="mi">1</span>
+          <span class="s">"a string"</span>
+          <span class="p">[</span><span class="s">"a"</span> <span class="s">"vector"</span> <span class="s">"of"</span> <span class="s">"strings"</span><span class="p">]</span></pre></div></div>
+    <p>Your code will rarely contain free-floating literals, of course, since
+      they don't actually <em>do</em> anything on their own. Instead, you'll use
+      literals in operations. Operations are how you <em>do things</em>. All
+      operations take the form, "opening parthensis, operator, operands,
+      closing parenthesis":</p>
+    <div class="code pygments"><div class="highlight"><pre><span class="p">(</span><span class="nf">operator</span> <span class="nv">operand1</span> <span class="nv">operand2</span> <span class="nv">...</span> <span class="nv">operandn</span><span class="p">)</span></pre></div></div>
+    <p>Notice that there are no commas. Clojure uses whitespace to separate
+      operands and it treats commas as whitespace. Here are some example
+      operations:</p>
+    <div class="code pygments"><div class="highlight"><pre><span class="p">(</span><span class="nb">+ </span><span class="mi">1</span> <span class="mi">2</span> <span class="mi">3</span><span class="p">)</span>
+          <span class="c1">; =&gt; 6</span>
+
+          <span class="p">(</span><span class="nb">str </span><span class="s">"It was the panda "</span> <span class="s">"in the library "</span> <span class="s">"with a dust buster"</span><span class="p">)</span>
+          <span class="c1">; =&gt; "It was the panda in the library with a dust buster"</span></pre></div></div>
+    <p>To recap, Clojure consists of <em>forms</em>. Forms have a uniform
+      structure. They consist of literals and operations. Operations consist
+      of forms enclosed within parentheses.</p>
+    
+    <p>For good measure, here's something that is not a form because it
+      doesn't have a closing parenthesis:</p>
+    <div class="code pygments"><div class="highlight"><pre><span class="p">(</span><span class="nf">+</span></pre></div></div>
+    <p>Clojure's structural uniformity is probably different from what you're
+      used to. In other languages, different operations might have different
+      structures depending on the operator and the operands. For example,
+      JavaScript employs a smorgasbord of infix notation, dot operators, and
+      parentheses:</p>
+    <div class="code pygments"><div class="highlight"><pre><span class="mi">1</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">+</span> <span class="mi">3</span>
+          <span class="s2">"It was the panda "</span><span class="p">.</span><span class="nx">concat</span><span class="p">(</span><span class="s2">"in the library "</span><span class="p">,</span> <span class="s2">"with a dust buster"</span><span class="p">)</span></pre></div></div>
+    <p>Clojure's structure is very simple and consistent by comparison. No
+      matter what operator you're using or what kind of data you're
+      operating on, the structure is the same.</p>
+    
+    <p>One final note: I'll also use the term <strong>expression</strong> to refer to
+      Clojure forms. Don't get too hung up on the terminology, though.</p>
+    
+    <h3 id="1_2__Control_Flow">1.2. Control Flow</h3>
+    
+    <p>Here are some basic control flow operators. Throughout the book you'll
+      encounter more.</p>
+    
+    <h4 id="1_2_1__if">1.2.1. if</h4>
+    
+    <p>The general structure of <code>if</code> is:</p>
+    <div class="code pygments"><div class="highlight"><pre><span class="p">(</span><span class="k">if </span><span class="nv">boolean-form</span>
+          <span class="nv">then-form</span>
+          <span class="nv">optional-else-form</span><span class="p">)</span></pre></div></div>
+    <p>Here's an example:</p>
+    <div class="code pygments"><div class="highlight"><pre><span class="p">(</span><span class="k">if </span><span class="nv">true</span>
+          <span class="s">"abra cadabra"</span>
+          <span class="s">"hocus pocus"</span><span class="p">)</span>
+          <span class="c1">; =&gt; "abra cadabra"</span></pre></div></div>
+    <p>Notice that each branch of the if can only have one form. This is
+      different from most languages. For example, in Ruby you can write:</p>
+    <div class="code pygments"><div class="highlight"><pre><span class="k">if</span> <span class="kp">true</span>
+          <span class="n">doer</span><span class="o">.</span><span class="n">do_thing</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+          <span class="n">doer</span><span class="o">.</span><span class="n">do_thing</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+          <span class="k">else</span>
+          <span class="n">other_doer</span><span class="o">.</span><span class="n">do_thing</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+          <span class="n">other_doer</span><span class="o">.</span><span class="n">do_thing</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+          <span class="k">end</span></pre></div></div>
+    <p>To get around this apparent limitation, we have the <code>do</code> operator:</p>
+    
+    <h4 id="1_2_2__do">1.2.2. do</h4>
+    
+    <p><code>do</code> lets you "wrap up" multiple forms. Try the following in your REPL:</p>
+    <div class="code pygments"><div class="highlight"><pre><span class="p">(</span><span class="k">if </span><span class="nv">true</span>
+          <span class="p">(</span><span class="k">do </span><span class="p">(</span><span class="nb">println </span><span class="s">"Success!"</span><span class="p">)</span>
+          <span class="s">"abra cadabra"</span><span class="p">)</span>
+          <span class="p">(</span><span class="k">do </span><span class="p">(</span><span class="nb">println </span><span class="s">"Failure :("</span><span class="p">)</span>
+          <span class="s">"hocus pocus"</span><span class="p">))</span>
+          <span class="c1">; =&gt; Success!</span>
+          <span class="c1">; =&gt; "abra cadabra"</span></pre></div></div>
+    <p>In this case, <code>Success!</code> is printed in the REPL and <code>"abra cadabra"</code>
+      is returned as the value of the entire <code>if</code> expression.</p>
+    
+    <h4 id="1_2_3__when">1.2.3. when</h4>
+    
+    <p>The <code>when</code> operator is like a combination of <code>if</code> and <code>do</code>, but with
+      no else form. Here's an example:</p>
+    <div class="code pygments"><div class="highlight"><pre><span class="p">(</span><span class="nb">when </span><span class="nv">true</span>
+          <span class="p">(</span><span class="nb">println </span><span class="s">"Success!"</span><span class="p">)</span>
+          <span class="s">"abra cadabra"</span><span class="p">)</span>
+          <span class="c1">; =&gt; Success!</span>
+          <span class="c1">; =&gt; "abra cadabra"</span></pre></div></div>
+    <p>Use <code>when</code> when you want to do multiple things when some condition is
+      true, and you don't want to do anything when the condition is false.</p>
+    
+    <p>That covers the essential control flow operators!</p>
+    
+    <h3 id="1_3__Naming_Things_with_def">1.3. Naming Things with def</h3>
+    
+    <p>One final thing before we move on to data structures: you use <code>def</code> to
+      <em>bind</em> a <em>name</em> to a <em>value</em> in Clojure:</p>
+    <div class="code pygments"><div class="highlight"><pre><span class="p">(</span><span class="k">def </span><span class="nv">failed-protagonist-names</span>
+          <span class="p">[</span><span class="s">"Larry Potter"</span>
+          <span class="s">"Doreen the Explorer"</span>
+          <span class="s">"The Incredible Bulk"</span><span class="p">])</span></pre></div></div>
+    <p>In this case, you're binding the name <code>failed-protagonist-names</code> to a
+      vector containing three strings. Notice that I'm using the term
+      "bind", whereas in other langauges you'd say that you're <em>assigning</em> a
+      value to a <em>variable</em>. For example, in Ruby you might perform multiple
+      assignments to a variable to "build up" its value:</p>
+    <div class="code pygments"><div class="highlight"><pre><span class="n">severity</span> <span class="o">=</span> <span class="ss">:mild</span>
+          <span class="n">error_message</span> <span class="o">=</span> <span class="s2">"OH GOD! IT'S A DISASTER! WE'RE "</span>
+          <span class="k">if</span> <span class="n">severity</span> <span class="o">==</span> <span class="ss">:mild</span>
+          <span class="n">error_message</span> <span class="o">=</span> <span class="n">error_message</span> <span class="o">+</span> <span class="s2">"MILDLY INCONVENIENCED!"</span>
+          <span class="k">else</span>
+          <span class="n">error_message</span> <span class="o">=</span> <span class="n">error_message</span> <span class="o">+</span> <span class="s2">"DOOOOOOOMED!"</span>
+          <span class="k">end</span></pre></div></div>
+    <p>The Clojure equivalent would be:</p>
+    <div class="code pygments"><div class="highlight"><pre><span class="p">(</span><span class="k">def </span><span class="nv">severity</span> <span class="ss">:mild</span><span class="p">)</span>
+          <span class="p">(</span><span class="k">def </span><span class="nv">error-message</span> <span class="s">"OH GOD! IT'S A DISASTER! WE'RE "</span><span class="p">)</span>
+          <span class="p">(</span><span class="k">if </span><span class="p">(</span><span class="nb">= </span><span class="nv">severity</span> <span class="ss">:mild</span><span class="p">)</span>
+          <span class="p">(</span><span class="k">def </span><span class="nv">error-message</span> <span class="p">(</span><span class="nb">str </span><span class="nv">error-message</span> <span class="s">"MILDLY INCONVENIENCED!"</span><span class="p">))</span>
+          <span class="p">(</span><span class="k">def </span><span class="nv">error-message</span> <span class="p">(</span><span class="nb">str </span><span class="nv">error-message</span> <span class="s">"DOOOOOOOMED!"</span><span class="p">)))</span></pre></div></div>
+    <p>However, this is really bad Clojure. For now, you should treat <code>def</code>
+      as if it's defining constants. But fear not! Over the next few
+      chapters you'll learn how to work with this apparent limitation by
+      coding in the functional style.</p>
+    
+    <h2 id="2__Data_Structures">2. Data Structures</h2>
+    
+    <p>Clojure comes with a handful of data structures which you'll find
+      yourself using the majority of the time. If you're coming from an
+      object-oriented background, you'll be surprised at how much you can do
+      with the "basic" types presented here.</p>
+    
+    <p>All of Clojure's data structures are immutable, meaning you can't
+      change them in place. There's no Clojure equivalent for the following
+      Ruby:</p>
+    <div class="code pygments"><div class="highlight"><pre><span class="n">failed_protagonist_names</span> <span class="o">=</span> <span class="o">[</span>
+          <span class="s2">"Larry Potter"</span><span class="p">,</span>
+          <span class="s2">"Doreen the Explorer"</span><span class="p">,</span>
+          <span class="s2">"The Incredible Bulk"</span>
+          <span class="o">]</span>
+          <span class="n">failed_protagonist_names</span><span class="o">[</span><span class="mi">0</span><span class="o">]</span> <span class="o">=</span> <span class="s2">"Gary Potter"</span>
+          <span class="n">failed_protagonist_names</span>
+          <span class="c1"># =&gt; [</span>
+          <span class="c1">#   "Gary Potter",</span>
+          <span class="c1">#   "Doreen the Explorer",</span>
+          <span class="c1">#   "The Incredible Bulk"</span>
+          <span class="c1"># ]</span></pre></div></div>
+    <p>You'll learn more about why Clojure was implemented this way, but for
+      now it's fun to just learn how to do things without all that
+      philosophizing. Without further ado:</p>
+    
+    <h3 id="2_1__nil__true__false__Truthiness__Equality">2.1. nil, true, false, Truthiness, Equality</h3>
+    
+    <p>Clojure has <code>true</code> and <code>false</code> values. <code>nil</code> is used to indicate "no
+      value" in Clojure. You can check if a value is <code>nil</code> with the cleverly
+      named <code>nil?</code> function:</p>
+    <div class="code pygments"><div class="highlight"><pre><span class="p">(</span><span class="nb">nil? </span><span class="mi">1</span><span class="p">)</span>
+          <span class="c1">; =&gt; false</span>
+
+          <span class="p">(</span><span class="nb">nil? </span><span class="nv">nil</span><span class="p">)</span>
+          <span class="c1">; =&gt; true</span></pre></div></div>
+    <p>Both <code>nil</code> and <code>false</code> are used to represent logical falsiness, while
+      all other values are logically truthy. <code>=</code> is the equality operator:</p>
+    <div class="code pygments"><div class="highlight"><pre><span class="p">(</span><span class="nb">= </span><span class="mi">1</span> <span class="mi">1</span><span class="p">)</span>
+          <span class="c1">; =&gt; true</span>
+
+          <span class="p">(</span><span class="nb">= </span><span class="nv">nil</span> <span class="nv">nil</span><span class="p">)</span>
+          <span class="c1">; =&gt; true</span>
+
+          <span class="p">(</span><span class="nb">= </span><span class="mi">1</span> <span class="mi">2</span><span class="p">)</span>
+          <span class="c1">; =&gt; false</span></pre></div></div>
+    <p>Some other languages require you to use different operators when
+      comparing values of different types. For example, you might have to
+      use some kind of special "string equality" operator specially made
+      just for strings. You don't need anything weird or tedious like
+      that to test for equality when using Clojure's built-in data
+      structures.</p>
+    
+    <h3 id="2_2__Numbers">2.2. Numbers</h3>
+    
+    <p>Clojure has pretty sophisticated numerical support. I'm not going to
+      spend much time dwelling on the boring technical details (like
+      coercion and contagion), because that will get in the way of <em>doing
+        things</em>. If you're interested in said boring details, check out
+      <a href="http://clojure.org/data_structures#Data%0AStructures-Numbers">http://clojure.org/data_structures#Data Structures-Numbers</a>. Suffice to say that Clojure will merrily handle
+      pretty much anything you throw at it.</p>
+    
+    <p>In the mean time, we'll be working with integers and floats. We'll
+      also be working with ratios, which Clojure can represent directly.
+      Here's an integer, a float, and a ratio:</p>
+    <div class="code pygments"><div class="highlight"><pre><span class="mi">93</span>
+          <span class="mf">1.2</span>
+          <span class="mi">1</span><span class="nv">/5</span></pre></div></div>
+    <h3 id="2_3__Strings">2.3. Strings</h3>
+    
+    <p>Here are some string examples:</p>
+    <div class="code pygments"><div class="highlight"><pre><span class="s">"Lord Voldemort"</span>
+          <span class="s">"\"He who must not be named\""</span>
+          <span class="s">"\"Great cow of Moscow!\" - Hermes Conrad"</span></pre></div></div>
+    <p>Notice that Clojure only allows double quotes to delineate strings.
+      <code>'Lord Voldemort'</code>, for example, is not a valid string. Also notice
+      that Clojure doesn't have string interpolation. It only allows
+      concatenation via the <code>str</code> function:</p>
+    <div class="code pygments"><div class="highlight"><pre><span class="p">(</span><span class="k">def </span><span class="nb">name </span><span class="s">"Chewbacca"</span><span class="p">)</span>
+          <span class="p">(</span><span class="nb">str </span><span class="s">"\"Uggllglglglglglglglll\" - "</span> <span class="nv">name</span><span class="p">)</span>
+          <span class="c1">; =&gt; "Uggllglglglglglglglll" - Chewbacca</span></pre></div></div>
+    <h3 id="2_4__Maps">2.4. Maps</h3>
+    
+    <p>Maps are similar to dictionaries or hashes in other languages. They're
+      a way of associating some value with some other value. Here are
+      example map literals:</p>
+    <div class="code pygments"><div class="highlight"><pre><span class="c1">;; An empty map</span>
+          <span class="p">{}</span>
+
+          <span class="c1">;; ":a", ":b", ":c" are keywords and we'll cover them in the next section</span>
+          <span class="p">{</span><span class="ss">:a</span> <span class="mi">1</span>
+          <span class="ss">:b</span> <span class="s">"boring example"</span>
+          <span class="ss">:c</span> <span class="p">[]}</span>
+
+          <span class="c1">;; Associate "string-key" with the "plus" function</span>
+          <span class="p">{</span><span class="s">"string-key"</span> <span class="nv">+</span><span class="p">}</span>
+
+          <span class="c1">;; Maps can be nested</span>
+          <span class="p">{</span><span class="ss">:name</span> <span class="p">{</span><span class="ss">:first</span> <span class="s">"John"</span> <span class="ss">:middle</span> <span class="s">"Jacob"</span> <span class="ss">:last</span> <span class="s">"Jingleheimerschmidt"</span><span class="p">}}</span></pre></div></div>
+    <p>Notice that map values can be of any type. String, number, map,
+      vector, even function! Clojure don't care!</p>
+    
+    <p>You can look up values in maps with the <code>get</code> function:</p>
+    <div class="code pygments"><div class="highlight"><pre><span class="p">(</span><span class="nb">get </span><span class="p">{</span><span class="ss">:a</span> <span class="mi">0</span> <span class="ss">:b</span> <span class="mi">1</span><span class="p">}</span> <span class="ss">:b</span><span class="p">)</span>
+          <span class="c1">; =&gt; 1</span>
+
+          <span class="p">(</span><span class="nb">get </span><span class="p">{</span><span class="ss">:a</span> <span class="mi">0</span> <span class="ss">:b</span> <span class="p">{</span><span class="ss">:c</span> <span class="s">"ho hum"</span><span class="p">}}</span> <span class="ss">:b</span><span class="p">)</span>
+          <span class="c1">; =&gt; {:c "ho hum"}</span></pre></div></div>
+    <p><code>get</code> will return <code>nil</code> if it doesn't find your key, but you can give
+      it a default value to return:</p>
+    <div class="code pygments"><div class="highlight"><pre><span class="p">(</span><span class="nb">get </span><span class="p">{</span><span class="ss">:a</span> <span class="mi">0</span> <span class="ss">:b</span> <span class="mi">1</span><span class="p">}</span> <span class="ss">:c</span><span class="p">)</span>
+          <span class="c1">; =&gt; nil</span>
+
+          <span class="p">(</span><span class="nb">get </span><span class="p">{</span><span class="ss">:a</span> <span class="mi">0</span> <span class="ss">:b</span> <span class="mi">1</span><span class="p">}</span> <span class="ss">:c</span> <span class="s">"UNICORNS"</span><span class="p">)</span>
+          <span class="c1">; =&gt; "UNICORNS"</span></pre></div></div>
+    <p>The <code>get-in</code> function lets you look up values in nested maps:</p>
+    <div class="code pygments"><div class="highlight"><pre><span class="p">(</span><span class="nf">get-in</span> <span class="p">{</span><span class="ss">:a</span> <span class="mi">0</span> <span class="ss">:b</span> <span class="p">{</span><span class="ss">:c</span> <span class="s">"ho hum"</span><span class="p">}}</span> <span class="p">[</span><span class="ss">:b</span> <span class="ss">:c</span><span class="p">])</span>
+          <span class="c1">; =&gt; "ho hum"</span></pre></div></div>
+    <p><code>[:b :c]</code> is a vector, which you'll read about in a minute.</p>
+    
+    <p>Another way to look up a value in a map is to treat the map like a
+      function, with the key as its argument:</p>
+    <div class="code pygments"><div class="highlight"><pre><span class="p">({</span><span class="ss">:name</span> <span class="s">"The Human Coffee Pot"</span><span class="p">}</span> <span class="ss">:name</span><span class="p">)</span>
+          <span class="c1">; =&gt; "The Human Coffee Pot"</span></pre></div></div>
+    <p>Real Clojurists hardly ever do this, though. However, Real Clojurists
+      <em>do</em> use keywords to look up values in maps:</p>
+    
+    <h3 id="2_5__Keywords">2.5. Keywords</h3>
+    
+    <p>Clojure keywords are best understood by the way they're used. They're
+      primarily used as keys in maps, as you can see above. Examples of
+      keywords:</p>
+    <div class="code pygments"><div class="highlight"><pre><span class="ss">:a</span>
+          <span class="ss">:rumplestiltsken</span>
+          <span class="ss">:34</span>
+          <span class="ss">:_?</span></pre></div></div>
+    <p>Keywords can be used as functions which look up the corresponding
+      value in a data structure. For example:</p>
+    <div class="code pygments"><div class="highlight"><pre><span class="c1">;; Look up :a in map</span>
+          <span class="p">(</span><span class="ss">:a</span> <span class="p">{</span><span class="ss">:a</span> <span class="mi">1</span> <span class="ss">:b</span> <span class="mi">2</span> <span class="ss">:c</span> <span class="mi">3</span><span class="p">})</span>
+          <span class="c1">; =&gt; 1</span>
+
+          <span class="c1">;; This is equivalent to:</span>
+          <span class="p">(</span><span class="nb">get </span><span class="p">{</span><span class="ss">:a</span> <span class="mi">1</span> <span class="ss">:b</span> <span class="mi">2</span> <span class="ss">:c</span> <span class="mi">3</span><span class="p">}</span> <span class="ss">:a</span><span class="p">)</span>
+          <span class="c1">; =&gt; 1</span>
+
+          <span class="c1">;; Provide a default value, just like get:</span>
+          <span class="p">(</span><span class="ss">:d</span> <span class="p">{</span><span class="ss">:a</span> <span class="mi">1</span> <span class="ss">:b</span> <span class="mi">2</span> <span class="ss">:c</span> <span class="mi">3</span><span class="p">}</span> <span class="s">"FAERIES"</span><span class="p">)</span>
+          <span class="c1">; =&gt; "FAERIES</span></pre></div></div>
+    <p>I think this is super cool and Real Clojurists do it all the time. You
+      should do it, too!</p>
+    
+    <p>Besides using map literals, you can use the <code>hash-map</code> function to
+      create a map:</p>
+    <div class="code pygments"><div class="highlight"><pre><span class="p">(</span><span class="nb">hash-map </span><span class="ss">:a</span> <span class="mi">1</span> <span class="ss">:b</span> <span class="mi">2</span><span class="p">)</span>
+          <span class="c1">; =&gt; {:a 1 :b 2}</span></pre></div></div>
+    <p>Clojure also lets you create sorted maps, but I won't be covering
+      that.</p>
+    
+    <h3 id="2_6__Vectors">2.6. Vectors</h3>
+    
+    <p>A vector is similar to an array in that it's a 0-indexed collection:</p>
+    <div class="code pygments"><div class="highlight"><pre><span class="c1">;; Here's a vector literal</span>
+          <span class="p">[</span><span class="mi">3</span> <span class="mi">2</span> <span class="mi">1</span><span class="p">]</span>
+
+          <span class="c1">;; Here we're returning an element of a vector</span>
+          <span class="p">(</span><span class="nb">get </span><span class="p">[</span><span class="mi">3</span> <span class="mi">2</span> <span class="mi">1</span><span class="p">]</span> <span class="mi">0</span><span class="p">)</span>
+          <span class="c1">; =&gt; 3</span>
+
+          <span class="c1">;; Another example of getting by index. Notice as well that vector</span>
+          <span class="c1">;; elements can be of any type and you can mix types.</span>
+          <span class="p">(</span><span class="nb">get </span><span class="p">[</span><span class="s">"a"</span> <span class="p">{</span><span class="ss">:name</span> <span class="s">"Pugsley Winterbottom"</span><span class="p">}</span> <span class="s">"c"</span><span class="p">]</span> <span class="mi">1</span><span class="p">)</span>
+          <span class="c1">; =&gt; {:name "Pugsley Winterbottom"}</span></pre></div></div>
+    <p>Notice that we're using the same <code>get</code> function as we use when looking
+      up values in maps. The next chapter explains why we do this.</p>
+    
+    <p>You can create vectors with the <code>vector</code> function:</p>
+    <div class="code pygments"><div class="highlight"><pre><span class="p">(</span><span class="nb">vector </span><span class="s">"creepy"</span> <span class="s">"full"</span> <span class="s">"moon"</span><span class="p">)</span>
+          <span class="c1">; =&gt; ["creepy" "full" "moon"]</span></pre></div></div>
+    <p>Elements get added to the <em>end</em> of a vector:</p>
+    <div class="code pygments"><div class="highlight"><pre><span class="p">(</span><span class="nb">conj </span><span class="p">[</span><span class="mi">1</span> <span class="mi">2</span> <span class="mi">3</span><span class="p">]</span> <span class="mi">4</span><span class="p">)</span>
+          <span class="c1">; =&gt; [1 2 3 4]</span></pre></div></div>
+    <h3 id="2_7__Lists">2.7. Lists</h3>
+    
+    <p>Lists are similar to vectors in that they're linear collections of
+      values. There are some differences, though. You can't retrieve list
+      elements with <code>get</code>:</p>
+    <div class="code pygments"><div class="highlight"><pre><span class="c1">;; Here's a list - note the preceding single quote</span>
+          <span class="o">'</span><span class="p">(</span><span class="mi">1</span> <span class="mi">2</span> <span class="mi">3</span> <span class="mi">4</span><span class="p">)</span>
+          <span class="c1">; =&gt; (1 2 3 4)</span>
+          <span class="c1">;; Notice that the REPL prints the list without a quote. This is OK,</span>
+          <span class="c1">;; and it'll be explained later.</span>
+
+
+          <span class="c1">;; Doesn't work for lists</span>
+          <span class="p">(</span><span class="nb">get </span><span class="o">'</span><span class="p">(</span><span class="mi">100</span> <span class="mi">200</span> <span class="mi">300</span> <span class="mi">400</span><span class="p">)</span> <span class="mi">0</span><span class="p">)</span>
+
+          <span class="c1">;; This works but has different performance characteristics which we</span>
+          <span class="c1">;; don't care about right now.</span>
+          <span class="p">(</span><span class="nb">nth </span><span class="o">'</span><span class="p">(</span><span class="mi">100</span> <span class="mi">200</span> <span class="mi">300</span> <span class="mi">400</span><span class="p">)</span> <span class="mi">3</span><span class="p">)</span>
+          <span class="c1">; =&gt; 400</span></pre></div></div>
+    <p>You can create lists with the <code>list</code> function:</p>
+    <div class="code pygments"><div class="highlight"><pre><span class="p">(</span><span class="nb">list </span><span class="mi">1</span> <span class="mi">2</span> <span class="mi">3</span> <span class="mi">4</span><span class="p">)</span>
+          <span class="c1">; =&gt; (1 2 3 4)</span></pre></div></div>
+    <p>Elements get added to the <em>beginning</em> of a list:</p>
+    <div class="code pygments"><div class="highlight"><pre><span class="p">(</span><span class="nb">conj </span><span class="o">'</span><span class="p">(</span><span class="mi">1</span> <span class="mi">2</span> <span class="mi">3</span><span class="p">)</span> <span class="mi">4</span><span class="p">)</span>
+          <span class="c1">; =&gt; (4 1 2 3)</span></pre></div></div>
+    <p>When should you use a list and when should you use a vector? For now,
+      you're probably best off just using vectors. As you learn more, you'll
+      get a good feel for when to use which.</p>
+    
+    <h3 id="2_8__Sets">2.8. Sets</h3>
+    
+    <p>Sets are collections of unique values:</p>
+    <div class="code pygments"><div class="highlight"><pre><span class="c1">;; Literal notation</span>
+          <span class="o">#</span><span class="p">{</span><span class="s">"hannah montanna"</span> <span class="s">"miley cyrus"</span> <span class="mi">20</span> <span class="mi">45</span><span class="p">}</span>
+
+          <span class="c1">;; If you try to add :b to a set which already contains :b,</span>
+          <span class="c1">;; the set still only has one :b</span>
+          <span class="p">(</span><span class="nb">conj </span><span class="o">#</span><span class="p">{</span><span class="ss">:a</span> <span class="ss">:b</span><span class="p">}</span> <span class="ss">:b</span><span class="p">)</span>
+          <span class="c1">; =&gt; #{:a :b}</span>
+
+          <span class="c1">;; You can check whether a value exists in a set</span>
+          <span class="p">(</span><span class="nb">get </span><span class="o">#</span><span class="p">{</span><span class="ss">:a</span> <span class="ss">:b</span><span class="p">}</span> <span class="ss">:a</span><span class="p">)</span>
+          <span class="c1">; =&gt; :a</span>
+
+          <span class="p">(</span><span class="ss">:a</span> <span class="o">#</span><span class="p">{</span><span class="ss">:a</span> <span class="ss">:b</span><span class="p">})</span>
+          <span class="c1">; =&gt; :a</span>
+
+          <span class="p">(</span><span class="nb">get </span><span class="o">#</span><span class="p">{</span><span class="ss">:a</span> <span class="ss">:b</span><span class="p">}</span> <span class="s">"hannah montanna"</span><span class="p">)</span>
+          <span class="c1">; =&gt; nil</span></pre></div></div>
+    <p>You can create sets from existing vectors and lists by using the <code>set</code>
+      function. One unobvious use for this is to check whether an element
+      exists in a collection:</p>
+    <div class="code pygments"><div class="highlight"><pre><span class="p">(</span><span class="nb">set </span><span class="p">[</span><span class="mi">3</span> <span class="mi">3</span> <span class="mi">3</span> <span class="mi">4</span> <span class="mi">4</span><span class="p">])</span>
+          <span class="c1">; =&gt; #{3 4}</span>
+
+          <span class="c1">;; 3 exists in vector</span>
+          <span class="p">(</span><span class="nb">get </span><span class="p">(</span><span class="nb">set </span><span class="p">[</span><span class="mi">3</span> <span class="mi">3</span> <span class="mi">3</span> <span class="mi">4</span> <span class="mi">4</span><span class="p">])</span> <span class="mi">3</span><span class="p">)</span>
+          <span class="c1">; =&gt; 3</span>
+
+          <span class="c1">;; but 5 doesn't</span>
+          <span class="p">(</span><span class="nb">get </span><span class="p">(</span><span class="nb">set </span><span class="p">[</span><span class="mi">3</span> <span class="mi">3</span> <span class="mi">3</span> <span class="mi">4</span> <span class="mi">4</span><span class="p">])</span> <span class="mi">5</span><span class="p">)</span>
+          <span class="c1">; =&gt; nil</span></pre></div></div>
+    <p>Just as you can create hash maps and sorted maps, you can create hash
+      sets and sorted sets:</p>
+    <div class="code pygments"><div class="highlight"><pre><span class="p">(</span><span class="nb">hash-set </span><span class="mi">1</span> <span class="mi">1</span> <span class="mi">3</span> <span class="mi">1</span> <span class="mi">2</span><span class="p">)</span>
+          <span class="c1">; =&gt; #{1 2 3}</span>
+
+          <span class="p">(</span><span class="nb">sorted-set </span><span class="ss">:b</span> <span class="ss">:a</span> <span class="ss">:c</span><span class="p">)</span>
+          <span class="c1">; =&gt; #{:a :b :c}</span></pre></div></div>
+    <p>Clojure also lets you define how a set is sorted using the
+      <code>sorted-set-by</code> function, but this book doesn't cover that.</p>
+    
+    <h3 id="2_9__Symbols_and_Naming">2.9. Symbols and Naming</h3>
+    
+    <p>Symbols are identifiers that are normally used to refer to something.
+      Let's look at a <code>def</code> example:</p>
+    <div class="code pygments"><div class="highlight"><pre><span class="p">(</span><span class="k">def </span><span class="nv">failed-movie-titles</span> <span class="p">[</span><span class="s">"Gone With the Moving Air"</span> <span class="s">"Swellfellas"</span><span class="p">])</span></pre></div></div>
+    <p>In this case, <code>def</code> associates the value
+      <code>["Gone With the Moving Air" "Swellfellas"]</code> with the symbol
+      <code>failed-movie-titles</code>.</p>
+    
+    <p>You might be thinking, "So what? Every other programming language lets
+      me associate a name with a value. Big whoop!" Lisps, however, allow
+      you to manipulate symbols as data, something we'll see a lot of when
+      we start working with macros. Functions can return symbols and take
+      them as arguments:</p>
+    <div class="code pygments"><div class="highlight"><pre><span class="c1">;; Identity returns its argument</span>
+          <span class="p">(</span><span class="nb">identity </span><span class="ss">'test</span><span class="p">)</span>
+          <span class="c1">; =&gt; test</span></pre></div></div>
+    <p>For now, though, it's OK to think "Big whoop!" and not be very
+      impressed.</p>
+    
+    <h3 id="2_10__Quoting">2.10. Quoting</h3>
+    
+    <p>You may have noticed the single quote, <code>'</code>, in the examples above.
+      This is called "quoting". You'll learn about this in detail in the
+      chapter "Clojure Alchemy: Reading, Evaluation, and Macros". Here's the
+      quick explanation for now.</p>
+    
+    <p>Giving Clojure a symbol returns the "object" it refers to:</p>
+    <div class="code pygments"><div class="highlight"><pre><span class="nv">failed-protagonist-names</span>
+          <span class="c1">; =&gt; ["Larry Potter" "Doreen the Explorer" "The Incredible Bulk"]</span>
+
+          <span class="p">(</span><span class="nb">first </span><span class="nv">failed-protagonist-names</span><span class="p">)</span>
+          <span class="c1">; =&gt; "Larry Potter"</span></pre></div></div>
+    <p>Quoting a symbol tells Clojure to use the symbol itself as a data
+      structure, not the object the symbol refers to:</p>
+    <div class="code pygments"><div class="highlight"><pre><span class="ss">'failed-protagonist-names</span>
+          <span class="c1">; =&gt; failed-protagonist-names</span>
+
+          <span class="p">(</span><span class="nb">eval </span><span class="ss">'failed-protagonist-names</span><span class="p">)</span>
+          <span class="c1">; =&gt; ["Larry Potter" "Doreen the Explorer" "The Incredible Bulk"]</span>
+
+          <span class="p">(</span><span class="nb">first </span><span class="ss">'failed-protagonist-names</span><span class="p">)</span>
+          <span class="c1">; =&gt; Throws exception!</span>
+
+          <span class="p">(</span><span class="nb">first </span><span class="p">[</span><span class="ss">'failed-protagonist-names</span> <span class="ss">'failed-antagonist-names</span><span class="p">])</span>
+          <span class="c1">; =&gt; failed-protagonist-names</span></pre></div></div>
+    <p>You can also quote collections like lists, maps, and vectors. All
+      symbols within the collection will be unevaluated:</p>
+    <div class="code pygments"><div class="highlight"><pre><span class="o">'</span><span class="p">(</span><span class="nf">failed-protagonist-names</span> <span class="mi">0</span> <span class="mi">1</span><span class="p">)</span>
+          <span class="c1">; =&gt; (failed-protagonist-names 0 1)</span>
+
+          <span class="p">(</span><span class="nb">first </span><span class="o">'</span><span class="p">(</span><span class="nf">failed-protagonist-names</span> <span class="mi">0</span> <span class="mi">1</span><span class="p">))</span>
+          <span class="c1">; =&gt; failed-protagonist-names</span>
+
+          <span class="p">(</span><span class="nb">second </span><span class="o">'</span><span class="p">(</span><span class="nf">failed-protagonist-names</span> <span class="mi">0</span> <span class="mi">1</span><span class="p">))</span>
+          <span class="c1">; =&gt; 0</span></pre></div></div>
+    <h3 id="2_11__Simplicity">2.11. Simplicity</h3>
+    
+    <p>You may have noticed that this treatment of data structures doesn't
+      include a description of how to create new types or classes. This is
+      because Clojure's emphasis on simplicity encourages you to reach for
+      the built-in, "basic" data structures first.</p>
+    
+    <p>If you come from an object-oriented background, you might think that
+      this approach is weird and backwards. What you'll find, though, is
+      that your data does not have to be tightly bundled with a class for it
+      to be useful and intelligible. Here's an epigram loved by Clojurists
+      which hints at the Clojure philosophy:</p>
+    <div class="code pygments"><div class="highlight"><pre><span class="nx">It</span> <span class="nx">is</span> <span class="nx">better</span> <span class="nx">to</span> <span class="nx">have</span> <span class="mi">100</span> <span class="nx">functions</span> <span class="nx">operate</span> <span class="nx">on</span> <span class="nx">one</span> <span class="nx">data</span> <span class="nx">structure</span>
+          <span class="nx">than</span> <span class="mi">10</span> <span class="nx">functions</span> <span class="nx">on</span> <span class="mi">10</span> <span class="nx">data</span> <span class="nx">structures</span><span class="p">.</span>
+
+          <span class="o">--</span> <span class="nx">Alan</span> <span class="nx">Perlis</span></pre></div></div>
+    <p>You'll learn more about this aspect of Clojure's philosophy in the
+      coming chapters. For now, though, keep an eye out for the ways that
+      you gain code re-use by sticking to basic data structures.</p>
+    
+    <p>Thus concludes our Clojure data structures primer. Now it's time to
+      dig in to functions and see how these data structures can be used!</p>
+    
+    <h2 id="3__Functions">3. Functions</h2>
+    
+    <p>One of the reasons people go nuts over Lisps is that they allow you to
+      build programs which behave in complex ways, yet the primary building
+      block — the function — is so simple. This section will
+      initiate you in the beauty and elegance of Lisp functions by
+      explaining:</p>
+    
+    <ul>
+      <li>Calling functions</li>
+      <li>How functions differ from macros and special forms</li>
+      <li>Defining functions</li>
+      <li>Anonymous functions</li>
+      <li>Returning functions</li>
+    </ul>
+    <h3 id="3_1__Calling_Functions">3.1. Calling Functions</h3>
+    
+    <p>By now you've seen many examples of function calls:</p>
+    <div class="code pygments"><div class="highlight"><pre><span class="p">(</span><span class="nb">+ </span><span class="mi">1</span> <span class="mi">2</span> <span class="mi">3</span> <span class="mi">4</span><span class="p">)</span>
+          <span class="p">(</span><span class="nb">* </span><span class="mi">1</span> <span class="mi">2</span> <span class="mi">3</span> <span class="mi">4</span><span class="p">)</span>
+          <span class="p">(</span><span class="nb">first </span><span class="p">[</span><span class="mi">1</span> <span class="mi">2</span> <span class="mi">3</span> <span class="mi">4</span><span class="p">])</span></pre></div></div>
+    <p>I've already gone over how all Clojure expressions have the same
+      syntax: opening parenthesis, operator, operands, closing parenthesis.
+      "Function call" is just another term for an expression where the
+      operator is a <em>function expression</em>. A <em>function expression</em> is just
+      an expression which returns a function.</p>
+    
+    <p>It might not be obvious, but this lets you write some pretty
+      interesting code. Here's a function expression which returns the <code>+</code>
+      (addition) function:</p>
+    <div class="code pygments"><div class="highlight"><pre><span class="c1">;; Return value of "or" is first truthy value, and + is truthy</span>
+          <span class="p">(</span><span class="nb">or + </span><span class="nv">-</span><span class="p">)</span></pre></div></div>
+    <p>You can use that expression as the operator in another expression:</p>
+    <div class="code pygments"><div class="highlight"><pre><span class="p">((</span><span class="nb">or + </span><span class="nv">-</span><span class="p">)</span> <span class="mi">1</span> <span class="mi">2</span> <span class="mi">3</span><span class="p">)</span>
+          <span class="c1">; =&gt; 6</span></pre></div></div>
+    <p>Here are a couple more valid function calls which return 6:</p>
+    <div class="code pygments"><div class="highlight"><pre><span class="c1">;; Return value of "and" is first falsey value or last truthy value.</span>
+          <span class="c1">;; + is the last truthy value</span>
+          <span class="p">((</span><span class="nb">and </span><span class="p">(</span><span class="nb">= </span><span class="mi">1</span> <span class="mi">1</span><span class="p">)</span> <span class="nv">+</span><span class="p">)</span> <span class="mi">1</span> <span class="mi">2</span> <span class="mi">3</span><span class="p">)</span>
+
+          <span class="c1">;; Return value of "first" is the first element in a sequence</span>
+          <span class="p">((</span><span class="nb">first </span><span class="p">[</span><span class="nb">+ </span><span class="mi">0</span><span class="p">])</span> <span class="mi">1</span> <span class="mi">2</span> <span class="mi">3</span><span class="p">)</span></pre></div></div>
+    <p>However, these aren't valid function calls:</p>
+    <div class="code pygments"><div class="highlight"><pre><span class="c1">;; Numbers aren't functions</span>
+          <span class="p">(</span><span class="mi">1</span> <span class="mi">2</span> <span class="mi">3</span> <span class="mi">4</span><span class="p">)</span>
+
+          <span class="c1">;; Neither are strings</span>
+          <span class="p">(</span><span class="s">"test"</span> <span class="mi">1</span> <span class="mi">2</span> <span class="mi">3</span><span class="p">)</span></pre></div></div>
+    <p>If you run these in your REPL you'll get something like</p>
+    <div class="code pygments"><div class="highlight"><pre><span class="n">ClassCastException</span> <span class="n">java</span><span class="p">.</span><span class="n">lang</span><span class="p">.</span><span class="n">String</span> <span class="n">cannot</span> <span class="n">be</span> <span class="n">cast</span> <span class="n">to</span> <span class="n">clojure</span><span class="p">.</span><span class="n">lang</span><span class="p">.</span><span class="n">IFn</span>
+          <span class="n">user</span><span class="o">/</span><span class="n">eval728</span> <span class="p">(</span><span class="n">NO_SOURCE_FILE</span><span class="o">:</span><span class="mi">1</span><span class="p">)</span></pre></div></div>
+    <p>You're likely to see this error many times as you continue with
+      Clojure. "x cannot be cast to clojure.lang.IFn" just means that you're
+      trying something as a function when it's not.</p>
+    
+    <p>Function flexibility doesn't end with the function expression!
+      Syntactically, functions can take any expressions as arguments —
+      including <em>other functions</em>.</p>
+    
+    <p>Take the <code>map</code> function (not to be confused with the map data
+      structure). <code>map</code> creates a new list by applying a function to each
+      member of a collection:</p>
+    <div class="code pygments"><div class="highlight"><pre><span class="c1">;; The "inc" function increments a number by 1</span>
+          <span class="p">(</span><span class="nb">inc </span><span class="mf">1.1</span><span class="p">)</span>
+          <span class="c1">; =&gt; 2.1</span>
+
+          <span class="p">(</span><span class="nb">map inc </span><span class="p">[</span><span class="mi">0</span> <span class="mi">1</span> <span class="mi">2</span> <span class="mi">3</span><span class="p">])</span>
+          <span class="c1">; =&gt; (1 2 3 4)</span></pre></div></div>
+    <p>(Note that <code>map</code> doesn't return a vector even though we supplied a
+      vector as an argument. You'll learn why later. For now, just trust
+      that this is OK and expected.)</p>
+    
+    <p>Indeed, Clojure's ability to receive functions as arguments allows you
+      to build more powerful abstractions. Those unfamiliar with this kind
+      of programming think of functions as allowing you to generalize
+      operations over data instances. For example, the <code>+</code> function
+      abstracts addition over any specific numbers.</p>
+    
+    <p>By contrast, Clojure (and all Lisps) allows you to create functions
+      which generalize over processes. <code>map</code> allows you to generalize the
+      process of transforming a collection by applying a function — any
+      function — over any collection.</p>
+    
+    <p>The last thing that you need know about function calls is that Clojure
+      evaluates all function arguments recursively before passing them to
+      the function. Here's how Clojure would evaluate a function call whose
+      arguments are also function calls:</p>
+    <div class="code pygments"><div class="highlight"><pre><span class="c1">;; Here's the function call. It kicks off the evaluation process</span>
+          <span class="p">(</span><span class="nb">+ </span><span class="p">(</span><span class="nb">inc </span><span class="mi">199</span><span class="p">)</span> <span class="p">(</span><span class="nb">/ </span><span class="mi">100</span> <span class="p">(</span><span class="nb">- </span><span class="mi">7</span> <span class="mi">2</span><span class="p">)))</span>
+
+          <span class="c1">;; All sub-forms are evaluated before applying the "+" function</span>
+          <span class="p">(</span><span class="nb">+ </span><span class="mi">200</span> <span class="p">(</span><span class="nb">/ </span><span class="mi">100</span> <span class="p">(</span><span class="nb">- </span><span class="mi">7</span> <span class="mi">2</span><span class="p">)))</span> <span class="c1">; evaluated "(inc 199)"</span>
+          <span class="p">(</span><span class="nb">+ </span><span class="mi">200</span> <span class="p">(</span><span class="nb">/ </span><span class="mi">100</span> <span class="mi">5</span><span class="p">))</span> <span class="c1">; evaluated (- 7 2)</span>
+          <span class="p">(</span><span class="nb">+ </span><span class="mi">200</span> <span class="mi">20</span><span class="p">)</span> <span class="c1">; evaluated (/ 100 5)</span>
+          <span class="mi">220</span> <span class="c1">; final evaluation</span></pre></div></div>
+    <h3 id="3_2__Function_Calls__Macro_Calls__and_Special_Forms">3.2. Function Calls, Macro Calls, and Special Forms</h3>
+    
+    <p>In the last section, you learned that function calls are expressions
+      which have a function expression as the operator. There are two other
+      kinds of expressions: <strong>macro calls</strong> and <strong>special forms</strong>. You've
+      already seen a couple special forms:</p>
+    <div class="code pygments"><div class="highlight"><pre><span class="p">(</span><span class="k">def </span><span class="nv">failed-movie-titles</span> <span class="p">[</span><span class="s">"Gone With the Moving Air"</span> <span class="s">"Swellfellas"</span><span class="p">])</span>
+          <span class="p">(</span><span class="k">if </span><span class="p">(</span><span class="nb">= </span><span class="nv">severity</span> <span class="ss">:mild</span><span class="p">)</span>
+          <span class="p">(</span><span class="k">def </span><span class="nv">error-message</span> <span class="p">(</span><span class="nb">str </span><span class="nv">error-message</span> <span class="s">"MILDLY INCONVENIENCED!"</span><span class="p">))</span>
+          <span class="p">(</span><span class="k">def </span><span class="nv">error-message</span> <span class="p">(</span><span class="nb">str </span><span class="nv">error-message</span> <span class="s">"DOOOOOOOMED!"</span><span class="p">)))</span></pre></div></div>
+    <p>You'll learn everything there is to know about macro calls and special
+      forms in the chapter "Clojure Alchemy: Reading, Evaluation, and
+      Macros". For now, though, the main feature which makes special forms
+      "special" is that <em>they don't always evaluate all of their operands</em>,
+      unlike function calls.</p>
+    
+    <p>Take <code>if</code>, for example. Its general structure is:</p>
+    <div class="code pygments"><div class="highlight"><pre><span class="p">(</span><span class="k">if </span><span class="nv">boolean-form</span>
+          <span class="nv">then-form</span>
+          <span class="nv">optional-else-form</span><span class="p">)</span></pre></div></div>
+    <p>Now imagine you had an <code>if</code> statement like this:</p>
+    <div class="code pygments"><div class="highlight"><pre><span class="p">(</span><span class="k">if </span><span class="nv">good-mood</span>
+          <span class="p">(</span><span class="nf">tweet</span> <span class="nv">walking-on-sunshine-lyrics</span><span class="p">)</span>
+          <span class="p">(</span><span class="nf">tweet</span> <span class="nv">mopey-country-song-lyrics</span><span class="p">))</span></pre></div></div>
+    <p>If Clojure evaluated both <code>tweet</code> function calls, then your followers
+      would end up very confused.</p>
+    
+    <p>Another feature which differentiates special forms is that you can't use
+      them as arguments to functions.</p>
+    
+    <p>In general, special forms implement core Clojure functionality that
+      just can't be implemented with functions. There are only a handful of
+      Clojure special forms, and it's pretty amazing that such a rich
+      language is implemented with such a small set of building blocks.</p>
+    
+    <p>Macros are similar to special forms in that they evaluate their
+      operands differently from function calls and they also can't be passed
+      as arguments to functions. But this detour has taken long enough; it's
+      time to learn how to define functions!</p>
+    
+    <h3 id="3_3__Defining_Functions">3.3. Defining Functions</h3>
+    
+    <p>Function definitions are comprised of five main parts:</p>
+    
+    <ul>
+      <li><code>defn</code></li>
+      <li>A name</li>
+      <li>(Optional) a docstring</li>
+      <li>Parameters</li>
+      <li>The function body</li>
+    </ul>
+    <p>Here's an example of a function definition and calling the function:</p>
+    <div class="code pygments"><div class="highlight"><pre><span class="p">(</span><span class="kd">defn </span><span class="nv">too-enthusiastic</span>
+          <span class="s">"Return a cheer that might be a bit too enthusiastic"</span>
+          <span class="p">[</span><span class="nv">name</span><span class="p">]</span>
+          <span class="p">(</span><span class="nb">str </span><span class="s">"OH. MY. GOD! "</span> <span class="nb">name </span><span class="s">" YOU ARE MOST DEFINITELY LIKE THE BEST "</span>
+          <span class="s">"MAN SLASH WOMAN EVER I LOVE YOU AND WE SHOULD RUN AWAY TO SOMEWHERE"</span><span class="p">))</span>
+
+          <span class="p">(</span><span class="nf">too-enthusiastic</span> <span class="s">"Zelda"</span><span class="p">)</span>
+          <span class="c1">; =&gt; "OH. MY. GOD! Zelda YOU ARE MOST DEFINITELY LIKE THE BEST MAN SLASH WOMAN EVER I LOVE YOU AND WE SHOULD RUN AWAY TO SOMEWHERE"</span></pre></div></div>
+    <p>Let's dive deeper into the docstring, parameters, and function
+      body.</p>
+    
+    <h4 id="3_3_1__The_Docstring">3.3.1. The Docstring</h4>
+    
+    <p>The docstring is really cool. You can view the docstring for a
+      function in the REPL with <code>(doc fn-name)</code>, e.g. <code>(doc map)</code>. The
+      docstring is also utilized if you use a tool to generate documentation
+      for your code. In the above example, <code>"Return a cheer that might be a
+        bit too enthusiastic"</code> is the docstring.</p>
+    
+    <h4 id="3_3_2__Parameters">3.3.2. Parameters</h4>
+    
+    <p>Clojure functions can be defined with zero or more parameters:</p>
+    <div class="code pygments"><div class="highlight"><pre><span class="p">(</span><span class="kd">defn </span><span class="nv">no-params</span>
+          <span class="p">[]</span>
+          <span class="s">"I take no parameters!"</span><span class="p">)</span>
+
+          <span class="p">(</span><span class="kd">defn </span><span class="nv">one-param</span>
+          <span class="p">[</span><span class="nv">x</span><span class="p">]</span>
+          <span class="p">(</span><span class="nb">str </span><span class="s">"I take one param: "</span> <span class="nv">x</span> <span class="s">" It'd better be a string!"</span><span class="p">))</span>
+
+          <span class="p">(</span><span class="kd">defn </span><span class="nv">two-params</span>
+          <span class="p">[</span><span class="nv">x</span> <span class="nv">y</span><span class="p">]</span>
+          <span class="p">(</span><span class="nb">str </span><span class="s">"Two parameters! That's nothing! Pah! I will smoosh them "</span>
+          <span class="s">"together to spite you! "</span> <span class="nv">x</span> <span class="nv">y</span><span class="p">))</span></pre></div></div>
+    <p>Functions can also be overloaded by arity. This means that a different
+      function body will run depending on the number of arguments passed to
+      a function.</p>
+    
+    <p>Here's the general form of a multiple-arity function definition.
+      Notice that each arity definition is enclosed in parentheses and has
+      an argument list:</p>
+    <div class="code pygments"><div class="highlight"><pre><span class="p">(</span><span class="kd">defn </span><span class="nv">multi-arity</span>
+          <span class="c1">;; 3-arity arguments and body</span>
+          <span class="p">([</span><span class="nv">first-arg</span> <span class="nv">second-arg</span> <span class="nv">third-arg</span><span class="p">]</span>
+          <span class="p">(</span><span class="nf">do-things</span> <span class="nv">first-arg</span> <span class="nv">second-arg</span> <span class="nv">third-arg</span><span class="p">))</span>
+          <span class="c1">;; 2-arity arguments and body</span>
+          <span class="p">([</span><span class="nv">first-arg</span> <span class="nv">second-arg</span><span class="p">]</span>
+          <span class="p">(</span><span class="nf">do-things</span> <span class="nv">first-arg</span> <span class="nv">second-arg</span><span class="p">))</span>
+          <span class="c1">;; 1-arity arguments and body</span>
+          <span class="p">([</span><span class="nv">first-arg</span><span class="p">]</span>
+          <span class="p">(</span><span class="nf">do-things</span> <span class="nv">first-arg</span><span class="p">)))</span></pre></div></div>
+    <p>Overloading by arity is one way to provide default values for
+      arguments. In this case, <code>"karate"</code> is the default argument for the
+      <code>chop-type</code> param: </p>
+    <div class="code pygments"><div class="highlight"><pre><span class="p">(</span><span class="kd">defn </span><span class="nv">x-chop</span>
+          <span class="s">"Describe the kind of chop you're inflicting on someone"</span>
+          <span class="p">([</span><span class="nb">name </span><span class="nv">chop-type</span><span class="p">]</span>
+          <span class="p">(</span><span class="nb">str </span><span class="s">"I "</span> <span class="nv">chop-type</span> <span class="s">" chop "</span> <span class="nb">name </span><span class="s">"! Take that!"</span><span class="p">))</span>
+          <span class="p">([</span><span class="nv">name</span><span class="p">]</span>
+          <span class="p">(</span><span class="nf">x-chop</span> <span class="nb">name </span><span class="s">"karate"</span><span class="p">)))</span></pre></div></div>
+    <p>If you call <code>x-chop</code> with two arguments, then the function works just
+      as it would if it weren't a multi-arity function:</p>
+    <div class="code pygments"><div class="highlight"><pre><span class="p">(</span><span class="nf">x-chop</span> <span class="s">"Kanye West"</span> <span class="s">"slap"</span><span class="p">)</span>
+          <span class="c1">; =&gt; "I slap chop Kanye West! Take that!"</span></pre></div></div>
+    <p>If you call <code>x-chop</code> with only one argument, though, then <code>x-chop</code>
+      will actually call itself with the second argument <code>"karate"</code>
+      supplied:</p>
+    <div class="code pygments"><div class="highlight"><pre><span class="p">(</span><span class="nf">x-chop</span> <span class="s">"Kanye East"</span><span class="p">)</span>
+          <span class="c1">; =&gt; "I karate chop Kanye East! Take that!"</span></pre></div></div>
+    <p>It might seem unusual to define a function in terms of itself like
+      this. If so, great! You're learning a new way to do things!</p>
+    
+    <p>You can also make each arity do something completely unrelated:</p>
+    <div class="code pygments"><div class="highlight"><pre><span class="p">(</span><span class="kd">defn </span><span class="nv">weird-arity</span>
+          <span class="p">([]</span>
+          <span class="s">"Destiny dressed you this morning my friend, and now Fear is</span>
+          <span class="s">     trying to pull off your pants. If you give up, if you give in,</span>
+          <span class="s">     you're gonna end up naked with Fear just standing there laughing</span>
+          <span class="s">     at your dangling unmentionables! - the Tick"</span><span class="p">)</span>
+          <span class="p">([</span><span class="nv">number</span><span class="p">]</span>
+          <span class="p">(</span><span class="nb">inc </span><span class="nv">number</span><span class="p">)))</span></pre></div></div>
+    <p>But most likely, you don't want to do that.</p>
+    
+    <p>Clojure also allows you to define variable-arity functions by
+      including a "rest-param", as in "put the rest of these arguments in a
+      list with the following name":</p>
+    <div class="code pygments"><div class="highlight"><pre><span class="p">(</span><span class="kd">defn </span><span class="nv">codger-communication</span>
+          <span class="p">[</span><span class="nv">whippersnapper</span><span class="p">]</span>
+          <span class="p">(</span><span class="nb">str </span><span class="s">"Get off my lawn, "</span> <span class="nv">whippersnapper</span> <span class="s">"!!!"</span><span class="p">))</span>
+
+          <span class="p">(</span><span class="kd">defn </span><span class="nv">codger</span>
+          <span class="p">[</span><span class="o">&amp;</span> <span class="nv">whippersnappers</span><span class="p">]</span> <span class="c1">;; the ampersand indicates the "rest-param"</span>
+          <span class="p">(</span><span class="nb">map </span><span class="nv">codger-communication</span> <span class="nv">whippersnappers</span><span class="p">))</span>
+
+          <span class="p">(</span><span class="nf">codger</span> <span class="s">"Billy"</span> <span class="s">"Anne-Marie"</span> <span class="s">"The Incredible Bulk"</span><span class="p">)</span>
+          <span class="c1">; =&gt;</span>
+          <span class="c1">; ("Get off my lawn, Billy!!!"</span>
+          <span class="c1">;  "Get off my lawn, Anne-Marie!!!"</span>
+          <span class="c1">;  "Get off my lawn, The Incredible Bulk!!!")</span></pre></div></div>
+    <p>As you can see, when you provide arguments to variable-arity
+      functions, the arguments get treated as a list.</p>
+    
+    <p>You can mix rest-params with normal params, but the rest-param has to
+      come last:</p>
+    <div class="code pygments"><div class="highlight"><pre><span class="p">(</span><span class="kd">defn </span><span class="nv">favorite-things</span>
+          <span class="p">[</span><span class="nb">name </span><span class="o">&amp;</span> <span class="nv">things</span><span class="p">]</span>
+          <span class="p">(</span><span class="nb">str </span><span class="s">"Hi, "</span> <span class="nb">name </span><span class="s">", here are my favorite things: "</span>
+          <span class="p">(</span><span class="nf">clojure.string/join</span> <span class="s">", "</span> <span class="nv">things</span><span class="p">)))</span>
+
+          <span class="p">(</span><span class="nf">favorite-things</span> <span class="s">"Doreen"</span> <span class="s">"gum"</span> <span class="s">"shoes"</span> <span class="s">"kara-te"</span><span class="p">)</span>
+          <span class="c1">; =&gt; "Hi, Doreen, here are my favorite things: gum, shoes, kara-te"</span></pre></div></div>
+    <p>Finally, Clojure has a more sophisticated way of defining parameters
+      called "destructuring", which deserves its own subsection:</p>
+    
+    <h4 id="3_3_3__Destructuring">3.3.3. Destructuring</h4>
+    
+    <p>The basic idea behind destructuring is that it lets you concisely bind
+      <em>symbols</em> to <em>values</em> within a <em>collection</em>. Let's look at a basic
+      example:</p>
+    <div class="code pygments"><div class="highlight"><pre><span class="c1">;; Return the first element of a collection</span>
+          <span class="p">(</span><span class="kd">defn </span><span class="nv">my-first</span>
+          <span class="p">[[</span><span class="nv">first-thing</span><span class="p">]]</span> <span class="c1">; Notice that first-thing is within a vector</span>
+          <span class="nv">first-thing</span><span class="p">)</span>
+
+          <span class="p">(</span><span class="nf">my-first</span> <span class="p">[</span><span class="s">"oven"</span> <span class="s">"bike"</span> <span class="s">"waraxe"</span><span class="p">])</span>
+          <span class="c1">; =&gt; "oven"</span></pre></div></div>
+    <p>Here's how you would accomplish the same thing without destructuring:</p>
+    <div class="code pygments"><div class="highlight"><pre><span class="p">(</span><span class="kd">defn </span><span class="nv">my-other-first</span>
+          <span class="p">[</span><span class="nv">collection</span><span class="p">]</span>
+          <span class="p">(</span><span class="nb">first </span><span class="nv">collection</span><span class="p">))</span>
+          <span class="p">(</span><span class="nf">my-other-first</span> <span class="p">[</span><span class="s">"nickel"</span> <span class="s">"hair"</span><span class="p">])</span>
+          <span class="c1">; =&gt; "nickel"</span></pre></div></div>
+    <p>As you can see, the <code>my-first</code> associates the symbol <code>first-thing</code>
+      with the first element of the vector that was passed in as an
+      argument. You tell <code>my-first</code> to do this by placing the symbol
+      <code>first-thing</code> within a vector.</p>
+    
+    <p>That vector is like a huge sign held up to Clojure which says, "Hey!
+      This function is going to receive a list or a vector or a set as an
+      argument. Make my life easier by taking apart the argument's structure
+      for me and associating meaningful names with different parts of the
+      argument!"</p>
+    
+    <p>When destructuring a vector or list, you can name as many elements as
+      you want and also use rest params:</p>
+    <div class="code pygments"><div class="highlight"><pre><span class="p">(</span><span class="kd">defn </span><span class="nv">chooser</span>
+          <span class="p">[[</span><span class="nv">first-choice</span> <span class="nv">second-choice</span> <span class="o">&amp;</span> <span class="nv">unimportant-choices</span><span class="p">]]</span>
+          <span class="p">(</span><span class="nb">println </span><span class="p">(</span><span class="nb">str </span><span class="s">"Your first choice is: "</span> <span class="nv">first-choice</span><span class="p">))</span>
+          <span class="p">(</span><span class="nb">println </span><span class="p">(</span><span class="nb">str </span><span class="s">"Your second choice is: "</span> <span class="nv">second-choice</span><span class="p">))</span>
+          <span class="p">(</span><span class="nb">println </span><span class="p">(</span><span class="nb">str </span><span class="s">"We're ignoring the rest of your choices. "</span>
+          <span class="s">"Here they are in case you need to cry over them: "</span>
+          <span class="p">(</span><span class="nf">clojure.string/join</span> <span class="s">", "</span> <span class="nv">unimportant-choices</span><span class="p">))))</span>
+          <span class="p">(</span><span class="nf">chooser</span> <span class="p">[</span><span class="s">"Marmalade"</span>, <span class="s">"Handsome Jack"</span>, <span class="s">"Pigpen"</span>, <span class="s">"Aquaman"</span><span class="p">])</span>
+          <span class="c1">; =&gt; </span>
+          <span class="c1">; Your first choice is: Marmalade</span>
+          <span class="c1">; Your second choice is: Handsome Jack</span>
+          <span class="c1">; We're ignoring the rest of your choices. Here they are in case \</span>
+          <span class="c1">; you need to cry over them: Pigpen, Aquaman</span></pre></div></div>
+    <p>You can also destructure maps. In the same way that you tell Clojure
+      to destructure a vector or list by providing a vector as a parameter,
+      you destucture maps by providing a map as a parameter:</p>
+    <div class="code pygments"><div class="highlight"><pre><span class="p">(</span><span class="kd">defn </span><span class="nv">announce-treasure-location</span>
+          <span class="p">[{</span><span class="nv">lat</span> <span class="ss">:lat</span> <span class="nv">lng</span> <span class="ss">:lng</span><span class="p">}]</span>
+          <span class="p">(</span><span class="nb">println </span><span class="p">(</span><span class="nb">str </span><span class="s">"Treasure lat: "</span> <span class="nv">lat</span><span class="p">))</span>
+          <span class="p">(</span><span class="nb">println </span><span class="p">(</span><span class="nb">str </span><span class="s">"Treasure lng: "</span> <span class="nv">lng</span><span class="p">)))</span>
+          <span class="p">(</span><span class="nf">announce-treasure-location</span> <span class="p">{</span><span class="ss">:lat</span> <span class="mf">28.22</span> <span class="ss">:lng</span> <span class="mf">81.33</span><span class="p">})</span>
+          <span class="c1">; =&gt;</span>
+          <span class="c1">; Treasure lat: 28.22</span>
+          <span class="c1">; Treasure lng: 81.33</span></pre></div></div>
+    <p>Let's look more at this line:</p>
+    <div class="code pygments"><div class="highlight"><pre><span class="p">[{</span><span class="nv">lat</span> <span class="ss">:lat</span> <span class="nv">lng</span> <span class="ss">:lng</span><span class="p">}]</span></pre></div></div>
+    <p>This is like telling Clojure, "Yo! Clojure! Do me a flava and
+      associate the symbol <code>lat</code> with the value corresponding to the key
+      <code>:lat</code>. Do the same thing with <code>lng</code> and <code>:lng</code>, ok?."</p>
+    
+    <p>We often want to just take keywords and "break them out" of a map, so
+      there's a shorter syntax for that:</p>
+    <div class="code pygments"><div class="highlight"><pre><span class="c1">;; Works the same as above.</span>
+          <span class="p">(</span><span class="kd">defn </span><span class="nv">announce-treasure-location</span>
+          <span class="p">[{</span><span class="ss">:keys</span> <span class="p">[</span><span class="nv">lat</span> <span class="nv">lng</span><span class="p">]}]</span>
+          <span class="p">(</span><span class="nb">println </span><span class="p">(</span><span class="nb">str </span><span class="s">"Treasure lat: "</span> <span class="nv">lat</span><span class="p">))</span>
+          <span class="p">(</span><span class="nb">println </span><span class="p">(</span><span class="nb">str </span><span class="s">"Treasure lng: "</span> <span class="nv">lng</span><span class="p">)))</span></pre></div></div>
+    <p>You can retain access to the original map argument by using the <code>:as</code>
+      keyword. In the example below, the original map is accessed with
+      <code>treasure-location</code>:</p>
+    <div class="code pygments"><div class="highlight"><pre><span class="c1">;; Works the same as above.</span>
+          <span class="p">(</span><span class="kd">defn </span><span class="nv">receive-treasure-location</span>
+          <span class="p">[{</span><span class="ss">:keys</span> <span class="p">[</span><span class="nv">lat</span> <span class="nv">lng</span><span class="p">]</span> <span class="ss">:as</span> <span class="nv">treasure-location</span><span class="p">}]</span>
+          <span class="p">(</span><span class="nb">println </span><span class="p">(</span><span class="nb">str </span><span class="s">"Treasure lat: "</span> <span class="nv">lat</span><span class="p">))</span>
+          <span class="p">(</span><span class="nb">println </span><span class="p">(</span><span class="nb">str </span><span class="s">"Treasure lng: "</span> <span class="nv">lng</span><span class="p">))</span>
+
+          <span class="c1">;; One would assume that this would put in new coordinates for your ship</span>
+          <span class="p">(</span><span class="nf">steer-ship!</span> <span class="nv">treasure-location</span><span class="p">))</span></pre></div></div>
+    <p>In general, you can think of destructuring as instructing Clojure how
+      to associate symbols with values in a list, map, set, or vector.</p>
+    
+    <p>Now, on to the part of the function that actually does something: the
+      function body!</p>
+    
+    <h4 id="3_3_4__Function_body">3.3.4. Function body</h4>
+    
+    <p>Your function body can contain any forms. Clojure automatically
+      returns the last form evaluated:</p>
+    <div class="code pygments"><div class="highlight"><pre><span class="p">(</span><span class="kd">defn </span><span class="nv">illustrative-function</span>
+          <span class="p">[]</span>
+          <span class="p">(</span><span class="nb">+ </span><span class="mi">1</span> <span class="mi">304</span><span class="p">)</span>
+          <span class="mi">30</span>
+          <span class="s">"joe"</span><span class="p">)</span>
+          <span class="p">(</span><span class="nf">illustrative-function</span><span class="p">)</span>
+          <span class="c1">; =&gt; "joe"</span>
+
+          <span class="p">(</span><span class="kd">defn </span><span class="nv">number-comment</span>
+          <span class="p">[</span><span class="nv">x</span><span class="p">]</span>
+          <span class="p">(</span><span class="k">if </span><span class="p">(</span><span class="nb">&gt; </span><span class="nv">x</span> <span class="mi">6</span><span class="p">)</span>
+          <span class="s">"Oh my gosh! What a big number!"</span>
+          <span class="s">"That number's OK, I guess"</span><span class="p">))</span>
+
+          <span class="p">(</span><span class="nf">number-comment</span> <span class="mi">5</span><span class="p">)</span>
+          <span class="c1">; =&gt; "That number's OK, I guess"</span>
+
+          <span class="p">(</span><span class="nf">number-comment</span> <span class="mi">7</span><span class="p">)</span>
+          <span class="c1">; =&gt; "Oh my gosh! What a big number!"</span></pre></div></div>
+    <h4 id="3_3_5__All_Functions_are_Created_Equal">3.3.5. All Functions are Created Equal</h4>
+    
+    <p>One final note: in Clojure, there are no privileged functions. <code>+</code> is
+      just a function, <code>-</code> is just a function, <code>inc</code> and <code>map</code> are just
+      functions. They're no better than your functions! So don't let them
+      give you any lip.</p>
+    
+    <p>More importantly, this fact helps to demonstrate Clojure's underlying
+      simplicity. In a way, Clojure is very dumb. When you make a function
+      call, Clojure just says, "<code>map</code>? Sure, whatever! I'll just apply this
+      and move on." It doesn't care what the function is or where it came
+      from, it treats all functions the same. At its core, Clojure doesn't
+      give two burger flips about addition, multiplication, or mapping. It
+      just cares about applying functions.</p>
+    
+    <p>As you program with Clojure more, you'll see that this simplicity
+      is great. You don't have to worry about special rules or syntax for
+      working with functions. They all work the same!</p>
+    
+    <h3 id="3_4__Anonymous_Functions">3.4. Anonymous Functions</h3>
+    
+    <p>In Clojure, your functions don't have to have names. In fact, you'll
+      find yourself using anonymous functions all the time. How mysterious!</p>
+    
+    <p>There are two ways to create anonymous functions. The first is to use
+      the <code>fn</code> form:</p>
+    <div class="code pygments"><div class="highlight"><pre><span class="c1">;; This looks a lot like defn, doesn't it?</span>
+          <span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="nv">param-list</span><span class="p">]</span>
+          <span class="nv">function</span> <span class="nv">body</span><span class="p">)</span>
+
+          <span class="c1">;; Example</span>
+          <span class="p">(</span><span class="nb">map </span><span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="nv">name</span><span class="p">]</span> <span class="p">(</span><span class="nb">str </span><span class="s">"Hi, "</span> <span class="nv">name</span><span class="p">))</span>
+          <span class="p">[</span><span class="s">"Darth Vader"</span> <span class="s">"Mr. Magoo"</span><span class="p">])</span>
+          <span class="c1">; =&gt; ("Hi, Darth Vader" "Hi, Mr. Magoo")</span>
+
+          <span class="c1">;; Another example</span>
+          <span class="p">((</span><span class="k">fn </span><span class="p">[</span><span class="nv">x</span><span class="p">]</span> <span class="p">(</span><span class="nb">* </span><span class="nv">x</span> <span class="mi">3</span><span class="p">))</span> <span class="mi">8</span><span class="p">)</span>
+          <span class="c1">; =&gt; 24</span></pre></div></div>
+    <p>You can treat <code>fn</code> nearly identically to the way you treat <code>defn</code>.
+      The parameter lists and function bodies work exactly the same. You can
+      use argument destructuring, rest-params, and so on.</p>
+    
+    <p>You could even associate your anonymous function with a name, which
+      shouldn't come as a surprise:</p>
+    <div class="code pygments"><div class="highlight"><pre><span class="p">(</span><span class="k">def </span><span class="nv">my-special-multiplier</span> <span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="nv">x</span><span class="p">]</span> <span class="p">(</span><span class="nb">* </span><span class="nv">x</span> <span class="mi">3</span><span class="p">)))</span>
+          <span class="p">(</span><span class="nf">my-special-multiplier</span> <span class="mi">12</span><span class="p">)</span>
+          <span class="c1">; =&gt; 36</span></pre></div></div>
+    <p>(If it does come as a surprise, then… Surprise!)</p>
+    
+    <p>There's another, more compact way to create anonymous functions:</p>
+    <div class="code pygments"><div class="highlight"><pre><span class="c1">;; Whoa this looks weird.</span>
+          <span class="o">#</span><span class="p">(</span><span class="nb">* </span><span class="nv">%</span> <span class="mi">3</span><span class="p">)</span>
+
+          <span class="c1">;; Apply this weird looking thing</span>
+          <span class="p">(</span><span class="o">#</span><span class="p">(</span><span class="nb">* </span><span class="nv">%</span> <span class="mi">3</span><span class="p">)</span> <span class="mi">8</span><span class="p">)</span>
+          <span class="c1">; =&gt; 24</span>
+
+          <span class="c1">;; Another example</span>
+          <span class="p">(</span><span class="nb">map </span><span class="o">#</span><span class="p">(</span><span class="nb">str </span><span class="s">"Hi, "</span> <span class="nv">%</span><span class="p">)</span>
+          <span class="p">[</span><span class="s">"Darth Vader"</span> <span class="s">"Mr. Magoo"</span><span class="p">])</span>
+          <span class="c1">; =&gt; ("Hi, Darth Vader" "Hi, Mr. Magoo")</span></pre></div></div>
+    <p>You can see that it's definitely more compact, but it's probably also
+      confusing. Let's break it down.</p>
+    
+    <p>This kind of anonymous function looks a lot like a function call,
+      except that it's preceded by a pound sign, <code>#</code>:</p>
+    <div class="code pygments"><div class="highlight"><pre><span class="c1">;; Function call</span>
+          <span class="p">(</span><span class="nb">* </span><span class="mi">8</span> <span class="mi">3</span><span class="p">)</span>
+
+          <span class="c1">;; Anonymous function</span>
+          <span class="o">#</span><span class="p">(</span><span class="nb">* </span><span class="nv">%</span> <span class="mi">3</span><span class="p">)</span></pre></div></div>
+    <p>This similarity allows you to more quickly see what will happen when
+      this anonymous function gets applied. "Oh," you can say to yourself,
+      "this is going to multiply its argument by 3".</p>
+    
+    <p>As you may have guessed by now, the percent sign, <code>%</code>, indicates the
+      argument passed to the function. If your anonymous function takes
+      multiple arguments, you can distinguish them like this: <code>%1</code>, <code>%2</code>,
+      <code>%3</code>, etc. <code>%</code> is equivalent to <code>%1</code>:</p>
+    <div class="code pygments"><div class="highlight"><pre><span class="p">(</span><span class="o">#</span><span class="p">(</span><span class="nb">str </span><span class="nv">%1</span> <span class="s">" and "</span> <span class="nv">%2</span><span class="p">)</span> <span class="s">"corn bread"</span> <span class="s">"butter beans"</span><span class="p">)</span>
+          <span class="c1">; =&gt; "corn bread and butter beans"</span></pre></div></div>
+    <p>You can also pass a rest param:</p>
+    <div class="code pygments"><div class="highlight"><pre><span class="p">(</span><span class="o">#</span><span class="p">(</span><span class="nb">identity </span><span class="nv">%</span><span class="o">&amp;</span><span class="p">)</span> <span class="mi">1</span> <span class="s">"blarg"</span> <span class="ss">:yip</span><span class="p">)</span>
+          <span class="c1">; =&gt; (1 "blarg" :yip)</span></pre></div></div>
+    <p>The main difference between this form and <code>fn</code> is that this form can
+      easily become unreadable and is best used for short functions.</p>
+    
+    <h3 id="3_5__Returning_Functions">3.5. Returning Functions</h3>
+    
+    <p>Functions can return other functions. The returned functions are
+      closures, which means that they can access all the variables that were
+      in scope when the function was created.</p>
+    
+    <p>Here's a standard example:</p>
+    <div class="code pygments"><div class="highlight"><pre><span class="c1">;; inc-by is in scope, so the returned function has access to it even</span>
+          <span class="c1">;; when the returned function is used outside inc-maker</span>
+          <span class="p">(</span><span class="kd">defn </span><span class="nv">inc-maker</span>
+          <span class="s">"Create a custom incrementor"</span>
+          <span class="p">[</span><span class="nv">inc-by</span><span class="p">]</span>
+          <span class="o">#</span><span class="p">(</span><span class="nb">+ </span><span class="nv">%</span> <span class="nv">inc-by</span><span class="p">))</span>
+
+          <span class="p">(</span><span class="k">def </span><span class="nv">inc3</span> <span class="p">(</span><span class="nf">inc-maker</span> <span class="mi">3</span><span class="p">))</span>
+
+          <span class="p">(</span><span class="nf">inc3</span> <span class="mi">7</span><span class="p">)</span>
+          <span class="c1">; =&gt; 10</span></pre></div></div>
+    <p>Woohoo!</p>
+    
+    <h2 id="4__Pulling_It_All_Together">4. Pulling It All Together</h2>
+    
+    <p>OK! Let's pull all this together and use our knowledge for a noble
+      purpose: smacking around hobbits!</p>
+    
+    <p>In order to hit a hobbit, we'll first model its body parts. Each body
+      part will include its relative size to help us determine how likely it
+      is that that part will be hit.</p>
+    
+    <p>In order to avoid repetition, this hobbit model will only include
+      entries for "left foot", "left ear", etc. Therefore, we'll need a
+      function to fully symmetrize the model.</p>
+    
+    <p>Finally, we'll create a function which iterates over our body parts
+      and randomly chooses the one hit.</p>
+    
+    <p>Fun!</p>
+    
+    <h3 id="4_1__The_Shire_s_Next_Top_Model">4.1. The Shire's Next Top Model</h3>
+    
+    <p>For our hobbit model, we'll eschew such characteristics as "joviality"
+      and "mischievousness" and focus only on the hobbit's tiny body. Here's
+      our hobbit model:</p>
+    <div class="code pygments"><div class="highlight"><pre><span class="p">(</span><span class="k">def </span><span class="nv">asym-hobbit-body-parts</span> <span class="p">[{</span><span class="ss">:name</span> <span class="s">"head"</span> <span class="ss">:size</span> <span class="mi">3</span><span class="p">}</span>
+          <span class="p">{</span><span class="ss">:name</span> <span class="s">"left-eye"</span> <span class="ss">:size</span> <span class="mi">1</span><span class="p">}</span>
+          <span class="p">{</span><span class="ss">:name</span> <span class="s">"left-ear"</span> <span class="ss">:size</span> <span class="mi">1</span><span class="p">}</span>
+          <span class="p">{</span><span class="ss">:name</span> <span class="s">"mouth"</span> <span class="ss">:size</span> <span class="mi">1</span><span class="p">}</span>
+          <span class="p">{</span><span class="ss">:name</span> <span class="s">"nose"</span> <span class="ss">:size</span> <span class="mi">1</span><span class="p">}</span>
+          <span class="p">{</span><span class="ss">:name</span> <span class="s">"neck"</span> <span class="ss">:size</span> <span class="mi">2</span><span class="p">}</span>
+          <span class="p">{</span><span class="ss">:name</span> <span class="s">"left-shoulder"</span> <span class="ss">:size</span> <span class="mi">3</span><span class="p">}</span>
+          <span class="p">{</span><span class="ss">:name</span> <span class="s">"left-upper-arm"</span> <span class="ss">:size</span> <span class="mi">3</span><span class="p">}</span>
+          <span class="p">{</span><span class="ss">:name</span> <span class="s">"chest"</span> <span class="ss">:size</span> <span class="mi">10</span><span class="p">}</span>
+          <span class="p">{</span><span class="ss">:name</span> <span class="s">"back"</span> <span class="ss">:size</span> <span class="mi">10</span><span class="p">}</span>
+          <span class="p">{</span><span class="ss">:name</span> <span class="s">"left-forearm"</span> <span class="ss">:size</span> <span class="mi">3</span><span class="p">}</span>
+          <span class="p">{</span><span class="ss">:name</span> <span class="s">"abdomen"</span> <span class="ss">:size</span> <span class="mi">6</span><span class="p">}</span>
+          <span class="p">{</span><span class="ss">:name</span> <span class="s">"left-kidney"</span> <span class="ss">:size</span> <span class="mi">1</span><span class="p">}</span>
+          <span class="p">{</span><span class="ss">:name</span> <span class="s">"left-hand"</span> <span class="ss">:size</span> <span class="mi">2</span><span class="p">}</span>
+          <span class="p">{</span><span class="ss">:name</span> <span class="s">"left-knee"</span> <span class="ss">:size</span> <span class="mi">2</span><span class="p">}</span>
+          <span class="p">{</span><span class="ss">:name</span> <span class="s">"left-thigh"</span> <span class="ss">:size</span> <span class="mi">4</span><span class="p">}</span>
+          <span class="p">{</span><span class="ss">:name</span> <span class="s">"left-lower-leg"</span> <span class="ss">:size</span> <span class="mi">3</span><span class="p">}</span>
+          <span class="p">{</span><span class="ss">:name</span> <span class="s">"left-achilles"</span> <span class="ss">:size</span> <span class="mi">1</span><span class="p">}</span>
+          <span class="p">{</span><span class="ss">:name</span> <span class="s">"left-foot"</span> <span class="ss">:size</span> <span class="mi">2</span><span class="p">}])</span></pre></div></div>
+    <p>This is a vector of maps. Each map has the name of the body part and
+      relative size of the body part. Look, I know that only anime
+      characters have eyes 1/3 the size of their head, but just go with it,
+      OK?</p>
+    
+    <p>Conspicuously missing is the hobbit's right side. Let's fix that.
+      The code below is the most complex code we've looked at so far. It
+      introduces some ideas we haven't covered yet. Don't worry though,
+      because we're going to examine it in great detail:</p>
+    <div class="code pygments"><div class="highlight"><pre><span class="p">(</span><span class="kd">defn </span><span class="nv">has-matching-part?</span>
+          <span class="p">[</span><span class="nv">part</span><span class="p">]</span>
+          <span class="p">(</span><span class="nb">re-find </span><span class="o">#</span><span class="s">"^left-"</span> <span class="p">(</span><span class="ss">:name</span> <span class="nv">part</span><span class="p">)))</span>
+
+          <span class="p">(</span><span class="kd">defn </span><span class="nv">matching-part</span>
+          <span class="p">[</span><span class="nv">part</span><span class="p">]</span>
+          <span class="p">{</span><span class="ss">:name</span> <span class="p">(</span><span class="nf">clojure.string/replace</span> <span class="p">(</span><span class="ss">:name</span> <span class="nv">part</span><span class="p">)</span> <span class="o">#</span><span class="s">"^left-"</span> <span class="s">"right-"</span><span class="p">)</span>
+          <span class="ss">:size</span> <span class="p">(</span><span class="ss">:size</span> <span class="nv">part</span><span class="p">)})</span>
+
+          <span class="p">(</span><span class="kd">defn </span><span class="nv">symmetrize-body-parts</span>
+          <span class="s">"Expects a seq of maps which have a :name and :size"</span>
+          <span class="p">[</span><span class="nv">asym-body-parts</span><span class="p">]</span>
+          <span class="p">(</span><span class="k">loop </span><span class="p">[</span><span class="nv">remaining-asym-parts</span> <span class="nv">asym-body-parts</span>
+          <span class="nv">final-body-parts</span> <span class="p">[]]</span>
+          <span class="p">(</span><span class="k">if </span><span class="p">(</span><span class="nf">empty?</span> <span class="nv">remaining-asym-parts</span><span class="p">)</span>
+          <span class="nv">final-body-parts</span>
+          <span class="p">(</span><span class="k">let </span><span class="p">[[</span><span class="nv">part</span> <span class="o">&amp;</span> <span class="nv">remaining</span><span class="p">]</span> <span class="nv">remaining-asym-parts</span>
+          <span class="nv">final-body-parts</span> <span class="p">(</span><span class="nb">conj </span><span class="nv">final-body-parts</span> <span class="nv">part</span><span class="p">)]</span>
+          <span class="p">(</span><span class="k">if </span><span class="p">(</span><span class="nf">has-matching-part?</span> <span class="nv">part</span><span class="p">)</span>
+          <span class="p">(</span><span class="nf">recur</span> <span class="nv">remaining</span> <span class="p">(</span><span class="nb">conj </span><span class="nv">final-body-parts</span> <span class="p">(</span><span class="nf">matching-part</span> <span class="nv">part</span><span class="p">)))</span>
+          <span class="p">(</span><span class="nf">recur</span> <span class="nv">remaining</span> <span class="nv">final-body-parts</span><span class="p">))))))</span>
+
+          <span class="p">(</span><span class="nf">symmetrize-body-parts</span> <span class="nv">asym-hobbit-body-parts</span><span class="p">)</span>
+          <span class="c1">; =&gt; the following is the return value</span>
+          <span class="p">[{</span><span class="ss">:name</span> <span class="s">"head"</span>, <span class="ss">:size</span> <span class="mi">3</span><span class="p">}</span>
+          <span class="p">{</span><span class="ss">:name</span> <span class="s">"left-eye"</span>, <span class="ss">:size</span> <span class="mi">1</span><span class="p">}</span>
+          <span class="p">{</span><span class="ss">:name</span> <span class="s">"right-eye"</span>, <span class="ss">:size</span> <span class="mi">1</span><span class="p">}</span>
+          <span class="p">{</span><span class="ss">:name</span> <span class="s">"left-ear"</span>, <span class="ss">:size</span> <span class="mi">1</span><span class="p">}</span>
+          <span class="p">{</span><span class="ss">:name</span> <span class="s">"right-ear"</span>, <span class="ss">:size</span> <span class="mi">1</span><span class="p">}</span>
+          <span class="p">{</span><span class="ss">:name</span> <span class="s">"mouth"</span>, <span class="ss">:size</span> <span class="mi">1</span><span class="p">}</span>
+          <span class="p">{</span><span class="ss">:name</span> <span class="s">"nose"</span>, <span class="ss">:size</span> <span class="mi">1</span><span class="p">}</span>
+          <span class="p">{</span><span class="ss">:name</span> <span class="s">"neck"</span>, <span class="ss">:size</span> <span class="mi">2</span><span class="p">}</span>
+          <span class="p">{</span><span class="ss">:name</span> <span class="s">"left-shoulder"</span>, <span class="ss">:size</span> <span class="mi">3</span><span class="p">}</span>
+          <span class="p">{</span><span class="ss">:name</span> <span class="s">"right-shoulder"</span>, <span class="ss">:size</span> <span class="mi">3</span><span class="p">}</span>
+          <span class="p">{</span><span class="ss">:name</span> <span class="s">"left-upper-arm"</span>, <span class="ss">:size</span> <span class="mi">3</span><span class="p">}</span>
+          <span class="p">{</span><span class="ss">:name</span> <span class="s">"right-upper-arm"</span>, <span class="ss">:size</span> <span class="mi">3</span><span class="p">}</span>
+          <span class="p">{</span><span class="ss">:name</span> <span class="s">"chest"</span>, <span class="ss">:size</span> <span class="mi">10</span><span class="p">}</span>
+          <span class="p">{</span><span class="ss">:name</span> <span class="s">"back"</span>, <span class="ss">:size</span> <span class="mi">10</span><span class="p">}</span>
+          <span class="p">{</span><span class="ss">:name</span> <span class="s">"left-forearm"</span>, <span class="ss">:size</span> <span class="mi">3</span><span class="p">}</span>
+          <span class="p">{</span><span class="ss">:name</span> <span class="s">"right-forearm"</span>, <span class="ss">:size</span> <span class="mi">3</span><span class="p">}</span>
+          <span class="p">{</span><span class="ss">:name</span> <span class="s">"abdomen"</span>, <span class="ss">:size</span> <span class="mi">6</span><span class="p">}</span>
+          <span class="p">{</span><span class="ss">:name</span> <span class="s">"left-kidney"</span>, <span class="ss">:size</span> <span class="mi">1</span><span class="p">}</span>
+          <span class="p">{</span><span class="ss">:name</span> <span class="s">"right-kidney"</span>, <span class="ss">:size</span> <span class="mi">1</span><span class="p">}</span>
+          <span class="p">{</span><span class="ss">:name</span> <span class="s">"left-hand"</span>, <span class="ss">:size</span> <span class="mi">2</span><span class="p">}</span>
+          <span class="p">{</span><span class="ss">:name</span> <span class="s">"right-hand"</span>, <span class="ss">:size</span> <span class="mi">2</span><span class="p">}</span>
+          <span class="p">{</span><span class="ss">:name</span> <span class="s">"left-knee"</span>, <span class="ss">:size</span> <span class="mi">2</span><span class="p">}</span>
+          <span class="p">{</span><span class="ss">:name</span> <span class="s">"right-knee"</span>, <span class="ss">:size</span> <span class="mi">2</span><span class="p">}</span>
+          <span class="p">{</span><span class="ss">:name</span> <span class="s">"left-thigh"</span>, <span class="ss">:size</span> <span class="mi">4</span><span class="p">}</span>
+          <span class="p">{</span><span class="ss">:name</span> <span class="s">"right-thigh"</span>, <span class="ss">:size</span> <span class="mi">4</span><span class="p">}</span>
+          <span class="p">{</span><span class="ss">:name</span> <span class="s">"left-lower-leg"</span>, <span class="ss">:size</span> <span class="mi">3</span><span class="p">}</span>
+          <span class="p">{</span><span class="ss">:name</span> <span class="s">"right-lower-leg"</span>, <span class="ss">:size</span> <span class="mi">3</span><span class="p">}</span>
+          <span class="p">{</span><span class="ss">:name</span> <span class="s">"left-achilles"</span>, <span class="ss">:size</span> <span class="mi">1</span><span class="p">}</span>
+          <span class="p">{</span><span class="ss">:name</span> <span class="s">"right-achilles"</span>, <span class="ss">:size</span> <span class="mi">1</span><span class="p">}</span>
+          <span class="p">{</span><span class="ss">:name</span> <span class="s">"left-foot"</span>, <span class="ss">:size</span> <span class="mi">2</span><span class="p">}</span>
+          <span class="p">{</span><span class="ss">:name</span> <span class="s">"right-foot"</span>, <span class="ss">:size</span> <span class="mi">2</span><span class="p">}]</span></pre></div></div>
+    <p>Let's break this down!</p>
+    
+    <h3 id="4_2__let">4.2. let</h3>
+    
+    <p>In our symmetrizer above, we saw the following:</p>
+    <div class="code pygments"><div class="highlight"><pre><span class="p">(</span><span class="k">let </span><span class="p">[[</span><span class="nv">part</span> <span class="o">&amp;</span> <span class="nv">remaining</span><span class="p">]</span> <span class="nv">remaining-asym-parts</span>
+          <span class="nv">final-body-parts</span> <span class="p">(</span><span class="nb">conj </span><span class="nv">final-body-parts</span> <span class="nv">part</span><span class="p">)]</span>
+          <span class="nv">some-stuff</span><span class="p">)</span></pre></div></div>
+    <p>All this does is bind the names on the left to the values on the
+      right. You can think of <code>let</code> as short for "let it be", which is also
+      a beautiful Beatles song (in case you didn't know (in which case,
+      wtf?)). For example, "Let <code>final-body-parts</code> be <code>(conj
+        final-body-parts part)</code>."</p>
+    
+    <p>Here are some simpler examples:</p>
+    <div class="code pygments"><div class="highlight"><pre><span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nv">x</span> <span class="mi">3</span><span class="p">]</span>
+          <span class="nv">x</span><span class="p">)</span>
+          <span class="c1">; =&gt; 3</span>
+
+
+          <span class="p">(</span><span class="k">def </span><span class="nv">dalmatian-list</span>
+          <span class="p">[</span><span class="s">"Pongo"</span> <span class="s">"Perdita"</span> <span class="s">"Puppy 1"</span> <span class="s">"Puppy 2"</span><span class="p">])</span> <span class="c1">; and 97 more...</span>
+          <span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nv">dalmatians</span> <span class="p">(</span><span class="nb">take </span><span class="mi">2</span> <span class="nv">dalmatian-list</span><span class="p">)]</span>
+          <span class="nv">dalmatians</span><span class="p">)</span>
+          <span class="c1">; =&gt; ("Pongo" "Perdita")</span></pre></div></div>
+    <p><code>let</code> also introduces a new scope:</p>
+    <div class="code pygments"><div class="highlight"><pre><span class="p">(</span><span class="k">def </span><span class="nv">x</span> <span class="mi">0</span><span class="p">)</span>
+          <span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nv">x</span> <span class="mi">1</span><span class="p">]</span> <span class="nv">x</span><span class="p">)</span>
+          <span class="c1">; =&gt; 1</span></pre></div></div>
+    <p>However, you can reference existing bindings in your <code>let</code> binding:</p>
+    <div class="code pygments"><div class="highlight"><pre><span class="p">(</span><span class="n">def</span> <span class="n">x</span> <span class="mi">0</span><span class="p">)</span>
+          <span class="p">(</span><span class="n">let</span> <span class="p">[</span><span class="n">x</span> <span class="p">(</span><span class="n">inc</span> <span class="n">x</span><span class="p">)]</span> <span class="n">x</span><span class="p">)</span>
+          <span class="p">;</span> <span class="o">=&gt;</span> <span class="mi">1</span></pre></div></div>
+    <p>You can also use rest-params in <code>let</code>, just like you can in functions:</p>
+    <div class="code pygments"><div class="highlight"><pre><span class="p">(</span><span class="k">let </span><span class="p">[[</span><span class="nv">pongo</span> <span class="o">&amp;</span> <span class="nv">dalmatians</span><span class="p">]</span> <span class="nv">dalmatian-list</span><span class="p">]</span>
+          <span class="p">[</span><span class="nv">pongo</span> <span class="nv">dalmatians</span><span class="p">])</span>
+          <span class="c1">; =&gt; ["Pongo" ("Perdita" "Puppy 1" "Puppy 2")]</span></pre></div></div>
+    <p>Notice that the value of a <code>let</code> form is the last form in its body
+      which gets evaluated.</p>
+    
+    <p><code>let</code> forms follow all the destructuring rules which we introduced in
+      "Calling a Function" above.</p>
+    
+    <p>One way to think about <code>let</code> forms is that they provide parameters and
+      their arguments side-by-side. <code>let</code> forms have two main uses:</p>
+    
+    <ul>
+      <li>They provide clarity by allowing you to name things</li>
+      <li>They allow you to evaluate an expression only once and re-use the
+        result. This is especially important when you need to re-use the
+        result of an expensive function call, like a network API call. It's
+        also important when the expression has side effects.</li>
+    </ul>
+    <p>Let's have another look at the <code>let</code> form in our symmetrizing function
+      so we can understand exactly what's going on:</p>
+    <div class="code pygments"><div class="highlight"><pre><span class="c1">;; Associate "part" with the first element of "remaining-asym-parts"</span>
+          <span class="c1">;; Associate "remaining" with the rest of the elements in "remaining-asym-parts"</span>
+          <span class="c1">;; Associate "final-body-parts" with the result of (conj final-body-parts part)</span>
+          <span class="p">(</span><span class="k">let </span><span class="p">[[</span><span class="nv">part</span> <span class="o">&amp;</span> <span class="nv">remaining</span><span class="p">]</span> <span class="nv">remaining-asym-parts</span>
+          <span class="nv">final-body-parts</span> <span class="p">(</span><span class="nb">conj </span><span class="nv">final-body-parts</span> <span class="nv">part</span><span class="p">)]</span>
+          <span class="p">(</span><span class="k">if </span><span class="p">(</span><span class="nf">has-matching-part?</span> <span class="nv">part</span><span class="p">)</span>
+          <span class="p">(</span><span class="nf">recur</span> <span class="nv">remaining</span> <span class="p">(</span><span class="nb">conj </span><span class="nv">final-body-parts</span> <span class="p">(</span><span class="nf">matching-part</span> <span class="nv">part</span><span class="p">)))</span>
+          <span class="p">(</span><span class="nf">recur</span> <span class="nv">remaining</span> <span class="nv">final-body-parts</span><span class="p">)))</span></pre></div></div>
+    <p>Notice that <code>part</code>, <code>remaining</code>, and <code>final-body-parts</code> each gets used
+      multiple times in the body of the <code>let</code>. If, instead of using the
+      names <code>part</code>, <code>remaining</code>, and <code>final-body-parts</code> we used the original
+      expressions, it would be a mess! For example:</p>
+    <div class="code pygments"><div class="highlight"><pre><span class="p">(</span><span class="k">if </span><span class="p">(</span><span class="nf">has-matching-part?</span> <span class="p">(</span><span class="nb">first </span><span class="nv">remaining-asym-parts</span><span class="p">))</span>
+          <span class="p">(</span><span class="nf">recur</span> <span class="p">(</span><span class="nb">rest </span><span class="nv">remaining-asym-parts</span><span class="p">)</span>
+          <span class="p">(</span><span class="nb">conj </span><span class="p">(</span><span class="nb">conj </span><span class="p">(</span><span class="nb">conj </span><span class="nv">final-body-parts</span> <span class="nv">part</span><span class="p">)</span> <span class="p">(</span><span class="nb">first </span><span class="nv">remaining-asym-parts</span><span class="p">))</span>
+          <span class="p">(</span><span class="nf">matching-part</span> <span class="p">(</span><span class="nb">first </span><span class="nv">remaining-asym-parts</span><span class="p">))))</span>
+          <span class="p">(</span><span class="nf">recur</span> <span class="p">(</span><span class="nb">rest </span><span class="nv">remaining-asym-parts</span><span class="p">)</span>
+          <span class="p">(</span><span class="nb">conj </span><span class="p">(</span><span class="nb">conj </span><span class="nv">final-body-parts</span> <span class="nv">part</span><span class="p">)</span> <span class="p">(</span><span class="nb">first </span><span class="nv">remaining-asym-parts</span><span class="p">))))</span></pre></div></div>
+    <p>So, <code>let</code> is a handy way to introduce names for values.</p>
+    
+    <h3 id="4_3__loop">4.3. loop</h3>
+    
+    <p><code>loop</code> provides another way to do recursion in Clojure. Let's look at
+      a simple example:</p>
+    <div class="code pygments"><div class="highlight"><pre><span class="p">(</span><span class="k">loop </span><span class="p">[</span><span class="nv">iteration</span> <span class="mi">0</span><span class="p">]</span>
+          <span class="p">(</span><span class="nb">println </span><span class="p">(</span><span class="nb">str </span><span class="s">"Iteration "</span> <span class="nv">iteration</span><span class="p">))</span>
+          <span class="p">(</span><span class="k">if </span><span class="p">(</span><span class="nb">&gt; </span><span class="nv">iteration</span> <span class="mi">3</span><span class="p">)</span>
+          <span class="p">(</span><span class="nb">println </span><span class="s">"Goodbye!"</span><span class="p">)</span>
+          <span class="p">(</span><span class="nf">recur</span> <span class="p">(</span><span class="nb">inc </span><span class="nv">iteration</span><span class="p">))))</span>
+          <span class="c1">; =&gt;</span>
+          <span class="nv">Iteration</span> <span class="mi">0</span>
+          <span class="nv">Iteration</span> <span class="mi">1</span>
+          <span class="nv">Iteration</span> <span class="mi">2</span>
+          <span class="nv">Iteration</span> <span class="mi">3</span>
+          <span class="nv">Iteration</span> <span class="mi">4</span>
+          <span class="nv">Goodbye!</span></pre></div></div>
+    <p>The first line, <code>loop [iteration 0]</code> begins the loop and introduces a
+      binding with an initial value. This is almost like calling an
+      anonymous function with a default value. On the first pass through the
+      loop, <code>iteration</code> has a value of 0.</p>
+    
+    <p>Next, it prints a super interesting little message.</p>
+    
+    <p>Then, it checks the value of <code>iteration</code> - if it's greater than 3 then
+      it's time to say goodbye. Otherwise, we <code>recur</code>. This is like calling
+      the anonymous function created by <code>loop</code>, but this time we pass it an
+      argument, <code>(inc iteration)</code>.</p>
+    
+    <p>You could in fact accomplish the same thing just using functions:</p>
+    <div class="code pygments"><div class="highlight"><pre><span class="p">(</span><span class="kd">defn </span><span class="nv">recursive-printer</span>
+          <span class="p">([]</span>
+          <span class="p">(</span><span class="nf">recursive-printer</span> <span class="mi">0</span><span class="p">))</span>
+          <span class="p">([</span><span class="nv">iteration</span><span class="p">]</span>
+          <span class="p">(</span><span class="nb">println </span><span class="nv">iteration</span><span class="p">)</span>
+          <span class="p">(</span><span class="k">if </span><span class="p">(</span><span class="nb">&gt; </span><span class="nv">iteration</span> <span class="mi">3</span><span class="p">)</span>
+          <span class="p">(</span><span class="nb">println </span><span class="s">"Goodbye!"</span><span class="p">)</span>
+          <span class="p">(</span><span class="nf">recursive-printer</span> <span class="p">(</span><span class="nb">inc </span><span class="nv">iteration</span><span class="p">)))))</span>
+          <span class="p">(</span><span class="nf">recursive-printer</span><span class="p">)</span>
+          <span class="c1">; =&gt;</span>
+          <span class="nv">Iteration</span> <span class="mi">0</span>
+          <span class="nv">Iteration</span> <span class="mi">1</span>
+          <span class="nv">Iteration</span> <span class="mi">2</span>
+          <span class="nv">Iteration</span> <span class="mi">3</span>
+          <span class="nv">Iteration</span> <span class="mi">4</span>
+          <span class="nv">Goodbye!</span></pre></div></div>
+    <p>As you can see, this is a little more verbose. Also, <code>loop</code> has much
+      better performance.</p>
+    
+    <h3 id="4_4__Regular_Expressions">4.4. Regular Expressions</h3>
+    
+    <p>Regular expressions are tools for performing pattern matching on text.
+      I won't go into how they work, but here's their literal notation:</p>
+    <div class="code pygments"><div class="highlight"><pre><span class="c1">;; pound, open quote, close quote</span>
+          <span class="o">#</span><span class="s">"regular-expression"</span></pre></div></div>
+    <p>In our symmetrizer, <code>re-find</code> returns true or false based on whether
+      the part's name starts with the string "left-":</p>
+    <div class="code pygments"><div class="highlight"><pre><span class="p">(</span><span class="kd">defn </span><span class="nv">has-matching-part?</span>
+          <span class="p">[</span><span class="nv">part</span><span class="p">]</span>
+          <span class="p">(</span><span class="nb">re-find </span><span class="o">#</span><span class="s">"^left-"</span> <span class="p">(</span><span class="ss">:name</span> <span class="nv">part</span><span class="p">)))</span>
+          <span class="p">(</span><span class="nf">has-matching-part?</span> <span class="p">{</span><span class="ss">:name</span> <span class="s">"left-eye"</span><span class="p">})</span>
+          <span class="c1">; =&gt; true</span>
+          <span class="p">(</span><span class="nf">has-matching-part?</span> <span class="p">{</span><span class="ss">:name</span> <span class="s">"neckbeard"</span><span class="p">})</span>
+          <span class="c1">; =&gt; false</span></pre></div></div>
+    <p><code>matching-part</code> uses a regex to replace <code>"left-"</code> with <code>"right-"</code>:</p>
+    <div class="code pygments"><div class="highlight"><pre><span class="p">(</span><span class="kd">defn </span><span class="nv">matching-part</span>
+          <span class="p">[</span><span class="nv">part</span><span class="p">]</span>
+          <span class="p">{</span><span class="ss">:name</span> <span class="p">(</span><span class="nf">clojure.string/replace</span> <span class="p">(</span><span class="ss">:name</span> <span class="nv">part</span><span class="p">)</span> <span class="o">#</span><span class="s">"^left-"</span> <span class="s">"right-"</span><span class="p">)</span>
+          <span class="ss">:size</span> <span class="p">(</span><span class="ss">:size</span> <span class="nv">part</span><span class="p">)})</span>
+          <span class="p">(</span><span class="nf">matching-part</span> <span class="p">{</span><span class="ss">:name</span> <span class="s">"left-eye"</span> <span class="ss">:size</span> <span class="mi">1</span><span class="p">})</span>
+          <span class="c1">; =&gt; {:name "right-eye" :size 1}]</span></pre></div></div>
+    <h3 id="4_5__Symmetrizer">4.5. Symmetrizer</h3>
+    
+    <p>Now let's analyze the symmetrizer fully. Note points are floating in
+      the ocean, like <code>~~~1~~~</code>:</p>
+    <div class="code pygments"><div class="highlight"><pre><span class="p">(</span><span class="k">def </span><span class="nv">asym-hobbit-body-parts</span> <span class="p">[{</span><span class="ss">:name</span> <span class="s">"head"</span> <span class="ss">:size</span> <span class="mi">3</span><span class="p">}</span>
+          <span class="p">{</span><span class="ss">:name</span> <span class="s">"left-eye"</span> <span class="ss">:size</span> <span class="mi">1</span><span class="p">}</span>
+          <span class="p">{</span><span class="ss">:name</span> <span class="s">"left-ear"</span> <span class="ss">:size</span> <span class="mi">1</span><span class="p">}</span>
+          <span class="p">{</span><span class="ss">:name</span> <span class="s">"mouth"</span> <span class="ss">:size</span> <span class="mi">1</span><span class="p">}</span>
+          <span class="p">{</span><span class="ss">:name</span> <span class="s">"nose"</span> <span class="ss">:size</span> <span class="mi">1</span><span class="p">}</span>
+          <span class="p">{</span><span class="ss">:name</span> <span class="s">"neck"</span> <span class="ss">:size</span> <span class="mi">2</span><span class="p">}</span>
+          <span class="p">{</span><span class="ss">:name</span> <span class="s">"left-shoulder"</span> <span class="ss">:size</span> <span class="mi">3</span><span class="p">}</span>
+          <span class="p">{</span><span class="ss">:name</span> <span class="s">"left-upper-arm"</span> <span class="ss">:size</span> <span class="mi">3</span><span class="p">}</span>
+          <span class="p">{</span><span class="ss">:name</span> <span class="s">"chest"</span> <span class="ss">:size</span> <span class="mi">10</span><span class="p">}</span>
+          <span class="p">{</span><span class="ss">:name</span> <span class="s">"back"</span> <span class="ss">:size</span> <span class="mi">10</span><span class="p">}</span>
+          <span class="p">{</span><span class="ss">:name</span> <span class="s">"left-forearm"</span> <span class="ss">:size</span> <span class="mi">3</span><span class="p">}</span>
+          <span class="p">{</span><span class="ss">:name</span> <span class="s">"abdomen"</span> <span class="ss">:size</span> <span class="mi">6</span><span class="p">}</span>
+          <span class="p">{</span><span class="ss">:name</span> <span class="s">"left-kidney"</span> <span class="ss">:size</span> <span class="mi">1</span><span class="p">}</span>
+          <span class="p">{</span><span class="ss">:name</span> <span class="s">"left-hand"</span> <span class="ss">:size</span> <span class="mi">2</span><span class="p">}</span>
+          <span class="p">{</span><span class="ss">:name</span> <span class="s">"left-knee"</span> <span class="ss">:size</span> <span class="mi">2</span><span class="p">}</span>
+          <span class="p">{</span><span class="ss">:name</span> <span class="s">"left-thigh"</span> <span class="ss">:size</span> <span class="mi">4</span><span class="p">}</span>
+          <span class="p">{</span><span class="ss">:name</span> <span class="s">"left-lower-leg"</span> <span class="ss">:size</span> <span class="mi">3</span><span class="p">}</span>
+          <span class="p">{</span><span class="ss">:name</span> <span class="s">"left-achilles"</span> <span class="ss">:size</span> <span class="mi">1</span><span class="p">}</span>
+          <span class="p">{</span><span class="ss">:name</span> <span class="s">"left-foot"</span> <span class="ss">:size</span> <span class="mi">2</span><span class="p">}])</span>
+
+          <span class="p">(</span><span class="kd">defn </span><span class="nv">has-matching-part?</span>
+          <span class="p">[</span><span class="nv">part</span><span class="p">]</span>
+          <span class="p">(</span><span class="nb">re-find </span><span class="o">#</span><span class="s">"^left-"</span> <span class="p">(</span><span class="ss">:name</span> <span class="nv">part</span><span class="p">)))</span>
+
+          <span class="p">(</span><span class="kd">defn </span><span class="nv">matching-part</span>
+          <span class="p">[</span><span class="nv">part</span><span class="p">]</span>
+          <span class="p">{</span><span class="ss">:name</span> <span class="p">(</span><span class="nf">clojure.string/replace</span> <span class="p">(</span><span class="ss">:name</span> <span class="nv">part</span><span class="p">)</span> <span class="o">#</span><span class="s">"^left-"</span> <span class="s">"right-"</span><span class="p">)</span>
+          <span class="ss">:size</span> <span class="p">(</span><span class="ss">:size</span> <span class="nv">part</span><span class="p">)})</span>
+
+          <span class="c1">; ~~~1~~~</span>
+          <span class="p">(</span><span class="kd">defn </span><span class="nv">symmetrize-body-parts</span>
+          <span class="s">"Expects a seq of maps which have a :name and :size"</span>
+          <span class="p">[</span><span class="nv">asym-body-parts</span><span class="p">]</span> <span class="c1">; </span>
+          <span class="p">(</span><span class="k">loop </span><span class="p">[</span><span class="nv">remaining-asym-parts</span> <span class="nv">asym-body-parts</span> <span class="c1">; ~~~2~~~</span>
+          <span class="nv">final-body-parts</span> <span class="p">[]]</span>
+          <span class="p">(</span><span class="k">if </span><span class="p">(</span><span class="nf">empty?</span> <span class="nv">remaining-asym-parts</span><span class="p">)</span> <span class="c1">; ~~~3~~~</span>
+          <span class="nv">final-body-parts</span>
+          <span class="p">(</span><span class="k">let </span><span class="p">[[</span><span class="nv">part</span> <span class="o">&amp;</span> <span class="nv">remaining</span><span class="p">]</span> <span class="nv">remaining-asym-parts</span> <span class="c1">; ~~~4~~~</span>
+          <span class="nv">final-body-parts</span> <span class="p">(</span><span class="nb">conj </span><span class="nv">final-body-parts</span> <span class="nv">part</span><span class="p">)]</span>
+          <span class="p">(</span><span class="k">if </span><span class="p">(</span><span class="nf">has-matching-part?</span> <span class="nv">part</span><span class="p">)</span> <span class="c1">; ~~~5~~~</span>
+          <span class="p">(</span><span class="nf">recur</span> <span class="nv">remaining</span> <span class="p">(</span><span class="nb">conj </span><span class="nv">final-body-parts</span> <span class="p">(</span><span class="nf">matching-part</span> <span class="nv">part</span><span class="p">)))</span> <span class="c1">; ~~~6~~~</span>
+          <span class="p">(</span><span class="nf">recur</span> <span class="nv">remaining</span> <span class="nv">final-body-parts</span><span class="p">))))))</span></pre></div></div>
+    <ol>
+      <li> This function employs a general strategy which is common in functional
+        programming. Given a sequence (in this case, a vector of body parts
+        and their sizes), continuously split the sequence into a "head" and
+        a "tail". Process the head, add it to some result, and then
+        use recursion to continue the process with the tail.</li>
+      <li> Begin looping over the body parts. The "tail" of the sequence will be
+        bound to <code>remaining-asym-parts</code>. Initially, it's bound to the full
+        sequence passed to the function, <code>asym-body-parts</code>. Create a result
+        sequence, <code>final-body-parts</code>; its initial value is an empty vector.</li>
+      <li> If <code>remaining-asym-parts</code> is empty, that means we've processed the
+        entire sequence and can return the result, <code>final-body-parts</code>.</li>
+      <li> Otherwise, split the list into a head, <code>part</code>, and tail,
+        <code>remaining</code>. Also, add <code>part</code> to <code>final-body-parts</code> and re-bind the
+        result to the name <code>final-body-parts</code>. This might seem weird, and
+        it's worthwhile to figure out why it works.</li>
+      <li> Our growing sequence of <code>final-body-parts</code> already includes the
+        body part we're currently examining, <code>part</code>. Here, we decide
+        whether we need to add the matching body part to the list.</li>
+      <li> If so, then add the <code>matching-part</code> to <code>final-body-parts</code> and
+        recur. Otherwise, just recur.</li>
+    </ol>
+    <p>If you're new to this kind of programming, this might take some time
+      to puzzle out. Stick with it! Once you understand what's happening,
+      you'll feel like a million bucks!</p>
+    
+    <h3 id="4_6__Shorter_Symmetrizer_with_Reduce">4.6. Shorter Symmetrizer with Reduce</h3>
+    
+    <p>The pattern of "process each element in a sequence and build a result"
+      is so common that there's a function for it: <code>reduce</code>.</p>
+    
+    <p>Here's a simple example:</p>
+    <div class="code pygments"><div class="highlight"><pre><span class="c1">;; sum with reduce</span>
+          <span class="p">(</span><span class="nb">reduce + </span><span class="p">[</span><span class="mi">1</span> <span class="mi">2</span> <span class="mi">3</span> <span class="mi">4</span><span class="p">])</span>
+          <span class="c1">; =&gt; 10</span></pre></div></div>
+    <p>This is like telling Clojure to do this:</p>
+    <div class="code pygments"><div class="highlight"><pre><span class="p">(</span><span class="nb">+ </span><span class="p">(</span><span class="nb">+ </span><span class="p">(</span><span class="nb">+ </span><span class="mi">1</span> <span class="mi">2</span><span class="p">)</span> <span class="mi">3</span><span class="p">)</span> <span class="mi">4</span><span class="p">)</span></pre></div></div>
+    <p>So, reduce works by doing this:</p>
+    
+    <ol>
+      <li>Apply the given function to the first two elements of a sequence.
+        That's where <code>(+ 1 2)</code> comes from.</li>
+      <li>Apply the given function to the result and the next element of the
+        sequence. In this case, the result of step 1 is <code>3</code>, and the next
+        element of the sequence is <code>3</code> as well. So you end up with <code>(+ 3
+          3)</code>.</li>
+      <li>Repeat step 2 for every remaining element in the sequence.</li>
+    </ol>
+    <p>Reduce also takes an optional initial value. <code>15</code> is the initial value
+      here:</p>
+    <div class="code pygments"><div class="highlight"><pre><span class="p">(</span><span class="nb">reduce + </span><span class="mi">15</span> <span class="p">[</span><span class="mi">1</span> <span class="mi">2</span> <span class="mi">3</span> <span class="mi">4</span><span class="p">])</span></pre></div></div>
+    <p>If you provide an initial value, then reduce starts by applying the
+      given function to the initial value and the first element of the
+      sequence, rather than the first two elements of the sequence.</p>
+    
+    <p>To further understand how reduce works, here's one way that it could
+      be implemented:</p>
+    <div class="code pygments"><div class="highlight"><pre><span class="p">(</span><span class="kd">defn </span><span class="nv">my-reduce</span>
+          <span class="p">([</span><span class="nv">f</span> <span class="nv">initial</span> <span class="nv">coll</span><span class="p">]</span>
+          <span class="p">(</span><span class="k">loop </span><span class="p">[</span><span class="nv">result</span> <span class="nv">initial</span>
+          <span class="nv">remaining</span> <span class="nv">coll</span><span class="p">]</span>
+          <span class="p">(</span><span class="k">let </span><span class="p">[[</span><span class="nv">current</span> <span class="o">&amp;</span> <span class="nv">rest</span><span class="p">]</span> <span class="nv">remaining</span><span class="p">]</span>
+          <span class="p">(</span><span class="k">if </span><span class="p">(</span><span class="nf">empty?</span> <span class="nv">remaining</span><span class="p">)</span>
+          <span class="nv">result</span>
+          <span class="p">(</span><span class="nf">recur</span> <span class="p">(</span><span class="nf">f</span> <span class="nv">result</span> <span class="nv">current</span><span class="p">)</span> <span class="nv">rest</span><span class="p">)))))</span>
+          <span class="p">([</span><span class="nv">f</span> <span class="p">[</span><span class="nv">head</span> <span class="o">&amp;</span> <span class="nv">tail</span><span class="p">]]</span>
+          <span class="p">(</span><span class="nf">my-reduce</span> <span class="nv">f</span> <span class="p">(</span><span class="nf">f</span> <span class="nv">head</span> <span class="p">(</span><span class="nb">first </span><span class="nv">tail</span><span class="p">))</span> <span class="p">(</span><span class="nb">rest </span><span class="nv">tail</span><span class="p">))))</span></pre></div></div>
+    <p>We could re-implement symmetrize as follows:</p>
+    <div class="code pygments"><div class="highlight"><pre><span class="p">(</span><span class="kd">defn </span><span class="nv">better-symmetrize-body-parts</span>
+          <span class="s">"Expects a seq of maps which have a :name and :size"</span>
+          <span class="p">[</span><span class="nv">asym-body-parts</span><span class="p">]</span>
+          <span class="p">(</span><span class="nb">reduce </span><span class="p">(</span><span class="k">fn </span><span class="p">[</span><span class="nv">final-body-parts</span> <span class="nv">part</span><span class="p">]</span>
+          <span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nv">final-body-parts</span> <span class="p">(</span><span class="nb">conj </span><span class="nv">final-body-parts</span> <span class="nv">part</span><span class="p">)]</span>
+          <span class="p">(</span><span class="k">if </span><span class="p">(</span><span class="nf">has-matching-part?</span> <span class="nv">part</span><span class="p">)</span>
+          <span class="p">(</span><span class="nb">conj </span><span class="nv">final-body-parts</span> <span class="p">(</span><span class="nf">matching-part</span> <span class="nv">part</span><span class="p">))</span>
+          <span class="nv">final-body-parts</span><span class="p">)))</span>
+          <span class="p">[]</span>
+          <span class="nv">asym-body-parts</span><span class="p">))</span></pre></div></div>
+    <p>Groovy!</p>
+    
+    <h3 id="4_7__Hobbit_Violence">4.7. Hobbit Violence</h3>
+    
+    <p>My word, this is truly Clojure for the Brave and True!</p>
+    
+    <p>Now, let's create a function that will determine which part of the
+      hobbit gets hit:</p>
+    <div class="code pygments"><div class="highlight"><pre><span class="p">(</span><span class="kd">defn </span><span class="nv">hit</span>
+          <span class="p">[</span><span class="nv">asym-body-parts</span><span class="p">]</span>
+          <span class="p">(</span><span class="k">let </span><span class="p">[</span><span class="nv">sym-parts</span> <span class="p">(</span><span class="nf">better-symmetrize-body-parts</span> <span class="nv">asym-body-parts</span><span class="p">)</span>
+          <span class="nv">body-part-size-sum</span> <span class="p">(</span><span class="nb">reduce + </span><span class="mi">0</span> <span class="p">(</span><span class="nb">map </span><span class="ss">:size</span> <span class="nv">sym-parts</span><span class="p">))</span>
+          <span class="nv">target</span> <span class="p">(</span><span class="nb">inc </span><span class="p">(</span><span class="nb">rand </span><span class="nv">body-part-size-sum</span><span class="p">))]</span>
+          <span class="p">(</span><span class="k">loop </span><span class="p">[[</span><span class="nv">part</span> <span class="o">&amp;</span> <span class="nv">rest</span><span class="p">]</span> <span class="nv">sym-parts</span>
+          <span class="nv">accumulated-size</span> <span class="p">(</span><span class="ss">:size</span> <span class="nv">part</span><span class="p">)]</span>
+          <span class="p">(</span><span class="k">if </span><span class="p">(</span><span class="nb">&gt; </span><span class="nv">accumulated-size</span> <span class="nv">target</span><span class="p">)</span>
+          <span class="nv">part</span>
+          <span class="p">(</span><span class="nf">recur</span> <span class="nb">rest </span><span class="p">(</span><span class="nb">+ </span><span class="nv">accumulated-size</span> <span class="p">(</span><span class="ss">:size</span> <span class="nv">part</span><span class="p">)))))))</span>
+
+          <span class="p">(</span><span class="nf">hit</span> <span class="nv">asym-hobbit-body-parts</span><span class="p">)</span>
+          <span class="c1">; =&gt; {:name "right-upper-arm", :size 3}</span>
+
+          <span class="p">(</span><span class="nf">hit</span> <span class="nv">asym-hobbit-body-parts</span><span class="p">)</span>
+          <span class="c1">; =&gt; {:name "chest", :size 10}</span>
+
+          <span class="p">(</span><span class="nf">hit</span> <span class="nv">asym-hobbit-body-parts</span><span class="p">)</span>
+          <span class="c1">; =&gt; {:name "left-eye", :size 1}</span></pre></div></div>
+    <p>Oh my god, that poor hobbit! You monster!</p>
+    
+    <h2 id="5__What_Now_">5. What Now?</h2>
+    
+    <p>By this point I <em>highly</em> recommend actually writing some code to
+      solidify your Clojure knowledge if you haven't started already. The
+      <a href="http://clojure.org/cheatsheet">Clojure Cheatsheet</a> is a great
+      reference listing all the built-in functions which operate on the data
+      structures we covered.</p>
+    
+    <p>One great place to start would be to factor out the <code>loop</code> in the
+      <code>hit</code> function. Or, write out some Project Euler challenges. You can
+      also check out <a href="http://www.4clojure.com/problems">4Clojure</a>, an
+      online set of Clojure problems designed to test your knowledge. Just
+      write something!</p>
+    <div class="pagenav bottom">
+      <div class="prev">
+        <a href="../using-emacs-with-clojure/">
+          ←
+          Using Emacs with Clojure
+        </a>
+      </div>
+      <div class="next">
+        <a href="../core-functions-in-depth/">
+          Core Functions in Depth
+          →
+        </a>
+      </div>
+    </div>
+    <div id="disqus_thread"><iframe id="dsq-2" data-disqus-uid="2" allowtransparency="true" frameborder="0" scrolling="no" tabindex="0" title="Disqus" width="100%" src="http://disqus.com/embed/comments/?base=default&amp;disqus_version=aa0a352c&amp;f=clojureforthebraveandtrue&amp;t_u=http%3A%2F%2Fwww.braveclojure.com%2Fdo-things%2F&amp;t_d=Do%20Things%3A%20a%20Clojure%20Language%20Crash%20Course%20%7C%20Clojure%20for%20the%20Brave%20and%20True&amp;t_t=Do%20Things%3A%20a%20Clojure%20Language%20Crash%20Course%20%7C%20Clojure%20for%20the%20Brave%20and%20True&amp;s_o=default#2" style="width: 100% !important; border: none !important; overflow: hidden !important; height: 6441px !important;" horizontalscrolling="no" verticalscrolling="no"></iframe><iframe id="dsq-indicator-north" data-disqus-uid="indicator-north" allowtransparency="true" frameborder="0" scrolling="no" tabindex="0" title="Disqus" style="width: 687px !important; border: none !important; overflow: hidden !important; top: 0px !important; min-width: 687px !important; max-width: 687px !important; position: fixed !important; z-index: 2147483646 !important; height: 29px !important; min-height: 29px !important; max-height: 29px !important; display: none !important;"></iframe><iframe id="dsq-indicator-south" data-disqus-uid="indicator-south" allowtransparency="true" frameborder="0" scrolling="no" tabindex="0" title="Disqus" style="width: 687px !important; border: none !important; overflow: hidden !important; bottom: 0px !important; min-width: 687px !important; max-width: 687px !important; position: fixed !important; z-index: 2147483646 !important; height: 29px !important; min-height: 29px !important; max-height: 29px !important; display: none !important;"></iframe></div>
+    <script>
+      /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+      var disqus_shortname = 'clojureforthebraveandtrue'; // required: replace example with your forum shortname
+      
+      /* * * DON'T EDIT BELOW THIS LINE * * */
+      (function() {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      })();
+    </script>
+  </div>
+</div>

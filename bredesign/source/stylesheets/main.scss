@@ -1,0 +1,90 @@
+// Imports -----------------------------------------------------------
+@import "compass/reset";
+@import "compass/utilities/general/clearfix";
+@import "compass/css3/border-radius";
+@import "compass/typography/vertical_rhythm"; // http://compass-style.org/reference/compass/typography/vertical_rhythm/
+@import "compass/css3/box-shadow";
+@import "compass/css3/box-sizing";
+@import "compass/css3/text-shadow";
+@import "compass/css3/transform";
+@import "compass/css3/";
+
+@import "susy"; // grid
+
+$susy: (
+  columns: 12,
+  column-width: 4em,
+  gutters: 1/4,
+  math: fluid,
+  output: static,
+  container-position: center
+);
+@include border-box-sizing;
+
+@mixin bshadow {
+  @include single-box-shadow(0, 1px, 2px, 0px, rgba(0, 0, 0, 0.2));
+}
+
+@mixin bshadow-deep {
+  @include single-box-shadow(0, 1px, 3px, 0px, rgba(0, 0, 0, 0.2));
+}
+
+@mixin pill {
+  @include border-radius(20px);
+  cursor: pointer;
+}
+
+$emphasis-blue: #3495c1;
+
+// Fonts --------------------------------------------------------------
+@mixin sans-family {
+  font-family: "Fjalla One", "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+@mixin serif-family {
+  font-family: Gentium Book Basic, Palatino Linotype, Book Antiqua, Palatino, serif;
+}
+
+@mixin monospace-family {
+  font-family: "Bitstream Vera Sans Mono", monospace;
+}
+
+// Colors
+$orange: #f26f53;
+$burgundy: #591507;
+$light-orange: #fffaf9;
+$magenta: #e14d6d;
+$teal: #489bd2;
+
+$yellow: #f2c153;
+$dark-yellow: #595007;
+$light-yellow: #fdf4e1;
+
+$main-color: $yellow;
+$main-color-accent: $dark-yellow;
+$main-color-light: $light-yellow;
+
+$main-color: $orange;
+$main-color-accent: $burgundy;
+$main-color-light: $light-orange;
+$alt-color: $magenta;
+$tri-color: $teal;
+
+
+$red: #ff5553;
+$purple: #8873e5;
+$dark-purple: #6348dd;
+
+$blue: #73a1e5;
+$light-blue: #f8fcfd;
+$medium-blue: #d0ebf2;
+$dark-blue: #3276d9;
+
+$medium-green: #cdf0cc;
+$dark-green: #80d97d;
+
+
+
+@import "base";
+@import "layout";
+@import "theme";

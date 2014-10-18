@@ -1,0 +1,70 @@
+body {
+  @include serif-family;
+}
+
+h1, h2, h3, h4 {
+  @include sans-family;
+}
+
+a {
+  color: $alt-color;
+  &:visited {
+    color: $alt-color;
+  }
+  &:hover {
+    color: $tri-color;
+  }
+}
+
+.masthead {
+  background: $main-color;
+  border-bottom: .25em solid $main-color-accent;
+  border-top: 1em solid $main-color-accent;
+}
+
+.title {
+  @include adjust-font-size-to(60px, 2);
+  font-family: "Fjalla One";
+  font-weight: 400;
+  color: white;
+  span {
+    font-weight: 400;
+    color: $main-color-accent;
+    @include adjust-font-size-to(36px, 1, 60px);
+  }
+}
+.subtitle {
+  @include adjust-font-size-to(20px, 1);
+  @include leader(.5, 20px);
+  font-family: "Courgette";
+  font-weight: 600;
+  color: $main-color-accent;
+}
+
+.lambda {
+  @include adjust-font-size-to(20px, 1);
+  background: $main-color-accent;
+  color: white;
+  width: 2em;
+  height: 2em;
+  text-align: center;
+  line-height: 2em;
+  border-radius: 50%;
+}
+
+.buy {
+  padding: 0.75em 1em;
+  display: inline-block;
+  color: white;
+  background: $tri-color;
+  border-radius: 3px;
+  @include trailer(.5);
+  &:visited {
+    color: white;
+  }
+}
+
+.engage-me-please {
+  background: $main-color-light;
+  border-bottom: .25em solid $main-color-accent;
+}
