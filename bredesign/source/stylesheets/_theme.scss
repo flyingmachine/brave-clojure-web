@@ -18,8 +18,8 @@ a {
 
 .masthead {
   background: $main-color;
-  border-bottom: .2em solid $main-color-accent;
-  border-top: 1em solid $main-color-accent;
+  border-bottom: .18em solid $main-color-accent;
+  // border-top: 1em solid $main-color-accent;
 }
 
 .title {
@@ -52,7 +52,7 @@ a {
 }
 
 .buy {
-  padding: 0.75em 1em;
+  padding: 0.5em .75em;
   display: inline-block;
   color: white;
   background: $tri-color;
@@ -64,5 +64,5 @@ a {
 
 .engage-me-please {
   background: $main-color-light;
-  border-bottom: .2em solid $main-color-accent;
+  border-bottom: .18em solid $main-color-accent;
 }

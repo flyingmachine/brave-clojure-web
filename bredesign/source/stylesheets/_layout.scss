@@ -13,7 +13,7 @@ p {
 }
 
 .masthead {
-  @include padding-leader(2);
+  @include padding-leader(4);
   @include padding-trailer(1);
   position: relative;
   z-index: 1;
