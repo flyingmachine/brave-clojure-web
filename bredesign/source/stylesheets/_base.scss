@@ -1,11 +1,8 @@
-@include establish-baseline;
-
 html { box-sizing: border-box; }
 * { box-sizing: inherit; }
 body {
   margin: 0;
   padding: 0;
-  font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
 a {
@@ -17,16 +14,16 @@ strong {
 }
 
 h1 {
-  @include adjust-font-size-to(27px);
+  @include adjust-font-size-to(32px);
   margin-bottom: 0;
 }
 
 h2 {
-  @include adjust-font-size-to(24px, 1);
+  @include adjust-font-size-to(27px, 1);
 }
 
 h3 {
-  @include adjust-font-size-to(18px);
+  @include adjust-font-size-to(21px);
 }
 
 .delete {

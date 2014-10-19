@@ -21,20 +21,9 @@ $susy: (
 );
 @include border-box-sizing;
 
-@mixin bshadow {
-  @include single-box-shadow(0, 1px, 2px, 0px, rgba(0, 0, 0, 0.2));
-}
-
-@mixin bshadow-deep {
-  @include single-box-shadow(0, 1px, 3px, 0px, rgba(0, 0, 0, 0.2));
-}
-
-@mixin pill {
-  @include border-radius(20px);
-  cursor: pointer;
-}
-
-$emphasis-blue: #3495c1;
+$base-font-size: 20px;
+$base-line-height: 30px;
+@include establish-baseline;
 
 // Fonts --------------------------------------------------------------
 @mixin sans-family {

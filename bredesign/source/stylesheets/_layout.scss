@@ -13,16 +13,27 @@ p {
 }
 
 .masthead {
-  @include padding-leader(4);
+  @include padding-leader(2);
   @include padding-trailer(1);
   position: relative;
   z-index: 1;
+}
+
+.title {
+}
+
+.subtitle {
+  
 }
 
 .lambda {
   position: absolute;
   right: 1em;
   bottom: -1em;
+}
+
+.buy {
+  @include trailer(.5);
 }
 
 .container {
