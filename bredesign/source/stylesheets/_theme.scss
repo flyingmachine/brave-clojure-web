@@ -6,6 +6,18 @@ h1, h2, h3, h4 {
   @include sans-family;
 }
 
+h1 {
+  @include adjust-font-size-to($h1, 1);
+}
+
+h2 {
+  @include adjust-font-size-to($h2, 1);
+}
+
+h3 {
+  @include adjust-font-size-to($h3, 1);
+}
+
 a {
   color: $alt-color;
   &:visited {
@@ -18,8 +30,7 @@ a {
 
 .masthead {
   background: $main-color;
-  border-bottom: .18em solid $main-color-accent;
-  // border-top: 1em solid $main-color-accent;
+  border-top: 1em solid $main-color-accent;
 }
 
 .title {
@@ -64,5 +75,48 @@ a {
 
 .engage-me-please {
   background: $main-color-light;
+  border-top: .18em solid $main-color-accent;
   border-bottom: .18em solid $main-color-accent;
+}
+
+.mono, pre, code, tt {
+  @include monospace-family;
+  @include adjust-font-size-to(16px);
+  line-height: 24px;
+}
+
+ol a {
+  color: #666;
+}
+
+#top-nav {
+  background: $main-color;
+  border-bottom: .18em solid $main-color-accent;
+
+  li {
+    float: right;
+    margin-right: 1em;
+  }
+}
+
+#top-nav .home {
+  font-family: "Fjalla One";
+  font-weight: 300;
+  color: white;
+  float: left;
+
+  a {
+    color: white;
+    &:hover {
+      color: $main-color-accent;
+    }
+  }
+}
+
+.twitter-share-button {
+  margin-top: 2px;
+}
+
+.chapter-nav .buy {
+  background: #70b1dc;
 }

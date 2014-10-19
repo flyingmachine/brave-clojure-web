@@ -13,19 +13,6 @@ strong {
   font-weight: bold;
 }
 
-h1 {
-  @include adjust-font-size-to(32px);
-  margin-bottom: 0;
-}
-
-h2 {
-  @include adjust-font-size-to(27px, 1);
-}
-
-h3 {
-  @include adjust-font-size-to(21px);
-}
-
 .delete {
   cursor: pointer;
   color: $red;

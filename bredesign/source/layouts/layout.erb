@@ -9,9 +9,11 @@
     <!-- Use title if it's in the page YAML frontmatter -->
     <title><%= current_page.data.title || "The Middleman" %></title>
     
-    <%= stylesheet_link_tag "main" %>
-    <link href='http://fonts.googleapis.com/css?family=Oswald:400,300|Gentium+Book+Basic:400,700|IM+Fell+English|Open+Sans+Condensed:300,600|IM+Fell+DW+Pica|Open+Sans:300,400,600|Fjalla+One|Yellowtail|Courgette' rel='stylesheet' type='text/css'>
-    <%= javascript_include_tag  "all" %>
+    <%= stylesheet_link_tag "main", "pygments" %>
+    <link href='http://fonts.googleapis.com/css?family=Oswald:400,300|Gentium+Book+Basic:400,700|Fjalla+One|Courgette' rel='stylesheet' type='text/css'>
+    <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+    <script src="javascripts/jquery.sticky.js"></script>
+    <script src="javascripts/sticky.js"></script>
   </head>
   
   <body class="<%= page_classes %>">
