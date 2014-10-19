@@ -30,4 +30,5 @@
   (slurp s))
 
 (with-open [todo-list-rdr (clojure.java.io/reader "/tmp/hercules-todo-list")]
-  (line-seq todo-list-rdr))
+  (doseq [todo (line-seq todo-list-rdr)]
+    (println todo)))

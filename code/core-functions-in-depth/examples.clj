@@ -15,10 +15,6 @@
 ; => ([:c 3] [:b 2])
 
 
-(defn titleize
-  [topic]
-  (str topic " for the Brave and True"))
-
 (defn my-map
   [f x]
   (if-let [head (first x)]
@@ -31,6 +27,7 @@
 
 (map titleize ["Hamsters" "Ragnarok"])
 (map titleize '("Empathy" "Decorating"))
+(map #(titleize (second %)) {:uncomfortable-thing "Winking"})
 (map titleize #{"Elbows" "Soap Carving"})
 
 (defn label-key-val
