@@ -1,4 +1,4 @@
-body {
+body, input[type=email] {
   @include serif-family;
 }
 
@@ -26,6 +26,22 @@ a {
   &:hover {
     color: $tri-color;
   }
+}
+
+input {
+  font-size: 16px;
+}
+
+input[type=email] {
+  padding: .25em .125em;
+}
+
+input[type=submit] {
+  background: #ffd0c6;
+  border-radius: 2px;
+  border: none;
+  padding: .4em;
+  display: inline-block;
 }
 
 .masthead {
@@ -85,6 +101,11 @@ a {
   line-height: 24px;
 }
 
+.code {
+  overflow-y: auto;
+}
+
+
 ol a {
   color: #666;
 }
@@ -117,6 +138,20 @@ ol a {
   margin-top: 2px;
 }
 
-.chapter-nav .buy {
-  background: #70b1dc;
+.chapter-nav {
+  input[type=email]{
+    width: 100%;
+    border: none;
+    font-size: 20px;
+    padding: .4em;
+  }
+  input[type=submit]{
+    border-radius: 2px;
+    background: #fafafa;
+  }
+  
+  .buy {
+    background: #70b1dc;
+    @include trailer;
+  }
 }

@@ -71,6 +71,10 @@ p {
   @include trailer;
 }
 
+.chapter-nav>ol {
+  @include trailer;
+}
+
 ol ol {
   margin-left: 1em;
 }
