@@ -1,0 +1,157 @@
+body, input[type=email] {
+  @include serif-family;
+}
+
+h1, h2, h3, h4 {
+  @include sans-family;
+}
+
+h1 {
+  @include adjust-font-size-to($h1, 1);
+}
+
+h2 {
+  @include adjust-font-size-to($h2, 1);
+}
+
+h3 {
+  @include adjust-font-size-to($h3, 1);
+}
+
+a {
+  color: $alt-color;
+  &:visited {
+    color: $alt-color;
+  }
+  &:hover {
+    color: $tri-color;
+  }
+}
+
+input {
+  font-size: 16px;
+}
+
+input[type=email] {
+  padding: .25em .125em;
+}
+
+input[type=submit] {
+  background: #ffd0c6;
+  border-radius: 2px;
+  border: none;
+  padding: .4em;
+  display: inline-block;
+}
+
+.masthead {
+  background: $main-color;
+  border-top: 1em solid $main-color-accent;
+}
+
+.title {
+  @include adjust-font-size-to(60px, 2);
+  font-family: "Fjalla One";
+  font-weight: 400;
+  color: white;
+  span {
+    font-weight: 400;
+    color: $main-color-accent;
+    @include adjust-font-size-to(36px, 1, 60px);
+  }
+}
+.subtitle {
+  @include adjust-font-size-to(20px, 1);
+  font-family: "Courgette";
+  font-weight: 600;
+  color: $main-color-accent;
+}
+
+.lambda {
+  @include adjust-font-size-to(20px, 1);
+  background: $main-color-accent;
+  color: white;
+  width: 2em;
+  height: 2em;
+  text-align: center;
+  line-height: 2em;
+  border-radius: 50%;
+}
+
+.buy {
+  padding: 0.5em .75em;
+  display: inline-block;
+  color: white;
+  background: $tri-color;
+  border-radius: 3px;
+  &:visited {
+    color: white;
+  }
+}
+
+.engage-me-please {
+  background: $main-color-light;
+  border-top: .18em solid $main-color-accent;
+  border-bottom: .18em solid $main-color-accent;
+}
+
+.mono, pre, code, tt {
+  @include monospace-family;
+  @include adjust-font-size-to(16px);
+  line-height: 24px;
+}
+
+.code {
+  overflow-y: auto;
+}
+
+
+ol a {
+  color: #666;
+}
+
+#top-nav {
+  background: $main-color;
+  border-bottom: .18em solid $main-color-accent;
+
+  li {
+    float: right;
+    margin-right: 1em;
+  }
+}
+
+#top-nav .home {
+  font-family: "Fjalla One";
+  font-weight: 300;
+  color: white;
+  float: left;
+
+  a {
+    color: white;
+    &:hover {
+      color: $main-color-accent;
+    }
+  }
+}
+
+.twitter-share-button {
+  margin-top: 2px;
+}
+
+.chapter-nav {
+  input[type=email]{
+    width: 100%;
+    border: none;
+    font-size: 20px;
+    padding: .4em;
+  }
+  input[type=submit]{
+    border-radius: 2px;
+    background: #fafafa;
+  }
+  
+  .buy {
+    background: #70b1dc;
+    @include trailer;
+  }
+}
