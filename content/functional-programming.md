@@ -1098,6 +1098,7 @@ function in the glamour shot example above:
 (defn clean
   [text]
   (reduce (fn [string string-fn] (string-fn string))
+          text
           [s/trim #(s/replace % #"lol" "LOL")]))
 ```
 
