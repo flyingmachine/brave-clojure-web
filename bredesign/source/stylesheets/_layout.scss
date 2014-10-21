@@ -78,3 +78,30 @@ p {
 ol ol {
   margin-left: 1em;
 }
+
+#top-nav {
+  position: fixed;
+  width: 100%;
+  top: -3em;
+  @include padding-leader(.25);
+  @include padding-trailer(.25);
+}
+
+#top-nav-sticky-wrapper.is-sticky #top-nav {
+  top: 0;
+  display: block;
+}
+
+.pagenav.bottom {
+  @include leader;
+  @include trailer;
+  @include clearfix;
+
+  .prev {
+    float: left;
+  }
+
+  .next {
+    float: right;
+  }
+}
