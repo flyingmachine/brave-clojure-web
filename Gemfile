@@ -1,4 +1,4 @@
-source :rubygems
+source "https://rubygems.org"
 
 gem "compass"
 gem "susy"
@@ -14,3 +14,4 @@ gem "pygments.rb"
 gem "oj"
 gem "nokogiri"
 gem "guard-nanoc"
+gem "breakpoint"
