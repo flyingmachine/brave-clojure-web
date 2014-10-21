@@ -78,21 +78,3 @@ p {
 ol ol {
   margin-left: 1em;
 }
-
-#top-nav {
-  display: none;
-  width: 100%;
-  top: -2em;
-  transition: .25s ease-in-out all;
-  @include padding-leader(.25);
-  @include padding-trailer(.25);
-
-  .items {
-    
-  }
-}
-
-#top-nav-sticky-wrapper.is-sticky #top-nav {
-  top: 0;
-  display: block;
-}

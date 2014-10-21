@@ -63,7 +63,7 @@ input[type=submit] {
 .subtitle {
   @include adjust-font-size-to(20px, 1);
   font-family: "Courgette";
-  font-weight: 600;
+  font-weight: 300;
   color: $main-color-accent;
 }
 
@@ -95,10 +95,15 @@ input[type=submit] {
   border-bottom: .18em solid $main-color-accent;
 }
 
-.mono, pre, code, tt {
+.mono, pre, tt {
   @include monospace-family;
   @include adjust-font-size-to(16px);
   line-height: 24px;
+}
+
+code {
+  @include monospace-family;
+  background: $main-color-light;
 }
 
 .code {
@@ -111,26 +116,46 @@ ol a {
 }
 
 #top-nav {
-  background: $main-color;
+  background: $main-color-light;
   border-bottom: .18em solid $main-color-accent;
 
   li {
-    float: right;
+    float: left;
     margin-right: 1em;
   }
-}
 
-#top-nav .home {
-  font-family: "Fjalla One";
-  font-weight: 300;
-  color: white;
-  float: left;
+  .home {
+    font-family: "Fjalla One";
+    font-weight: 300;
+    color: black;
+    float: right;
 
-  a {
-    color: white;
-    &:hover {
-      color: $main-color-accent;
+    a {
+      color: white;
+      &:hover {
+        color: $main-color-accent;
+      }
     }
+  }
+
+  .buy {
+    font-family: "Fjalla One";
+    padding: 0 .75em;
+    background: $alt-color;
+    margin: 0;
+    @include adjust-font-size-to(16px);
+  }
+  .tweet {
+    position: relative;
+    top: 1px;
+  }
+
+  input {
+    font-family: "Fjalla One";
+    border: none;
+    border-radius: 2px;
+    font-size: 16px;
+    padding: .25em;
   }
 }
 
@@ -154,4 +179,20 @@ ol a {
     background: #70b1dc;
     @include trailer;
   }
+}
+
+
+#top-nav {
+  position: fixed;
+  width: 100%;
+  top: -3em;
+  transition: .25s ease-in-out all;
+  @include padding-leader(.25);
+  @include padding-trailer(.25);
+}
+
+#top-nav-sticky-wrapper.is-sticky #top-nav {
+  top: 0;
+  display: block;
+  transition: .25s ease-in-out all;
 }

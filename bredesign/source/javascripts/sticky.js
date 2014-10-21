@@ -1,6 +1,6 @@
 $(document).ready(function(){
   $(".chapter-nav .wrapper").sticky({
-    topSpacing: 30,
+    topSpacing: 60,
     getWidthFrom: ".chapter-nav"
   });
 
