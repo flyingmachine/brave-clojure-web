@@ -1,3 +1,5 @@
+$M: 47em;
+
 h1 {
   @include leader(1, $h1);
   @include trailer(1, $h1);
@@ -51,11 +53,15 @@ p {
 }
 
 .content {
-  width: span(9);
+  @include breakpoint($M) {
+    width: span(9);
+  }
 }
 
 .chapter-nav {
-  @include span(3 at 10 of 12);
+  @include breakpoint($M) {
+    @include span(3 at 10 of 12);
+  }
 }
 
 .engage-me-please {
@@ -80,17 +86,28 @@ ol ol {
 }
 
 #top-nav {
-  position: fixed;
-  width: 100%;
-  top: -3em;
-  @include padding-leader(.25);
-  @include padding-trailer(.25);
+  @include breakpoint($M) {
+    display: block;
+    position: fixed;
+    width: 100%;
+    top: -3em;
+    @include padding-leader(.25);
+    @include padding-trailer(.25);
+  }
 }
 
-#top-nav-sticky-wrapper.is-sticky #top-nav {
-  top: 0;
-  display: block;
-}
+#top-nav-sticky-wrapper {
+  &.is-sticky {
+    display: block;
+    #top-nav {
+      
+      @include breakpoint($M) {
+        top: 0;
+        display: block;
+      }
+    }
+  }
+} 
 
 .pagenav.bottom {
   @include leader;
