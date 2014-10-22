@@ -9,7 +9,7 @@ end
 
 class NokogiriTOC
   def self.level_text
-    [@level["h2"], @level["h3"], @level["h4"]].join(".").gsub(/\.0/, "") + "."
+    [@level["h2"], @level["h3"]].join(".").gsub(/\.0/, "") + "."
   end
 
   def self.to_anchor(content)
@@ -26,7 +26,7 @@ class NokogiriTOC
     
     toc_data = []
     
-    @level = {"h2" => 0, "h3" => 0, "h4" => 0}
+    @level = {"h2" => 0, "h3" => 0}
     selector = @level.keys.map{|h| Nokogiri::CSS.xpath_for("#{options[:content_selector]} #{h}")}.join("|")
 
     current_heading = nil
@@ -36,7 +36,6 @@ class NokogiriTOC
       @level[node.name] += 1
 
       @level["h3"] = 0 if node.name == "h2"
-      @level["h4"] = 0 if node.name == "h2" || node.name == "h3"
         
       node.content = level_text + " " + node.content
 
@@ -46,7 +45,6 @@ class NokogiriTOC
       parent = case node.name
       when "h2" then toc_data
       when "h3" then toc_data.last[:c]
-      when "h4" then toc_data.last[:c].last[:c]
       end
       parent << data
     end

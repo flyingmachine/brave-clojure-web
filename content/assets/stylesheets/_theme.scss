@@ -141,6 +141,8 @@ code {
 }
 
 .chapter-nav {
+  @include adjust-font-size-to(16px);
+  bottom: 1em;
   input[type=email]{
     width: 100%;
     border: none;

@@ -155,6 +155,8 @@ ol ol {
   @include breakpoint($M) {
     position: fixed !important;
     top: 60px !important;
+    bottom: 0;
+    overflow-y: auto;
   }
 }
 
