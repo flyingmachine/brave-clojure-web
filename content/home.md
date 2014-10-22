@@ -74,6 +74,9 @@ and fun programming languages in existence!
 9. [Writing Macros](/writing-macros/)
 10. [Concurrency, Parallelism, and State. And Zombies.](/concurrency/)
 11. [Interacting with Java](/java/)
+13. [Upcoming](/upcoming/)
+14. [Other Resources](/resources/)
+15. [About the Author](/about/)
 
 ## Part 1: Environment Setup
 
