@@ -49,7 +49,7 @@ p {
 }
 
 .page {
-  @include leader;
+
 }
 
 .content {
@@ -67,7 +67,9 @@ p {
 .engage-me-please {
   @include padding-leader;
   form {
-    width: span(9);
+    @include breakpoint($M) {
+      width: span(9);
+    }
   }
 }
 
@@ -97,17 +99,44 @@ ol ol {
 }
 
 #top-nav-sticky-wrapper {
-  &.is-sticky {
+  display: none;
+  @include breakpoint($M) {
     display: block;
+  }
+  &.is-sticky {
     #top-nav {
-      
       @include breakpoint($M) {
         top: 0;
         display: block;
       }
     }
   }
-} 
+}
+
+.chapter-nav .sticky-wrapper {
+  height: auto !important;
+  width: auto !important;
+
+  .wrapper {
+    height: auto !important;
+    width: auto !important;
+    @include leader(1);
+    @include breakpoint($M) {
+      margin-top: 0;
+    }
+  }
+}
+
+.chapter-nav .sticky-wrapper.is-sticky .wrapper {
+  position: static !important;
+  top: 0 !important;
+  width: auto !important;
+  
+  @include breakpoint($M) {
+    position: fixed !important;
+    top: 60px !important;
+  }
+}
 
 .pagenav.bottom {
   @include leader;

@@ -4,7 +4,5 @@ $(document).ready(function(){
     getWidthFrom: ".chapter-nav"
   });
 
-  $("#top-nav").sticky({
-    
-  })
+  $("#top-nav").sticky()
 });
