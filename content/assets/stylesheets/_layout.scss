@@ -1,3 +1,5 @@
+$M: 47em;
+
 h1 {
   @include leader(1, $h1);
   @include trailer(1, $h1);
@@ -43,25 +45,48 @@ p {
 
 .container {
   @include container;
-  padding: 0 1em;
+  padding: 0 2em;
 }
 
 .page {
-  @include leader;
+  @include leader(2);
+  img {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 100%;
+  }
 }
 
 .content {
-  width: span(9);
+  @include breakpoint($M) {
+    width: span(9);
+  }
+
+  li {
+    margin-left: 1.2em;
+  }
+
+  ul, ol {
+    @include trailer;
+    ul, ol {
+      margin-bottom: 0;
+    }
+  }
 }
 
 .chapter-nav {
-  @include span(3 at 10 of 12);
+  @include breakpoint($M) {
+    @include span(3 at 10 of 12);
+  }
 }
 
 .engage-me-please {
   @include padding-leader;
   form {
-    width: span(9);
+    @include breakpoint($M) {
+      width: span(9);
+    }
   }
 }
 
@@ -80,19 +105,92 @@ ol ol {
 }
 
 #top-nav {
-  display: none;
-  width: 100%;
-  top: -2em;
-  transition: .25s ease-in-out all;
-  @include padding-leader(.25);
-  @include padding-trailer(.25);
-
-  .items {
-    
+  @include breakpoint($M) {
+    display: block;
+    position: fixed;
+    width: 100%;
+    top: -3em;
+    @include padding-leader(.25);
+    @include padding-trailer(.25);
   }
 }
 
-#top-nav-sticky-wrapper.is-sticky #top-nav {
-  top: 0;
-  display: block;
+#top-nav-sticky-wrapper {
+  display: none;
+  @include breakpoint($M) {
+    height: 0 !important;
+    display: block;
+  }
+  &.is-sticky {
+    #top-nav {
+      @include breakpoint($M) {
+        height: 2.5em !important;
+        top: 0;
+        display: block;
+      }
+    }
+  }
+}
+
+.chapter-nav .sticky-wrapper {
+  height: auto !important;
+  width: auto !important;
+
+  .wrapper {
+    height: auto !important;
+    width: auto !important;
+    @include leader(1);
+    @include breakpoint($M) {
+      margin-top: 0;
+    }
+  }
+}
+
+.chapter-nav .sticky-wrapper.is-sticky .wrapper {
+  position: static !important;
+  top: 0 !important;
+  width: auto !important;
+  margin-right: 2em;
+  
+  @include breakpoint($M) {
+    position: fixed !important;
+    top: 60px !important;
+  }
+}
+
+.pagenav.bottom {
+  @include leader;
+  @include trailer;
+  @include clearfix;
+
+  .prev {
+    float: left;
+  }
+
+  .next {
+    float: right;
+  }
+}
+
+#tipue_search_content_title {
+  @include leader;
+}
+
+#disqus_thread {
+  @include leader;
+}
+
+blockquote {
+  padding-left: 1em;
+  @include padding-leader(0.5);
+  @include padding-trailer(0.5);
+
+  p {
+    margin: 0;
+    white-space: pre-line;
+  }
+}
+
+table {
+  @include trailer;
 }

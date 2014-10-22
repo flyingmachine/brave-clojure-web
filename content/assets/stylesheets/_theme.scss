@@ -28,6 +28,14 @@ a {
   }
 }
 
+em {
+  font-style: italic;
+}
+
+small {
+  font-size: 75%;
+}
+
 input {
   font-size: 16px;
 }
@@ -63,7 +71,7 @@ input[type=submit] {
 .subtitle {
   @include adjust-font-size-to(20px, 1);
   font-family: "Courgette";
-  font-weight: 600;
+  font-weight: 300;
   color: $main-color-accent;
 }
 
@@ -95,10 +103,26 @@ input[type=submit] {
   border-bottom: .18em solid $main-color-accent;
 }
 
-.mono, pre, code, tt {
+.content {
+  ul li {
+    list-style: disc;
+  }
+
+  ol>li {
+    list-style: decimal;
+  }
+}
+
+.mono, pre, tt {
   @include monospace-family;
-  @include adjust-font-size-to(16px);
-  line-height: 24px;
+  font-size: 16px;
+  line-height: 1.25em;
+}
+
+code {
+  @include monospace-family;
+  background: $main-color-light;
+  font-size: 16px;
 }
 
 .code {
@@ -108,30 +132,6 @@ input[type=submit] {
 
 ol a {
   color: #666;
-}
-
-#top-nav {
-  background: $main-color;
-  border-bottom: .18em solid $main-color-accent;
-
-  li {
-    float: right;
-    margin-right: 1em;
-  }
-}
-
-#top-nav .home {
-  font-family: "Fjalla One";
-  font-weight: 300;
-  color: white;
-  float: left;
-
-  a {
-    color: white;
-    &:hover {
-      color: $main-color-accent;
-    }
-  }
 }
 
 .twitter-share-button {
@@ -154,4 +154,89 @@ ol a {
     background: #70b1dc;
     @include trailer;
   }
+}
+
+
+#top-nav {
+  background: $main-color-light;
+  border-bottom: .18em solid $main-color-accent;
+  transition: .25s ease-in-out all;
+  font-family: "Fjalla One";
+
+  li {
+    float: left;
+    margin-right: 1em;
+  }
+
+  .pages {
+    
+  }
+
+  .chapters {
+    float: right;
+    select {
+      background: #ffd0c6;
+      font-size: 16px;
+      border: none;
+      font-family: "Fjalla One";
+      height: 1.8em;
+    }
+  }
+
+  .home {
+    font-weight: 300;
+    color: black;
+    float: right;
+
+    a {
+      color: black;
+      &:hover {
+        color: $tri-color;
+      }
+    }
+  }
+
+  .buy {
+    padding: 0 .75em;
+    background: $alt-color;
+    margin: 0;
+    @include adjust-font-size-to(16px);
+  }
+  .tweet {
+    position: relative;
+    top: 1px;
+  }
+
+  input {
+    font-family: "Fjalla One";
+    border: none;
+    border-radius: 2px;
+    font-size: 16px;
+    padding: .25em;
+  }
+}
+
+table {
+  border-top: 1px solid #eee;
+  thead {
+    display: none;
+  }
+  td {
+    border-bottom: 1px solid #eee;
+  }
+  td:first-child {
+    @include monospace-family;
+    white-space: pre;
+    padding: 0 1em;
+    border-right: 1px solid #eee;
+  }
+  td:last-child {
+    padding: 0 1em;
+  }
+}
+
+blockquote {
+  background: #fde6e1;
+  border-left: 2px solid $orange;
+  font-style: italic;
 }

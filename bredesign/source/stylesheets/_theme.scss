@@ -143,7 +143,7 @@ ol a {
   border-bottom: .18em solid $main-color-accent;
   transition: .25s ease-in-out all;
   font-family: "Fjalla One";
-
+  
   li {
     float: left;
     margin-right: 1em;
@@ -170,7 +170,7 @@ ol a {
     float: right;
 
     a {
-      color: white;
+      color: black;
       &:hover {
         color: $main-color-accent;
       }
