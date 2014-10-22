@@ -131,6 +131,7 @@ ol ol {
   position: static !important;
   top: 0 !important;
   width: auto !important;
+  margin-right: 1em;
   
   @include breakpoint($M) {
     position: fixed !important;
