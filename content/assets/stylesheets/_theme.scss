@@ -67,6 +67,12 @@ input[type=submit] {
     color: $main-color-accent;
     @include adjust-font-size-to(36px, 1, 60px);
   }
+  a, a:hover, a:visited {
+    color: white;
+    span {
+      color: $main-color-accent;
+    }
+  }
 }
 .subtitle {
   @include adjust-font-size-to(20px, 1);
@@ -130,10 +136,6 @@ code {
 }
 
 
-ol a {
-  color: #666;
-}
-
 .twitter-share-button {
   margin-top: 2px;
 }
@@ -153,6 +155,9 @@ ol a {
   .buy {
     background: #70b1dc;
     @include trailer;
+  }
+  ol a {
+    color: #666;
   }
 }
 

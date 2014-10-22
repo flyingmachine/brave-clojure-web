@@ -18,11 +18,12 @@
     .masthead
       .container
         .title
-          CLOJURE
-          %span> for the
-          BRAVE
-          %span> and
-          TRUE
+          %a{:href => "/"}
+            CLOJURE
+            %span> for the
+            &nbsp;BRAVE
+            %span> and
+            &nbsp;TRUE
         .subtitle
           %span a practical book for stouthearted beginners
       .lambda
@@ -50,15 +51,13 @@
                 
                 %a{:href => relative_path_to(i)}
                   &larr;
-              %a{:href => "/"} &uarr;
+              %a{:href => "/#toc"} &uarr;
               - if i = @items[index + 1]
                 %a{:href => relative_path_to(i)}
                   &rarr;
           %li.chapters
-            %select
-              - chapters.each do |i|
-                %option{:selected => (i == @item ? "selected" : nil)}
-                  Chapter X
+            %form#search{:action => "/search/"}
+              %input#tipue_search_input{:name => "q", :type => "search", :placeholder => "Search"}
           %li
             %a.buy{:href => "https://leanpub.com/clojure-for-the-brave-and-true"} buy the  ebook!!?!
           %li.subscribe
@@ -73,8 +72,6 @@
     .page.container
       .chapter-nav
         .wrapper
-          %form#search{:action => "/search/"}
-            %input#tipue_search_input{:name => "q", :type => "search", :placeholder => "Search"}
           %ol
             %li
               %a{:href => "/organization/#1__Your_Project_as_a_Library"} 1. Your Project as a Library
