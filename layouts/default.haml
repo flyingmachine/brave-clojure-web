@@ -57,7 +57,7 @@
                   &rarr;
           %li.chapters
             %form#search{:action => "/search/"}
-              %input#tipue_search_input{:name => "q", :type => "search", :placeholder => "Search"}
+              %input#tipue_search_input{:name => "q", :type => "search", :placeholder => "search site"}
           %li
             %a.buy{:href => "https://leanpub.com/clojure-for-the-brave-and-true"} buy the  ebook!!?!
           %li.subscribe
@@ -72,28 +72,6 @@
     .page.container
       .chapter-nav
         .wrapper
-          %ol
-            %li
-              %a{:href => "/organization/#1__Your_Project_as_a_Library"} 1. Your Project as a Library
-            %li
-              %a{:href => "/organization/#2__Storing_Objects_with_def"} 2. Storing Objects with def
-            %li
-              %a{:href => "/organization/#3__Creating_and_Switching_to_Namespaces"} 3. Creating and Switching to Namespaces
-            %li
-              %a{:href => "/organization/#4__refer_and_alias"} 4. refer and alias
-            %li
-              %a{:href => "/organization/#5__Real_Project_Organization"} 5. Real Project Organization
-              %ol
-                %li
-                  %a{:href => "/organization/#5_1__The_relationship_between_file_paths_and_namespace_names"} 5.1. The relationship between file paths and namespace names
-                %li
-                  %a{:href => "/organization/#5_2__Loading_a_file_with_require_and_use"} 5.2. Loading a file with require and use
-                %li
-                  %a{:href => "/organization/#5_3__Using_ns"} 5.3. Using ns
-            %li
-              %a{:href => "/organization/#6__To_Catch_a_Burglar"} 6. To Catch a Burglar
-            %li
-              %a{:href => "/organization/#7__Summary"} 7. Summary
 
       .content
         = find_and_preserve(yield)

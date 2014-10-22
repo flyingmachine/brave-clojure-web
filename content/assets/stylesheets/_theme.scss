@@ -158,6 +158,10 @@ code {
   }
   ol a {
     color: #666;
+    display: block;
+    &:hover {
+      color: $tri-color;
+    }
   }
 }
 

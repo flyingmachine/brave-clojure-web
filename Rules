@@ -52,7 +52,7 @@ compile '*' do
       when /coffee$/ then filter :coffeescript
       end
       if item.attributes[:kind] == "documentation" && !item.attributes[:notoc]
-        # filter :toc
+        filter :toc
       end
     end
   end
