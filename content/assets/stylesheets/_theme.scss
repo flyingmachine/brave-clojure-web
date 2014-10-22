@@ -14,7 +14,7 @@ h2 {
   @include adjust-font-size-to($h2, 1);
 }
 
-h3 {
+h3, h4 {
   @include adjust-font-size-to($h3, 1);
 }
 

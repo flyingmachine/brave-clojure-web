@@ -6,13 +6,13 @@ h1 {
 }
 
 h2 {
-  @include leader(1, $h2);
-  @include trailer(1, $h2);
+  @include leader(1.5, $h2);
+  @include trailer(.5, $h2);
 }
 
-h3 {
-  @include leader(1, $h3);
-  @include trailer(1, $h3);
+h3, h4 {
+  @include leader(1.5, $h3);
+  @include trailer(.5, $h3);
 }
 
 p {
@@ -153,6 +153,7 @@ ol ol {
   margin-right: 2em;
   
   @include breakpoint($M) {
+    @include padding-leader;
     position: fixed !important;
     top: 60px !important;
     bottom: 0;
@@ -186,6 +187,7 @@ blockquote {
   padding-left: 1em;
   @include padding-leader(0.5);
   @include padding-trailer(0.5);
+  @include trailer;
 
   p {
     margin: 0;
