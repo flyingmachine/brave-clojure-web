@@ -350,7 +350,7 @@ And that's why `map` treats your maps like lists of vectors! I wanted
 to point out this example in particular because it might be surprising
 and confusing. It was for me when I first started Clojure. Knowing
 these underlying mechanisms will save you from the kind of frustration
-and general mopiness of the kind of often seen among male vampires
+and general mopiness of the kind often seen among male vampires
 trying to retain their humanity.
 
 ### Seq Function Examples
@@ -444,7 +444,7 @@ applying each function to `numbers`:
 #### reduce
 
 The last chapter covers how `reduce` processes each element in a
-sequence to build a result. This section just shows a couple ways to
+sequence to build a result. This section just shows a couple of ways to
 use it that might not be obvious.
 
 Earlier in this chapter you saw how you can use `map` on a map data
@@ -488,7 +488,7 @@ first `n` elements removed:
 ```
 
 Their cousins `take-while` and `drop-while` are a bit more interesting. Each
-takes a predicate function (a function those return value is evaluated
+takes a predicate function (a function whose return value is evaluated
 for truth or falsity) to determine when it should stop taking or
 dropping. Suppose, for example, that you had a vector representing
 entries in your "food journal". Each entry has the year, month, and
@@ -628,7 +628,7 @@ example below, taken from clojuredocs.org, `count` is the key function:
 
 #### concat
 
-Finally, `concat` simply appends the members of sequence the end of
+Finally, `concat` simply appends the members of a sequence to the end of
 another:
 
 ```clojure
@@ -780,7 +780,7 @@ you pass:
 
 ```clojure
 (concat (take 8 (repeat "na")) ["Batman!"])
-("na" "na" "na" "na" "na" "na" "na" "na" "Batman!")
+; => ("na" "na" "na" "na" "na" "na" "na" "na" "Batman!")
 ```
 
 There's also `repeatedly`, which will call the provided function to
@@ -864,6 +864,7 @@ the original value, and `into` lets you do that:
 ; => ([:sunlight-reaction "Glitter!"])
 
 (into {} (map identity {:sunlight-reaction "Glitter!"}))
+; => {:sunlight-reaction "Glitter!"}
 ```
 
 This will work with other data structures as well:
@@ -977,7 +978,7 @@ also define `into` in terms of `conj` by using `apply`:
 (my-into [0] [1 2 3])
 ; => [0 1 2 3]
 
-;; the above call to my-into is equivalient to calling:
+;; the above call to my-into is equivalent to calling:
 (conj [0] 1 2 3)
 ```
 
@@ -1100,10 +1101,10 @@ Here's how you might implement `complement`:
 
 As you can see, `complement` is a fairly humble function. It does one
 little thing, and does it well. This isn't going to map reduce
-terabytes of data for your or something like that.
+terabytes of data for you or something like that.
 
 But it does demonstrate the power of higher-order functions. They
-allow you build up libraries of utility functions in a way which is
+allow you to build up libraries of utility functions in a way which is
 impossible in most other languages. In aggregate, these utility
 functions make your life a lot easier.
 
