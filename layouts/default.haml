@@ -1,5 +1,7 @@
 !!!
 - @items = chapters
+- count = @items.size
+- index = @items.index(@item)
 %html{:lang => "en"}
   %head
     %meta{:charset => "utf-8"}/
@@ -7,37 +9,69 @@
     %base{:href => "/"}/
     %title
       #{@item[:title]}
-      - if @item[:title] != 'Clojure for the Brave and True, an Online Book for Beginners'
+      - if @item[:title] != 'Clojure for the Brave and True, a Practical Guide for Stouthearted Beginners'
         | Clojure for the Brave and True
-    %link{:href => relative_path_to("/stylesheets/documentation.css"), :media => "screen", :rel => "stylesheet", :type => "text/css"}/
+    %link{:href => relative_path_to("/stylesheets/main.css"), :media => "screen", :rel => "stylesheet", :type => "text/css"}/
     %link{:href => relative_path_to("/stylesheets/pygments.css"), :media => "screen", :rel => "stylesheet", :type => "text/css"}/
-    %link{:href => 'http://fonts.googleapis.com/css?family=Gentium+Book+Basic:400,400italic|Open+Sans:400,800', :rel => 'stylesheet', :type => 'text/css'}/
-  %body{"data-spy" => "scroll", "data-target" => "nav"}
-    %header{:role => "banner"}
-      .title
-        %a{:href => "/"}
-          Clojure
-          %span for the
-          Brave
-          %span and
-          True
-      .subtitle
-        ( a Book for Beginners )
-    .announcement
-      .signup
-        %form#mc-embedded-subscribe-form.validate{:action => "http://flyingmachinestudios.us1.list-manage.com/subscribe/post?u=60763b0c4890c24bd055f32e6&amp;id=0b40ffd1e1", :method => "post", :name => "mc-embedded-subscribe-form", :novalidate => "", :target => "_blank"}
-          Spending your nights pining for the next chapter of <em>Clojure for the Brave and True</em>? Then follow <a href="https://twitter.com/nonrecursive">@nonrecursive</a> or get email updates: 
-          %input#mce-EMAIL.email{:name => "EMAIL", :placeholder => "email address", :required => "", :type => "email", :value => ""}/
-          %input#mc-embedded-subscribe.button{:name => "subscribe", :type => "submit", :value => "Get Updates"}/
-        %div
-          <a href="https://leanpub.com/clojure-for-the-brave-and-true" class="buy">Buy the DRM-free PDF, epub, and mobi!</a>
+    %link{:href => 'http://fonts.googleapis.com/css?family=Oswald:400,300|Gentium+Book+Basic:400,700|Fjalla+One|Courgette', :rel => 'stylesheet', :type => 'text/css'}
+  %body
+    .masthead
+      .container
+        .title
+          %a{:href => "/"}
+            CLOJURE<span> for the </span>BRAVE<span> and </span>TRUE
+        .subtitle
+          %span a practical book for stouthearted beginners
+      .lambda
+        λ
+    .engage-me-please
+      .container
+        %a.buy{:href => "https://leanpub.com/clojure-for-the-brave-and-true"} Buy the DRM-free PDF, epub, and mobi!
+        %form#mc-embedded-subscribe-form.validate{:action => "http://flyingmachinestudios.us1.list-manage.com/subscribe/post?u=60763b0c4890c24bd055f32e6&amp;amp;id=0b40ffd1e1", :method => "post", :name => "mc-embedded-subscribe-form", :novalidate => "", :target => "_blank"}
+          %p
+            Spending your nights pining for the next chapter of
+            <em>Clojure for the Brave and True</em>?
+            %br/
+            Then follow
+            %a{:href => "https://twitter.com/nonrecursive"} @nonrecursive
+            or subscribe for email updates:
+            %input#mce-EMAIL.email{:name => "EMAIL", :placeholder => "email address", :required => "", :type => "email", :value => ""}/
+            %input#mc-embedded-subscribe.button{:name => "subscribe", :type => "submit", :value => "Subscribe!"}/
+    #top-nav
+      .items.container
+        %ul
+          %li.home
+            - if index
+              - if index != 0
+                - i = @items[index - 1]
+                
+                %a{:href => relative_path_to(i)}
+                  &larr;
+              %a{:href => "/#toc"} &uarr;
+              - if i = @items[index + 1]
+                %a{:href => relative_path_to(i)}
+                  &rarr;
+          %li.chapters
+            %form#search{:action => "/search/"}
+              %input#tipue_search_input{:name => "q", :type => "search", :placeholder => "search site"}
+          %li
+            %a.buy{:href => "https://leanpub.com/clojure-for-the-brave-and-true"} buy the  ebook!!?!
+          %li.subscribe
+            %form#mc-embedded-subscribe-form.validate{:action => "http://flyingmachinestudios.us1.list-manage.com/subscribe/post?u=60763b0c4890c24bd055f32e6&amp;amp;id=0b40ffd1e1", :method => "post", :name => "mc-embedded-subscribe-form", :novalidate => "", :target => "_blank"}
+              %input#mce-EMAIL.email{:name => "EMAIL", :placeholder => "email address", :required => "", :type => "email", :value => ""}/
+              %input#mc-embedded-subscribe.button{:name => "subscribe", :type => "submit", :value => "subscribe"}/
+          %li.tweet
+            %a.twitter-share-button{:href => "https://twitter.com/share"} tweet bravely and truly
+            :javascript
+              !function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs')
+        
+    .page.container
+      .chapter-nav
+        .wrapper
 
-    .page
       .content
         = find_and_preserve(yield)
         .pagenav.bottom
-          - count = @items.size
-          - index = @items.index(@item)
           - if index
             - if index != 0
               - i = @items[index - 1]
@@ -63,40 +97,9 @@
               (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
           })();
 
-    
-      %nav
-        .sticky
-          <a href="https://leanpub.com/clojure-for-the-brave-and-true" class="buy">buy the ebook</a>
-          .signup
-            %form#mc-embedded-subscribe-form.validate{:action => "http://flyingmachinestudios.us1.list-manage.com/subscribe/post?u=60763b0c4890c24bd055f32e6&amp;id=0b40ffd1e1", :method => "post", :name => "mc-embedded-subscribe-form", :novalidate => "", :target => "_blank"}
-              %input#mce-EMAIL.email{:name => "EMAIL", :placeholder => "email address", :required => "", :type => "email", :value => ""}/
-              %input#mc-embedded-subscribe.button{:name => "subscribe", :type => "submit", :value => "Get Updates"}/
-              
-          %a{:href => "https://twitter.com/share", :class => "twitter-share-button"}tweet bravely and truly
-          :javascript
-            !function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs')
-
-          %iframe{:src => "http://ghbtns.com/github-btn.html?user=flyingmachine&repo=brave-clojure-web&type=fork", :width => "62", :height => "20"}
-
-          %form#search{:action => "/search/"}
-            %input#tipue_search_input{:name => "q", :type => "search", :placeholder => "Search"}
-          #toc.nav
-            %ol
-              - chapters.each do |i|
-                %li{:class => (i == @item ? "active-section" : "")}
-                  = link_to i[:link_title] || i[:title], relative_path_to(i), :class => (i == @item ? "active" : "")
-    %footer
-      .signup
-        %form#mc-embedded-subscribe-form.validate{:action => "http://flyingmachinestudios.us1.list-manage.com/subscribe/post?u=60763b0c4890c24bd055f32e6&amp;id=0b40ffd1e1", :method => "post", :name => "mc-embedded-subscribe-form", :novalidate => "", :target => "_blank"}
-          Spending your nights pining for the next chapter of <em>Clojure for the Brave and True</em>? Then follow <a href="https://twitter.com/nonrecursive">@nonrecursive</a> or submit this: 
-          %input#mce-EMAIL.email{:name => "EMAIL", :placeholder => "email address", :required => "", :type => "email", :value => ""}/
-          %input#mc-embedded-subscribe.button{:name => "subscribe", :type => "submit", :value => "Get Updates"}/
-        %p Found a mistake? I'd love to hear it! Please email <a href="mailto:brave-clojure@googlegroups.com">the development mailing list</a>
-    %script{ :src => "http://code.jquery.com/jquery-1.7.2.min.js" }
-    %script{ :src => relative_path_to("/javascripts/underscore.js") }
-    %script{ :src => relative_path_to("/javascripts/scrollspy.js") }
-    %script{ :src => relative_path_to("/javascripts/jquery.sticky.js") }
-    %script{ :src => relative_path_to("/javascripts/application.js") }
+    %script{:src => "https://code.jquery.com/jquery-2.1.1.min.js"}
+    %script{:src => relative_path_to("/javascripts/jquery.sticky.js")}
+    %script{:src => relative_path_to("/javascripts/sticky.js")}
     :javascript
       var _gaq = _gaq || [];
       _gaq.push(['_setAccount', 'UA-43463851-1']);

@@ -3,7 +3,7 @@ class TocFilter < Nanoc::Filter
   type :text
 
   def run(content, params ={})
-    NokogiriTOC.run(content, :content_selector => ".content", :toc_selector => "#toc.nav li.active-section")
+    NokogiriTOC.run(content, :content_selector => ".content", :toc_selector => ".chapter-nav .wrapper")
   end
 end
 
@@ -46,9 +46,9 @@ class NokogiriTOC
       parent = case node.name
       when "h2" then toc_data
       when "h3" then toc_data.last[:c]
-      when "h4" then toc_data.last[:c].last[:c]
+      # when "h4" then toc_data.last[:c].last[:c]
       end
-      parent << data
+      parent << data if parent
     end
 
     toc = doc.create_element("ol")

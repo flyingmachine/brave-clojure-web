@@ -26,22 +26,31 @@ compile '/assets/javascripts/tipuesearch-data/' do
   filter :erb
 end
 
+compile '/assets/stylesheets/*' do
+  unless item.identifier =~ /stylesheets\/_/ || item.identifier =~ /documentation/
+    filter(:sass, Compass.sass_engine_options)
+  end
+end
+
 compile '*' do
-  unless item.identifier.include?("#") # emacs tmp file
+  unless item.identifier.include?("#") 
     if item.binary?
       # don’t filter binary items
     else
       item_layout = "default"
       
       case item.attributes[:filename]
-      when /haml$/ then filter :haml; layout item_layout
-      when /textile$/ then filter :redcloth; layout item_layout
-      when /(markdown|md)$/ then filter :redcarpet, :options => {fenced_code_blocks: true, tables: true}, :renderer => RedcarpetSyntaxHighlighter; layout item_layout
-        
-      when /coffee$/ then filter :coffeescript;
-      when /scss$/ then filter(:sass, Compass.sass_engine_options)
+      when /haml$/ then
+        filter :haml
+        layout item_layout
+      when /textile$/ then
+        filter :redcloth
+        layout item_layout
+      when /(markdown|md)$/ then
+        filter :redcarpet, :options => {fenced_code_blocks: true, tables: true}, :renderer => RedcarpetSyntaxHighlighter
+        layout item_layout
+      when /coffee$/ then filter :coffeescript
       end
-
       if item.attributes[:kind] == "documentation" && !item.attributes[:notoc]
         filter :toc
       end
@@ -56,7 +65,7 @@ route '/assets/javascripts/*' do
 end
 
 route '/assets/stylesheets/*' do
-  unless item.identifier.include?("#") # emacs tmp file
+  unless item.identifier.include?("#") || item.identifier =~ /stylesheets\/_/ # emacs tmp file
     "/stylesheets/#{basename(item.attributes[:filename])}.css" 
   end
 end

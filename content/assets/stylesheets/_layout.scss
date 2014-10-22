@@ -6,13 +6,13 @@ h1 {
 }
 
 h2 {
-  @include leader(1, $h2);
-  @include trailer(1, $h2);
+  @include leader(1.5, $h2);
+  @include trailer(.5, $h2);
 }
 
-h3 {
-  @include leader(1, $h3);
-  @include trailer(1, $h3);
+h3, h4 {
+  @include leader(1.5, $h3);
+  @include trailer(.5, $h3);
 }
 
 p {
@@ -45,16 +45,33 @@ p {
 
 .container {
   @include container;
-  padding: 0 1em;
+  padding: 0 2em;
 }
 
 .page {
   @include leader(2);
+  img {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 100%;
+  }
 }
 
 .content {
   @include breakpoint($M) {
     width: span(9);
+  }
+
+  li {
+    margin-left: 1.2em;
+  }
+
+  ul, ol {
+    @include trailer;
+    ul, ol {
+      margin-bottom: 0;
+    }
   }
 }
 
@@ -133,11 +150,14 @@ ol ol {
   position: static !important;
   top: 0 !important;
   width: auto !important;
-  margin-right: 1em;
+  margin-right: 2em;
   
   @include breakpoint($M) {
+    @include padding-leader;
     position: fixed !important;
     top: 60px !important;
+    bottom: 0;
+    overflow-y: auto;
   }
 }
 
@@ -153,4 +173,28 @@ ol ol {
   .next {
     float: right;
   }
+}
+
+#tipue_search_content_title {
+  @include leader;
+}
+
+#disqus_thread {
+  @include leader;
+}
+
+blockquote {
+  padding-left: 1em;
+  @include padding-leader(0.5);
+  @include padding-trailer(0.5);
+  @include trailer;
+
+  p {
+    margin: 0;
+    white-space: pre-line;
+  }
+}
+
+table {
+  @include trailer;
 }

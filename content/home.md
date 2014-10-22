@@ -56,8 +56,27 @@ things:
 - It eschews "real-world" examples in favor of more interesting
   exercises like "assaulting hobbits" and "tracking glittery vampires"
 
+<a name="toc"></a>
+
 By the end, you'll be able to use Clojure, one of the most exciting
 and fun programming languages in existence!
+
+## TOC at a Glance
+
+1. [Building, Running, and The REPL](/getting-started/)
+2. [Start Using Emacs](/basic-emacs/)
+3. [Using Emacs with Clojure](/using-emacs-with-clojure/)
+4. [Do Things](/do-things/)
+5. [Core Functions in Depth](/core-functions-in-depth/)
+6. [Functional Programming](/functional-programming/)
+7. [Organizing Your Project: a Librarian's Tale](/organization/)
+8. [Clojure Alchemy: Reading, Evaluation, and Macros](/read-and-eval/)
+9. [Writing Macros](/writing-macros/)
+10. [Concurrency, Parallelism, and State. And Zombies.](/concurrency/)
+11. [Interacting with Java](/java/)
+13. [Upcoming](/upcoming/)
+14. [Other Resources](/resources/)
+15. [About the Author](/about/)
 
 ## Part 1: Environment Setup
 
@@ -126,6 +145,12 @@ functional programming mindset.
 
 [Read "Functional Programming"](/functional-programming/)
 
+### Project Organization
+
+This chapter shows you how to use namespaces to organize your code.
+
+[Read "Organizing Your Project: a Librarian's Tale"](/organization/)
+
 ### Clojure Alchemy: Reading, Evaluation, and Macros
 
 In this chapter, we'll take a step back and describe how Clojure runs
@@ -144,3 +169,22 @@ make-believe caps, pretending that we run an online potion store and
 using macros to validate customer orders.
 
 [Read "Writing Macros"](/writing-macros/)
+
+
+## Part 3: Extra-Fun Topics
+
+Here you'll dig learn about Clojure's more advanced topics. They're
+super fun!
+
+### Concurrency, Parallelism, and State. And Zombies.
+
+In this chapter you'll learn what concurrency and parallelism are and why they matter. You'll learn about the challenges you'll face when writing parallel programs and about how Clojure's design helps to mitigate them. Finally, you'll learn a big boatload of tools and techniques for writing parallel programs yourself, including: futures, promises, delays, atoms, refs, vars, pmap, and core.reducers. Also, there will be zombies. Onward!
+
+[Read "Concurrency, Parallelism, and State. And Zombies."](/concurrency/)
+
+
+### Interacting with Java
+
+This chapter is like a cross between a phrasebook and cultural introduction for the Land of Java. It will give you an overview of what the JVM is, how it runs programs, and how to compile programs for it. It will also give you a brief tour of frequently-used Java classes and methods and explain how to interact with them from Clojure. More than that, it will show you how to think about and understand Java so that you can incorporate any Java library into your Clojure program.
+
+[Read "Interacting with Java"](/java/)

@@ -14,7 +14,7 @@ h2 {
   @include adjust-font-size-to($h2, 1);
 }
 
-h3 {
+h3, h4 {
   @include adjust-font-size-to($h3, 1);
 }
 
@@ -26,6 +26,14 @@ a {
   &:hover {
     color: $tri-color;
   }
+}
+
+em {
+  font-style: italic;
+}
+
+small {
+  font-size: 75%;
 }
 
 input {
@@ -58,6 +66,12 @@ input[type=submit] {
     font-weight: 400;
     color: $main-color-accent;
     @include adjust-font-size-to(36px, 1, 60px);
+  }
+  a, a:hover, a:visited {
+    color: white;
+    span {
+      color: $main-color-accent;
+    }
   }
 }
 .subtitle {
@@ -95,15 +109,26 @@ input[type=submit] {
   border-bottom: .18em solid $main-color-accent;
 }
 
+.content {
+  ul li {
+    list-style: disc;
+  }
+
+  ol>li {
+    list-style: decimal;
+  }
+}
+
 .mono, pre, tt {
   @include monospace-family;
-  @include adjust-font-size-to(16px);
-  line-height: 24px;
+  font-size: 16px;
+  line-height: 1.25em;
 }
 
 code {
   @include monospace-family;
   background: $main-color-light;
+  font-size: 16px;
 }
 
 .code {
@@ -111,15 +136,13 @@ code {
 }
 
 
-ol a {
-  color: #666;
-}
-
 .twitter-share-button {
   margin-top: 2px;
 }
 
 .chapter-nav {
+  @include adjust-font-size-to(16px);
+  bottom: 1em;
   input[type=email]{
     width: 100%;
     border: none;
@@ -135,6 +158,13 @@ ol a {
     background: #70b1dc;
     @include trailer;
   }
+  ol a {
+    color: #666;
+    display: block;
+    &:hover {
+      color: $tri-color;
+    }
+  }
 }
 
 
@@ -143,7 +173,7 @@ ol a {
   border-bottom: .18em solid $main-color-accent;
   transition: .25s ease-in-out all;
   font-family: "Fjalla One";
-  
+
   li {
     float: left;
     margin-right: 1em;
@@ -172,7 +202,7 @@ ol a {
     a {
       color: black;
       &:hover {
-        color: $main-color-accent;
+        color: $tri-color;
       }
     }
   }
@@ -195,4 +225,29 @@ ol a {
     font-size: 16px;
     padding: .25em;
   }
+}
+
+table {
+  border-top: 1px solid #eee;
+  thead {
+    display: none;
+  }
+  td {
+    border-bottom: 1px solid #eee;
+  }
+  td:first-child {
+    @include monospace-family;
+    white-space: pre;
+    padding: 0 1em;
+    border-right: 1px solid #eee;
+  }
+  td:last-child {
+    padding: 0 1em;
+  }
+}
+
+blockquote {
+  background: #fde6e1;
+  border-left: 2px solid $orange;
+  font-style: italic;
 }
