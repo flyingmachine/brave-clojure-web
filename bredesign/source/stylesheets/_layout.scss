@@ -49,7 +49,7 @@ p {
 }
 
 .page {
-
+  @include leader(2);
 }
 
 .content {
@@ -101,11 +101,13 @@ ol ol {
 #top-nav-sticky-wrapper {
   display: none;
   @include breakpoint($M) {
+    height: 0 !important;
     display: block;
   }
   &.is-sticky {
     #top-nav {
       @include breakpoint($M) {
+        height: 2.5em !important;
         top: 0;
         display: block;
       }
