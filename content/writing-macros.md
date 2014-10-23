@@ -215,21 +215,8 @@ Here, `code-critic` takes a map as an argument and destructures the
 `:good` and `:bad` keys so that the corresponding values are named by
 `good` and `bad` within the macro.
 
-You can also create multiple-arity macros, though I've never seen one
-and most likely you shouldn't do it. Notice that each arity's argument
-list and body is wrapped in parens:
-
-```clojure
-(defmacro mutiple-arity
-  ([single-arg]
-     "Don't do this")
-     
-  ([arg1 arg2]
-     "Seriously, don't do it :(")
-     
-  ([arg1 arg2 arg 3]
-     "Nah, just kidding. Do whatever you want! Self-actualize!"))
-```
+You can also create multiple-arity macros. To look at some examples,
+check out the macros "and" and "or" in Clojure core.
 
 Now that you're comfortable with the anatomy of macros and are well on
 your way to self-actualization, it's time to strap yourself to your
