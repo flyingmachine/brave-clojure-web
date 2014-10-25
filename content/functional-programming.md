@@ -1161,13 +1161,14 @@ Here's what that board would look like:
 ![Peg Thing valid moves](images/functional-programming/peg-thing-valid-moves.png)
 
 
-Given this board, positions 1, 6, and 11 have valid moves, and all
-others don't
+Given this board, positions 1, 6, 11, and 13 have valid moves, and all
+others don't:
 
 ```clojure
 (valid-moves my-board 1)  ; => {4 2}
 (valid-moves my-board 6)  ; => {4 5}
 (valid-moves my-board 11) ; => {4 7}
+(valid-moves my-board 13) ; => {4 8}
 (valid-moves my-board 5)  ; => {}
 (valid-moves my-board 8)  ; => {}
 ```
