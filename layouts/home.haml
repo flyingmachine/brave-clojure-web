@@ -8,9 +8,7 @@
     %meta{:path => @item.path}
     %base{:href => "/"}/
     %title
-      #{@item[:title]}
-      - if @item[:title] != 'Clojure for the Brave and True, a Practical Guide for Stouthearted Beginners'
-        | Clojure for the Brave and True
+      Learn Clojure with Clojure for the Brave and True
     %link{:href => relative_path_to("/stylesheets/main.css"), :media => "screen", :rel => "stylesheet", :type => "text/css"}/
     %link{:href => relative_path_to("/stylesheets/pygments.css"), :media => "screen", :rel => "stylesheet", :type => "text/css"}/
     %link{:href => 'http://fonts.googleapis.com/css?family=Oswald:400,300|Gentium+Book+Basic:400,700|Fjalla+One|Courgette', :rel => 'stylesheet', :type => 'text/css'}
@@ -26,7 +24,6 @@
         λ
     .engage-me-please
       .container
-        %a.buy{:href => "https://leanpub.com/clojure-for-the-brave-and-true"} Buy the DRM-free PDF, epub, and mobi for $35!
         %form#mc-embedded-subscribe-form.validate{:action => "http://flyingmachinestudios.us1.list-manage.com/subscribe/post?u=60763b0c4890c24bd055f32e6&amp;amp;id=0b40ffd1e1", :method => "post", :name => "mc-embedded-subscribe-form", :novalidate => "", :target => "_blank"}
           %p
             Spending your nights pining for the next chapter of
@@ -37,7 +34,6 @@
             or subscribe for email updates:
             %input#mce-EMAIL.email{:name => "EMAIL", :placeholder => "email address", :required => "", :type => "email", :value => ""}/
             %input#mc-embedded-subscribe.button{:name => "subscribe", :type => "submit", :value => "Subscribe!"}/
-            
     #top-nav
       .items.container
         %ul
@@ -55,8 +51,6 @@
           %li.chapters
             %form#search{:action => "/search/"}
               %input#tipue_search_input{:name => "q", :type => "search", :placeholder => "search site"}
-          %li
-            %a.buy{:href => "https://leanpub.com/clojure-for-the-brave-and-true"} buy the ebook $35!!?!
           %li.subscribe
             %form#mc-embedded-subscribe-form.validate{:action => "http://flyingmachinestudios.us1.list-manage.com/subscribe/post?u=60763b0c4890c24bd055f32e6&amp;amp;id=0b40ffd1e1", :method => "post", :name => "mc-embedded-subscribe-form", :novalidate => "", :target => "_blank"}
               %input#mce-EMAIL.email{:name => "EMAIL", :placeholder => "email address", :required => "", :type => "email", :value => ""}/
@@ -67,8 +61,7 @@
               !function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs')
         
     .page.container
-      .chapter-nav
-        .wrapper
+
       .content
         = find_and_preserve(yield)
         .pagenav.bottom

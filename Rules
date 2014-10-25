@@ -40,6 +40,9 @@ compile '*' do
       item_layout = "default"
       
       case item.attributes[:filename]
+      when /home/ then
+        filter :redcarpet, :options => {fenced_code_blocks: true, tables: true}, :renderer => RedcarpetSyntaxHighlighter
+        layout "home"
       when /haml$/ then
         filter :haml
         layout item_layout
