@@ -5,7 +5,7 @@ kind: documentation
 notoc: true
 ---
 
-# Introduction
+# The Programming Language You've Been Longing For
 
 \**Clojure!*\*
 
