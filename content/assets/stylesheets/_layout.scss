@@ -138,7 +138,6 @@ ol ol {
 
   .wrapper {
     height: auto !important;
-    width: auto !important;
     @include leader(1);
     @include breakpoint($M) {
       margin-top: 0;
@@ -149,11 +148,9 @@ ol ol {
 .chapter-nav .sticky-wrapper.is-sticky .wrapper {
   position: static !important;
   top: 0 !important;
-  width: auto !important;
   margin-right: 2em;
   
   @include breakpoint($M) {
-    @include padding-leader;
     position: fixed !important;
     top: 60px !important;
     bottom: 0;

@@ -61,7 +61,38 @@
               !function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs')
         
     .page.container
-
+      .chapter-nav
+        .wrapper
+          %ol
+            %li
+              %a{:href => "/getting-started/"} Building, Running, and The REPL
+            %li
+              %a{:href => "/basic-emacs/"} Start Using Emacs
+            %li
+              %a{:href => "/using-emacs-with-clojure/"} Using Emacs with Clojure
+            %li
+              %a{:href => "/do-things/"} Do Things
+            %li
+              %a{:href => "/core-functions-in-depth/"} Core Functions in Depth
+            %li
+              %a{:href => "/functional-programming/"} Functional Programming
+            %li
+              %a{:href => "/organization/"} Organizing Your Project: a Librarian's Tale
+            %li
+              %a{:href => "/read-and-eval/"} Clojure Alchemy: Reading, Evaluation, and Macros
+            %li
+              %a{:href => "/writing-macros/"} Writing Macros
+            %li
+              %a{:href => "/concurrency/"} Concurrency, Parallelism, and State. And Zombies.
+            %li
+              %a{:href => "/java/"} Interacting with Java
+            %li
+              %a{:href => "/upcoming/"} Upcoming
+            %li
+              %a{:href => "/resources/"} Other Resources
+            %li
+              %a{:href => "/about/"} About the Author
+              
       .content
         = find_and_preserve(yield)
         .pagenav.bottom
