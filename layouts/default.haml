@@ -15,13 +15,13 @@
     %link{:href => relative_path_to("/stylesheets/pygments.css"), :media => "screen", :rel => "stylesheet", :type => "text/css"}/
     %link{:href => 'http://fonts.googleapis.com/css?family=Oswald:400,300|Gentium+Book+Basic:400,700|Fjalla+One|Courgette', :rel => 'stylesheet', :type => 'text/css'}
   %body
-    .masthead
+    %header
       .container
         .title
           %a{:href => "/"}
             CLOJURE<span> for the </span>BRAVE<span> and </span>TRUE
         .subtitle
-          %span the hobbit-approved guide to learning Clojure
+          %span the hobbit-approved guide for beginners
       .lambda
         λ
     .engage-me-please
@@ -39,32 +39,7 @@
             %input#mc-embedded-subscribe.button{:name => "subscribe", :type => "submit", :value => "Subscribe!"}/
             
     #top-nav
-      .items.container
-        %ul
-          %li.home
-            - if index
-              - if index != 0
-                - i = @items[index - 1]
-                
-                %a{:href => relative_path_to(i)}
-                  &larr;
-              %a{:href => "/#toc"} &uarr;
-              - if i = @items[index + 1]
-                %a{:href => relative_path_to(i)}
-                  &rarr;
-          %li.chapters
-            %form#search{:action => "/search/"}
-              %input#tipue_search_input{:name => "q", :type => "search", :placeholder => "search site"}
-          %li
-            %a.buy{:href => "https://leanpub.com/clojure-for-the-brave-and-true"} buy the ebook $35
-          %li.subscribe
-            %form#mc-embedded-subscribe-form.validate{:action => "http://flyingmachinestudios.us1.list-manage.com/subscribe/post?u=60763b0c4890c24bd055f32e6&amp;amp;id=0b40ffd1e1", :method => "post", :name => "mc-embedded-subscribe-form", :novalidate => "", :target => "_blank"}
-              %input#mce-EMAIL.email{:name => "EMAIL", :placeholder => "email address", :required => "", :type => "email", :value => ""}/
-              %input#mc-embedded-subscribe.button{:name => "subscribe", :type => "submit", :value => "get email updates"}/
-          %li.tweet
-            %a.twitter-share-button{:href => "https://twitter.com/share"} tweet bravely and truly
-            :javascript
-              !function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs')
+      
         
     .page.container
       .chapter-nav
@@ -97,6 +72,33 @@
           })();
       .chapter-nav
         .wrapper
+
+    .topnav-content.container
+      %ul
+        %li.home
+          - if index
+            - if index != 0
+              - i = @items[index - 1]
+              
+              %a{:href => relative_path_to(i)}
+                &larr;
+            %a{:href => "/#toc"} &uarr;
+            - if i = @items[index + 1]
+              %a{:href => relative_path_to(i)}
+                &rarr;
+        %li.chapters
+          %form#search{:action => "/search/"}
+            %input#tipue_search_input{:name => "q", :type => "search", :placeholder => "search site"}
+        %li
+          %a.buy{:href => "https://leanpub.com/clojure-for-the-brave-and-true"} buy the ebook $35
+        %li.subscribe
+          %form#mc-embedded-subscribe-form.validate{:action => "http://flyingmachinestudios.us1.list-manage.com/subscribe/post?u=60763b0c4890c24bd055f32e6&amp;amp;id=0b40ffd1e1", :method => "post", :name => "mc-embedded-subscribe-form", :novalidate => "", :target => "_blank"}
+            %input#mce-EMAIL.email{:name => "EMAIL", :placeholder => "email address", :required => "", :type => "email", :value => ""}/
+            %input#mc-embedded-subscribe.button{:name => "subscribe", :type => "submit", :value => "get email updates"}/
+        %li.tweet
+          %a.twitter-share-button{:href => "https://twitter.com/share"} tweet bravely and truly
+          :javascript
+            !function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs')
     %script{:src => "https://code.jquery.com/jquery-2.1.1.min.js"}
     %script{:src => relative_path_to("/javascripts/jquery.sticky.js")}
     %script{:src => relative_path_to("/javascripts/sticky.js")}

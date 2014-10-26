@@ -19,7 +19,7 @@ p {
   @include trailer;
 }
 
-.masthead {
+header {
   @include padding-leader(4);
   @include padding-trailer(1);
   position: relative;
@@ -50,16 +50,19 @@ p {
 
 .page {
   @include leader(2);
-  float:left;
   img {
     display: block;
     margin-left: auto;
     margin-right: auto;
     max-width: 100%;
   }
+  .content {
+    float:left;
+  }
 }
 
 .content {
+  @include leader(-1);
   @include breakpoint($M) {
     width: span(9);
   }
