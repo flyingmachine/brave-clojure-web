@@ -50,6 +50,7 @@ p {
 
 .page {
   @include leader(2);
+  float:left;
   img {
     display: block;
     margin-left: auto;
