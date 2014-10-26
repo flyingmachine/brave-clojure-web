@@ -46,7 +46,7 @@ is, though. Libraries therefore record the association between an
 object's title and its address and provide tools for searching these
 records.
 
-For example, if you searched for "The Da Vinci Code" your
+For example, if you searched for "The Da Vinci Code" in your
 local library's database, it would return the address "813.54" to you
 (if it's using the Dewey Decimal System). Now you can efficiently
 navigate your library and locate the physical space where _The Da
@@ -402,7 +402,7 @@ cheese.taxonomy> (clojure.core/refer 'cheese.analysis :only ['private-function])
 ```
 
 So that's `refer`! `alias` is relatively simple by comparison. All it
-does it let you use a shorter namespace name when using a
+does is let you use a shorter namespace name when using a
 fully-qualified name:
 
 ```clojure
@@ -966,7 +966,7 @@ In more detail:
         `the-divine-cheese-code.core/heists`, for example, then the
         result will be `{:lng 5.37, :lat 41.9}`.
 3. You use `comparator-over-maps` to create our comparison functions.
-   If you think of our drawing as being inscribed in a rectangle, than
+   If you think of our drawing as being inscribed in a rectangle, then
    `min` is the corner of the rectangle closest 0,0 and `max` is the
    corner fathest from it.
 4. `translate-to-00` works by finding the `min` of our locations and
