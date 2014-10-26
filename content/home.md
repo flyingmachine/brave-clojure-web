@@ -164,7 +164,7 @@ macro, one of the most powerful tools in existence.
 ### Writing Macros
 
 This chapter thoroughly examines how to write macros starting with
-basic examples and moving up in complexity. We'll close by donnig our
+basic examples and moving up in complexity. We'll close by donning our
 make-believe caps, pretending that we run an online potion store and
 using macros to validate customer orders.
 
