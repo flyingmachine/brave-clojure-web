@@ -1776,8 +1776,11 @@ solidify your Clojure knowledge if you haven't started already. The
 reference listing all the built-in functions which operate on the data
 structures we covered.
 
-One great place to start would be to factor out the `loop` in the
-`hit` function. Or, write out some Project Euler challenges. You can
-also check out [4Clojure](<http://www.4clojure.com/problems>), an
-online set of Clojure problems designed to test your knowledge. Just
-write something!
+One great place to start is to Create a function that's similar to
+symmetrize-body-parts, except that it has to work with weird space
+aliens with radial symmetry. Instead of two eyes, arms, legs, and all
+that, they have five. Or, do some
+[Project Euler](http://www.projeceuler.net) challenges. You can also
+check out [4Clojure](<http://www.4clojure.com/problems>), an online
+set of Clojure problems designed to test your knowledge. Just write
+something!
