@@ -1026,7 +1026,7 @@ how you might define it:
 (defn my-partial
   [partialized-fn & args]
   (fn [& more-args]
-    (apply partialized-fn (into args more-args))))
+    (apply partialized-fn (into more-args (reverse args)))))
 
 (def add20 (my-partial + 20))
 (add20 3) ; => 23
