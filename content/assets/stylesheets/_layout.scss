@@ -114,8 +114,8 @@ ol ol {
     position: fixed;
     width: 100%;
     top: -3em;
-    @include padding-leader(.25);
-    @include padding-trailer(.25);
+    @include padding-leader(.2);
+    @include padding-trailer(.2);
   }
 }
 
@@ -128,7 +128,7 @@ ol ol {
   &.is-sticky {
     #top-nav {
       @include breakpoint($M) {
-        height: 2.5em !important;
+        height: 2.25em !important;
         top: 0;
         display: block;
       }

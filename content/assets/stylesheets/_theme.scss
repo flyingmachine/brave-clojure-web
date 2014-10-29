@@ -225,6 +225,14 @@ code {
     font-size: 16px;
     padding: .25em;
   }
+
+  input[type=email]{
+    border: 2px solid #ffd0c6;
+  }
+
+  input[type=search]{
+    border: 2px solid #ccc;
+  }
 }
 
 table {
