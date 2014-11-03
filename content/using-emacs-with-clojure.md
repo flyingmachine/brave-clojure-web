@@ -162,7 +162,7 @@ Finally, try this:
     parenthesis.
 2.  Press `C-↵`.
 
-CIDER should close the parenthis and evaluate the expression.
+CIDER should close the parenthesis and evaluate the expression.
 
 The [CIDER README](https://github.com/clojure-emacs/cider) has a
 comprehensive list of key bindings which you can learn over time, but
