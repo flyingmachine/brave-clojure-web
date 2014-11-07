@@ -469,7 +469,7 @@ in action:
 6. Do `M-y`. This will remove "choreography" and yank the next item
    on the kill ring, "Treasure"
 
-Here's a summary of useful kill/yank key bindings: 
+Here's a summary of useful kill/yank key bindings:
 
 | Keys | Description                           |
 |------+---------------------------------------|
@@ -516,7 +516,7 @@ feel the comfort of an environment that has evolved over time to fit
 me perfectly – an assortment of packages and keybindings which help me
 bring ideas to life day after day.
 
-These resources will help you as you continue you on your Emacs
+These resources will help you as you continue on your Emacs
 journey:
 
 - [The Emacs Manual](http://www.gnu.org/software/emacs/manual/html_node/emacs/index.html#Top),

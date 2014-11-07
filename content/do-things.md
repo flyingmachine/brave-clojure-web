@@ -55,7 +55,7 @@ literal representations are all valid forms:
 Your code will rarely contain free-floating literals, of course, since
 they don't actually *do* anything on their own. Instead, you'll use
 literals in operations. Operations are how you *do things*. All
-operations take the form, "opening parthensis, operator, operands,
+operations take the form, "opening parenthesis, operator, operands,
 closing parenthesis":
 
 ```clojure
@@ -127,7 +127,7 @@ Here's an example:
 ; => "abra cadabra"
 ```
 
-Notice that each branch of the if can only have one form. This is
+Notice that each branch of the `if` can only have one form. This is
 different from most languages. For example, in Ruby you can write:
 
 ```ruby
@@ -659,7 +659,7 @@ which hints at the Clojure philosophy:
 
     It is better to have 100 functions operate on one data structure
     than 10 functions on 10 data structures.
-    
+
     -- Alan Perlis
 
 You'll learn more about this aspect of Clojure's philosophy in the
@@ -923,7 +923,7 @@ an argument list:
 
 Overloading by arity is one way to provide default values for
 arguments. In this case, `"karate"` is the default argument for the
-`chop-type` param: 
+`chop-type` param:
 
 ```clojure
 (defn x-chop
@@ -1057,7 +1057,7 @@ you want and also use rest params:
                 "Here they are in case you need to cry over them: "
                 (clojure.string/join ", " unimportant-choices))))
 (chooser ["Marmalade", "Handsome Jack", "Pigpen", "Aquaman"])
-; => 
+; =>
 ; Your first choice is: Marmalade
 ; Your second choice is: Handsome Jack
 ; We're ignoring the rest of your choices. Here they are in case \
@@ -1627,7 +1627,7 @@ the ocean, like `~~~1~~~`:
 ; ~~~1~~~
 (defn symmetrize-body-parts
   "Expects a seq of maps which have a :name and :size"
-  [asym-body-parts] ; 
+  [asym-body-parts] ;
   (loop [remaining-asym-parts asym-body-parts ; ~~~2~~~
          final-body-parts []]
     (if (empty? remaining-asym-parts) ; ~~~3~~~
