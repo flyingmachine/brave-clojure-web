@@ -534,7 +534,7 @@ you can visualize it:
 
 And that's how macros fit into the evaluation process. But why would
 you want to do this? The reason is that macros allow you to transform
-an arbitrary data structure like `(1 + 1)` into one into one that can
+an arbitrary data structure like `(1 + 1)` into one that can
 be evaluated by Clojure, `(+ 1 1)`. Thus, *you can use Clojure to
 extend itself* so that you write your program however you please.
 Macros thus enable syntax abstraction. "Syntax abstraction" sounds a
