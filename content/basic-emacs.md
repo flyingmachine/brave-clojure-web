@@ -80,7 +80,9 @@ following to use it:
    https://github.com/flyingmachine/emacs-for-clojure.git ~/.emacs.d`
 4. (Optional) delete the `.emacs.d/.git` directory. You'll probably
    want to create your own git repo for `.emacs.d`
-5. Open Emacs
+5. Create the file `~/.lein/profiles.clj` and add the line `{:user
+   {:plugins [[cider/cider-nrepl "0.8.1"]]}}` to it
+6. Open Emacs
 
 When you open Emacs you should see this:
 

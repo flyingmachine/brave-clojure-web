@@ -192,7 +192,7 @@ buffer.
 At the prompt, type this and hit enter: 
 
 ```clojure
-(map)
+(take)
 ```
 
 You should see something like this:
