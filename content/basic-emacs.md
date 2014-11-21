@@ -82,10 +82,7 @@ following to use it:
    want to create your own git repo for `.emacs.d`
 5. Open Emacs
 
-When you open Emacs you should see a lot of activity. This is because
-Emacs is downloading a bunch of packages which will be useful for
-Clojure development. Once the activity stops, go ahead and just quit
-Emacs and open it again. After you do so you should see this:
+When you open Emacs you should see this:
 
 ![Emacs configged](images/basic-emacs/emacs-configged.png)
 
