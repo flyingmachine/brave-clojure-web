@@ -18,8 +18,8 @@ Here are some super spiffy online resources:
 
 ## Practice
 
-* [4Clojure](www.4clojure.com)
-* [Project Euler](projecteuler.net/)
+* [4Clojure](http://www.4clojure.com)
+* [Project Euler](http://projecteuler.net/)
 
 ## Documentation
 
