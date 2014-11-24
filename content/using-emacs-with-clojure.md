@@ -42,7 +42,7 @@ starts a Clojure process with nrepl running and connects Emacs to it.
 After a short wait (it should be less than a minute), you should see
 something like this:
 
-![cider-jack-in](images/using-emacs-with-clojure/nrepl-jack-in.png)
+![cider-jack-in](images/using-emacs-with-clojure/cider-jack-in.png)
 
 If you've never seen Emacs split into two halves like this, don't
 worry! We'll cover that in a second.
@@ -119,7 +119,7 @@ Then do the following:
 Once you do this, you should see the text `Cleanliness is next to
 godliness` appear in the CIDER buffer:
 
-![keep it clean](images/using-emacs-with-clojure/nrepl-eval-last-expression.png)
+![keep it clean](images/using-emacs-with-clojure/cider-eval-last-expression.png)
 
 The key binding `C-x C-e` runs the command
 `cider-eval-last-expression`. As the command suggests, this makes
@@ -192,19 +192,19 @@ buffer.
 At the prompt, type this and hit enter: 
 
 ```clojure
-(map)
+(take)
 ```
 
 You should see something like this:
 
-![nrepl error](images/using-emacs-with-clojure/nrepl-error.png)
+![nrepl error](images/using-emacs-with-clojure/cider-error.png)
 
 To get rid of the stack trace in the left window, do
 
 1.  `C-x o` to swith to the window
 2.  `q` to close the stack trace and go back to CIDER
 
-If you want to view the error again, you can switch to the buffer `*nrepl-error*`.
+If you want to view the error again, you can switch to the buffer `*cider-error*`.
 
 Now try going to the `core.clj` buffer and do almost the same thing:
 

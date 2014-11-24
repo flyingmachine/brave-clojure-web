@@ -1491,10 +1491,10 @@ expressions, it would be a mess! For example:
 ```clojure
 (if (needs-matching-part? (first remaining-asym-parts))
   (recur (rest remaining-asym-parts)
-         (conj (conj (conj final-body-parts part) (first remaining-asym-parts))
+         (conj (conj final-body-parts (first remaining-asym-parts))
                (make-matching-part (first remaining-asym-parts))))
-  (recur (rest remaining-asym-parts)
-         (conj (conj final-body-parts part) (first remaining-asym-parts))))
+  (recur (rest remaining-asm-parts)
+         (conj (conj final-body-parts (first remaining-asym-parts)))))
 ```
 
 So, `let` is a handy way to introduce names for values.
