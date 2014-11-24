@@ -1780,7 +1780,7 @@ One great place to start is to Create a function that's similar to
 symmetrize-body-parts, except that it has to work with weird space
 aliens with radial symmetry. Instead of two eyes, arms, legs, and all
 that, they have five. Or, do some
-[Project Euler](http://www.projeceuler.net) challenges. You can also
+[Project Euler](http://www.projecteuler.net) challenges. You can also
 check out [4Clojure](<http://www.4clojure.com/problems>), an online
 set of Clojure problems designed to test your knowledge. Just write
 something!
