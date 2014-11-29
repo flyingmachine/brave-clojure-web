@@ -6,7 +6,7 @@ kind: documentation
 
 # Organizing Your Project: a Librarian's Tale
 
-Within each of us is lives a librarian named Melvil, a fantastical
+Within each of us lives a librarian named Melvil, a fantastical
 creature who delights in the organizational arts. Day and night, Melvil
 yearns to bring order to your codebase. Happily, Clojure provides a
 suite of tools designed specifically for aiding this homunculus in its
@@ -195,7 +195,7 @@ Javacript is notorious for it, and it happens in Ruby as well. It's a
 problem because you can unintentionally overwrite your own code, and
 if you use someone else's libraries you have no guarantee that they
 won't overwrite your code. Melvil recoils in horror! Thankfully,
-Clojure allows to create as many namespaces as we like so that we can
+Clojure allows us to create as many namespaces as we like so that we can
 avoid these collisions.
 
 ## Creating and Switching to Namespaces
@@ -348,14 +348,14 @@ happen if we had used these options in the example above:
 cheese.analysis> (clojure.core/refer 'cheese.taxonomy :only ['bries])
 cheese.analysis> bries
 ; => ["Wisconsin" "Somerset" "Brie de Meaux" "Brie de Melun"]
-cheese.analysis> cheddars 
+cheese.analysis> cheddars
 ; => RuntimeException: Unable to resolve symbol: cheddars
 
 ;; :exclude example
 cheese.analysis> (clojure.core/refer 'cheese.taxonomy :exclude ['bries])
 cheese.analysis> bries
 ; => RuntimeException: Unable to resolve symbol: bries
-cheese.analysis> cheddars 
+cheese.analysis> cheddars
 ; => ["mild" "medium" "strong" "sharp" "extra sharp"]
 
 ;; :rename example
@@ -514,7 +514,7 @@ this (you'll add in more later):
 (ns the-divine-cheese-code.visualization.svg)
 
 (defn latlng->point
-  "Convert lat/lng map to comma-separated string" 
+  "Convert lat/lng map to comma-separated string"
   [latlng]
   (str (:lat latlng) "," (:lng latlng)))
 
@@ -739,7 +739,7 @@ For now, I'm going to ignore `(:import)`, `(:load)`, and
 ```
 
 Notice that in the `ns` form you don't have to quote your symbol with
-`'` You'll never have to quote symbols within `ns`.
+`'`. You'll never have to quote symbols within `ns`.
 
 You can also `alias` a lib that you `require` within `ns`, just like
 when you call the function:
@@ -892,7 +892,7 @@ the code below. Note points are floating in the ocean, like `~~~1~~~`:
     (map #(merge-with * % ratio) locations)))
 
 (defn latlng->point
-  "Convert lat/lng map to comma-separated string" 
+  "Convert lat/lng map to comma-separated string"
   [latlng]
   (str (:lng latlng) "," (:lat latlng)))
 
