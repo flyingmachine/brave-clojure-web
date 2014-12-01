@@ -173,15 +173,16 @@ Notice that you'll need to hold down the Control key when pressing
 both "x" and "f".
 
 After you do that, you'll get another minibuffer prompt. Go ahead and
-navigate to `~/.emacs.d/user.el`, your main Emacs configuration file.
+navigate to `~/.emacs.d/customizations/ui.el`, a user-defined file
+customizing the way Emacs appears and how you can interact with it.
 Emacs opens the file in a new buffer, and the buffer's name is the
 same as the filename.
 
-Let's go to line 11 and uncomment it by removing the semi-colons. It
+Let's go to line 37 and uncomment it by removing the semi-colons. It
 will look like this:
 
 ```cl
-(setq initial-frame-alist '((top . 0) (left . 0) (width . 187) (height . 77)))
+(setq initial-frame-alist '((top . 0) (left . 0) (width . 177) (height . 53)))
 ```
 
 Then change the values for `width` and `height`. Width is the number
@@ -200,7 +201,7 @@ C-x C-s
 ```
 
 You should get a message at the bottom of Emacs like `Wrote
-/Users/snuffleupagus/.emacs.d/user.el`. Also go ahead and try saving
+/Users/snuffleupagus/.emacs.d/customizations/ui.el`. Also go ahead and try saving
 your buffer using the key binding you use in every other app. For me,
 it's &#8984;-s. The Emacs config you downloaded should allow that to
 work, but if it doesn't that's no big deal!
@@ -212,7 +213,7 @@ bet it's really tiny!
 
 Go through that same process a couple times until Emacs starts at a
 size that you like. Or just comment those lines out again and be done
-with it. If you're done editing `user.el`, you can close its buffer
+with it. If you're done editing `ui.el`, you can close its buffer
 with `C-x k`. Either way, you're done saving your first file in Emacs!
 If something crazy happens, just use git to revert your changes.
 
