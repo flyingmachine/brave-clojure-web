@@ -516,8 +516,11 @@ feel the comfort of an environment that has evolved over time to fit
 me perfectly – an assortment of packages and keybindings which help me
 bring ideas to life day after day.
 
-These resources will help you as you continue you on your Emacs
-journey:
+If you want to customize emacs, have a look at the file
+`~/.emacs.d/init.el`. This acts as a kind of table of contents listing
+every package that's installed and all the customization files. It's
+heavily documented, so try just reading through it. Also, these
+resources will help you as you continue you on your Emacs journey:
 
 - [The Emacs Manual](http://www.gnu.org/software/emacs/manual/html_node/emacs/index.html#Top),
   excellent, comprehensive instructions. Download the PDF and read it
