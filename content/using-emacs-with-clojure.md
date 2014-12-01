@@ -150,15 +150,15 @@ Now let's create a new function and run it. At the bottom of
 ```
 
 When you're done, save your file and do `C-c C-k`. This compiles your
-current file within the nrepl session. Now if you run `(train)` in
-nrepl it will echo back `Choo choo!`.
+current file within the CIDER session. Now if you run `(train)` in
+Cider it will echo back `Choo choo!`.
 
-While still in nrepl, try `C-↑`, which is Control + the up key.
-`C-↑` and `C-↓` cycle through your nrepl history.
+While still in CIDER, try `C-↑`, which is Control + the up key.
+`C-↑` and `C-↓` cycle through your CIDER history.
 
 Finally, try this:
 
-1.  Write `(-main` at the nrepl prompt. Note the lack of a closing
+1.  Write `(-main` at the CIDER prompt. Note the lack of a closing
     parenthesis.
 2.  Press `C-↵`.
 
@@ -180,13 +180,13 @@ for now here's a summary of the key bindings we just went over:
 
 | Keys               | Description                    |
 |--------------------+--------------------------------|
-| C-&uarr;, C-&darr; | Cycle through nrepl history    |
+| C-&uarr;, C-&darr; | Cycle through CIDER history    |
 | C-&crarr;          | Close parentheses and evaluate |
 
 ## How to Handle Errors
 
 Let's write some buggy code so that we'll know how Emacs responds to
-it. We'll do this in both the nrepl buffer and in the `core.clj`
+it. We'll do this in both the CIDER buffer and in the `core.clj`
 buffer.
 
 At the prompt, type this and hit enter: 
@@ -197,7 +197,7 @@ At the prompt, type this and hit enter:
 
 You should see something like this:
 
-![nrepl error](images/using-emacs-with-clojure/cider-error.png)
+![cider error](images/using-emacs-with-clojure/cider-error.png)
 
 To get rid of the stack trace in the left window, do
 
