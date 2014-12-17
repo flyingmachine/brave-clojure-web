@@ -1,7 +1,7 @@
-(doseq [phone-number (db/all :phone-numbers)]
-  (when (call-number phone-number)
-    (log-successful-call! phone-number)
-    (put-call-on-speaker! phone-number)))
+(defmacro infix
+  "Use this macro when you're too indie for prefix notation"
+  [infixed]
+  (list (second infixed) (first infixed) (last infixed)))
 
 (macroexpand '(when boolean-expression
                 expression-1
@@ -13,15 +13,29 @@
       expression-2
       expression-3))
 
-(defmacro postfix-notation
-  [expression]
-  (conj (butlast expression) (last expression)))
-(macroexpand '(postfix-notation (1 1 +)))
+(defmacro infix-2
+  [[operand1 op operand2]]
+  (list op operand1 operand2))
 
+(defmacro my-print-whoopsie
+  [expression]
+  (list let [result expression]
+        (list println result)
+        result))
+
+(defmacro my-print
+  [expression]
+  (list 'let ['result expression]
+        (list 'println 'result)
+        'result))
+
+(let [result expression]
+  (println result)
+  result)
 
 (defmacro code-critic
   "phrases are courtesy Hermes Conrad from Futurama"
-  [{:keys [good bad]}]
+  [bad good]
   (list 'do
         (list 'println
               "Great squid of Madrid, this is bad code:"
@@ -30,28 +44,18 @@
               "Sweet gorilla of Manila, this is good code:"
               (list 'quote good))))
 
-(code-critic {:good (+ 1 1) :bad (1 + 1)})
+(code-critic (1 + 1) (+ 1 1))
 
 ;; syntax quoted
 (defmacro code-critic
   "phrases are courtesy Hermes Conrad from Futurama"
-  [{:keys [good bad]}]
+  [bad good]
   `(do (println "Great squid of Madrid, this is bad code:"
                 (quote ~bad))
        (println "Sweet gorilla of Manila, this is good code:"
                 (quote ~good))))
 
-(defmacro my-when
-  [arguments]
-  body)
-
-(defmacro mutiple-arity
-  ([single-arg]
-     "Don't do this")
-  ([arg1 arg2]
-     "Seriously, don't do it :(")
-  ([arg1 arg2 arg 3]
-     "Nah, just kidding. Do whatever you want! Self-actualize!"))
+`(blarg# blarg#)
 
 (macroexpand '(when (the-cows-come :home)
                 (call me :pappy)
@@ -100,7 +104,7 @@
   `(println ~criticism (quote ~code)))
 
 (defmacro code-critic
-  [{:keys [good bad]}]
+  [bad good]
   `(do ~(criticize-code "Great squid of Madrid, this is bad code:" bad)
        ~(criticize-code "Sweet gorilla of Manila, this is good code:" good)))
 
@@ -174,6 +178,18 @@
      (println (quote ~to-try) "was successful:" ~to-try)
      (println (quote ~to-try) "was not successful:" ~to-try)))
 
+(if (do (Thread/sleep 1000) (+ 1 1))
+
+  (clojure.core/println
+   '(do (Thread/sleep 1000) (+ 1 1))
+   "was successful:"
+   (do (Thread/sleep 1000) (+ 1 1)))
+  
+  (clojure.core/println
+   '(do (Thread/sleep 1000) (+ 1 1))
+   "was not successful:"
+   (do (Thread/sleep 1000) (+ 1 1))))
+
 (report (Thread/sleep 1000))
 
 (defmacro report
@@ -193,49 +209,19 @@
 
 ;; validation
 
-(def shipping-details-validation
+(def order-details-validations
   {:name
    ["Please enter a name" not-empty]
-
-   :address
-   ["Please enter an address" not-empty]
-
-   :city
-   ["Please enter a city" not-empty]
-
-   :postal-code
-   ["Please enter a postal code" not-empty
-    
-    "Please enter a postal code that looks like a postal code"
-    #(or (empty? %)
-         (not (re-seq #"[^0-9-]" %)))]
 
    :email
    ["Please enter an email address" not-empty
 
     "Your email address doesn't look like an email address"
-    (or #(empty? %)
-        #(re-seq #"@" %))]})
+    #(or (empty? %) (re-seq #"@" %))]})
 
-(def shipping-details
+(def order-details
   {:name "Mitchard Blimmons"
-   :address "134 Wonderment Ln"
-   :city ""
-   :state "FL"
-   :postal-code "32501"
    :email "mitchard.blimmonsgmail.com"})
-
-(validate shipping-details)
-; =>
-{:email ["Your email address doesn't look like an email address."]
- :city ["Please enter a city"]}
-
-(defn error-messages-for
-  "return a seq of error messages"
-  [to-validate message-validator-pairs]
-  (map first (filter #(not ((second %) to-validate))
-                     (partition 2 message-validator-pairs))))
-
 
 (defn error-messages-for
   "return a seq of error messages
@@ -258,7 +244,12 @@
           {}
           validations))
 
-(validate shipping-details shipping-details-validation)
+(validate order-details order-details-validations)
+
+(let [errors (validate order-details order-details-validations)]
+  (if (empty? errors)
+    (println :success)
+    (println :failure errors)))
 
 (defmacro if-valid
   "Handle validation more concisely"
@@ -273,22 +264,31 @@
                      #(or (empty? %)
                           (not (re-seq #"[^0-9-]" %)))])
 
-(let [errors (validate shipping-details shipping-details-validation)]
+(let [errors (validate order-details order-details-validations)]
   (if (empty? errors)
-    (render :success)
-    (render :failure errors)))
+    (println :success)
+    (println :failure errors)))
 
-(let [errors (validate shipping-details shipping-details-validation)]
+(let [errors (validate order-details order-details-validations)]
   (if (empty? errors)
-    (do (save-shipping-details shipping-details)
+    (do (save-order-details order-details)
         (redirect-to (url-for :order-confirmation)))
-    (render "shipping-details" {:errors errors})))
+    (render "order-details" {:errors errors})))
 
-(if-valid shipping-details shipping-details-validation errors
- (render :success)
- (render :failure errors))
+(if-valid order-details order-details-validations errors
+ (println :success)
+ (println :failure errors))
 
-(if-valid shipping-details shipping-details-validation errors
- (do (save-shipping-details shipping-details)
+(macroexpand
+ '(if-valid order-details order-details-validations my-error-name
+            (println :success)
+            (println :failure my-error-name)))
+
+(if-valid order-details order-details-validations errors
+ (do (save-order-details order-details)
      (redirect-to (url-for :order-confirmation)))
- (render "shipping-details" {:errors errors}))
+ (render "order-details" {:errors errors}))
+
+
+(if-let [errors (valid? order-details order-details-validations)]
+  )
