@@ -71,7 +71,9 @@ that it reads:
 
 ```clojure
 (ns playsync.core
-  (:require [clojure.core.async :as a :refer [>! <! >!! <!! go chan close! thread]]))
+  (:require [clojure.core.async
+             :as a
+             :refer [>! <! >!! <!! go chan close! thread alts! alt! alts!! alt!!]]))
 ```
 
 Great! Now when you open this in a REPL, you'll have the most
@@ -358,9 +360,10 @@ Let's give it a go:
 ```
 
 First, we try the ol' pocket lint trick and get wilted lettuce. Then
-we put in 3 dollars twice and get a hot dog each time. Finally, we try
-to put in 3 dollars, but that's ignored. When we try to take something
-out we get `nil`.
+we put in 3 dollars twice and get a hot dog both times. Finally, we
+try to put in another 3 dollars, but that's ignored because the the
+channel is closed. When we try to take something out we get `nil`,
+again because the channel is closed.
 
 There are a couple interesting things about this hotdog
 machine. First, it both responds to events and produces them within
