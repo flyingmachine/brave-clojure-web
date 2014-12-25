@@ -160,13 +160,35 @@ waiting patiently for something to respond to. It could be that
 nothing ever happens, and he just waits indefinitely until the
 restaurant closes.
 
-This situation seems a little pathological, but soon you'll see how to
-use buffers and choice to allow your processes to behave a little more
-intelligently. Those tools, though, are just elaborations of the core
-model: processes are independent, concurrently executing units of
-logic that respond to and produce events. You can create processes
-with go blocks and communicate events over channels. It's time to
-expand on this model, starting with go blocks.
+This situation seems a little pathological: what self-respecting
+ketchup chef would just sit there waiting for someone to take his
+latest batch when he could return to making more ketchup? To avoid
+this tragic situation, you can create buffered channels:
+
+```clojure
+(def echo-buffer (chan 2))
+(>!! echo-buffer "ketchup")
+; => true
+(>!! echo-buffer "ketchup")
+; => true
+(>!! echo-buffer "ketchup")
+; blocks
+```
+
+In this case, you've created a channel with buffer size 2. That means
+that you can put two values on the channel without blocking, but
+putting a third one will block until another process takes a value
+from the channel. You can also create "sliding" buffers with
+`sliding-buffer`, which drops values in a first-in-first-out fashion
+as you continue adding values, and "dropping" buffers with
+`dropping-buffer`, which discards values in a last-in-first-out
+fashion. Neither of these buffers will ever cause a put to block.
+
+Buffers, though, are just elaborations of the core model: processes
+are independent, concurrently executing units of logic that respond to
+and produce events. You can create processes with go blocks and
+communicate events over channels. It's time to expand on this model,
+starting with go blocks.
 
 ## Go Blocks, thread, Blocking, and Parking
 
@@ -379,17 +401,92 @@ having two states, "ready to receive money" and "dispensed item," with
 the inserting of money and taking of the item triggering transitions
 between the two.
 
-## Choice and Buffers
+## Choice
 
+The core.async function `alts!!` lets you use the result of the first
+successful channel operation among a collection of operations. We did
+something similar do this in the previous chapter with delays and
+futures. In that example, we uploaded a set of headshots to a
+headshot-sharing site and notified the headhot owner when the first
+photo was uploaded. Here's how you'd do the same thing with `alts!!`:
 
+```clojure
+(defn upload
+  [headshot c]
+  (go (Thread/sleep (rand 100))
+      (>! c headshot)))
 
-####
-next
+(let [c1 (chan)
+      c2 (chan)
+      c3 (chan)]
+  (upload "serious.jpg" c1)
+  (upload "fun.jpg" c2)
+  (upload "sassy.jpg" c3)
+  (let [[headshot channel] (alts!! [c1 c2 c3])]
+    (println "Sending headshot notification for" headshot)))
+; => Sending headshot notification for sassy.jpg
+```
 
-create an infinite loop
-create a process that just emits events
-create an infinite hot dog machine
+Here, the `upload` function is pretty straightforward: it takes a
+headshot and a channel and creates a new process which sleeps for a
+random amount of time (simulating the upload) and then puts the
+headshot on the channel. The next few lines should make sense: we
+create three channels, then use them to perform the uploads.
 
-#### patterns?
-- rework the peg example
-- rock paper scissors?
+The next part is where it gets interesting. The `alts!!` takes a
+vector of channels as its argument. This is like saying, "Try to do a
+blocking take on each of these channels simultaneously. As soon as a
+take succeeds, return a vector whose first element is the value taken
+and whose second element is the winning channel. Consign the remaining
+channels to the dust heap of history." In this case, the channel
+associated with "sassy.jpg" received a value first.
+
+One cool thing about `alts!!` is that you can give it a *timeout
+channel*. A timeout channel is a channel which waits the specified
+number of milliseconds, then closes, and it's an elegant mechanism for
+putting a time limit on concurrent operations. Here's how you could
+use it with the upload service:
+
+```clojure
+(let [c1 (chan)]
+  (upload "serious.jpg" c1)
+  (let [[headshot channel] (alts!! [c1 (timeout 20)])]
+    (if headshot
+      (println "Sending headshot notification for" headshot)
+      (println "Timed out!"))))
+; => Timed out!
+```
+
+In this case, we set the timeout to 20 milliseconds. The "upload"
+didn't finish in that timeframe and we got a timeout message.
+
+You can also use `alts!!` to specify "put" operations. To do that, put
+a vector inside the vector you pass to `alts`, like this:
+
+```
+(let [c1 (chan)
+      c2 (chan)]
+  (go (<! c2))
+  (let [[value channel] (alts!! [c1 [c2 "put!"]])]
+    (println value)
+    (= channel c2)))
+; => true
+; => true
+```
+
+In this example, you're creating two channels and then creating a
+process that listens to `c2`. The vector that you supply to `alts!!`
+tells it, "Listen to `c1` and try to put `"put!"` on `c2`. If the take
+on `c1` finishes first, return its value and channel. If the put on
+`c2` finishes first, return `true` if the put was successful (the
+channel was open) and `false` otherwise." Finally, you print the
+result of `value` (`true`, because the `c2` channel was open) and show
+that the channel returned was indeed `c2`.
+
+Like `<!!` and `>!!`, `alts!!` has a parking alternative, `alts!`,
+that you can use in go blocks.
+
+## More Examples
+
+## Summary
+
