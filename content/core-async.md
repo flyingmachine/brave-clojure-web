@@ -16,14 +16,13 @@ The vending machine exhibits simple behavior: when it receives money,
 it releases a hot dog, then readies itself for the next purchase. When
 it's out of hot dogs, it stops. All around us are hot dog vending
 machines in different guises, independent entities concurrently
-responding to events in the world and producing further events
-according to their nature. The espresso machine at your favorite
-coffee shop, the pet hamster you loved as a child - everything can be
-modeled in terms of behavior using the general form, "when *x*
-happens, do *y*." Even the programs we write are just glorified hot
-dog vending machines, each one an independent process waiting for the
-next event, whether it's a keystroke, a timeout, or the arrival of
-data on a socket.
+responding to events in the world according to their nature. The
+espresso machine at your favorite coffee shop, the pet hamster you
+loved as a child - everything can be modeled in terms of behavior
+using the general form, "when *x* happens, do *y*." Even the programs
+we write are just glorified hot dog vending machines, each one an
+independent process waiting for the next event, whether it's a
+keystroke, a timeout, or the arrival of data on a socket.
 
 Clojure's core.async library allows you to create independent
 processes within a single program. This chapter describes a useful
@@ -37,17 +36,17 @@ happen efficiently.
 ## Processes
 
 At the heart of core.async is the *process*, a concurrently running
-unit of logic that responds to and produces events. The process
-concept is meant to capture our mental model of the real world, with
-entities interacting with and responding to each other completely
-independently, without some kind of central control mechanism. You put
-your money in the machine and out comes a hotdog, all without the
-Illumati or Big Brother orchestrating the whole thing. This differs
-from the view of concurrency you've been exploring so far, where
-you've defined tasks that are either tightly bound to the main thread
-of control (for example, achieving data parallelism with `pmap`) or
-that you have no interest in communicating with (`pmap` again and
-one-off tasks created with `future`).
+unit of logic that responds to events. The process concept is meant to
+capture our mental model of the real world, with entities interacting
+with and responding to each other completely independently, without
+some kind of central control mechanism. You put your money in the
+machine and out comes a hotdog, all without the Illumati or Big
+Brother orchestrating the whole thing. This differs from the view of
+concurrency you've been exploring so far, where you've defined tasks
+that are either tightly bound to the main thread of control (for
+example, achieving data parallelism with `pmap`) or that you have no
+interest in communicating with (`pmap` again and one-off tasks created
+with `future`).
 
 It might be strange to consider a vending machine to be a process:
 vending machines are noun-y and thing-y, and processes are verb-y and
@@ -172,10 +171,10 @@ chef, and when he's done with a batch he belts out, "Ketchup!" It's
 entirely possible that the rest of the staff is outside admiring the
 latest batch of "hippie oregano" in their "organic garden", and the
 chef just sits there waiting until someone shows up to take his
-ketchup. The go process is one of those staff members, and he's
-waiting patiently for something to respond to. It could be that
-nothing ever happens, and he just waits indefinitely until the
-restaurant closes.
+ketchup. On the flip side, the go process is one of those staff
+members, and he's waiting patiently for something to respond to. It
+could be that nothing ever happens, and he just waits indefinitely
+until the restaurant closes.
 
 This situation seems a little pathological: what self-respecting
 ketchup chef would just sit there waiting for someone to take his
@@ -193,8 +192,8 @@ this tragic situation, you can create buffered channels:
 ```
 
 In this case, you've created a channel with buffer size 2. That means
-that you can put two values on the channel without blocking, but
-putting a third one will block until another process takes a value
+that you can put two values on the channel without waiting, but
+putting a third one will wait until another process takes a value
 from the channel. You can also create "sliding" buffers with
 `sliding-buffer`, which drops values in a first-in-first-out fashion
 as you continue adding values, and "dropping" buffers with
@@ -203,9 +202,9 @@ fashion. Neither of these buffers will ever cause a put to block.
 
 Buffers, though, are just elaborations of the core model: processes
 are independent, concurrently executing units of logic that respond to
-and produce events. You can create processes with go blocks and
-communicate events over channels. It's time to expand on this model,
-starting with go blocks.
+events. You can create processes with go blocks and communicate events
+over channels. It's time to expand on this model, starting with go
+blocks.
 
 ## Go Blocks, thread, Blocking, and Parking
 
@@ -242,27 +241,29 @@ Clojure is able to accomplish this feat with threads by giving special
 care to the way they *wait*. We've already established that "put"
 waits until another process does a "take" on the same channel, and
 vice versa. In the example above, there are 1000 processes all waiting
-for a process to take from `hi-chan`.
+to take from `hi-chan`.
 
 There are two varieties of waiting: *parking* and
 *blocking*. *Blocking* is the kind of waiting you're familiar with: a
 thread stops execution until a task is complete. Usually this happens
 when you're performing some kind of I/O. This kind of waiting keeps
 the thread alive, doing no work, so that if you want your program to
-continue doing work you have to create a new thread. *Parking* moves
-the waiting task off the thread, freeing up the thread to do the work
-of processes that aren't waiting. Clojure's smart enough to move the
-parked process back on to a thread as soon its put or take is
-done. It's like parking allows interleaving on a single thread,
-similar to the way that using multiple threads allows interleaving on
-a single core:
+continue doing work you have to create a new thread. In the last
+chapter, you learned how to do this with `future`.
+
+*Parking* moves the waiting task off the thread, freeing up the thread
+to do the work of processes that aren't waiting. Clojure's smart
+enough to move the parked process back on to a thread as soon its put
+or take is done. It's like parking allows interleaving on a single
+thread, similar to the way that using multiple threads allows
+interleaving on a single core:
 
 ![Parking and Blocking](/images/core-async/parking.png)
 
-Parking is only possible within go blocks, and it's only possible when
-you use `>!` and `<!`, or *parking put* and *parking take*. As you've
-no doubt guessed, `>!!` and `<!!` are *blocking put* and *blocking
-take*.
+The implementation of parking isn't important; suffice to say that
+it's only possible within go blocks, and it's only possible when you
+use `>!` and `<!`, or *parking put* and *parking take*. As you've no
+doubt guessed, `>!!` and `<!!` are *blocking put* and *blocking take*.
 
 There are definitely times when you should prefer blocking over
 parking, like when your process will take a long time before putting
@@ -313,7 +314,7 @@ performance. The blocking variants should be used, along with
 or take.
 
 And that should give us everything we need to fulfill our hearts'
-desires and create a machine that turns money into hotdogs.
+desire and create a machine that turns money into hot dogs.
 
 ## The Hot Dog Process You've Been Longing For
 
@@ -374,8 +375,8 @@ the "output", whether it's lettuce or a hotdog, the process loops back
 with an updated hotdog count, ready to receive money again.
 
 Once it's out of hotdogs, it *closes* the channels. When you close a
-channel, you can no longer perform puts on them, and once you've taken
-all values off a channel subsequent takes will return nil.
+channel, you can no longer perform puts on it, and once you've taken
+all values off a closed channel subsequent takes will return `nil`.
 
 Let's give it a go:
 
@@ -405,18 +406,31 @@ channel is closed. When we try to take something out we get `nil`,
 again because the channel is closed.
 
 There are a couple interesting things about this hotdog
-machine. First, it both responds to events and produces them within
-the same go block. This isn't that unusual, and it's one way that you
-can create a pipeline of processes: just make the "in" channel of one
-process the "out" channel of another. (In fact, the function
-`clojure.core.async/pipe` helps you do just this.) Second, it's cool
-that the machine doesn't accept more money until you've dealt with
-whatever it's dispensed. This allows you to model state-machine-like
-behavior, where the completion of channel operations trigger state
-transitions. For example, you can think of the vending machine as
-having two states, "ready to receive money" and "dispensed item," with
-the inserting of money and taking of the item triggering transitions
-between the two.
+machine. First, it both does both a put and a take within the same go
+block. This isn't that unusual, and it's one way that you can create a
+pipeline of processes: just make the "in" channel of one process the
+"out" channel of another. The next example does just that, passing a
+string through a series of processes that perform transformations
+until the string finally gets printed by the last process:
+
+```clojure
+(let [c1 (chan)
+      c2 (chan)
+      c3 (chan)]
+  (go (>! c2 (clojure.string/upper-case (<! c1))))
+  (go (>! c3 (clojure.string/reverse (<! c2))))
+  (go (println (<! c3)))
+  (>!! c1 "redrum"))
+; => MURDER
+```
+
+Second, it's cool that the machine doesn't accept more money until
+you've dealt with whatever it's dispensed. This allows you to model
+state-machine-like behavior, where the completion of channel
+operations trigger state transitions. For example, you can think of
+the vending machine as having two states, "ready to receive money" and
+"dispensed item," with the inserting of money and taking of the item
+triggering transitions between the two.
 
 ## Choice
 
