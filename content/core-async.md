@@ -7,7 +7,7 @@ kind: documentation
 One day, while you are walking down the street, you will be surprised,
 intrigued, and a little disgusted to discover a hot dog vending
 machine. Your scalp tingling with guilty curiosity, you won't be able
-to help yourself from pulling out three Sacagawea dolalrs and seeing
+to help yourself from pulling out three Sacagawea dollars and seeing
 if this contraption actually works. After accepting your money, it
 will emit a click and a whirr, and out will pop a fresh hot dog, bun
 and all.
@@ -18,38 +18,48 @@ it's out of hot dogs, it stops. All around us are hot dog vending
 machines in different guises, independent entities concurrently
 responding to events in the world and producing further events
 according to their nature. The espresso machine at your favorite
-coffee shop, the pet hamster you loved as a child - everything's
-behavior can be modeled using the general form, "when *x* happens, do
-*y*." Even the programs we write are just glorified hot dog vending
-machines, each one an independent process waiting for the next event,
-whether it's a keystroke, a timeout, or the arrival of data on a
-socket.
+coffee shop, the pet hamster you loved as a child - everything can be
+modeled in terms of behavior using the general form, "when *x*
+happens, do *y*." Even the programs we write are just glorified hot
+dog vending machines, each one an independent process waiting for the
+next event, whether it's a keystroke, a timeout, or the arrival of
+data on a socket.
 
-Clojure's core.async library allows you to model the execution of
-independent processes within a single program. This chapter describes
-a useful mindset for thinking about this style of programming as well
-as the practical details you need to actually write stuff. You'll
-learn how to use channels, alts, and go blocks to create independent
-processes and communicate between them, and you'll learn a bit about
-how Clojure uses threads and something called "parking" to allow this
-all to happen efficiently.
+Clojure's core.async library allows you to create independent
+processes within a single program. This chapter describes a useful
+model for thinking about this style of programming as well as the
+practical details you need to actually write stuff. You'll learn how
+to use channels, alts, and go blocks to create independent processes
+and communicate between them, and you'll learn a bit about how Clojure
+uses threads and something called "parking" to allow this all to
+happen efficiently.
 
 ## Processes
 
-At the heart of core.async is the idea of the process. A process, in
-this context, is a concurrently running unit of logic that responds to
-and produces events. The process concept is meant to capture our
-mental model of the real world, with entities interacting with and
-responding to each other completely independently, without some kind
-of central control mechanism. You put your money in the machine and
-out comes a hotdog, all without the Illumati orchestrating the whole
-thing.
+At the heart of core.async is the *process*, a concurrently running
+unit of logic that responds to and produces events. The process
+concept is meant to capture our mental model of the real world, with
+entities interacting with and responding to each other completely
+independently, without some kind of central control mechanism. You put
+your money in the machine and out comes a hotdog, all without the
+Illumati or Big Brother orchestrating the whole thing. This differs
+from the view of concurrency you've been exploring so far, where
+you've defined tasks that are either tightly bound to the main thread
+of control (for example, achieving data parallelism with `pmap`) or
+that you have no interest in communicating with (`pmap` again and
+one-off tasks created with `future`).
 
-This differs from the view of concurrency you've been exploring so
-far, where you've defined tasks that are either tightly bound to the
-main thread of control (for example, achieving data parallelism with
-`pmap`) or that you have no interest in communicating with (`pmap`
-again and one-off tasks created with `future`).
+It might be strange to consider a vending machine to be a process:
+vending machines are noun-y and thing-y, and processes are verb-y and
+do-y. To get yourself in the right mindset, try defining real-world
+objects as the sum of their event-driven behavior. When a seed gets
+watered, it sprouts; when a mother looks at her new-born child, she is
+flooded with oxytocin and feels love; when you watch Star Wars Episode
+I, you are filled with a deep anger and despair. If you want to get
+super philosophical, consider whether it's possible to define every
+thing's essence as the set of the events it recognizes and its
+responses. Is reality just the composition of hot dog vending
+machines?
 
 Anyway, enough of my yakking! Let's make these ideas real by creating
 some simple processes. First, create a new Leiningen project called
@@ -73,7 +83,8 @@ that it reads:
 (ns playsync.core
   (:require [clojure.core.async
              :as a
-             :refer [>! <! >!! <!! go chan close! thread alts! alt! alts!! alt!!]]))
+             :refer [>! <! >!! <!! go chan buffer close! thread
+                     alts! alts!! timeout]]))
 ```
 
 Great! Now when you open this in a REPL, you'll have the most
@@ -91,40 +102,46 @@ happen to it:
 ```
 
 Here, you created a *channel* named `echo-chan` with the `chan`
-function. Channels are how you communicate events to processes. In the
-physical world, we don't think about channels or any other mechanism
-for conveying events; when you put your hard-earned cash in the
-mechanical hot dog maker, you don't think about the "channel" that
-communicates the "sufficient money" event or about the channel that
-communicates the "hot dog dispensed" event. Still, these events *are*
-communicated through the physical media of light, sound, and grease
-odor molecules. With core.async, the channel is your virtual medium
-for communicating events.
+function. Channels communicate *messages*. Communication over a
+channel is an event, and these communication events are what processes
+respond to. In the physical world, we don't normally think about
+channels or any other mechanism for conveying messages, and we don't
+think about that communication as an event. You don't think of the
+mechanical hot dog maker as listening on a channel, waiting for the
+communication event that includes the "sufficient money" message. You
+don't think about a person listening on a channel, waiting for the
+communication event that include the "hot dog dispensed"
+message. Still, these messages *are* communicated through the physical
+media of light, sound, and grease odor molecules, and that
+communication is an event that things respond to.
+
+With core.async, the channel is your virtual medium for communicating
+messages. You can *put* messages on a channel and *take* messages off
+of them. Processes wait for the completion of "put" and "take" -
+they're the events that processes respond to.
 
 Next, you used `go` to create a new process. Everything within the go
 expression - called a *go block* - will run concurrently on a separate
 thread. (Go blocks actually use a thread pool, a detail that I'll
 cover in a little bit.) In this case, the process `(println (<!
-echo-chan))` expresses, "*when* an event happens on `echo-chan`, print
-that event." The process is shunted to another thread, freeing up the
-current thread and allowing you to continue interacting with the REPL.
+echo-chan))` expresses, "when I take a message from `echo-chan`, print
+it." The process is shunted to another thread, freeing up the current
+thread and allowing you to continue interacting with the REPL.
 
-The expression `(<! echo-chan)` is how you express "when an event
-happens on `echo-chan`" as well as "that event." `<!` is the "take"
-function. It listens to the channel you give it as an argument and
-causes the go block it lives in to pause execution of its root
-expression (the `println` expression here) until it's able to retrieve
-a value from the channel; you probably noticed that `ketchup` didn't
-print in your REPL until you put it on the channel. Metaphorically
-speaking, the retrieval of the value signifies that the process is
-responding to the event. When `<!` does retrieve a value, the value is
-returned and the `println` expression is executed.
+The expression `(<! echo-chan)` is how you express "wait until I take
+message from `echo-chan`." `<!` is the *take* function. It listens to
+the channel you give it as an argument, causing the process to wait
+until another process puts a message on the channel. You probably
+noticed that `ketchup` didn't print in your REPL until you put it on
+the channel. When `<!` does retrieve a value, the value is returned
+and the `println` expression is executed.
 
-The expression `(>!! echo-chan "ketchup")` puts the string `"ketchup"`
-on `echo-chan` and returns `true`, and it's how you express "hey an
-event has happened." When you put an event on a channel, the process
-will block until another process takes the event. For example, if you
-do this:
+The expression `(>!! echo-chan "ketchup")` *puts* the string
+`"ketchup"` on `echo-chan` and returns `true` When you put a message
+on a channel, the process will block until another process takes the
+message. In this case, the REPL process didn't have to wait at all
+because there was already a process listening to the channel, waiting
+to take something off of it. However, if you do this:
 
 ```clojure
 (>!! (chan) "mustard")
@@ -132,11 +149,11 @@ do this:
 
 then your REPL will block indefinitely. You've created a new channel
 and put something on it, but it's impossible for anything else to take
-from it. So, processes don't just wait to receive events, they also
-wait for the events they produce to be handled.
+from it. So, processes don't just wait to receive messages, they also
+wait for the messages they put on a channel to be taken.
 
-(By the way, if you don't think that ketchup is an event, then stop
-reading this immediately and go to Veggie Galaxy in Cambridge,
+(By the way, if you don't think that ketchup is event-worthy, then
+stop reading this immediately and go to Veggie Galaxy in Cambridge,
 Massachusetts, because holy cow their ketchup is *delicious*. I think
 it's seasoned with hippie love. Wait... I'm not sure that sounds as
 good as I thought it would.)
