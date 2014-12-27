@@ -1,6 +1,6 @@
 ---
-title: Independent Concurrent Processes with core.async
-link_title: Independent Concurrent Processes with core.async
+title: Concurrent Processes with core.async
+link_title: Concurrent Processes with core.async
 kind: documentation
 ---
 
@@ -40,7 +40,7 @@ unit of logic that responds to events. The process concept is meant to
 capture our mental model of the real world, with entities interacting
 with and responding to each other completely independently, without
 some kind of central control mechanism. You put your money in the
-machine and out comes a hotdog, all without the Illumati or Big
+machine and out comes a hotdog, all without the Illuminati or Big
 Brother orchestrating the whole thing. This differs from the view of
 concurrency you've been exploring so far, where you've defined tasks
 that are either tightly bound to the main thread of control (for
@@ -405,6 +405,35 @@ try to put in another 3 dollars, but that's ignored because the the
 channel is closed. When we try to take something out we get `nil`,
 again because the channel is closed.
 
+There are a couple interesting things about this hotdog
+machine. First, it both does both a put and a take within the same go
+block. This isn't that unusual, and it's one way that you can create a
+pipeline of processes: just make the "in" channel of one process the
+"out" channel of another. The next example does just that, passing a
+string through a series of processes that perform transformations
+until the string finally gets printed by the last process:
+
+```clojure
+(let [c1 (chan)
+      c2 (chan)
+      c3 (chan)]
+  (go (>! c2 (clojure.string/upper-case (<! c1))))
+  (go (>! c3 (clojure.string/reverse (<! c2))))
+  (go (println (<! c3)))
+  (>!! c1 "redrum"))
+; => MURDER
+```
+
+I'll have more to say about process pipelines and how they can be used
+instead of callbacks toward the end of the chapter. The second cool
+thing about the hot dog machine, though, is that the machine doesn't
+accept more money until you've dealt with whatever it's
+dispensed. This allows you to model state-machine-like behavior, where
+the completion of channel operations trigger state transitions. For
+example, you can think of the vending machine as having two states,
+"ready to receive money" and "dispensed item," with the inserting of
+money and taking of the item triggering transitions between the two.
+
 ## Choice
 
 The core.async function `alts!!` lets you use the result of the first
@@ -555,7 +584,7 @@ In languages without channels, you end up needing to express the idea
 "when X happens, do Y" with *callbacks*.  If you've worked with
 JavaScript, you've probably spent some time wallowing in Callback Hell
 with code that looks like this (extra relevant if you've also used
-JavaScript to raise an army of the undead, and well, who hasn't):
+JavaScript to raise an army of the undead, and, well, who hasn't):
 
 ```javascript
 $.get("/cemetaries", function(cemetaries) {
@@ -573,66 +602,27 @@ In case you're unfamiliar with JavaScript and jQuery, `$.get` and
 is the URL and the second argument is the callback function - when the
 HTTP request returns, the callback function gets called on the
 resulting data. This is following the same event-driven behavior
-pattern that we've been looking at for this whole chapter: when X
-happens, do Y. When the request to "/cemetaries" returns, iterate over
+pattern that we've been looking at for this whole chapter: *when* X
+happens, do Y. *When* the request to "/cemetaries" returns, iterate over
 each cemetary in the result, raising minions and so forth.
 
-The difference is that JavaScript doesn't have channels, so you have
-to combine the event, arrival of data, with the communication of the
-data.
+The reason this is called "Callback *Hell*" is that it's very easy to
+create unobvious dependencies among the layers of callbacks. They end
+up sharing state, making it difficult to reason about the state of the
+overall system as the callbacks get triggered. You can avoid this
+depressing outcome by creating a process pipeline. That way, each unit
+of logic lives in its own isolated environment (a process), with
+communication between units of logic occurring through
+explicitly-defined and easy-to-reason about input and output
+channels. This is analogous to the way that pure functions are easier
+to reason about than non-pure functions, the difference being that
+processes place their data on an output channel, creating a one-way
+flow of data transformations rather than returning a value to a
+calling function.
 
-
-Let's talk about the hot dog machine again. Here's its code:
-
-```clojure
-(defn hotdog-machine-v2
-  [hotdog-count]
-  (let [in (chan)
-        out (chan)]
-    (go (loop [hc hotdog-count]
-          (if (> hc 0)
-            (let [input (<! in)]
-              (if (= 3 input)
-                (do (>! out "hotdog")
-                    (recur (dec hc)))
-                (do (>! out "wilted lettuce")
-                    (recur hc))))
-            (do (close! in)
-                (close! out)))))
-    [in out]))
-```
-
-Interestingly, it both does both a put and a take within the same go
-block. This isn't that unusual, and it's one way that you can create a
-pipeline of processes: just make the "in" channel of one process the
-"out" channel of another. The next example does just that, passing a
-string through a series of processes that perform transformations
-until the string finally gets printed by the last process:
-
-```clojure
-(defn semordnilap
-  []
-  (let [c1 (chan)
-        c2 (chan)
-        c3 (chan)]
-    (go (while true (>! c2 (clojure.string/upper-case (<! c1)))))
-    (go (while true (>! c3 (clojure.string/reverse (<! c2)))))
-    (go (while true (println (<! c3))))
-    c1))
-(def s-chan (semornilap))
-(>!! s-chan "redrum")
-; => MURDER
-
-(>!! s-chan "diaper")
-; => REPAID
-```
-
-The function `semordnilap` ("palindrome" spelled backwards, for words
-that form another word when reversed) creates three infinitely looping
-processes connected through channels, and returns the first channel,
-`c1`, as the "input" channel to the pipeline. In this case, we used
-one function to create all three text transformation services
-together, but we could just as well have created them separately:
+In this next example, we create three infinitely looping
+processes connected through channels, passing the "out" channel of one
+process as the "in" channel of the next process in the pipeline:
 
 ```clojure
 (defn upper-caser
@@ -658,21 +648,26 @@ together, but we could just as well have created them separately:
 
 (>!! in-chan "redrum")
 ; => MURDER
+
+(>!! in-chan "repaid")
+; => DIAPER
 ```
 
-In languages without channels, like Javascript, you might achieve this
-kind of pipeline using *callbacks*. Callbacks can become difficult to
-reason when you start nesting them inside each other.
-
-### State Machines
-
-It's also cool that the machine doesn't accept more money until you've
-dealt with whatever it's dispensed. This allows you to model
-state-machine-like behavior, where the completion of channel
-operations trigger state transitions. For example, you can think of
-the vending machine as having two states, "ready to receive money" and
-"dispensed item," with the inserting of money and taking of the item
-triggering transitions between the two.
+By handling events using processes like this, it's easier to reason
+about the individual steps of the overall data transformation
+system. You can look at each step and understand what it does without
+having to refer to what might have happened before it or what might
+happen after it; each process is as easy to reason about as a pure
+function.
 
 ## Summary
 
+In this chapter, you learned about how core.async allows you to create
+concurrent processes that respond to the put and take communication
+events on channels. You learned about how to use `go` and `thread` to
+create concurrent processes that wait for communication events by
+parking and blocking. You also learned how to create process pipelines
+by making the "out" channel of one process the "in" channel of
+another, and how this allows you to create saner code than nested
+callbacks. Finally, you meditated on whether or not you're just a
+fancy hot dog vending machine.
