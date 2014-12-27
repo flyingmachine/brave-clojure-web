@@ -405,33 +405,6 @@ try to put in another 3 dollars, but that's ignored because the the
 channel is closed. When we try to take something out we get `nil`,
 again because the channel is closed.
 
-There are a couple interesting things about this hotdog
-machine. First, it both does both a put and a take within the same go
-block. This isn't that unusual, and it's one way that you can create a
-pipeline of processes: just make the "in" channel of one process the
-"out" channel of another. The next example does just that, passing a
-string through a series of processes that perform transformations
-until the string finally gets printed by the last process:
-
-```clojure
-(let [c1 (chan)
-      c2 (chan)
-      c3 (chan)]
-  (go (>! c2 (clojure.string/upper-case (<! c1))))
-  (go (>! c3 (clojure.string/reverse (<! c2))))
-  (go (println (<! c3)))
-  (>!! c1 "redrum"))
-; => MURDER
-```
-
-Second, it's cool that the machine doesn't accept more money until
-you've dealt with whatever it's dispensed. This allows you to model
-state-machine-like behavior, where the completion of channel
-operations trigger state transitions. For example, you can think of
-the vending machine as having two states, "ready to receive money" and
-"dispensed item," with the inserting of money and taking of the item
-triggering transitions between the two.
-
 ## Choice
 
 The core.async function `alts!!` lets you use the result of the first
@@ -506,18 +479,200 @@ a vector inside the vector you pass to `alts`, like this:
 ```
 
 In this example, you're creating two channels and then creating a
-process that listens to `c2`. The vector that you supply to `alts!!`
-tells it, "Listen to `c1` and try to put `"put!"` on `c2`. If the take
-on `c1` finishes first, return its value and channel. If the put on
-`c2` finishes first, return `true` if the put was successful (the
-channel was open) and `false` otherwise." Finally, you print the
-result of `value` (`true`, because the `c2` channel was open) and show
-that the channel returned was indeed `c2`.
+process that's waiting to perform a take on `c2`. The vector that you
+supply to `alts!!` tells it, "Try to do a take on `c1` and try to put
+`"put!"` on `c2`. If the take on `c1` finishes first, return its value
+and channel. If the put on `c2` finishes first, return `true` if the
+put was successful (the channel was open) and `false` otherwise."
+Finally, you print the result of `value` (`true`, because the `c2`
+channel was open) and show that the channel returned was indeed `c2`.
 
 Like `<!!` and `>!!`, `alts!!` has a parking alternative, `alts!`,
 that you can use in go blocks.
 
-## More Examples
+## Queues
+
+In the last chapter, we wrote a macro that let us queue our
+futures. Processes let us do something similar in a more
+straightforward manner. Here's how you'd snag quotes and write them to
+a file without having to worry about quotes being interleaved:
+
+```clojure
+(defn append-to-file
+  [filename s]
+  (spit filename s :append true))
+
+(defn format-quote
+  [quote]
+  (str "=== BEGIN QUOTE ===\n" quote "=== END QUOTE ===\n\n"))
+
+(defn random-quote
+  []
+  (format-quote (slurp "http://www.iheartquotes.com/api/v1/random")))
+
+(defn snag-quotes
+  [filename num-quotes]
+  (let [c (chan)]
+    (go (while true (append-to-file filename (<! c))))
+    (dotimes [n num-quotes] (go (>! c (random-quote))))))
+```
+
+The functions `append-to-file`, `format-quote`, and `random-quote` are
+all lifted from the last chapter's example. `snag-quotes` is where the
+interesting work is happening. First, it creates a channel to be
+shared between the quote producing processes and the quote consuming
+process. Then, it creates a process which uses `while true` to create
+an infinite loop. On every iteration of the loop, it waits for a quote
+to arrive on `c` and then appends it to a file. Finally, `snag-quotes`
+creates an `num-quotes` number of processes that fetch a quote and
+then put it on `c`. If you evaluate `(snag-quotes "/tmp/quotes" 2)`
+and check `/tmp/quotes`, it should have two quotes:
+
+```
+=== BEGIN QUOTE ===
+Nobody's gonna believe that computers are intelligent until they start
+coming in late and lying about it.
+
+[codehappy] http://iheartquotes.com/fortune/show/23605
+=== END QUOTE ===
+
+=== BEGIN QUOTE ===
+Give your child mental blocks for Christmas.
+
+[fortune] http://iheartquotes.com/fortune/show/47398
+=== END QUOTE ===
+```
+
+This kind of queueing differs from the example in the last chapter in
+that that example ensured that each task was handled in the order it
+was *created*. Here, though, each quote-retrieving task is handled in
+the order that it *finishes*. In both cases, you ensure that only one
+quote at a time is being written to a file.
+
+## Callbacks
+
+In languages without channels, you end up needing to express the idea
+"when X happens, do Y" with *callbacks*.  If you've worked with
+JavaScript, you've probably spent some time wallowing in Callback Hell
+with code that looks like this (extra relevant if you've also used
+JavaScript to raise an army of the undead, and well, who hasn't):
+
+```javascript
+$.get("/cemetaries", function(cemetaries) {
+  $.each(cemetaries, function(cemetary){
+    raiseMinions(cemetary);
+    $.put("/cemetaries/" + cemetary.id, function(cemetary){
+      updateCemetaryDom(cemetary);
+    })
+  })
+});
+```
+
+In case you're unfamiliar with JavaScript and jQuery, `$.get` and
+`$.put` perform asynchronous HTTP requests. Here, their first argument
+is the URL and the second argument is the callback function - when the
+HTTP request returns, the callback function gets called on the
+resulting data. This is following the same event-driven behavior
+pattern that we've been looking at for this whole chapter: when X
+happens, do Y. When the request to "/cemetaries" returns, iterate over
+each cemetary in the result, raising minions and so forth.
+
+The difference is that JavaScript doesn't have channels, so you have
+to combine the event, arrival of data, with the communication of the
+data.
+
+
+Let's talk about the hot dog machine again. Here's its code:
+
+```clojure
+(defn hotdog-machine-v2
+  [hotdog-count]
+  (let [in (chan)
+        out (chan)]
+    (go (loop [hc hotdog-count]
+          (if (> hc 0)
+            (let [input (<! in)]
+              (if (= 3 input)
+                (do (>! out "hotdog")
+                    (recur (dec hc)))
+                (do (>! out "wilted lettuce")
+                    (recur hc))))
+            (do (close! in)
+                (close! out)))))
+    [in out]))
+```
+
+Interestingly, it both does both a put and a take within the same go
+block. This isn't that unusual, and it's one way that you can create a
+pipeline of processes: just make the "in" channel of one process the
+"out" channel of another. The next example does just that, passing a
+string through a series of processes that perform transformations
+until the string finally gets printed by the last process:
+
+```clojure
+(defn semordnilap
+  []
+  (let [c1 (chan)
+        c2 (chan)
+        c3 (chan)]
+    (go (while true (>! c2 (clojure.string/upper-case (<! c1)))))
+    (go (while true (>! c3 (clojure.string/reverse (<! c2)))))
+    (go (while true (println (<! c3))))
+    c1))
+(def s-chan (semornilap))
+(>!! s-chan "redrum")
+; => MURDER
+
+(>!! s-chan "diaper")
+; => REPAID
+```
+
+The function `semordnilap` ("palindrome" spelled backwards, for words
+that form another word when reversed) creates three infinitely looping
+processes connected through channels, and returns the first channel,
+`c1`, as the "input" channel to the pipeline. In this case, we used
+one function to create all three text transformation services
+together, but we could just as well have created them separately:
+
+```clojure
+(defn upper-caser
+  [in]
+  (let [out (chan)]
+    (go (while true (>! out (clojure.string/upper-case (<! in)))))
+    out))
+
+(defn reverser
+  [in]
+  (let [out (chan)]
+    (go (while true (>! out (clojure.string/reverse (<! in)))))
+    out))
+
+(defn printer
+  [in]
+  (go (while true (println (<! in)))))
+
+(def in-chan (chan))
+(def upper-caser-out (upper-caser in-chan))
+(def reverser-out (reverser upper-caser-out))
+(printer reverser-out)
+
+(>!! in-chan "redrum")
+; => MURDER
+```
+
+In languages without channels, like Javascript, you might achieve this
+kind of pipeline using *callbacks*. Callbacks can become difficult to
+reason when you start nesting them inside each other.
+
+### State Machines
+
+It's also cool that the machine doesn't accept more money until you've
+dealt with whatever it's dispensed. This allows you to model
+state-machine-like behavior, where the completion of channel
+operations trigger state transitions. For example, you can think of
+the vending machine as having two states, "ready to receive money" and
+"dispensed item," with the inserting of money and taking of the item
+triggering transitions between the two.
 
 ## Summary
 
