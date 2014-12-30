@@ -441,7 +441,7 @@ to the clipboard, and pasting copies the contents of the clipboard to
 the current application.
 
 In Emacs, we take the homicidal approach and **kill** regions, adding
-them to do the **kill ring**. Don't you feel *braver* and *truer*
+them to the **kill ring**. Don't you feel *braver* and *truer*
 knowing that you're laying waste to untold kilobytes of text?
 
 We then **yank**, inserting the most recently killed text at point. We
