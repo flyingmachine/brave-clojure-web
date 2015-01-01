@@ -771,7 +771,7 @@ writing serially. Here's the final product. I'll walk through it below.
 ```
 
 `append-to-file` and `format-quote` are the same as above, they're
-just shown here again so you don't have to flip back  and forth.
+just shown here again so you don't have to flip back and forth.
 `random-quote` simply grabs a quote and formats it.
 
 The interesting bits are in `snag-quotes-queued`. The point of the
