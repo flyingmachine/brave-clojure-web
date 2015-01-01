@@ -2,6 +2,7 @@
 title: Concurrent Processes with core.async
 link_title: Concurrent Processes with core.async
 kind: documentation
+draft: true
 ---
 
 One day, while you are walking down the street, you will be surprised,
@@ -43,7 +44,7 @@ some kind of central control mechanism. You put your money in the
 machine and out comes a hotdog, all without the Illuminati or Big
 Brother orchestrating the whole thing. This differs from the view of
 concurrency you've been exploring so far, where you've defined tasks
-that are either tightly bound to the main thread of control (for
+that are either mere extensions of the main thread of control (for
 example, achieving data parallelism with `pmap`) or that you have no
 interest in communicating with (`pmap` again and one-off tasks created
 with `future`).
@@ -89,8 +90,8 @@ that it reads:
 Great! Now when you open this in a REPL, you'll have the most
 frequently-used core.async functions at your disposal. Before creating
 something as sophisticated and revolutionary as a hot dog vending
-machine, let's create a process that simply prints the events that
-happen to it:
+machine, let's create a process that simply prints the message it
+receives:
 
 ```clojure
 (def echo-chan (chan))
@@ -659,6 +660,16 @@ system. You can look at each step and understand what it does without
 having to refer to what might have happened before it or what might
 happen after it; each process is as easy to reason about as a pure
 function.
+
+## Additional Resources
+
+Clojure's core.async library was largely inspired by Go's concurrency
+model, which is based on the work by Tony Hoare in
+[Communicating Sequential Processes](http://www.usingcsp.com/).
+
+Rob Pike, co-creator of Go, has a
+[good talk](https://www.youtube.com/watch?v=f6kdp27TYZs) on
+concurrency.
 
 ## Summary
 
