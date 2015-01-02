@@ -671,6 +671,9 @@ Rob Pike, co-creator of Go, has a
 [good talk](https://www.youtube.com/watch?v=f6kdp27TYZs) on
 concurrency.
 
+Finally, check out the
+[api docs](http://clojure.github.io/core.async/).
+
 ## Summary
 
 In this chapter, you learned about how core.async allows you to create
