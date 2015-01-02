@@ -52,7 +52,7 @@ things:
   programs immediately
 - It assumes 0 experience with the JVM, functional programming, or
   lisp. It covers these topics in detail so that you'll feel like you
-  know what what you're doing when you write Clojure code
+  know what you're doing when you write Clojure code
 - It eschews "real-world" examples in favor of more interesting
   exercises like "assaulting hobbits" and "tracking glittery vampires"
 
