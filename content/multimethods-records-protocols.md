@@ -1,5 +1,5 @@
 ---
-title: Abstraction Tools: Multimethods, Records, Protocols, Reify
+title: Abstraction Tools: Multimethods, Protocols, Records, Reify
 link_title: Abstraction Tools: Multimethods, Records, Protocols, Reify
 kind: documentation
 draft: true
@@ -15,27 +15,37 @@ more a programming language lets you think and write in terms of
 abstractions, the more productive you will be.
 
 In the chapter "Core Functions in Depth", you saw how Clojure is
-written in terms of abstractions. In this chapter, you'll learn how to
-create your own abstractions with protocols and multimethods, how to
-create performant implementions of abstractions with records, and how
-to extend existing implementations so that they'll belong to an
-abstraction.
+written in terms of abstractions. This chapter serves as an
+introduction to the world of creating and implementing your own
+abstractions. You'll learn the basics of multimethods, protocols, and
+records.
 
 ## Abstractions, Implementations, and Polymorphism
 
-An *abstraction* is a named collection of *operations*, and data types
-implement abstractions. The Seq abstraction consists of operations
-like `first` and `rest`, and the vector data type is an implementation
-of that abstraction - it responds to all of the Seq operations. A
-specific vector, like `[:seltzer :water]` is an instance of that data
-type.
+An *abstraction* is a named collection of *operations*, and *data
+types* implement abstractions. The Seq abstraction consists of
+operations like `first` and `rest`, and the vector data type is an
+implementation of that abstraction - it responds to all of the Seq
+operations. A specific vector, like `[:seltzer :water]` is an instance
+of that data type.
+
+Because this chapter deals with how data types implement abstractions,
+and because Clojure relies on Java's standard library for many of its
+data types, there's a little Java involved. For example, Clojure
+strings are just Java strings, instances of the Java class
+`java.lang.String`. "Wait a minute," you might be mentally imploring
+me, "what's all this talk about classes all of a sudden?" Classes are
+how you define your own data types in Java. Clojure provides
+additional type constructs: *records* and *types*. This book only
+covers records.
 
 The main way that we achieve abstraction in Clojure is through
 *polymorphism*, or the association of an operation name with more than
 one algorithm. The algorithm for performing `conj` on a list is
-different from the one for vectors, but we give them the same name to
-indicate that they implement the same concept of "add an element to
-the business end of this data structure."
+different from the one for vectors, but we unify them under the same
+name to indicate that they implement the same concept of "add an
+element to the business end of this data structure." Let's look at
+multimethods, our first tool for defining polymorphic behavior.
 
 ## Multimethods
 
@@ -91,10 +101,10 @@ since keywords can act as functions.
 Next, you define two methods, one for when the value returned by
 dispatching function is `:wolf` and one for when it's
 `:simmons`. `:wolf` and `:simmons` are both referred to as a
-*dispatch-value*. This is distinct from a *dispatching value*, which
+*dispatch value*. This is distinct from a *dispatching value*, which
 is what the dispatching function returns. This method definition looks
 a lot like a function definition, but the major difference is that the
-method name is immediately followed by the dispatch-value.
+method name is immediately followed by the dispatch value.
 
 After that, you call the method twice. In the first example,
 `(full-moon-behavior {:were-type :wolf :name "Rachel from next
@@ -102,6 +112,29 @@ door"})`, the dispatching function returns the value `:wolf` and the
 corresponding method is used, informing you that `"Rachel from next
 door will howl and murder"`. The next example behaves similarly,
 except with `:simmons` as the dispatching value.
+
+You can define a method for `nil`:
+
+```clojure
+(defmethod full-moon-behavior nil
+  [were-creature]
+  (str (:name were-creature) " will stay at home and eat ice cream"))
+(full-moon-behavior {:were-type nil
+                     :name "Martin the nurse"})
+; => "Martin the nurse will stay at home and eat ice cream"
+```
+
+You can also define a default method to use if no other methods match
+by specifying `:default` as the dispatch value:
+
+```clojure
+(defmethod full-moon-behavior :default
+  [were-creature]
+  (str (:name were-creature) " will stay up all night fantasy footballing"))
+(full-moon-behavior {:were-type :office-worker
+                     :name "Jimmy from sales"})
+; => "Jimmy from sales will stay up all night fantasy footballing"
+```
 
 One cool thing about multimethods is that you can always continue
 adding new methods. If you publish a library that includes the
@@ -118,11 +151,145 @@ multimethod to handle new dispatch values:
 ; => "Laura the intern will show up and dance at random parties"
 ```
 
-Multimethods also allow hierarchical dispatching. In fact, Clojure
-actually uses the `isa?` function to compare dispatching values to
-methods' dispatch-values. `isa?` tests for equality first, which is
-why method matches for `:simmons`, `:were`, and `:murray` have worked.
-It also tests for various kinds of hierarchical relationships, and you
-can read them about them all in the
+Your dispatching function can return any arbitrary value using any or
+all of its arguments. The next example defines a multimethod that
+takes two arguments and returns a vector containing the type of each
+argument, and a method that matches when each argument is a string:
+
+```clojure
+(ns user)
+(defmulti types (fn [x y] [(class x) (class y)]))
+(defmethod types [java.lang.String java.lang.String]
+  [x y]
+  "Two strings!")
+(types "String 1" "String 2")
+; => "Two strings!"
+```
+
+Incidentally, this is why they're called *multi*methods - they allow
+multiple dispatch, or dispatch on more than one argument.
+
+Multimethods also allow *hierarchical dispatching*. Clojure allows you
+to build custom hierarchies, which I won't cover, but you can learn
+about them by reading the
 [clojure.org documentation](http://clojure.org/multimethods).
 
+## Protocols
+
+93.58% of the time, you'll want to dispatch to methods according to an
+argument's type; `count` will need to work differently for vectors
+than it does for maps or for lists. You could perform type dispatch
+with multimethods, of course, but *protocols* are optimized for this
+use case. They're more efficient than multimethods and they have nice
+language support so that you can succinctly specify protocol
+implementations.
+
+Whereas a multimethod is one polymorphic operation, a protocol is a
+named *collection* of one or more polymorphic operations. Protocol
+operations are also called methods.  Whereas multimethods perform
+dispatch on arbitrary values returned by a dispatching function that
+can make use of any of its arguments, protocol methods are dispatched
+based on the type of the first argument. Let's look at an example:
+
+```clojure
+(ns data-psychology)
+(defprotocol Psychodynamics
+  "Plumb the inner depths of your data types"
+  (thoughts [x] "The data type's innermost thoughts")
+  (feelings-about [x] [x y] "Feelings about self or other"))
+```
+
+First, there's `defprotocol`. This takes a name, `Psychodynamics`, and
+an optional docstring, `"Plumb the inner depths"` yada yada. Next are
+the *method signatures*. A method signature consists of a name, an
+argument specification, and an optional doc string. In the first
+method signature, `thoughts` is the name and it can only ever take one
+argument. In the second, `feelings-about` is the name and it can take
+one or two arguments. One limitation of protocols is that the methods
+can't have rest arguments, so something like
+
+```clojure
+(feelings-about [x] [x & others])
+```
+
+isn't allowed.
+
+In defining a protocol, you're defining an abstraction, so it makes
+sense that there would be no implementation code within the protocol
+itself. Instead, you *extend* data types to implement the protocol:
+
+```clojure
+(extend-type java.lang.String
+  Psychodynamics
+  (thoughts [x] "Truly, the character defines the data type")
+  (feelings-about
+    ([x] "longing for a simpler way of life")
+    ([x y] (str "envious of " y "'s simpler way of life"))))
+
+(thoughts "blorb")
+; => "Truly, the character defines the data type"
+
+(feelings-about "schmorb")
+; => "longing for a simpler way of life"
+
+(feelings-about "schmorb" 2)
+; => "envious of 2's simpler way of life"
+```
+
+`extend-type` is followed by the name of the class or type you want to
+extend and the protocol you want it to support. After that, you
+provide an implementation for each method. If you want to provide a
+default implementation, you can just extend `java.lang.Object`:
+
+```clojure
+(extend-type java.lang.Object
+  Psychodynamics
+  (thoughts [x] "Maybe the Internet is just a vector for toxoplasmosis")
+  (feelings-about
+    ([x] "meh")
+    ([x y] (str "meh about " y))))
+  
+(thoughts 3)
+; => "Maybe the Internet is just a vector for toxoplasmosis"
+
+(feelings-about 3)
+; => "meh"
+
+(feelings-about 3 "blorb")
+; => "meh about blorb"
+```
+
+Instead of extending multiple types with multiple calls to
+`extend-type`, you can use `extend-protocol`, which allows you to
+define protocol implementations for multiple types at once. Here's how
+you'd perform the above protocol implementations:
+
+```clojure
+(extend-protocol Psychodynamics
+  java.lang.String
+  (thoughts [x] "Truly, the character defines the data type")
+  (feelings-about
+    ([x] "longing for a simpler way of life")
+    ([x y] (str "envious of " y "'s simpler way of life")))
+  
+  java.lang.Object
+  (thoughts [x] "Maybe the Internet is just a vector for toxoplasmosis")
+  (feelings-about
+    ([x] "meh")
+    ([x y] (str "meh about" y))))
+```
+
+You might find this more convenient than using `extend-type`. Then
+again, you might not. How does `extend-type` make you feel? How about
+`extend-protocol`? Come lie down on this couch and tell me about it.
+
+One thing to keep in mind is that a protocol's methods "belong" to the
+namespace that they're defined in. In the examples above, the
+fully-qualified names of the `Psychodynamics` methods are
+`data-psychology/thoughts` and `data-psychology/feelings-about`. If
+you come from an object-oriented background, this might seem weird
+because, in OOP, methods belong to data types. Protocols' belonging to
+namespaces is just another way that Clojure gives primacy to
+abstractions. One consequence of this fact is that, if you want two
+different protocols to include methods that have the same name, you'll
+need to put the protocols in different namespaces.
