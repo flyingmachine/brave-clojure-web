@@ -1,6 +1,6 @@
 ---
-title: Abstraction Tools: Multimethods, Protocols, Records, Reify
-link_title: Abstraction Tools: Multimethods, Records, Protocols, Reify
+title: Abstraction Tools: Multimethods, Protocols, Records
+link_title: Abstraction Tools: Multimethods, Protocols, Records
 kind: documentation
 draft: true
 ---
@@ -9,7 +9,7 @@ As a programmer, abstraction is your second-best friend. It is the
 glorious mechanism that allows you to circumvent your cognitive
 limits, allowing you to tie together disparate details into a neat
 conceptual package that you can easily hold in your working
-memory. Instead of having to hold "squeezable red ball honks nose
+memory. Instead of having to hold "squeezable honking red ball nose
 adornment" in your mind, you only need the concept "clown nose." The
 more a programming language lets you think and write in terms of
 abstractions, the more productive you will be.
@@ -22,12 +22,12 @@ records.
 
 ## Abstractions, Implementations, and Polymorphism
 
-An *abstraction* is a named collection of *operations*, and *data
-types* implement abstractions. The Seq abstraction consists of
-operations like `first` and `rest`, and the vector data type is an
-implementation of that abstraction - it responds to all of the Seq
-operations. A specific vector, like `[:seltzer :water]` is an instance
-of that data type.
+An *abstraction* is a named collection of operations, and *data types*
+implement abstractions. The Seq abstraction consists of operations
+like `first` and `rest`, and the vector data type is an implementation
+of that abstraction - it responds to all of the Seq operations. A
+specific vector, like `[:seltzer :water]` is an instance of that data
+type.
 
 Because this chapter deals with how data types implement abstractions,
 and because Clojure relies on Java's standard library for many of its
@@ -52,11 +52,11 @@ multimethods, our first tool for defining polymorphic behavior.
 Multimethods give you a direct, flexible way to introduce
 polymorphism. Using multimethods, you associate a name with multiple
 implementations by first defining a *dispatching function* which
-produce *dispatching values* that are used to determine which *method*
-to use. The dispatching function is like the host at a restaurant. The
-host will ask you questions like, "do you have a reservation?" and
-"party size?" and sit you at the right table based on the
-answer. Similarly, when you call a multimethod, the dispatching
+produces *dispatching values* that are used to determine which
+*method* to use. The dispatching function is like the host at a
+restaurant. The host will ask you questions like, "do you have a
+reservation?" and "party size?" and sit you at the right table based
+on the answer. Similarly, when you call a multimethod, the dispatching
 function will interrogate the arguments and send them to the right
 method. Let's look at an example:
 
@@ -101,7 +101,7 @@ since keywords can act as functions.
 Next, you define two methods, one for when the value returned by
 dispatching function is `:wolf` and one for when it's
 `:simmons`. `:wolf` and `:simmons` are both referred to as a
-*dispatch value*. This is distinct from a *dispatching value*, which
+*dispatch value*. This is distinct from a dispatch*ing* value, which
 is what the dispatching function returns. This method definition looks
 a lot like a function definition, but the major difference is that the
 method name is immediately followed by the dispatch value.
@@ -259,10 +259,10 @@ default implementation, you can just extend `java.lang.Object`:
 ; => "meh about blorb"
 ```
 
-Instead of extending multiple types with multiple calls to
-`extend-type`, you can use `extend-protocol`, which allows you to
-define protocol implementations for multiple types at once. Here's how
-you'd perform the above protocol implementations:
+Instead of using multiple calls to `extend-type` to extend multiple
+types, you can use `extend-protocol`, which allows you to define
+protocol implementations for multiple types at once. Here's how you'd
+define the above protocol implementations:
 
 ```clojure
 (extend-protocol Psychodynamics
@@ -293,3 +293,140 @@ namespaces is just another way that Clojure gives primacy to
 abstractions. One consequence of this fact is that, if you want two
 different protocols to include methods that have the same name, you'll
 need to put the protocols in different namespaces.
+
+## Records
+
+Clojure allows you to create *records*, which are custom map-like data
+types. They're map-like in that they associate keys with values and
+you can look up their values the same as you can with maps, and
+they're immutable just like maps are. They're different in that you
+specify *fields* for records. Fields are named slots for data; it's
+like you're specifying which keys this data structure should
+have. Records are also different in that you can extend them to
+implement protocols.
+
+To create a record, you use `defrecord` to specify its name and
+fields:
+
+```clojure
+(ns were-records)
+(defrecord WereWolf [name title])
+```
+
+This record's name is `WereSimmons` and it has two fields, `name` and
+`title`. There are three different ways that you can create an
+instance of of this record:
+
+```clojure
+(WereWolf. "David" "London Tourist")
+; => #were_records.WereWolf{:name "David", :title "London Tourist"}
+
+(->WereWolf "Jacob" "Lead Shirt Discarder")
+; => #were_records.WereWolf{:name "Jacob", :title "Lead Shirt Discarder"}
+
+(map->WereWolf {:name "Lucian" :title "CEO of Melodrama"})
+; => #were_records.WereWolf{:name "Lucian", :title "CEO of Melodrama"}
+```
+
+In the first example, you create an instance the same way that you
+create a Java object, using the class instantiation interop
+call. Notice that the arguments must follow the same order as the
+field definition. You can use the Java interop call because, under the
+covers, records are actually Java classes. If you want to use them in
+another namespace, you'll have to import them, just like you would any
+other Java class.
+
+The second example looks nearly identical to the first, but the key
+difference is that `->WereWolf` is a function. When you create a
+record, the factory functions `->RecordName` and `map->RecordName` are
+created automatically. The last example, `map->WereWolf` should be
+self-explanatory.
+
+You can look up record values in the same way you look up map values,
+and you can also use Java field access interop:
+
+```clojure
+(def jacob (->WereWolf "Jacob" "Lead Shirt Discarder"))
+(.name jacob) ; => "Jacob"
+(:name jacob) ; => "Jacob"
+(get jacob :name) ; => "Jacob"
+```
+
+When testing for equality, Clojure will check that all fields are
+equal and that the two comparands have the same type:
+
+```clojure
+(= jacob (->WereWolf "Jacob" "Lead Shirt Discarder"))
+; => true
+
+(= jacob (WereWolf. "David" "London Tourist"))
+; => false
+
+(= jacob {:name "Jacob" :title "Lead Shirt Discarder"})
+; => false
+```
+
+If you can use a function on a map, you can use it on a record:
+
+```clojure
+(assoc jacob :title "Lead Third Wheel")
+; => #were_records.WereWolf{:name "Jacob", :title "Lead Third Wheel"}
+```
+
+However, you `dissoc` a field, the result will be map rather than a
+data structure of the record's type:
+
+```clojure
+(dissoc jacob :title)
+; => {:name "Jacob"} <- that's not a were_records.WereWolf
+```
+
+When you create a new record type, you can extend a protocol:
+
+```clojure
+(defprotocol WereCreature
+  (full-moon-behavior [x]))
+
+(defrecord WereWolf [name title]
+  WereCreature
+  (full-moon-behavior [x]
+    (str name " will howl and murder")))
+
+(full-moon-behavior (map->WereWolf {:name "Lucian" :title "CEO of Melodrama"}))
+; => "Lucian will howl and murder"
+```
+
+We've created a new protocol, WereCreature, with one method,
+`full-moon-behaior`. Next, `defrecord` implements `WereCreature` for
+`WereWolf`. The most interesting part of the `full-moon-behavior`
+implementation is that you have access to `name`. You also have access
+to `title` and any other fields that might be defined for your
+record. You can also extend records using `extend-type` and
+`extend-protocol`.
+
+When should you use records, and when should you use maps? In general,
+you should consider using records if you find yourself creating maps
+with the same fields over and over. This tells you that that set of
+data represents information in your application's domain, and it'd be
+your code will communicate its purpose better if you give a name to
+the concept you're trying to model. Not only that, but record access
+is more performant than map access, so your program will become a
+little more efficient. Finally, if you want to make use of protocols,
+then you'll need to create a record.
+
+## Further Study
+
+Clojure offers other tools for working with abstractions and data
+types, including `deftype`, `reify`, and `proxy`, which I consider
+advanced tools. If you're interested in learning more, check out the
+[clojure.org documentation on data types](http://clojure.org/datatypes).
+
+## Summary
+
+One of Clojure's design principles is to write to abstractions. In
+this chapter, you learned how to define your own abstractions using
+multimethods and prototypes. These constructs provide polymorphism,
+allowing the same operation to behave differently based on the
+arguments its given. You also learned how to create and use your own
+associative data types with `defrecord`, and how to extend records to
+implement protocols.

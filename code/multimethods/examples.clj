@@ -65,6 +65,44 @@
 (extend-type java.lang.Object
   Psychodynamics
   (thoughts [x] "Maybe the Internet is just a vector for toxoplasmosis")
-  (feelings
+  (feelings-about
     ([x] "meh")
     ([x y] (str "meh about" y))))
+
+
+(extend-protocol Psychodynamics
+  java.lang.String
+  (thoughts [x] "Truly, the character defines the data type")
+  (feelings-about
+    ([x] "longing for a simpler way of life")
+    ([x y] (str "envious of " y "'s simpler way of life")))
+  
+  java.lang.Object
+  (thoughts [x] "Maybe the Internet is just a vector for toxoplasmosis")
+  (feelings-about
+    ([x] "meh")
+    ([x y] (str "meh about" y))))
+
+;; records
+(ns were-records)
+(defrecord WereWolf [name title])
+(WereWolf. "David" "London Tourist")
+(->WereWolf "Jacob" "Lead Shirt Discarder")
+(map->WereWolf {:name "Lucian" :title "CEO of Melodrama"})
+
+(def jacob (->WereWolf "Jacob" "Lead Shirt Discarder"))
+(.name jacob) ; => "Jacob"
+(:name jacob) ; => "Jacob"
+(get jacob :name) ; => "Jacob"
+
+(= jacob (->WereWolf "Jacob" "Lead Shirt Discarder"))
+(= jacob {:name "Jacob" :title "Lead Shirt Discarder"})
+
+
+(defprotocol WereCreature
+  (full-moon-behavior [x]))
+
+(defrecord WereWolf [name title]
+  WereCreature
+  (full-moon-behavior [x]
+    (str name " will howl and murder")))
