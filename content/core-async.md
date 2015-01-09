@@ -2,8 +2,9 @@
 title: Master Concurrent Processes with core.async
 link_title: Master Concurrent Processes with core.async
 kind: documentation
-draft: true
 ---
+
+# Master Concurrent Processes with core.async
 
 One day, while you are walking down the street, you will be surprised,
 intrigued, and a little disgusted to discover a hot dog vending
