@@ -1,6 +1,6 @@
 ---
-title: Abstraction Tools: Multimethods, Protocols, Records
-link_title: Abstraction Tools: Multimethods, Protocols, Records
+title: Multimethods, Protocols, Records
+link_title: Multimethods, Protocols, Records
 kind: documentation
 draft: true
 ---

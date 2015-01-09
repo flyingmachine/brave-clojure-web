@@ -1,6 +1,6 @@
 ---
-title: Concurrent Processes with core.async
-link_title: Concurrent Processes with core.async
+title: Master Concurrent Processes with core.async
+link_title: Master Concurrent Processes with core.async
 kind: documentation
 draft: true
 ---
@@ -24,6 +24,8 @@ using the general form, "when *x* happens, do *y*." Even the programs
 we write are just glorified hot dog vending machines, each one an
 independent process waiting for the next event, whether it's a
 keystroke, a timeout, or the arrival of data on a socket.
+
+![Self Portrait](images/core-async/machine.png)
 
 Clojure's core.async library allows you to create independent
 processes within a single program. This chapter describes a useful
@@ -259,7 +261,7 @@ or take is done. It's like parking allows interleaving on a single
 thread, similar to the way that using multiple threads allows
 interleaving on a single core:
 
-![Parking and Blocking](/images/core-async/parking.png)
+![Parking and Blocking](images/core-async/parking.png)
 
 The implementation of parking isn't important; suffice to say that
 it's only possible within go blocks, and it's only possible when you
