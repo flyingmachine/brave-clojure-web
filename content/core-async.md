@@ -442,7 +442,7 @@ money and taking of the item triggering transitions between the two.
 
 The core.async function `alts!!` lets you use the result of the first
 successful channel operation among a collection of operations. We did
-something similar do this in the previous chapter with delays and
+something similar to this in the previous chapter with delays and
 futures. In that example, we uploaded a set of headshots to a
 headshot-sharing site and notified the headhot owner when the first
 photo was uploaded. Here's how you'd do the same thing with `alts!!`:
