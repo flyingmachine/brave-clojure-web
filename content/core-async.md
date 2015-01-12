@@ -410,7 +410,7 @@ channel is closed. When we try to take something out we get `nil`,
 again because the channel is closed.
 
 There are a couple interesting things about this hotdog
-machine. First, it both does both a put and a take within the same go
+machine. First, it does both a put and a take within the same go
 block. This isn't that unusual, and it's one way that you can create a
 pipeline of processes: just make the "in" channel of one process the
 "out" channel of another. The next example does just that, passing a
