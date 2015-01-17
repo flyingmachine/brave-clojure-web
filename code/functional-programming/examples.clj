@@ -82,4 +82,4 @@
   (Thread/sleep 1000)
   x)
 
-(def memo-sleep-identity (memoize sleepy-identity))
+(def memo-sleepy-identity (memoize sleepy-identity))
