@@ -494,7 +494,7 @@ If you create a new, memoized version of `sleepy-identity` with
 subsequent function call returns immediately: 
 
 ```clojure
-(def memo-sleep-identity (memoize sleepy-identity))
+(def memo-sleepy-identity (memoize sleepy-identity))
 (memo-sleepy-identity "Mr. Fantastico")
 ; => "Mr. Fantastico" after 1 second
 (memo-sleepy-identity "Mr. Fantastico")
