@@ -162,10 +162,10 @@ it's seasoned with hippie love. Wait... I'm not sure that sounds as
 good as I thought it would.)
 
 It's worth noting that there were *two* processes for this exercise:
-the one you created with `go` and the REPL process. These processes
+the one you created with `go`, and the REPL process. These processes
 don't have explicit knowledge of each other, and they act
 independently. The REPL process could refrain from ketchuping on
-`echo-chan` and the go block could live on forever, waiting for
+`echo-chan`, and the go block could live on forever, waiting for
 something to happen. Alternatively, the REPL process could have
 ketchuped on `echo-chan` without knowing whether another process would
 be there to handle the event.
@@ -206,7 +206,7 @@ fashion. Neither of these buffers will ever cause a put to block.
 
 Buffers, though, are just elaborations of the core model: processes
 are independent, concurrently executing units of logic that respond to
-events. You can create processes with go blocks and communicate events
+events. You can create processes with go blocks and communicate messages
 over channels. It's time to expand on this model, starting with go
 blocks.
 
@@ -245,7 +245,7 @@ Clojure is able to accomplish this feat with threads by giving special
 care to the way they *wait*. We've already established that "put"
 waits until another process does a "take" on the same channel, and
 vice versa. In the example above, there are 1000 processes all waiting
-to take from `hi-chan`.
+to put the message `"hi"` on `hi-chan`.
 
 There are two varieties of waiting: *parking* and
 *blocking*. *Blocking* is the kind of waiting you're familiar with: a
@@ -470,13 +470,13 @@ random amount of time (simulating the upload) and then puts the
 headshot on the channel. The next few lines should make sense: we
 create three channels, then use them to perform the uploads.
 
-The next part is where it gets interesting. The `alts!!` takes a
-vector of channels as its argument. This is like saying, "Try to do a
-blocking take on each of these channels simultaneously. As soon as a
-take succeeds, return a vector whose first element is the value taken
-and whose second element is the winning channel. Consign the remaining
-channels to the dust heap of history." In this case, the channel
-associated with "sassy.jpg" received a value first.
+The next part is where it gets interesting. The `alts!!` function
+takes a vector of channels as its argument. This is like saying, "Try
+to do a blocking take on each of these channels simultaneously. As
+soon as a take succeeds, return a vector whose first element is the
+value taken and whose second element is the winning channel. Consign
+the remaining channels to the dust heap of history." In this case, the
+channel associated with "sassy.jpg" received a value first.
 
 One cool thing about `alts!!` is that you can give it a *timeout
 channel*. A timeout channel is a channel which waits the specified
@@ -494,8 +494,13 @@ use it with the upload service:
 ; => Timed out!
 ```
 
-In this case, we set the timeout to 20 milliseconds. The "upload"
-didn't finish in that timeframe and we got a timeout message.
+In this case, we set the timeout to 20 milliseconds. After 20
+milliseconds, the timeout channel closes, and the take on that channel
+succeeds. It might seem counterintuitive that you can successfully
+take from a closed channel, but remember that closed channels always
+return `nil` when you try to take from them. In this case, the timeout
+channel returns `nil`, so the value of `headshot` is `nil`, and we get
+a timeout messages.
 
 You can also use `alts!!` to specify "put" operations. To do that, put
 a vector inside the vector you pass to `alts`, like this:
@@ -617,7 +622,7 @@ overall system as the callbacks get triggered. You can avoid this
 depressing outcome by creating a process pipeline. That way, each unit
 of logic lives in its own isolated environment (a process), with
 communication between units of logic occurring through
-explicitly-defined and easy-to-reason about input and output
+explicitly-defined and easy-to-reason-about input and output
 channels. This is analogous to the way that pure functions are easier
 to reason about than non-pure functions, the difference being that
 processes place their data on an output channel, creating a one-way
