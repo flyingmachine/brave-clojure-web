@@ -201,7 +201,7 @@ You should see something like this:
 
 To get rid of the stack trace in the left window, do
 
-1.  `C-x o` to swith to the window
+1.  `C-x o` to switch to the window
 2.  `q` to close the stack trace and go back to CIDER
 
 If you want to view the error again, you can switch to the buffer `*cider-error*`.
