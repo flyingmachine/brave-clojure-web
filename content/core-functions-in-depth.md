@@ -526,7 +526,7 @@ tested until that point:
 ```
 
 The same idea applies with `drop-while`, except that it keeps dropping
-elements until one tests true:
+elements until one tests `false`:
 
 ```clojure
 (drop-while #(< (:month %) 3) food-journal)
