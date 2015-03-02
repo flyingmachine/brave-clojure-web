@@ -1061,8 +1061,8 @@ mutual connection established; when 4 "connects right" to 6, 6
 ```clojure
 (connect-down-left {} 15 1)
 ; =>
-{1 {:connections {4 2}
- 4 {:connections {1 2}}}}
+{1 {:connections {4 2}}
+ 4 {:connections {1 2}}}
 
 (connect-down-right {} 15 3)
 ; =>
