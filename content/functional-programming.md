@@ -1085,6 +1085,7 @@ a peg is in the given position:
             [connect-right connect-down-left connect-down-right])))
 
 (add-pos {} 15 1)
+;=>
 {1 {:connections {6 3, 4 2}, :pegged true}
  4 {:connections {1 2}}
  6 {:connections {1 3}}}
