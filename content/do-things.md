@@ -419,7 +419,7 @@ value in a data structure. For example:
 
 ;; Provide a default value, just like get:
 (:d {:a 1 :b 2 :c 3} "FAERIES")
-; => "FAERIES
+; => "FAERIES"
 ```
 
 I think this is super cool and Real Clojurists do it all the time. You
