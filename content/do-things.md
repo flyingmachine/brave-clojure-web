@@ -1538,7 +1538,7 @@ You could in fact accomplish the same thing just using functions:
   ([]
      (recursive-printer 0))
   ([iteration]
-     (println iteration)
+     (println (str "Iteration " iteration))
      (if (> iteration 3)
        (println "Goodbye!")
        (recursive-printer (inc iteration)))))
