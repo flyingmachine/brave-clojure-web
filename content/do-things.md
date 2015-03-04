@@ -1586,7 +1586,7 @@ the part's name starts with the string "left-":
   {:name (clojure.string/replace (:name part) #"^left-" "right-")
    :size (:size part)})
 (make-matching-part {:name "left-eye" :size 1})
-; => {:name "right-eye" :size 1}]
+; => {:name "right-eye" :size 1}
 ```
 
 ### Symmetrizer
