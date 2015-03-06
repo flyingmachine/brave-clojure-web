@@ -192,7 +192,7 @@ list whose first member is the symbol `quote` and whose second member
 is the data structure following the single quote. The deref reader
 macro, `@` works similarly:
 
-```
+```clojure
 (read-string "@var")
 ; => (clojure.core/deref var)
 ```
