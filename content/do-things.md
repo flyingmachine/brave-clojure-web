@@ -1714,7 +1714,7 @@ be implemented:
           remaining coll]
      (if (empty? remaining)
        result
-       (recur (f result (first remaining) (rest remaining))))))
+       (recur (f result (first remaining)) (rest remaining)))))
   ([f [head & tail]]
    (my-reduce f head tail)))
 ```
