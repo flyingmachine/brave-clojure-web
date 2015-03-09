@@ -2,6 +2,7 @@
 title: Building and Developing with Leiningen
 link_title: Building and Developing with Leiningen
 kind: documentation
+draft: true
 ---
 
 # Building and Developing with Leiningen
@@ -24,12 +25,13 @@ There's also an entire artifact ecosystem handling JAR files from Java
 land that Clojure uses. *Artifact ecosystem* isn't an official
 programming term; I use it to refer to the suite of tools, resources,
 and conventions used to identify and distribute artifacts. Java's
-ecosystem grew up around the Maven build tool. Maven is a huge tool
+ecosystem grew up around the Maven build tool, and since Clojure uses
+this ecosystem, you'll often see references to Maven. Maven is a huge tool
 that does a lot of stuff that you don't need to care about as a
 Clojurist. What matters is that Maven specifies a pattern for
 identifying artifacts that Clojure projects adhere to, and it also
 specifies how to host these artifacts in Maven *repositories*, which
-are just servers that store artifacts for distribution.
+are just servers that store artifacts for distribution. 
 
 
 ### Identification

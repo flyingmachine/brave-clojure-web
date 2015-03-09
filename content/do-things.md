@@ -1710,14 +1710,13 @@ be implemented:
 ```clojure
 (defn my-reduce
   ([f initial coll]
-     (loop [result initial
-            remaining coll]
-       (let [[current & rest] remaining]
-         (if (empty? remaining)
-           result
-           (recur (f result current) rest)))))
+   (loop [result initial
+          remaining coll]
+     (if (empty? remaining)
+       result
+       (recur (f result (first remaining) (rest remaining))))))
   ([f [head & tail]]
-     (my-reduce f (f head (first tail)) (rest tail))))
+   (my-reduce f head tail)))
 ```
 
 We could re-implement symmetrize as follows:
