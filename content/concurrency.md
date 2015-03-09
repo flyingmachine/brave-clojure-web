@@ -565,8 +565,6 @@ seconds to obtain a result, as the following code shows. Note that
 functions, as discussed in the chapter "Functional Programming":
 
 ```clojure
-(some odd? [2 2 2 1 3 5])
-
 (time (some (comp satisfactory? mock-api-call)
             [yak-butter-international butter-than-nothing baby-got-yak]))
 ; => "Elapsed time: 3002.132 msecs"
