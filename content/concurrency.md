@@ -1978,7 +1978,7 @@ lower-caseification so that each thread runs
 
 And once again the parallel version takes nearly half the time. Just
 for fun, we can generalize this technique into a function called
-`ppmap`, for "partitioned pmap. It can receive more than one
+`ppmap`, for "partitioned pmap". It can receive more than one
 collection, just like `map`:
 
 ```clojure
