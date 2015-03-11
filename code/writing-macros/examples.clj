@@ -179,16 +179,13 @@
      (println (quote ~to-try) "was not successful:" ~to-try)))
 
 (if (do (Thread/sleep 1000) (+ 1 1))
-
-  (clojure.core/println
-   '(do (Thread/sleep 1000) (+ 1 1))
-   "was successful:"
-   (do (Thread/sleep 1000) (+ 1 1)))
+  (println '(do (Thread/sleep 1000) (+ 1 1))
+           "was successful:"
+           (do (Thread/sleep 1000) (+ 1 1)))
   
-  (clojure.core/println
-   '(do (Thread/sleep 1000) (+ 1 1))
-   "was not successful:"
-   (do (Thread/sleep 1000) (+ 1 1))))
+  (println '(do (Thread/sleep 1000) (+ 1 1))
+           "was not successful:"
+           (do (Thread/sleep 1000) (+ 1 1))))
 
 (report (Thread/sleep 1000))
 
@@ -251,6 +248,13 @@
     (println :success)
     (println :failure errors)))
 
+(defn if-valid
+  [record validation success-code failure-code]
+  (let [errors (validate record validation)]
+    (if (empty? errors)
+      success-code
+      failure-code)))
+
 (defmacro if-valid
   "Handle validation more concisely"
   [to-validate validations errors-name & then-else]
@@ -258,11 +262,8 @@
      (if (empty? ~errors-name)
        ~@then-else)))
 
-(error-messages-for "SHINE ON"
-                    ["Please enter a postal code" not-empty
-                     "Please enter a postal code that looks like a US postal code"
-                     #(or (empty? %)
-                          (not (re-seq #"[^0-9-]" %)))])
+(error-messages-for "" ["Please enter a name" not-empty])
+;=> ("Please enter a name")
 
 (let [errors (validate order-details order-details-validations)]
   (if (empty? errors)
@@ -290,5 +291,4 @@
  (render "order-details" {:errors errors}))
 
 
-(if-let [errors (valid? order-details order-details-validations)]
-  )
+(if-let [errors (valid? order-details order-details-validations)])
