@@ -85,7 +85,7 @@ multiple processors.
 You can see from this definition that parallelism is a subclass of
 concurrency: in order to execute multiple tasks simultaneously, you
 first have to manage multiple tasks. Concurrency can be seen as
-potential paralellism.
+potential parallelism.
 
 It's important to distinguish parallelism from **distribution**.
 Distributed computing is a specialization of parallel computing where
@@ -159,7 +159,7 @@ executing a single-threaded program:
 
 A thread can "spawn" a new thread. In a single-processor system, the
 processor switches back and forth between the threads (interleaving).
-Here's where we things start to get tricky. While the processor will
+Here's where things start to get tricky. While the processor will
 execute the instructions on each thread in order, it makes no
 guarantees about when it will switch back and forth between threads.
 

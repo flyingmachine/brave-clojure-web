@@ -1108,7 +1108,7 @@ Now we need to accumulate these error messages in a map:
  :city ("Please enter a city")}
 ```
 
-Success! This works my reducing over `shipping-details-validations`,
+Success! This works by reducing over `shipping-details-validations`,
 associating the error messages (if there are any) for each key of
 `shipping-details` into a final map of error messages.
 
@@ -1128,7 +1128,7 @@ heart's content! Most often, validation will look something like this:
     (render "shipping-details" {:errors errors})))
 ```
 
-Here's where we can an introduce a macro to clean things up a bit.
+Here's where we can introduce a macro to clean things up a bit.
 Notice the pattern? It's:
 
 1. Validate a record and bind result to `errors`
