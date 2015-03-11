@@ -410,7 +410,7 @@ channel is closed. When we try to take something out we get `nil`,
 again because the channel is closed.
 
 There are a couple interesting things about this hotdog
-machine. First, it both does both a put and a take within the same go
+machine. First, it does both a put and a take within the same go
 block. This isn't that unusual, and it's one way that you can create a
 pipeline of processes: just make the "in" channel of one process the
 "out" channel of another. The next example does just that, passing a
@@ -442,7 +442,7 @@ money and taking of the item triggering transitions between the two.
 
 The core.async function `alts!!` lets you use the result of the first
 successful channel operation among a collection of operations. We did
-something similar do this in the previous chapter with delays and
+something similar to this in the previous chapter with delays and
 futures. In that example, we uploaded a set of headshots to a
 headshot-sharing site and notified the headhot owner when the first
 photo was uploaded. Here's how you'd do the same thing with `alts!!`:
