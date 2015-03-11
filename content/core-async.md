@@ -66,7 +66,7 @@ machines?
 
 Anyway, enough of my yakking! Let's make these ideas real by creating
 some simple processes. First, create a new Leiningen project called
-"playsync" with `lein new playsync`. Then, open the file `project.clj`
+"playsync" with `lein new app playsync`. Then, open the file `project.clj`
 and add core.async to the `:dependencies` vector so that it reads:
 
 ```clojure
