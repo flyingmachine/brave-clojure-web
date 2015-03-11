@@ -1085,7 +1085,7 @@ Let's look more at this line:
 [{lat :lat lng :lng}]
 ```
 
-This is like telling Clojure, "Yo! Clojure! Do me a flava and
+This is like telling Clojure, "Yo! Clojure! Do me a fava and
 associate the symbol `lat` with the value corresponding to the key
 `:lat`. Do the same thing with `lng` and `:lng`, ok?."
 
