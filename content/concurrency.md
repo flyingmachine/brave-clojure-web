@@ -773,7 +773,7 @@ just shown here again so you don't have to flip back and forth.
 `random-quote` simply grabs a quote and formats it.
 
 The interesting bits are in `snag-quotes-queued`. The point of the
-macro is to returns a form that looks like:
+macro is to return a form that looks like:
 
 ```clojure
 (snag-quotes-queued 4 "quotes.txt")
