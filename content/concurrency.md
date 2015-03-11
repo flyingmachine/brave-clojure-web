@@ -1316,7 +1316,7 @@ you're starting with Clojure you don't need to know much about it. You
 only need to know how to make use of it. Which is what this section
 does.)
 
-Let's get to actually performing the sock tracksfer. First, you'll
+Let's get to actually performing the sock transfer. First, you'll
 need to code up some sock-and-gnome creation technology:
 
 ```clojure
