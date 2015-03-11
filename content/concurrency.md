@@ -1205,7 +1205,7 @@ Just attach it to fred with `add-watch`:
 ```clojure
 ;; General form of add-watch is (add-watch ref key watch-fn)
 (add-watch fred :fred-shuffle-alert shuffle-alert)
-(swap! fred update-in [:percent-detiorated] + 1)
+(swap! fred update-in [:percent-deteriorated] + 1)
 ; => All's well with  :fred-shuffle-alert
 ; => Cuddle hunger:  22
 ; => Percent deteriorated:  3
