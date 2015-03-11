@@ -225,7 +225,7 @@ user> (create-ns 'cheese.taxonomy)
 
 ;; Pass the returned namespace as an argument
 ; (ns-name (create-ns 'cheese.taxonomy))
-; => secret-lair
+; => cheese.taxonomy
 ```
 
 This is pretty neat, but in practice you'll probably never use

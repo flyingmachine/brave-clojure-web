@@ -470,7 +470,7 @@ their value:
         {}
         {:human 4.1
          :critter 3.9})
-; {:human 4.1}
+; => {:human 4.1}
 ```
 
 #### take, drop, take-while, drop-while

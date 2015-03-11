@@ -565,8 +565,6 @@ seconds to obtain a result, as the following code shows. Note that
 functions, as discussed in the chapter "Functional Programming":
 
 ```clojure
-(some odd? [2 2 2 1 3 5])
-
 (time (some (comp satisfactory? mock-api-call)
             [yak-butter-international butter-than-nothing baby-got-yak]))
 ; => "Elapsed time: 3002.132 msecs"
@@ -1207,7 +1205,7 @@ Just attach it to fred with `add-watch`:
 ```clojure
 ;; General form of add-watch is (add-watch ref key watch-fn)
 (add-watch fred :fred-shuffle-alert shuffle-alert)
-(swap! fred update-in [:percent-detiorated] + 1)
+(swap! fred update-in [:percent-deteriorated] + 1)
 ; => All's well with  :fred-shuffle-alert
 ; => Cuddle hunger:  22
 ; => Percent deteriorated:  3
@@ -1910,7 +1908,7 @@ characters long:
 
 ```clojure
 (def orc-name-abbrevs (random-string-list 20000 300))
-(time (dorun (map clojure.string/lower-case orc-name-abbevs)))
+(time (dorun (map clojure.string/lower-case orc-name-abbrevs)))
 ; => "Elapsed time: 78.23 msecs"
 (time (dorun (pmap clojure.string/lower-case orc-name-abbrevs)))
 ; => "Elapsed time: 124.727 msecs"
@@ -1992,7 +1990,7 @@ collection, just like `map`:
    (apply pmap
           (fn [& pgroups] (doall (apply map f pgroups)))
           (map (partial partition-all grain-size) colls))))
-(time (dorun (ppmap 1000 clojure.string/lower-case orc-name-abbevs)))
+(time (dorun (ppmap 1000 clojure.string/lower-case orc-name-abbrevs)))
 ; => "Elapsed time: 44.902 msecs"
 ```
 
