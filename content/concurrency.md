@@ -1908,7 +1908,7 @@ characters long:
 
 ```clojure
 (def orc-name-abbrevs (random-string-list 20000 300))
-(time (dorun (map clojure.string/lower-case orc-name-abbevs)))
+(time (dorun (map clojure.string/lower-case orc-name-abbrevs)))
 ; => "Elapsed time: 78.23 msecs"
 (time (dorun (pmap clojure.string/lower-case orc-name-abbrevs)))
 ; => "Elapsed time: 124.727 msecs"
@@ -1990,7 +1990,7 @@ collection, just like `map`:
    (apply pmap
           (fn [& pgroups] (doall (apply map f pgroups)))
           (map (partial partition-all grain-size) colls))))
-(time (dorun (ppmap 1000 clojure.string/lower-case orc-name-abbevs)))
+(time (dorun (ppmap 1000 clojure.string/lower-case orc-name-abbrevs)))
 ; => "Elapsed time: 44.902 msecs"
 ```
 
