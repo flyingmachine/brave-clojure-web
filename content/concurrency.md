@@ -1448,7 +1448,7 @@ is complete different. Here's how `alter` behaves:
 
 1. Reach outside the transaction and read the ref's *current* state.
 2. Compare the current state to the state the ref started within
-   within the transaction.
+   the transaction.
 2. If the two differ, make the entire transaction retry
 3. Otherwise commit the altered ref state
 
