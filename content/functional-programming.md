@@ -141,7 +141,7 @@ perform them, which lets you put them on autopilot.
 ### Pure Functions Have No Side Effects
 
 To perform a side effect is to change the association between a name
-and its value within a given scope. For example, in Javscript:
+and its value within a given scope. For example, in Javascript:
 
 ```javascript
 var haplessObject = {
