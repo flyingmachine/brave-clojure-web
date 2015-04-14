@@ -419,7 +419,7 @@ value in a data structure. For example:
 
 ;; Provide a default value, just like get:
 (:d {:a 1 :b 2 :c 3} "FAERIES")
-; => "FAERIES
+; => "FAERIES"
 ```
 
 I think this is super cool and Real Clojurists do it all the time. You
@@ -1538,7 +1538,7 @@ You could in fact accomplish the same thing just using functions:
   ([]
      (recursive-printer 0))
   ([iteration]
-     (println iteration)
+     (println (str "Iteration " iteration))
      (if (> iteration 3)
        (println "Goodbye!")
        (recursive-printer (inc iteration)))))
@@ -1586,7 +1586,7 @@ the part's name starts with the string "left-":
   {:name (clojure.string/replace (:name part) #"^left-" "right-")
    :size (:size part)})
 (make-matching-part {:name "left-eye" :size 1})
-; => {:name "right-eye" :size 1}]
+; => {:name "right-eye" :size 1}
 ```
 
 ### Symmetrizer
@@ -1710,14 +1710,13 @@ be implemented:
 ```clojure
 (defn my-reduce
   ([f initial coll]
-     (loop [result initial
-            remaining coll]
-       (let [[current & rest] remaining]
-         (if (empty? remaining)
-           result
-           (recur (f result current) rest)))))
+   (loop [result initial
+          remaining coll]
+     (if (empty? remaining)
+       result
+       (recur (f result (first remaining)) (rest remaining)))))
   ([f [head & tail]]
-     (my-reduce f (f head (first tail)) (rest tail))))
+   (my-reduce f head tail)))
 ```
 
 We could re-implement symmetrize as follows:

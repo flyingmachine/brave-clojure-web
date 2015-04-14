@@ -494,7 +494,7 @@ If you create a new, memoized version of `sleepy-identity` with
 subsequent function call returns immediately: 
 
 ```clojure
-(def memo-sleep-identity (memoize sleepy-identity))
+(def memo-sleepy-identity (memoize sleepy-identity))
 (memo-sleepy-identity "Mr. Fantastico")
 ; => "Mr. Fantastico" after 1 second
 (memo-sleepy-identity "Mr. Fantastico")
@@ -1061,8 +1061,8 @@ mutual connection established; when 4 "connects right" to 6, 6
 ```clojure
 (connect-down-left {} 15 1)
 ; =>
-{1 {:connections {4 2}
- 4 {:connections {1 2}}}}
+{1 {:connections {4 2}}
+ 4 {:connections {1 2}}}
 
 (connect-down-right {} 15 3)
 ; =>
@@ -1085,6 +1085,7 @@ a peg is in the given position:
             [connect-right connect-down-left connect-down-right])))
 
 (add-pos {} 15 1)
+;=>
 {1 {:connections {6 3, 4 2}, :pegged true}
  4 {:connections {1 2}}
  6 {:connections {1 3}}}

@@ -129,10 +129,11 @@ code {
   @include monospace-family;
   background: $main-color-light;
   font-size: 16px;
-}
-
-.code {
   overflow-y: auto;
+  &::before, &::after{
+    letter-spacing: -0.2em;
+    content: "\00a0 ";
+  }
 }
 
 

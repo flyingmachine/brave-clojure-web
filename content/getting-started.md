@@ -281,10 +281,11 @@ however, we'll cover Emacs in depth.
 If Emacs isn't your cup of tea, here are some resources for setting
 up other text editors for Clojure development:
 
--   [Clojure development with Sublime Text 2 (youtube)](http://www.youtube.com/watch?v=wBl0rYXQdGg)
--   [Writing Clojure with Vim in 2013](http://mybuddymichael.com/writings/writing-clojure-with-vim-in-2013.html)
--   [Counterclockwise](https://code.google.com/p/counterclockwise/) is a highly-recommended Eclipse plugin
--   [Getting Started with La Clojure, a plugin for IntelliJ](http://wiki.jetbrains.net/intellij/Getting_started_with_La_Clojure)
+* [Cursive](https://cursiveclojure.com/userguide/) is the best alternative in my opinion
+* [Clojure development with Sublime Text 2 (youtube)](http://www.youtube.com/watch?v=wBl0rYXQdGg)
+* [Getting started with Clojure in Vim](http://www.neo.com/2014/02/25/getting-started-with-clojure-in-vim)
+* [Counterclockwise](https://code.google.com/p/counterclockwise/) is a highly-recommended Eclipse plugin
+* [Getting Started with La Clojure, a plugin for IntelliJ](http://wiki.jetbrains.net/intellij/Getting_started_with_La_Clojure)
 
 ## Chapter Summary
 

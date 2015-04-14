@@ -73,7 +73,8 @@ and fun programming languages in existence!
 8. [Clojure Alchemy: Reading, Evaluation, and Macros](/read-and-eval/)
 9. [Writing Macros](/writing-macros/)
 10. [Concurrency, Parallelism, and State. And Zombies.](/concurrency/)
-11. [Interacting with Java](/java/)
+11. [Mastering Concurrency with core.async](/core-async/)
+12. [Interacting with Java](/java/)
 13. [Upcoming](/upcoming/)
 14. [Other Resources](/resources/)
 15. [About the Author](/about/)
@@ -178,9 +179,22 @@ super fun!
 
 ### Concurrency, Parallelism, and State. And Zombies.
 
-In this chapter you'll learn what concurrency and parallelism are and why they matter. You'll learn about the challenges you'll face when writing parallel programs and about how Clojure's design helps to mitigate them. Finally, you'll learn a big boatload of tools and techniques for writing parallel programs yourself, including: futures, promises, delays, atoms, refs, vars, pmap, and core.reducers. Also, there will be zombies. Onward!
+In this chapter you'll learn what concurrency and parallelism are and
+why they matter. You'll learn about the challenges you'll face when
+writing parallel programs and about how Clojure's design helps to
+mitigate them. Finally, you'll learn a big boatload of tools and
+techniques for writing parallel programs yourself, including: futures,
+promises, delays, atoms, refs, vars, pmap, and core.reducers. Also,
+there will be zombies. Onward!
 
 [Read "Concurrency, Parallelism, and State. And Zombies."](/concurrency/)
+
+### Mastering Concurrent Processes with core.async
+
+Learn how to tame asynchronous code using the powerful core.async
+library!
+
+[Read "Mastering Concurrent Processes with core.async"](/core-async/)
 
 
 ### Interacting with Java

@@ -85,7 +85,7 @@ multiple processors.
 You can see from this definition that parallelism is a subclass of
 concurrency: in order to execute multiple tasks simultaneously, you
 first have to manage multiple tasks. Concurrency can be seen as
-potential paralellism.
+potential parallelism.
 
 It's important to distinguish parallelism from **distribution**.
 Distributed computing is a specialization of parallel computing where
@@ -159,7 +159,7 @@ executing a single-threaded program:
 
 A thread can "spawn" a new thread. In a single-processor system, the
 processor switches back and forth between the threads (interleaving).
-Here's where we things start to get tricky. While the processor will
+Here's where things start to get tricky. While the processor will
 execute the instructions on each thread in order, it makes no
 guarantees about when it will switch back and forth between threads.
 
@@ -565,8 +565,6 @@ seconds to obtain a result, as the following code shows. Note that
 functions, as discussed in the chapter "Functional Programming":
 
 ```clojure
-(some odd? [2 2 2 1 3 5])
-
 (time (some (comp satisfactory? mock-api-call)
             [yak-butter-international butter-than-nothing baby-got-yak]))
 ; => "Elapsed time: 3002.132 msecs"
@@ -775,7 +773,7 @@ just shown here again so you don't have to flip back and forth.
 `random-quote` simply grabs a quote and formats it.
 
 The interesting bits are in `snag-quotes-queued`. The point of the
-macro is to returns a form that looks like:
+macro is to return a form that looks like:
 
 ```clojure
 (snag-quotes-queued 4 "quotes.txt")
@@ -1207,7 +1205,7 @@ Just attach it to fred with `add-watch`:
 ```clojure
 ;; General form of add-watch is (add-watch ref key watch-fn)
 (add-watch fred :fred-shuffle-alert shuffle-alert)
-(swap! fred update-in [:percent-detiorated] + 1)
+(swap! fred update-in [:percent-deteriorated] + 1)
 ; => All's well with  :fred-shuffle-alert
 ; => Cuddle hunger:  22
 ; => Percent deteriorated:  3
@@ -1318,7 +1316,7 @@ you're starting with Clojure you don't need to know much about it. You
 only need to know how to make use of it. Which is what this section
 does.)
 
-Let's get to actually performing the sock tracksfer. First, you'll
+Let's get to actually performing the sock transfer. First, you'll
 need to code up some sock-and-gnome creation technology:
 
 ```clojure
@@ -1450,7 +1448,7 @@ is complete different. Here's how `alter` behaves:
 
 1. Reach outside the transaction and read the ref's *current* state.
 2. Compare the current state to the state the ref started within
-   within the transaction.
+   the transaction.
 2. If the two differ, make the entire transaction retry
 3. Otherwise commit the altered ref state
 
@@ -1910,7 +1908,7 @@ characters long:
 
 ```clojure
 (def orc-name-abbrevs (random-string-list 20000 300))
-(time (dorun (map clojure.string/lower-case orc-name-abbevs)))
+(time (dorun (map clojure.string/lower-case orc-name-abbrevs)))
 ; => "Elapsed time: 78.23 msecs"
 (time (dorun (pmap clojure.string/lower-case orc-name-abbrevs)))
 ; => "Elapsed time: 124.727 msecs"
@@ -1980,7 +1978,7 @@ lower-caseification so that each thread runs
 
 And once again the parallel version takes nearly half the time. Just
 for fun, we can generalize this technique into a function called
-`ppmap`, for "partitioned pmap. It can receive more than one
+`ppmap`, for "partitioned pmap". It can receive more than one
 collection, just like `map`:
 
 ```clojure
@@ -1992,7 +1990,7 @@ collection, just like `map`:
    (apply pmap
           (fn [& pgroups] (doall (apply map f pgroups)))
           (map (partial partition-all grain-size) colls))))
-(time (dorun (ppmap 1000 clojure.string/lower-case orc-name-abbevs)))
+(time (dorun (ppmap 1000 clojure.string/lower-case orc-name-abbrevs)))
 ; => "Elapsed time: 44.902 msecs"
 ```
 
