@@ -14,6 +14,7 @@ CHAPTER_IDS_ORDERED = %w{
   concurrency
   core-async
   java
+  multimethods-records-protocols
   upcoming
   resources
   debugging

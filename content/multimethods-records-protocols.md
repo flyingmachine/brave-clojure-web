@@ -2,7 +2,6 @@
 title: Multimethods, Protocols, and Records
 link_title: Multimethods, Protocols, and Records
 kind: documentation
-draft: true
 ---
 
 # Multimethods, Protocols, and Records

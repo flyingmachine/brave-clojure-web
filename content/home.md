@@ -75,9 +75,10 @@ and fun programming languages in existence!
 10. [Concurrency, Parallelism, and State. And Zombies.](/concurrency/)
 11. [Mastering Concurrency with core.async](/core-async/)
 12. [Interacting with Java](/java/)
-13. [Upcoming](/upcoming/)
-14. [Other Resources](/resources/)
-15. [About the Author](/about/)
+13. [Multimethods, Protocols, and Records](/multimethods-records-protocols/)
+14. [Upcoming](/upcoming/)
+15. [Other Resources](/resources/)
+16. [About the Author](/about/)
 
 ## Part 1: Environment Setup
 
@@ -202,3 +203,14 @@ library!
 This chapter is like a cross between a phrasebook and cultural introduction for the Land of Java. It will give you an overview of what the JVM is, how it runs programs, and how to compile programs for it. It will also give you a brief tour of frequently-used Java classes and methods and explain how to interact with them from Clojure. More than that, it will show you how to think about and understand Java so that you can incorporate any Java library into your Clojure program.
 
 [Read "Interacting with Java"](/java/)
+
+
+### Multimethods, Protocols, and Records
+
+In the chapter "Core Functions in Depth", you saw how Clojure is
+written in terms of abstractions. This chapter serves as an
+introduction to the world of creating and implementing your own
+abstractions. You'll learn the basics of multimethods, protocols, and
+records.
+
+[Read "Multimethods, Protocols, and Records"](/multimethods-records-protocols/)
