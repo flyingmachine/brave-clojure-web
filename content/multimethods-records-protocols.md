@@ -314,7 +314,7 @@ fields:
 (defrecord WereWolf [name title])
 ```
 
-This record's name is `WereSimmons` and it has two fields, `name` and
+This record's name is `WereWolf` and it has two fields, `name` and
 `title`. There are three different ways that you can create an
 instance of of this record:
 
