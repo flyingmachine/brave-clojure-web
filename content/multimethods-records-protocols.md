@@ -1,9 +1,11 @@
 ---
-title: Multimethods, Protocols, Records
-link_title: Multimethods, Protocols, Records
+title: Multimethods, Protocols, and Records
+link_title: Multimethods, Protocols, and Records
 kind: documentation
 draft: true
 ---
+
+# Multimethods, Protocols, and Records
 
 As a programmer, abstraction is your second-best friend. It is the
 glorious mechanism that allows you to circumvent your cognitive
