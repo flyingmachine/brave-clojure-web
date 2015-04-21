@@ -1565,17 +1565,17 @@ I won't go into how they work, but here's their literal notation:
 #"regular-expression"
 ```
 
-In our symmetrizer, `re-find` returns true or false based on whether
-the part's name starts with the string "left-":
+In our symmetrizer, `re-find` returns truthy or falsey based on
+whether the part's name starts with the string "left-":
 
 ```clojure
 (defn needs-matching-part?
   [part]
   (re-find #"^left-" (:name part)))
 (needs-matching-part? {:name "left-eye"})
-; => true
+; => "left-" ; this is truthy
 (needs-matching-part? {:name "neckbeard"})
-; => false
+; => nil ; this is falsey
 ```
 
 `make-matching-part` uses a regex to replace `"left-"` with `"right-"`:
