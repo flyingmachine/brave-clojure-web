@@ -6,7 +6,7 @@ kind: documentation
 
 # Do Things: a Clojure Crash Course
 
-It's time to to learn how to actually *do things* with Clojure! Hot
+It's time to learn how to actually *do things* with Clojure! Hot
 damn!
 
 While you've undoubtedly heard of Clojure's awesome concurrency
