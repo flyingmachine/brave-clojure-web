@@ -1009,7 +1009,7 @@ does:
 (add10 3) ;=> 13
 (add10 5) ;=> 15
 
-(def add-missing-element
+(def add-missing-elements
   (partial conj ["water" "earth" "air"]))
 
 (add-missing-elements "unobtainium" "adamantium")
