@@ -352,7 +352,7 @@ git! I don't know, google it!
 ### Functional Composition instead of Attribute Mutation
 
 Another way you might be used to using mutation is to build up the
-final state of an object. In the Ruby below example, the
+final state of an object. In the Ruby example below, the
 GlamourShotCaption object uses mutation to clean input by removing
 trailing spaces and capitalizing "lol":
 
