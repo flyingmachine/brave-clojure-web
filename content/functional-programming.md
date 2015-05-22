@@ -199,7 +199,7 @@ lengths to limit side effects &mdash; all of its core data structures
 are immutable. You cannot change them in place no matter how hard you
 try! If you're unfamiliar with immutable data structures, however, you
 might feel like your favorite tool has been taken from you. How can
-you *do* anything without side effects? Well, guess what! That's What
+you *do* anything without side effects? Well, guess what! That's what
 the next sections all about! How about this segue, eh? Eh?
 
 ## Living with Immutable Data Structures
