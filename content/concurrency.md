@@ -309,8 +309,8 @@ cached. Try the following:
 ```clojure
 (let [result (future (println "this prints once")
                      (+ 1 1))]
-  (println "deref: " (deref result))
-  (println "@: " @result))
+  (println "deref:" (deref result))
+  (println "@:" @result))
 ; =>
 ; "this prints once"
 ; deref: 2
