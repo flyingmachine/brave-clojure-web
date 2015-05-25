@@ -329,8 +329,7 @@ A lot of modes are distributed as `packages`, which are just bundles
 of elisp files stored in a package repository. Emacs 24, which you
 should have installed, makes it very easy to browse and install
 packages. `M-x package-list-packages` will show you almost every
-package available just make sure you run `M-x
-package-refresh-contents` first so you get the latest list. You can
+package available. You can
 install packages with `M-x package-install`.
 
 You can also customize Emacs by loading your own elisp files or files
