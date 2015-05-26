@@ -1442,7 +1442,7 @@ suspiciously long sleeve: `commute`.
 
 ### Commute
 
-`commute` allows you to update update a ref's state within a
+`commute` allows you to update a ref's state within a
 transaction, just like `alter`. However, its behavior at commit time
 is complete different. Here's how `alter` behaves:
 
