@@ -2027,7 +2027,7 @@ arguments. I'll explain "identity value" below. Here's an example of
 ```clojure
 (require '[clojure.core.reducers :as r])
 
-;; vector consisting of 1 through 1000000
+;; vector consisting of 0 through 999999
 (def numbers (vec (range 1000000)))
 
 (time (reduce + numbers))
@@ -2043,7 +2043,7 @@ you pass `fold` a collection that's not a vector or map, then its
 performance is the same as `reduce`'s:
 
 ```clojure
-;; lazy seq consisting of 1 through 1000000
+;; lazy seq consisting of 0 through 999999
 (def numbers (range 1000000))
 
 (time (reduce + numbers))
