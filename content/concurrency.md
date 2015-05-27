@@ -1903,8 +1903,7 @@ Sometimes, in fact, the time taken by this overhead can dwarf the time
 of each function application, and `pmap` can actually take longer than
 `map`. Here's how you can visualize this:
 
-We can see this effect at work if we 20,000 abbreviated orc names, 300
-characters long:
+We can see this effect at work if we create 20,000 abbreviated orc names, 300 characters long:
 
 ```clojure
 (def orc-name-abbrevs (random-string-list 20000 300))
