@@ -2054,7 +2054,7 @@ performance is the same as `reduce`'s:
 ```
 
 About identity values: an identity value is one which, when given as
-an argument in a binary function (a receiving two arguments), returns
+an argument in a binary function (receives two arguments), returns
 the other argument. For example, 0 is the identity value for addition.
 Add a number to 0 and the same number is returned:
 
