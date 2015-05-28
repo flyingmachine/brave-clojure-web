@@ -188,7 +188,7 @@ absolute value of a number:
 
 ```clojure
 Math.abs(-50)
-// => -50
+// => 50
 ```
  
 #### Back to the Pirate Example
