@@ -503,7 +503,7 @@ channel returns `nil`, so the value of `headshot` is `nil`, and we get
 a timeout messages.
 
 You can also use `alts!!` to specify "put" operations. To do that, put
-a vector inside the vector you pass to `alts`, like this:
+a vector inside the vector you pass to `alts!!`, like this:
 
 ```
 (let [c1 (chan)
