@@ -246,7 +246,7 @@ In this section, you'll learn about how Java handles programs which
 are spread over more than one file and you'll learn how to use Java
 libraries. Once again, we'll look at both compiling and running a
 program. This section has direct implications for Clojure, where
-you'll the same ideas and terminology to interact with Java libraries.
+you'll learn ideas and terminology to interact with Java libraries.
 
 First, a couple definitions:
 
