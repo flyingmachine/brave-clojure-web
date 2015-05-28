@@ -100,8 +100,8 @@ receives:
 (def echo-chan (chan))
 (go (println (<! echo-chan)))
 (>!! echo-chan "ketchup")
+; ketchup
 ; => true
-; => ketchup
 ```
 
 Here, you created a *channel* named `echo-chan` with the `chan`
