@@ -607,9 +607,8 @@ might add an object to it:
 There are a couple interesting things here. First, you need to create
 a `let` binding for `stack` and add it as the last expression in the
 let form. If you didn't do that, then the value of the overall
-expression would be the string `"Latest episode of Game of Fancy
-Chairs, ho!"`, because that's the return value of `push`, as you can
-see here:
+expression would be the string `"Latest episode of Game of Thrones,
+ho!"`, because that's the return value of `push`, as you can see here:
 
 ```clojure
 (.push (java.util.Stack.) "Latest episode of Game of Thrones, ho!")
