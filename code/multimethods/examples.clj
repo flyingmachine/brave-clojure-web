@@ -31,6 +31,15 @@
 
 (were-creatures/full-moon-behavior {:name "Laura the intern" :were-type :murray})
 
+(ns random-namespace
+  (:require [were-creatures]))
+(defmethod were-creatures/full-moon-behavior :bill-murray
+  [were-creature]
+  (str (:name were-creature) " will be the most likeable celebrity"))
+(were-creatures/full-moon-behavior {:name "Laura the intern" :were-type :murray})
+
+; => "Laura the intern will be the most likeable celebrity"
+
 ;; type
 (ns user)
 (defmulti types (fn [x y] [(class x) (class y)]))
@@ -57,10 +66,10 @@
 
 (extend-type java.lang.String
   Psychodynamics
-  (thoughts [x] "Truly, the character defines the data type")
+  (thoughts [x] (str x " thinks, 'Truly, the character defines the data type'"))
   (feelings-about
-    ([x] "longing for a simpler way of life")
-    ([x y] (str "envious of " y "'s simpler way of life"))))
+    ([x] (str x " is longing for a simpler way of life"))
+    ([x y] (str x " is envious of " y "'s simpler way of life"))))
 
 (extend-type java.lang.Object
   Psychodynamics
