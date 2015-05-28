@@ -382,7 +382,7 @@ data structure of the record's type:
 ; => {:name "Jacob"} <- that's not a were_records.WereWolf
 ```
 
-When you create a new record type, you can extend a protocol:
+When you create a new record type, you extend a protocol:
 
 ```clojure
 (defprotocol WereCreature
