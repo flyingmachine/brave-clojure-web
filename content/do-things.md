@@ -55,7 +55,7 @@ literal representations are all valid forms:
 Your code will rarely contain free-floating literals, of course, since
 they don't actually *do* anything on their own. Instead, you'll use
 literals in operations. Operations are how you *do things*. All
-operations take the form, "opening parthensis, operator, operands,
+operations take the form, "opening parenthesis, operator, operands,
 closing parenthesis":
 
 ```clojure
@@ -127,7 +127,7 @@ Here's an example:
 ; => "abra cadabra"
 ```
 
-Notice that each branch of the if can only have one form. This is
+Notice that each branch of the `if` can only have one form. This is
 different from most languages. For example, in Ruby you can write:
 
 ```ruby

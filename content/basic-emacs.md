@@ -522,7 +522,7 @@ If you want to customize emacs, have a look at the file
 `~/.emacs.d/init.el`. This acts as a kind of table of contents listing
 every package that's installed and all the customization files. It's
 heavily documented, so try just reading through it. Also, these
-resources will help you as you continue you on your Emacs journey:
+resources will help you as you continue on your Emacs journey:
 
 - [The Emacs Manual](http://www.gnu.org/software/emacs/manual/html_node/emacs/index.html#Top),
   excellent, comprehensive instructions. Download the PDF and read it

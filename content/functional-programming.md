@@ -57,7 +57,7 @@ about our programs. Pure functions are easier to reason about because
 they're completely isolated, unable to impact other parts
 of your system. When you use them, you don't have to ask yourself,
 "What could I break by calling this function?" They're also
-consistent; you'll never find yourself trying to figure out why the
+consistent; you'll never find yourself trying to figure out why
 passing a function the exact same arguments results in different
 return values.
 
@@ -66,7 +66,7 @@ numbers? Pure functions are as stable and problem-free as arithmetic.
 They're these stupendous, stable little bricks of functionality
 that you can confidently use as the foundation of your program.
 Let's look at referential transparency and lack-of-side-effects in
-more detail so that we'll know exactly what they are how they're
+more detail so that we'll know exactly what they are and how they're
 helpful.
 
 ### Pure Functions Are Referentially Transparent
@@ -199,8 +199,8 @@ lengths to limit side effects &mdash; all of its core data structures
 are immutable. You cannot change them in place no matter how hard you
 try! If you're unfamiliar with immutable data structures, however, you
 might feel like your favorite tool has been taken from you. How can
-you *do* anything without side effects? Well, guess what! That's What
-the next sections all about! How about this segue, eh? Eh?
+you *do* anything without side effects? Well, guess what! That's what
+the next sections are all about! How about this segue, eh? Eh?
 
 ## Living with Immutable Data Structures
 
@@ -211,7 +211,7 @@ But how do you get anything done without side effects?
 ### Recursion instead of for/while
 
 Raise your hand if you've ever written something like this
-(javascript):
+(Javascript):
 
 ```javascript
 var wrestlers = getAlligatorWrestlers();
@@ -288,7 +288,7 @@ recursive problem-solving.
 
 This function takes two arguments, a collection to process (`vals`)
 and an accumulator (`accumulating-total`), and we use arity
-overloading (covered in "[Do Things](/do-things)") to provide a
+overloading (covered in [Do Things](/do-things)) to provide a
 default value of 0 for `accumulating-total` (1).
 
 Like all recursive solution, this function checks the argument it's
