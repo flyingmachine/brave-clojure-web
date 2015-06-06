@@ -309,8 +309,8 @@ cached. Try the following:
 ```clojure
 (let [result (future (println "this prints once")
                      (+ 1 1))]
-  (println "deref: " (deref result))
-  (println "@: " @result))
+  (println "deref:" (deref result))
+  (println "@:" @result))
 ; =>
 ; "this prints once"
 ; deref: 2
@@ -1442,7 +1442,7 @@ suspiciously long sleeve: `commute`.
 
 ### Commute
 
-`commute` allows you to update update a ref's state within a
+`commute` allows you to update a ref's state within a
 transaction, just like `alter`. However, its behavior at commit time
 is complete different. Here's how `alter` behaves:
 
@@ -1903,8 +1903,7 @@ Sometimes, in fact, the time taken by this overhead can dwarf the time
 of each function application, and `pmap` can actually take longer than
 `map`. Here's how you can visualize this:
 
-We can see this effect at work if we 20,000 abbreviated orc names, 300
-characters long:
+We can see this effect at work if we create 20,000 abbreviated orc names, 300 characters long:
 
 ```clojure
 (def orc-name-abbrevs (random-string-list 20000 300))
@@ -2028,7 +2027,7 @@ arguments. I'll explain "identity value" below. Here's an example of
 ```clojure
 (require '[clojure.core.reducers :as r])
 
-;; vector consisting of 1 through 1000000
+;; vector consisting of 0 through 999999
 (def numbers (vec (range 1000000)))
 
 (time (reduce + numbers))
@@ -2044,7 +2043,7 @@ you pass `fold` a collection that's not a vector or map, then its
 performance is the same as `reduce`'s:
 
 ```clojure
-;; lazy seq consisting of 1 through 1000000
+;; lazy seq consisting of 0 through 999999
 (def numbers (range 1000000))
 
 (time (reduce + numbers))
@@ -2055,7 +2054,7 @@ performance is the same as `reduce`'s:
 ```
 
 About identity values: an identity value is one which, when given as
-an argument in a binary function (a receiving two arguments), returns
+an argument in a binary function (receives two arguments), returns
 the other argument. For example, 0 is the identity value for addition.
 Add a number to 0 and the same number is returned:
 

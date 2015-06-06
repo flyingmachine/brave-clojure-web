@@ -188,7 +188,7 @@ absolute value of a number:
 
 ```clojure
 Math.abs(-50)
-// => -50
+// => 50
 ```
  
 #### Back to the Pirate Example
@@ -246,7 +246,7 @@ In this section, you'll learn about how Java handles programs which
 are spread over more than one file and you'll learn how to use Java
 libraries. Once again, we'll look at both compiling and running a
 program. This section has direct implications for Clojure, where
-you'll the same ideas and terminology to interact with Java libraries.
+you'll learn ideas and terminology to interact with Java libraries.
 
 First, a couple definitions:
 
@@ -607,9 +607,8 @@ might add an object to it:
 There are a couple interesting things here. First, you need to create
 a `let` binding for `stack` and add it as the last expression in the
 let form. If you didn't do that, then the value of the overall
-expression would be the string `"Latest episode of Game of Fancy
-Chairs, ho!"`, because that's the return value of `push`, as you can
-see here:
+expression would be the string `"Latest episode of Game of Thrones,
+ho!"`, because that's the return value of `push`, as you can see here:
 
 ```clojure
 (.push (java.util.Stack.) "Latest episode of Game of Thrones, ho!")

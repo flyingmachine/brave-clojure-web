@@ -199,7 +199,7 @@ lengths to limit side effects &mdash; all of its core data structures
 are immutable. You cannot change them in place no matter how hard you
 try! If you're unfamiliar with immutable data structures, however, you
 might feel like your favorite tool has been taken from you. How can
-you *do* anything without side effects? Well, guess what! That's What
+you *do* anything without side effects? Well, guess what! That's what
 the next sections all about! How about this segue, eh? Eh?
 
 ## Living with Immutable Data Structures
@@ -352,7 +352,7 @@ git! I don't know, google it!
 ### Functional Composition instead of Attribute Mutation
 
 Another way you might be used to using mutation is to build up the
-final state of an object. In the Ruby below example, the
+final state of an object. In the Ruby example below, the
 GlamourShotCaption object uses mutation to clean input by removing
 trailing spaces and capitalizing "lol":
 

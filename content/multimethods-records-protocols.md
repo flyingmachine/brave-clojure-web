@@ -382,7 +382,7 @@ data structure of the record's type:
 ; => {:name "Jacob"} <- that's not a were_records.WereWolf
 ```
 
-When you create a new record type, you can extend a protocol:
+When you create a new record type, you extend a protocol:
 
 ```clojure
 (defprotocol WereCreature
@@ -426,7 +426,7 @@ advanced tools. If you're interested in learning more, check out the
 
 One of Clojure's design principles is to write to abstractions. In
 this chapter, you learned how to define your own abstractions using
-multimethods and prototypes. These constructs provide polymorphism,
+multimethods and protocols. These constructs provide polymorphism,
 allowing the same operation to behave differently based on the
 arguments its given. You also learned how to create and use your own
 associative data types with `defrecord`, and how to extend records to

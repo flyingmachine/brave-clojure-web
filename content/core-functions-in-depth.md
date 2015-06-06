@@ -852,7 +852,7 @@ concepts which underly the functions and data structures you're using.
 Now we'll examine two common collection functions whose similarities
 can be a bit confusing.
 
-### Into
+### into
 
 One of the most important collection functions is `into`. As you now
 know, many seq functions return a seq rather than the original data
@@ -912,7 +912,7 @@ If `into` were asked to describe its strengths at a job interview, it
 would say "I'm great at taking two collections and adding all the
 elements from the second to the first."
 
-### Conj
+### conj
 
 Conj also adds elements to a collection, but it does it in a
 slightly different way:
@@ -1009,7 +1009,7 @@ does:
 (add10 3) ;=> 13
 (add10 5) ;=> 15
 
-(def add-missing-element
+(def add-missing-elements
   (partial conj ["water" "earth" "air"]))
 
 (add-missing-elements "unobtainium" "adamantium")

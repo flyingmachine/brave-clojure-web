@@ -266,7 +266,7 @@ In the last chapter, you learned about how to associate symbols with
 values using `def`. In Clojure, symbols are data structures; if they
 weren't, Clojure wouldn't be able to evaluate them. Clojure evaluates
 symbols by **resolving** them, which you learned about in the last
-chapter as well.. Ultimately, a symbol resolves to either a *special
+chapter as well. Ultimately, a symbol resolves to either a *special
 form* or a *value*. I'll cover special forms in the next section.
 Let's look at some examples of symbols resolving to values.
 
