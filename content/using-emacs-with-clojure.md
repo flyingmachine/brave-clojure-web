@@ -156,6 +156,11 @@ Cider it will echo back `Choo choo!`.
 While still in CIDER, try `C-↑`, which is Control + the up key.
 `C-↑` and `C-↓` cycle through your CIDER history.
 
+Note for Mac users: By default, OS X maps `C-↑`, `C-↓`, C-&larr;, and
+C-&rarr; to Mission Control commands. You can change your Mac key
+bindings by opening System Preferences, then going to Keyboard,
+Shortcuts, Mission Control.
+
 Finally, try this:
 
 1.  Write `(-main` at the CIDER prompt. Note the lack of a closing
