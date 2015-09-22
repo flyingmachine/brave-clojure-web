@@ -99,3 +99,6 @@ DEPENDENCIES
   redcarpet
   sass
   susy
+
+BUNDLED WITH
+   1.10.2

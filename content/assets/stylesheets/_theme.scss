@@ -255,6 +255,12 @@ table {
   }
 }
 
+.notice {
+  background: $orange;
+  border-radius: .25em;
+  color: white;
+}
+
 blockquote {
   background: #fde6e1;
   border-left: 2px solid $orange;
