@@ -1246,7 +1246,7 @@ section just define constants:
 ```
 
 The bindings `alpha-start` and `alpha-end` are the beginning and end
-of the numerical values of the laters a through z. We use those to
+of the numerical values of the letters a through z. We use those to
 build up a seq of `letters`: `char`, when applied to an integer,
 returns the character corresponding to that integer, and `str` turns
 the char into a string. `pos-chars` is used by the function
