@@ -1406,7 +1406,7 @@ In our symmetrizer above, we saw the following:
 ```clojure
 (let [[part & remaining] remaining-asym-parts
       final-body-parts (conj final-body-parts part)]
-  some-stuff)
+  ...)
 ```
 
 All this does is bind the names on the left to the values on the
