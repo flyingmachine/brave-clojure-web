@@ -491,7 +491,7 @@ Their cousins `take-while` and `drop-while` are a bit more interesting. Each
 takes a predicate function (a function whose return value is evaluated
 for truth or falsity) to determine when it should stop taking or
 dropping. Suppose, for example, that you had a vector representing
-entries in your "food journal". Each entry has the year, month, and
+entries in your "food journal". Each entry has the month and
 day, along with what you ate. To preserve space, we'll only include a
 few entries:
 
