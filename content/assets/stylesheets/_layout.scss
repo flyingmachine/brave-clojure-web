@@ -205,3 +205,21 @@ table {
   @include padding-trailer(.5);
   @include padding-leader(.5);
 }
+
+@media (max-width: 60.5em) {
+  .main, .footer {
+    float: none;
+    width: 100%;
+    margin: auto;
+    > * {
+      padding-left: 1rem;
+      padding-right: 1rem;
+    }
+  }
+  .secondary {
+    display: none;
+  }
+  .code.pygments {
+    overflow: scroll;
+  }
+}
