@@ -1,0 +1,22 @@
+<div class="chapter-nav">
+<%
+   @items = chapters
+   index = @items.index(@item)
+
+   if index.nil?
+     puts "Problem #{@item[:title]}"
+   end 
+%>
+
+<%
+   if index && index != 0
+   i = @items[index - 1]
+%>
+<div class="prev"><a href="<%= relative_path_to(i) %>">&larr; <%= i[:title] %></a></div>
+<% end %>
+
+<% if index && (i = @items[index + 1]) %>
+<div class="next"><a href="<%= relative_path_to(i) %>"><%= i[:title] %> &rarr;</a></div>
+<% end %>
+
+</div>

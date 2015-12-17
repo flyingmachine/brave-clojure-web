@@ -1,0 +1,330 @@
+---
+title: "Mastering Concurrent Processes with core.async"
+kind: chapter
+---
+
+  
+  
+    
+      <div class="chapter-number">Chapter 11</div>
+      <h1>Mastering Concurrent Processes with core.async</h1>
+      <p class="x1st-Para">One day, while you are walking down the street, you will be surprised, intrigued, and a little disgusted to discover a hot dog vending machine. Your scalp tingling with guilty curiosity, you won’t be able to help yourself from pulling out three dollars and seeing if this contraption actually works. After accepting your money with a click and a whir, it pops out a fresh hot dog, bun and all.</p>
+      <img src="/assets/images/cftbat/core-async/hotdog-vending-machine.png" class="figure" />
+      <p class="Body">The vending machine exhibits simple behavior: when it receives money, it releases a hot dog and then gets ready for the next purchase. When it’s out of hot dogs, it stops. All around us are hot dog vending machines in different guises—independent entities concurrently responding to events in the world. The espresso machine at your favorite coffee shop, the pet hamster you loved as a child—everything can be deconstructed into a set of behaviors that follow the general form “when <em>x</em> happens, do <em>y</em>.” Even the programs we write are just glorified hot dog vending machines, each one an independent process waiting for the next event, whether it’s a keystroke, a timeout, or the arrival of data on a socket.</p>
+      <p class="Body"><span>Clojure’s core.async library allows </span>you to create multiple independent processes within a single program. <span>This chapter describes a useful model </span>for thinking about this style of programming as well as the practical details you need to know to actually write code. You’ll learn how to use channels to communicate between independent processes created by go blocks and <code>thread</code>; a bit about how Clojure manages threads efficiently <span>with parking and blocking; how to use </span><code>alts!!</code><span>; and a more straight­forward way of creating queues. Finally, you’ll learn how to kick callbacks in the butt with process pipelines.</span></p>
+      <h2>Getting Started with Processes</h2>
+      <p class="BodyFirst">At the heart of core.async is the <em>process</em>, a concurrently running unit of logic that responds to events. The process corresponds to our mental model of the real world: entities interact with and respond to each other independently without some kind of central control mechanism pulling the strings. You put your money in the machine, and out comes a hot dog, all without the Illuminati or Big Brother orchestrating the whole thing. This differs from the view of concurrency you’ve been exploring so far, where you’ve defined tasks that are either mere extensions of the main thread of control (for example, achieving data parallelism with <code>pmap</code>) or tasks that you have no interest in communicating with (like one-off tasks created with <code>future</code>).</p>
+      <p class="Body">It might be strange to think of a vending machine as a process: vend<span>ing machines are noun-y and thing-y, and processes are verb-y and do-y. To get in the right mindset, try defining real-world objects as the sum of their event-driven behavior. When a seed gets watered, it sprouts; when a mother looks at her newborn child, she feels love; and when you watch </span><em>Star </em><em>Wars Episode I</em>, you are filled with anger and despair. If you want to get super philosophical, consider whether it’s possible to define every thing’s essence as the set of the events it recognizes and how it responds. Is reality just the composition of hot dog vending machines?</p>
+      <p class="Body"><span>Anyway, enough of my yakking! Let’s move from the theoretical to the concrete by creating some simple processes. First, create a new Leiningen </span><span>project called </span><em>playsync</em><span> with </span><code>lein new app playsync</code><span>. Then, open the file </span><em>project.clj</em><span> </span>and add core.async to the <code>:dependencies</code> vector so it reads as follows:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">[[</span><span class="tok-nv">org.clojure/clojure</span> <span class="tok-s">"1.7.0"</span><span class="tok-p">]</span>
+<span class="tok-p">[</span><span class="tok-nv">org.clojure/core.async</span> <span class="tok-s">"0.1.346.0-17112a-alpha"</span><span class="tok-p">]]</span>
+</code></pre></div></div>
+
+      <p class="Note"><span class="Note-Head">Note</span>	It’s possible that the core.async version has advanced since I wrote this. For the latest version, check the core.async GitHub project page. But for the purpose of these exercises, please use the version listed here.</p>
+      <p class="Body">Next, open <em>src/playsync/core.clj</em> and make it look like this:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-kd">ns </span><span class="tok-nv">playsync.core</span>
+  <span class="tok-p">(</span><span class="tok-ss">:require</span> <span class="tok-p">[</span><span class="tok-nv">clojure.core.async</span>
+             <span class="tok-ss">:as</span> <span class="tok-nv">a</span>
+             <span class="tok-ss">:refer</span> <span class="tok-p">[</span><span class="tok-nv">&gt;!</span> <span class="tok-nv">&lt;!</span> <span class="tok-nv">&gt;!!</span> <span class="tok-nv">&lt;!!</span> <span class="tok-nv">go</span> <span class="tok-nv">chan</span> <span class="tok-nv">buffer</span> <span class="tok-nv">close!</span> <span class="tok-nv">thread</span>
+                     <span class="tok-nv">alts!</span> <span class="tok-nv">alts!!</span> <span class="tok-nv">timeout</span><span class="tok-p">]]))</span>
+</code></pre></div></div>
+
+      <p class="Body">Now when you open this in a REPL, you’ll have the most frequently used core.async functions at your disposal. Great! Before creating something as sophisticated and revolutionary as a hot dog vending machine, <span>create</span> a process that simply prints the message it receives:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-k">def </span><span class="tok-nv">echo-chan</span> <span class="tok-p">(</span><span class="tok-nf">chan</span><span class="tok-p">))</span>
+<span class="tok-p">(</span><span class="tok-nf">go</span> <span class="tok-p">(</span><span class="tok-nb">println </span><span class="tok-p">(</span><span class="tok-nf">&lt;!</span> <span class="tok-nv">echo-chan</span><span class="tok-p">)))</span>
+<span class="tok-p">(</span><span class="tok-nf">&gt;!!</span> <span class="tok-nv">echo-chan</span> <span class="tok-s">"ketchup"</span><span class="tok-p">)</span>
+<span class="tok-c1">; =&gt; true</span>
+<span class="tok-c1">; =&gt; ketchup</span>
+</code></pre></div></div>
+
+      <p class="Body"><span>At the first line of code, you used the </span><code>chan</code><span> function to create a </span><em>channel</em><span> named </span><code>echo-chan</code><span>. Channels communicate </span><em>messages</em><span>. </span><span>You can </span><em>put</em><span> messages on a channel and </span><em>take</em><span> messages off a channel. Processes </span><em>wait</em><span> for the completion </span><span>of put and take—these are the events that processes respond to. You can </span><span>think of processes as having two rules: 1) when trying to put a message on a </span><span>channel</span><span> or take a message off of it, wait and do nothing until the put or take succeeds, and 2) when the put or take succeeds, continue executing.</span></p>
+      <p class="Body">On the next line, you used <code>go</code> to create a new process. Everything within the <code>go</code> expression—called a <em>go block</em>—runs concurrently on a separate thread. Go blocks run your processes on a thread pool that contains a number of threads equal to two plus the number of cores on your machine, which means your program doesn’t have to create a new thread for each process. This often results in better performance because you avoid the overhead associated with creating threads.</p>
+      <p class="Body">In this case, the process <code>(println (&lt;! echo-chan))</code> expresses “when I take a message from <code>echo-chan</code>, print it.” The process is shunted to another thread, freeing up the current thread and allowing you to continue interacting with the REPL.</p>
+      <p class="Body">In the expression <code>(&lt;! echo-chan)</code>, <code>&lt;!</code> is the <em>take</em> function. It listens to the channel you give it as an argument, and the process it belongs to waits until another process puts a message on the channel. When <code>&lt;!</code> retrieves a value, the value is returned and the <code>println</code> expression is executed.</p>
+      <p class="Body">The expression <code>(&gt;!! echo-chan "ketchup")</code> <em>puts</em> the string <code>"ketchup" </code>on <code>echo-chan</code> and returns <code>true</code>. When you put a message on a channel, the process blocks until another process takes the message. In this case, the REPL process didn’t have to wait at all, because there was already a process listening to the channel, waiting to take something off it. However, if you do the following, your REPL will block indefinitely:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-nf">&gt;!!</span> <span class="tok-p">(</span><span class="tok-nf">chan</span><span class="tok-p">)</span> <span class="tok-s">"mustard"</span><span class="tok-p">)</span>
+</code></pre></div></div>
+
+      <p class="Body">You’ve created a new channel and put something on it, but there’s no process listening to that channel. Processes don’t just wait to receive messages; they also wait for the messages they put on a channel to be taken.</p>
+      <h3>Buffering</h3>
+      <p class="BodyFirst">It’s worth noting that the previous exercise contained <em>two</em> processes: the one you created with <code>go</code> and the REPL process. These processes don’t have explicit knowledge of each other, and they act independently. </p>
+      <p class="Body">Let’s imagine that these processes take place in a diner. The REPL is the ketchup chef, and when he’s done with a batch, he belts out, “Ketchup!” It’s entirely possible that the rest of the staff is outside admiring the latest batch of oregano in their organic garden, and the chef just sits and waits until someone shows up to take his ketchup. On the flip side, the <code>go</code> process represents one of the staff, and he’s waiting patiently for something to respond to. It could be that nothing ever happens, and he just waits indefinitely until the restaurant closes.</p>
+      <p class="Body">This situation seems a little silly: what self-respecting ketchup chef would just sit and wait for someone to take his latest batch before making more ketchup? To avoid this tragedy, you can create buffered channels:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-k">def </span><span class="tok-nv">echo-buffer</span> <span class="tok-p">(</span><span class="tok-nf">chan</span> <span class="tok-mi">2</span><span class="tok-p">))</span>
+<span class="tok-p">(</span><span class="tok-nf">&gt;!!</span> <span class="tok-nv">echo-buffer</span> <span class="tok-s">"ketchup"</span><span class="tok-p">)</span>
+<span class="tok-c1">; =&gt; true</span>
+<span class="tok-p">(</span><span class="tok-nf">&gt;!!</span> <span class="tok-nv">echo-buffer</span> <span class="tok-s">"ketchup"</span><span class="tok-p">)</span>
+<span class="tok-c1">; =&gt; true</span>
+<span class="tok-p">(</span><span class="tok-nf">&gt;!!</span> <span class="tok-nv">echo-buffer</span> <span class="tok-s">"ketchup"</span><span class="tok-p">)</span>
+<span class="tok-c1">; This blocks because the channel buffer is full</span>
+</code></pre></div></div>
+
+      <p class="Body">(Be careful evaluating the last <code>(&gt;!! echo-buffer "ketchup")</code> because it will <span>block your REPL. If you’re using a Leiningen REPL, </span><span class="Keycap">ctrl-C</span><span> will unblock it.)</span></p>
+      <p class="Body">In this case, you’ve created a channel with buffer size 2. That means you can put two values on the channel without waiting, but putting a third <span>one on means the process will wait until another process takes a value </span>from the channel. You can also create<em> sliding </em>buffers with <code>sliding-buffer</code>, which drops values in a first-in, first-out fashion; and <em>dropping</em> buffers with <code>dropping-buffer</code>, which discards values in a last-in, first-out fashion. Neither of these buffers will ever cause <code>&gt;!!</code> to block.</p>
+      <p class="Body"><span>By using buffers, the master ketchup chef can keep whipping up batches of mouthwatering ketchup without having to wait for his staff to take them away. If he’s using a regular buffer, it’s like he has a shelf to put all his ketchup batches on; once the shelf is full, he’ll still have to wait for space to open up. If he’s using a sliding buffer, he’d throw away the oldest batch of ketchup when the shelf is full, slide all the ketchup down, and put the new batch in the vacant space. With a dropping buffer, he’d just </span>knock the freshest batch off of the shelf and put his new batch in that space.</p>
+      <p class="Body">Buffers are just elaborations of the core model: processes are independent, concurrently executing units of logic that respond to events. You can create processes with go blocks and communicate events over channels.</p>
+      <h3>Blocking and Parking </h3>
+      <p class="BodyFirst">You may have noticed that the take function <code>&lt;!</code> used only one exclamation point, whereas the put function <code>&gt;!!</code> used two. In fact, both put and take have one-exclamation-point and two-exclamation-point varieties. When do you use which? The simple answer is that you can use one exclamation point inside go blocks, but you have to use two exclamation points outside of them:</p>
+      <table id="table-1" class="NSP-Standard-Table">
+	<thead>
+	  <tr>
+	    <th></th>
+	    <th>
+	      Inside go block
+	    </th>
+	    <th>
+	      <span>Outside go block</span>
+	    </th>
+	  </tr>
+	</thead>
+	<tbody>
+	  <tr>
+	    <td class="Body">
+	      <span>put</span>
+	    </td>
+	    <td class="Body">
+	      <code>&gt;!</code><span> or </span><code>&gt;!!</code>
+	    </td>
+	    <td class="Body">
+	      <code>&gt;!!</code>
+	    </td>
+	  </tr>
+	  <tr>
+	    <td class="Body-Footer-Row">
+	      <span>take</span>
+	    </td>
+	    <td class="Body-Footer-Row">
+	      <code>&lt;!</code><span> or </span><code>&lt;!!</code>
+	    </td>
+	    <td class="Body-Footer-Row">
+	      <code>&lt;!!</code>
+	    </td>
+	  </tr>
+	</tbody>
+      </table>
+      <p class="Body">It all comes down to efficiency. Because go blocks use a thread pool with a fixed size, you can create 1,000 go processes but use only a handful of threads:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-k">def </span><span class="tok-nv">hi-chan</span> <span class="tok-p">(</span><span class="tok-nf">chan</span><span class="tok-p">))</span>
+<span class="tok-p">(</span><span class="tok-nb">doseq </span><span class="tok-p">[</span><span class="tok-nv">n</span> <span class="tok-p">(</span><span class="tok-nb">range </span><span class="tok-mi">1000</span><span class="tok-p">)]</span>
+  <span class="tok-p">(</span><span class="tok-nf">go</span> <span class="tok-p">(</span><span class="tok-nf">&gt;!</span> <span class="tok-nv">hi-chan</span> <span class="tok-p">(</span><span class="tok-nb">str </span><span class="tok-s">"hi "</span> <span class="tok-nv">n</span><span class="tok-p">))))</span>
+</code></pre></div></div>
+
+      <p class="Body">To understand how Clojure accomplishes this, we need to explore how processes <em>wait</em>. Waiting is a key aspect of working with core.async processes: we’ve already established that <em>put</em> waits until another process does a <em>take</em> on the same channel, and vice versa. In this example, 1,000 processes are waiting for another process to take from <code>hi-chan</code>.</p>
+      <p class="Body">There are two varieties of waiting: <em>parking</em> and <em>blocking</em>. Blocking is the kind of waiting you’re familiar with: a thread stops execution until a task is complete. Usually this happens when you’re doing some kind of I/O operation. The thread remains alive but doesn’t do any work, so you have to <span>create</span> a new thread if you want your program to continue working. In Chapter 9, you learned how to do this with <code>future</code>.</p>
+      <p class="Body"><span>Parking frees up the thread so it can keep doing work. Let’s say you have one thread and two processes, Process A and Process B. Process A is running on the thread and then waits for a put or take. Clojure moves Process A off the thread and moves Process B onto the thread. If Process B starts waiting and Process A’s put or take has finished, then Clojure will move Process B off the thread and put Process A back on it. Parking allows the instructions from multiple processes to interleave on a single thread, similar to the way that using multiple threads allows interleaving on a single core. The implementation of parking isn’t important; suffice it to say that it’s only possible within go blocks, and it’s only possible when you use </span><code>&gt;!</code><span> and </span><code>&lt;!</code><span>, or </span><em>parking put</em><span> and </span><em>parking take</em><span>. </span><code>&gt;!!</code><span> and </span><code>&lt;!!</code><span> are </span><em>blocking put</em><span> and </span><em>blocking take</em><span>.</span></p>
+      <h3>thread</h3>
+      <p class="BodyFirst">There are definitely times when you’ll want to use blocking instead of parking, like when your process will take a long time before putting or taking, and for those occasions you should use <code>thread</code>:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-nf">thread</span> <span class="tok-p">(</span><span class="tok-nb">println </span><span class="tok-p">(</span><span class="tok-nf">&lt;!!</span> <span class="tok-nv">echo-chan</span><span class="tok-p">)))</span>
+<span class="tok-p">(</span><span class="tok-nf">&gt;!!</span> <span class="tok-nv">echo-chan</span> <span class="tok-s">"mustard"</span><span class="tok-p">)</span>
+<span class="tok-c1">; =&gt; true</span>
+<span class="tok-c1">; =&gt; mustard</span>
+</code></pre></div></div>
+
+      <p class="Body"><code>thread</code> acts almost exactly like <code>future</code>: it creates a new thread and executes a process on that thread. Unlike <code>future</code>, instead of returning an object that you can dereference, <code>thread</code> returns a channel. When <code>thread</code>’s process stops, the process’s return value is put on the channel that <code>thread</code> returns:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-k">let </span><span class="tok-p">[</span><span class="tok-nv">t</span> <span class="tok-p">(</span><span class="tok-nf">thread</span> <span class="tok-s">"chili"</span><span class="tok-p">)]</span>
+  <span class="tok-p">(</span><span class="tok-nf">&lt;!!</span> <span class="tok-nv">t</span><span class="tok-p">))</span>
+<span class="tok-c1">; =&gt; "chili"</span>
+</code></pre></div></div>
+
+      <p class="Body">In this case, the process doesn’t wait for any events; instead, it stops immediately. Its return value is <code>"chili"</code>, which gets put on the channel that’s bound to <code>t.</code> We take from <code>t</code>, returning <code>"chili"</code>.</p>
+      <p class="Body">The reason you should use <code>thread</code> instead of a go block when you’re performing a long-running task is so you don’t clog your thread pool. Imagine you’re running four processes that download humongous files, save them, and then put the file paths on a channel. While the processes are downloading files and saving these files, Clojure can’t park their threads. It can park the thread only at the last step, when the process puts the files’ paths on a channel. Therefore, if your thread pool has only four threads, all four threads will be used for downloading, and no other process will be allowed to run until one of the downloads finishes.</p>
+      <p class="Body"><code>go</code><span>, </span><code>thread</code><span>, </span><code>chan</code><span>, </span><code>&lt;!</code><span>, </span><code>&lt;!!</code><span>, </span><code>&gt;!</code><span>, and </span><code>&gt;!!</code><span> are the core tools you’ll use for </span><span>creating</span><span> and communicating with processes. Both put and take will cause a process to wait until its complement is performed on the given channel. </span><code>go</code><span> allows you to use the parking variants of put and take, which could improve performance. You should use the blocking variants, along with </span><code>thread</code><span>, if you’re performing long-running tasks before the put or take.</span></p>
+      <p class="Body">And that should give you everything you need to fulfill your heart’s desire and create a machine that turns money into hot dogs. </p>
+      <h2>The Hot Dog Machine Process You’ve Been Longing For</h2>
+      <p class="BodyFirst">Behold, your dreams made real! </p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-kd">defn </span><span class="tok-nv">hot-dog-machine</span>
+  <span class="tok-p">[]</span>
+  <span class="tok-p">(</span><span class="tok-k">let </span><span class="tok-p">[</span><span class="tok-nv">in</span> <span class="tok-p">(</span><span class="tok-nf">chan</span><span class="tok-p">)</span>
+        <span class="tok-nv">out</span> <span class="tok-p">(</span><span class="tok-nf">chan</span><span class="tok-p">)]</span>
+    <span class="tok-p">(</span><span class="tok-nf">go</span> <span class="tok-p">(</span><span class="tok-nf">&lt;!</span> <span class="tok-nv">in</span><span class="tok-p">)</span>
+        <span class="tok-p">(</span><span class="tok-nf">&gt;!</span> <span class="tok-nv">out</span> <span class="tok-s">"hot dog"</span><span class="tok-p">))</span>
+    <span class="tok-p">[</span><span class="tok-nv">in</span> <span class="tok-nv">out</span><span class="tok-p">]))</span>
+</code></pre></div></div>
+
+      <p class="Body">This function creates an <code>in</code> channel for receiving money and an <code>out</code> <span>channel for dispensing a hot dog. It then creates an asynchronous process </span><span>with </span><code>go</code><span class="Default-Paragraph-Font">,</span><span> which waits for money and then dispenses a hot dog. Finally, it </span>returns the <code>in</code> and <code>out</code> channels as a vector.</p>
+      <p class="Body">Time for a hot dog! </p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-k">let </span><span class="tok-p">[[</span><span class="tok-nv">in</span> <span class="tok-nv">out</span><span class="tok-p">]</span> <span class="tok-p">(</span><span class="tok-nf">hot-dog-machine</span><span class="tok-p">)]</span>
+  <span class="tok-p">(</span><span class="tok-nf">&gt;!!</span> <span class="tok-nv">in</span> <span class="tok-s">"pocket lint"</span><span class="tok-p">)</span>
+  <span class="tok-p">(</span><span class="tok-nf">&lt;!!</span> <span class="tok-nv">out</span><span class="tok-p">))</span>
+<span class="tok-c1">; =&gt; "hot dog"</span>
+</code></pre></div></div>
+
+      <p class="Body">In this snippet, you use destructuring (covered in Chapter 3) with <code>let</code> to bind the <code>in</code> and <code>out</code> channels to the <code>in</code> and <code>out</code> sym<span>bols. You then put </span><code>"pocket lint"</code><span> on the </span><code>in</code><span> channel. The hot dog machine process waits for something, anything, to arrive on the </span><code>in</code><span> channel; once </span><code>"pocket lint"</code> arrives, the hot dog machine process resumes execution, putting <code>"hot dog"</code> on the <code>out</code> channel.</p>
+      <p class="Body"><span>Wait a minute . . . that’s not right. I mean, yay, free hot dogs, but </span>someone’s bound to get upset that the machine’s accepting pocket lint as payment. Not only that, but this machine will only dispense one hot dog <span>before shutting down. Let’s alter the hot dog machine function so that you can specify how many hot dogs it has and so it only dispenses a hot dog when you give it the number 3:</span></p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-kd">defn </span><span class="tok-nv">hot-dog-machine-v2</span>
+  <span class="tok-p">[</span><span class="tok-nv">hot-dog-count</span><span class="tok-p">]</span>
+  <span class="tok-p">(</span><span class="tok-k">let </span><span class="tok-p">[</span><span class="tok-nv">in</span> <span class="tok-p">(</span><span class="tok-nf">chan</span><span class="tok-p">)</span>
+        <span class="tok-nv">out</span> <span class="tok-p">(</span><span class="tok-nf">chan</span><span class="tok-p">)]</span>
+    <span class="tok-p">(</span><span class="tok-nf">go</span> <span class="tok-p">(</span><span class="tok-k">loop </span><span class="tok-p">[</span><span class="tok-nv">hc</span> <span class="tok-nv">hot-dog-count</span><span class="tok-p">]</span>
+          <span class="tok-p">(</span><span class="tok-k">if </span><span class="tok-p">(</span><span class="tok-nb">&gt; </span><span class="tok-nv">hc</span> <span class="tok-mi">0</span><span class="tok-p">)</span>
+            <span class="tok-p">(</span><span class="tok-k">let </span><span class="tok-p">[</span><span class="tok-nv">input</span> <span class="tok-p">(</span><span class="tok-nf">&lt;!</span> <span class="tok-nv">in</span><span class="tok-p">)]</span>
+             <span class="tok-err">➊</span><span class="tok-p">(</span><span class="tok-k">if </span><span class="tok-p">(</span><span class="tok-nb">= </span><span class="tok-mi">3</span> <span class="tok-nv">input</span><span class="tok-p">)</span>
+                <span class="tok-p">(</span><span class="tok-k">do </span><span class="tok-p">(</span><span class="tok-nf">&gt;!</span> <span class="tok-nv">out</span> <span class="tok-s">"hot dog"</span><span class="tok-p">)</span>
+                    <span class="tok-p">(</span><span class="tok-nf">recur</span> <span class="tok-p">(</span><span class="tok-nb">dec </span><span class="tok-nv">hc</span><span class="tok-p">)))</span>
+                <span class="tok-p">(</span><span class="tok-k">do </span><span class="tok-p">(</span><span class="tok-nf">&gt;!</span> <span class="tok-nv">out</span> <span class="tok-s">"wilted lettuce"</span><span class="tok-p">)</span>
+                    <span class="tok-p">(</span><span class="tok-nf">recur</span> <span class="tok-nv">hc</span><span class="tok-p">))))</span>
+           <span class="tok-err">➋</span><span class="tok-p">(</span><span class="tok-k">do </span><span class="tok-p">(</span><span class="tok-nf">close!</span> <span class="tok-nv">in</span><span class="tok-p">)</span>
+                <span class="tok-p">(</span><span class="tok-nf">close!</span> <span class="tok-nv">out</span><span class="tok-p">)))))</span>
+    <span class="tok-p">[</span><span class="tok-nv">in</span> <span class="tok-nv">out</span><span class="tok-p">]))</span>
+</code></pre></div></div>
+
+      <p class="Body">There’s a lot more code here, but the strategy is straightforward. The <span>new function </span><code>hot-dog-machine-v2</code><span> allows you to specify the </span><code>hot-dog-count</code><span>. Within the go block at </span>➊<span>, it dispenses a hot dog only if the number 3 (meaning three dollars) is placed on the </span><code>in</code><span> channel; otherwise, it dispenses wilted lettuce, which is definitely not a hot dog. Once a process has taken the output, the hot dog machine process loops back with an updated hot dog count and is ready to receive money again.</span></p>
+      <p class="Body">When the machine process runs out of hot dogs, the process <em>closes</em> the channels at ➋. When you close a channel, you can no longer perform puts on it, and once you’ve taken all values off a closed channel, any subsequent takes will return <code>nil.</code></p>
+      <p class="Body">Let’s give the upgraded hot dog machine a go in Listing 11-1 by putting in money and pocket lint:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-k">let </span><span class="tok-p">[[</span><span class="tok-nv">in</span> <span class="tok-nv">out</span><span class="tok-p">]</span> <span class="tok-p">(</span><span class="tok-nf">hot-dog-machine-v2</span> <span class="tok-mi">2</span><span class="tok-p">)]</span>
+  <span class="tok-p">(</span><span class="tok-nf">&gt;!!</span> <span class="tok-nv">in</span> <span class="tok-s">"pocket lint"</span><span class="tok-p">)</span>
+  <span class="tok-p">(</span><span class="tok-nb">println </span><span class="tok-p">(</span><span class="tok-nf">&lt;!!</span> <span class="tok-nv">out</span><span class="tok-p">))</span>
+
+  <span class="tok-p">(</span><span class="tok-nf">&gt;!!</span> <span class="tok-nv">in</span> <span class="tok-mi">3</span><span class="tok-p">)</span>
+  <span class="tok-p">(</span><span class="tok-nb">println </span><span class="tok-p">(</span><span class="tok-nf">&lt;!!</span> <span class="tok-nv">out</span><span class="tok-p">))</span>
+
+  <span class="tok-p">(</span><span class="tok-nf">&gt;!!</span> <span class="tok-nv">in</span> <span class="tok-mi">3</span><span class="tok-p">)</span>
+  <span class="tok-p">(</span><span class="tok-nb">println </span><span class="tok-p">(</span><span class="tok-nf">&lt;!!</span> <span class="tok-nv">out</span><span class="tok-p">))</span>
+
+  <span class="tok-p">(</span><span class="tok-nf">&gt;!!</span> <span class="tok-nv">in</span> <span class="tok-mi">3</span><span class="tok-p">)</span>
+  <span class="tok-p">(</span><span class="tok-nf">&lt;!!</span> <span class="tok-nv">out</span><span class="tok-p">))</span>
+<span class="tok-c1">; =&gt; wilted lettuce</span>
+<span class="tok-c1">; =&gt; hotdog</span>
+<span class="tok-c1">; =&gt; hotdog</span>
+<span class="tok-c1">; =&gt; nil</span>
+</code></pre></div></div>
+
+      <ol class="List-1">
+	<li class="Listing">Interacting with a robust hot dog vending machine process</li>
+      </ol>
+      <p class="Body">First, we try the ol’ pocket lint trick and get wilted lettuce. Next, we put in 3 dollars twice and get a hot dog both times. Then, we try to put in <span>another 3 dollars, but that’s ignored because the channel is closed; the number 3 is not put on the channel. When we try to take from the </span><code>out</code><span> channel</span>, we get <code>nil</code>, again because the channel is closed. You might notice a couple of interesting details about <code>hot-dog-machine-v2</code>. First, it does a put and a take within the same go block. This isn’t that unusual, and it’s one way you can create a <em>pipeline</em> of processes: just make the<em> in </em>channel of one process the <em>out </em>channel of another. The following example does just that, passing a string through a series of processes that perform transformations until the string finally gets printed by the last process: </p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-k">let </span><span class="tok-p">[</span><span class="tok-nv">c1</span> <span class="tok-p">(</span><span class="tok-nf">chan</span><span class="tok-p">)</span>
+      <span class="tok-nv">c2</span> <span class="tok-p">(</span><span class="tok-nf">chan</span><span class="tok-p">)</span>
+      <span class="tok-nv">c3</span> <span class="tok-p">(</span><span class="tok-nf">chan</span><span class="tok-p">)]</span>
+  <span class="tok-p">(</span><span class="tok-nf">go</span> <span class="tok-p">(</span><span class="tok-nf">&gt;!</span> <span class="tok-nv">c2</span> <span class="tok-p">(</span><span class="tok-nf">clojure.string/upper-case</span> <span class="tok-p">(</span><span class="tok-nf">&lt;!</span> <span class="tok-nv">c1</span><span class="tok-p">))))</span>
+  <span class="tok-p">(</span><span class="tok-nf">go</span> <span class="tok-p">(</span><span class="tok-nf">&gt;!</span> <span class="tok-nv">c3</span> <span class="tok-p">(</span><span class="tok-nf">clojure.string/reverse</span> <span class="tok-p">(</span><span class="tok-nf">&lt;!</span> <span class="tok-nv">c2</span><span class="tok-p">))))</span>
+  <span class="tok-p">(</span><span class="tok-nf">go</span> <span class="tok-p">(</span><span class="tok-nb">println </span><span class="tok-p">(</span><span class="tok-nf">&lt;!</span> <span class="tok-nv">c3</span><span class="tok-p">)))</span>
+  <span class="tok-p">(</span><span class="tok-nf">&gt;!!</span> <span class="tok-nv">c1</span> <span class="tok-s">"redrum"</span><span class="tok-p">))</span>
+<span class="tok-c1">; =&gt; MURDER</span>
+</code></pre></div></div>
+
+      <p class="Body">I’ll have more to say about process pipelines and how you can use them instead of callbacks toward the end of the chapter. </p>
+      <p class="Body">Back to Listing 11-1! Another thing to note is that the hot dog machine doesn’t accept more money until you’ve dealt with whatever it’s dispensed. This allows you to model state-machine-like behavior, where the completion of channel operations triggers state transitions. For example, you can think <span>of the vending machine as having two states: </span><em>ready to receive money</em><span> and </span><em>dis</em><em>pensed</em><em> item</em>. Inserting money and taking the item trigger transitions between the two.</p>
+      <h2>alts!!</h2>
+      <p class="BodyFirst">The core.async function <code>alts!!</code> lets you use the result of the first successful <span>channel operation among a collection of operations. We did something similar to this with delays and futures in </span><span>“Delays” on page </span><span>198</span><span>. In that example, we uploaded a set of headshots to a headshot-sharing site and </span>notified the headshot owner when the first photo was uploaded. Here’s how you’d do the same with <code>alts!!</code>:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-kd">defn </span><span class="tok-nv">upload</span>
+  <span class="tok-p">[</span><span class="tok-nv">headshot</span> <span class="tok-nv">c</span><span class="tok-p">]</span>
+  <span class="tok-p">(</span><span class="tok-nf">go</span> <span class="tok-p">(</span><span class="tok-nf">Thread/sleep</span> <span class="tok-p">(</span><span class="tok-nb">rand </span><span class="tok-mi">100</span><span class="tok-p">))</span>
+      <span class="tok-p">(</span><span class="tok-nf">&gt;!</span> <span class="tok-nv">c</span> <span class="tok-nv">headshot</span><span class="tok-p">)))</span>
+
+<span class="tok-err">➊</span> <span class="tok-p">(</span><span class="tok-k">let </span><span class="tok-p">[</span><span class="tok-nv">c1</span> <span class="tok-p">(</span><span class="tok-nf">chan</span><span class="tok-p">)</span>
+      <span class="tok-nv">c2</span> <span class="tok-p">(</span><span class="tok-nf">chan</span><span class="tok-p">)</span>
+      <span class="tok-nv">c3</span> <span class="tok-p">(</span><span class="tok-nf">chan</span><span class="tok-p">)]</span>
+  <span class="tok-p">(</span><span class="tok-nf">upload</span> <span class="tok-s">"serious.jpg"</span> <span class="tok-nv">c1</span><span class="tok-p">)</span>
+  <span class="tok-p">(</span><span class="tok-nf">upload</span> <span class="tok-s">"fun.jpg"</span> <span class="tok-nv">c2</span><span class="tok-p">)</span>
+  <span class="tok-p">(</span><span class="tok-nf">upload</span> <span class="tok-s">"sassy.jpg"</span> <span class="tok-nv">c3</span><span class="tok-p">)</span>
+<span class="tok-err">➋</span>   <span class="tok-p">(</span><span class="tok-k">let </span><span class="tok-p">[[</span><span class="tok-nv">headshot</span> <span class="tok-nv">channel</span><span class="tok-p">]</span> <span class="tok-p">(</span><span class="tok-nf">alts!!</span> <span class="tok-p">[</span><span class="tok-nv">c1</span> <span class="tok-nv">c2</span> <span class="tok-nv">c3</span><span class="tok-p">])]</span>
+    <span class="tok-p">(</span><span class="tok-nb">println </span><span class="tok-s">"Sending headshot notification for"</span> <span class="tok-nv">headshot</span><span class="tok-p">)))</span>
+<span class="tok-c1">; =&gt; Sending headshot notification for sassy.jpg</span>
+</code></pre></div></div>
+
+      <p class="Body">Here, the <code>upload</code> function takes a headshot and a channel, and creates a new process that sleeps for a random amount of time (to simulate the upload) and then puts the headshot on the channel. The <code>let</code> bindings and <code>upload</code> function calls beginning at ➊ should make sense: we create three channels and then use them to perform the uploads.</p>
+      <p class="Body"><span>Things get interesting at </span>➋<span>. The </span><code>alts!!</code><span> function takes a vector of </span><span>channels</span><span> as its argument. This is like saying, “Try to do a blocking take on each of these channels simultaneously. As soon as a take succeeds, return </span>a vector whose first element is the value taken and whose second element is the winning channel.” In this case, the channel associated with <em>sassy.jpg</em> received a value first. The other channels are still available if you want to <span>take their values and do something with them. All </span><code>alts!!</code><span> does is take a value </span>from the first channel to have a value; it doesn’t touch the other channels.</p>
+      <p class="Body">One cool aspect of <code>alts!!</code> is that you can give it a <em>timeout channel</em>, which waits the specified number of milliseconds and then closes. It’s an elegant mechanism for putting a time limit on concurrent operations. Here’s how you could use it with the upload service:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-k">let </span><span class="tok-p">[</span><span class="tok-nv">c1</span> <span class="tok-p">(</span><span class="tok-nf">chan</span><span class="tok-p">)]</span>
+  <span class="tok-p">(</span><span class="tok-nf">upload</span> <span class="tok-s">"serious.jpg"</span> <span class="tok-nv">c1</span><span class="tok-p">)</span>
+  <span class="tok-p">(</span><span class="tok-k">let </span><span class="tok-p">[[</span><span class="tok-nv">headshot</span> <span class="tok-nv">channel</span><span class="tok-p">]</span> <span class="tok-p">(</span><span class="tok-nf">alts!!</span> <span class="tok-p">[</span><span class="tok-nv">c1</span> <span class="tok-p">(</span><span class="tok-nf">timeout</span> <span class="tok-mi">20</span><span class="tok-p">)])]</span>
+    <span class="tok-p">(</span><span class="tok-k">if </span><span class="tok-nv">headshot</span>
+      <span class="tok-p">(</span><span class="tok-nb">println </span><span class="tok-s">"Sending headshot notification for"</span> <span class="tok-nv">headshot</span><span class="tok-p">)</span>
+      <span class="tok-p">(</span><span class="tok-nb">println </span><span class="tok-s">"Timed out!"</span><span class="tok-p">))))</span>
+<span class="tok-c1">; =&gt; Timed out!</span>
+</code></pre></div></div>
+
+      <p class="Body">In this case, we set the timeout to 20 milliseconds. Because the upload didn’t finish in that time frame, we got a timeout message.</p>
+      <p class="Body">You can also use <code>alts!!</code> to specify put operations. To do that, place a vector inside the vector you pass to <code>alts!!</code>, like at ➊ in this example:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-k">let </span><span class="tok-p">[</span><span class="tok-nv">c1</span> <span class="tok-p">(</span><span class="tok-nf">chan</span><span class="tok-p">)</span>
+      <span class="tok-nv">c2</span> <span class="tok-p">(</span><span class="tok-nf">chan</span><span class="tok-p">)]</span>
+  <span class="tok-p">(</span><span class="tok-nf">go</span> <span class="tok-p">(</span><span class="tok-nf">&lt;!</span> <span class="tok-nv">c2</span><span class="tok-p">))</span>
+<span class="tok-err">➊</span>   <span class="tok-p">(</span><span class="tok-k">let </span><span class="tok-p">[[</span><span class="tok-nv">value</span> <span class="tok-nv">channel</span><span class="tok-p">]</span> <span class="tok-p">(</span><span class="tok-nf">alts!!</span> <span class="tok-p">[</span><span class="tok-nv">c1</span> <span class="tok-p">[</span><span class="tok-nv">c2</span> <span class="tok-s">"put!"</span><span class="tok-p">]])]</span>
+    <span class="tok-p">(</span><span class="tok-nb">println </span><span class="tok-nv">value</span><span class="tok-p">)</span>
+    <span class="tok-p">(</span><span class="tok-nb">= </span><span class="tok-nv">channel</span> <span class="tok-nv">c2</span><span class="tok-p">)))</span>
+<span class="tok-c1">; =&gt; true</span>
+<span class="tok-c1">; =&gt; true</span>
+</code></pre></div></div>
+
+      <p class="Body">Here you’re creating two channels and then creating a process that’s waiting to perform a take on <code>c2</code>. The vector that you supply to <code>alts!!</code> tells it, “Try to do a take on <code>c1</code> and try to put <code>"put!"</code> on <code>c2</code>. If the take on <code>c1</code> finishes first, return its value and channel. If the put on <code>c2</code> finishes first, return <code>true</code><em> </em>if the put was successful and <code>false</code> otherwise.” Finally, the result of <code>value</code> (which is <code>true</code>, because the <code>c2</code> channel was open) prints and shows that the channel returned was indeed <code>c2</code>.</p>
+      <p class="Body">Like <code>&lt;!!</code> and <code>&gt;!!</code>, <code>alts!!</code> has a parking alternative, <code>alts!</code>, which you can use inside go blocks. <code>alts!</code> is a nice way to exercise some choice over which of a group of channels you put or take from. It still performs puts and takes, so the same reasons to use the parking or blocking variation apply.</p>
+      <p class="Body">And that covers the core.async basics! The rest of the chapter explains two common patterns for coordinating processes.</p>
+      <h2>Queues</h2>
+      <p class="BodyFirst">In “Rolling Your Own Queue” on page <span>202</span>, you wrote a macro that let you queue futures. Processes let you use a similar technique in a more straightforward manner. Let’s say you want to get a bunch of random quotes from a website and write them to a single file. You want to make sure that only one quote is written to a file at a time so the text doesn’t get interleaved, so you put your quotes on a queue. Here’s the full code:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-kd">defn </span><span class="tok-nv">append-to-file</span>
+  <span class="tok-s">"Write a string to the end of a file"</span>
+  <span class="tok-p">[</span><span class="tok-nv">filename</span> <span class="tok-nv">s</span><span class="tok-p">]</span>
+  <span class="tok-p">(</span><span class="tok-nf">spit</span> <span class="tok-nv">filename</span> <span class="tok-nv">s</span> <span class="tok-ss">:append</span> <span class="tok-nv">true</span><span class="tok-p">))</span>
+
+<span class="tok-p">(</span><span class="tok-kd">defn </span><span class="tok-nv">format-quote</span>
+  <span class="tok-s">"Delineate the beginning and end of a quote because it's convenient"</span>
+  <span class="tok-p">[</span><span class="tok-nv">quote</span><span class="tok-p">]</span>
+  <span class="tok-p">(</span><span class="tok-nb">str </span><span class="tok-s">"=== BEGIN QUOTE ===\n"</span> <span class="tok-k">quote </span><span class="tok-s">"=== END QUOTE ===\n\n"</span><span class="tok-p">))</span>
+
+<span class="tok-p">(</span><span class="tok-kd">defn </span><span class="tok-nv">random-quote</span>
+  <span class="tok-s">"Retrieve a random quote and format it"</span>
+  <span class="tok-p">[]</span>
+  <span class="tok-p">(</span><span class="tok-nf">format-quote</span> <span class="tok-p">(</span><span class="tok-nb">slurp </span><span class="tok-s">"http://www.braveclojure.com/random-quote"</span><span class="tok-p">)))</span>
+
+<span class="tok-p">(</span><span class="tok-kd">defn </span><span class="tok-nv">snag-quotes</span>
+  <span class="tok-p">[</span><span class="tok-nv">filename</span> <span class="tok-nv">num-quotes</span><span class="tok-p">]</span>
+  <span class="tok-p">(</span><span class="tok-k">let </span><span class="tok-p">[</span><span class="tok-nv">c</span> <span class="tok-p">(</span><span class="tok-nf">chan</span><span class="tok-p">)]</span>
+    <span class="tok-p">(</span><span class="tok-nf">go</span> <span class="tok-p">(</span><span class="tok-nf">while</span> <span class="tok-nv">true</span> <span class="tok-p">(</span><span class="tok-nf">append-to-file</span> <span class="tok-nv">filename</span> <span class="tok-p">(</span><span class="tok-nf">&lt;!</span> <span class="tok-nv">c</span><span class="tok-p">))))</span>
+    <span class="tok-p">(</span><span class="tok-nb">dotimes </span><span class="tok-p">[</span><span class="tok-nv">n</span> <span class="tok-nv">num-quotes</span><span class="tok-p">]</span> <span class="tok-p">(</span><span class="tok-nf">go</span> <span class="tok-p">(</span><span class="tok-nf">&gt;!</span> <span class="tok-nv">c</span> <span class="tok-p">(</span><span class="tok-nf">random-quote</span><span class="tok-p">))))))</span>
+</code></pre></div></div>
+
+      <p class="Body">The functions <code>append-to-file</code>, <code>format-quote</code>, and <code>random-quote</code> have doc<span>strings that explain what they do. </span><code>snag-quotes</code><span> is where the interesting work happens. First, it creates a channel that’s shared between the quote-producing processes and the quote-consuming process. Then it creates a process that uses </span><code>while true</code><span> to create an infinite loop. On every iteration of the loop, it waits for a quote to arrive on </span><code>c</code><span> and then appends it to a file. Finally, </span><code>snag-quotes</code><span> creates a </span><code>num-quotes</code><span> number of processes that fetch a quote and then put it on </span><code>c</code><span>. If you evaluate </span><code>(snag-quotes "quotes" 2)</code><span> and check the </span><em>quotes</em><span> file in the directory where you started your REPL, it should have two quotes:</span></p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-nv">===</span> <span class="tok-nv">BEGIN</span> <span class="tok-nv">QUOTE</span> <span class="tok-nv">===</span>
+<span class="tok-nv">Nobody</span><span class="tok-ss">'s</span> <span class="tok-nv">gonna</span> <span class="tok-nv">believe</span> <span class="tok-nv">that</span> <span class="tok-nv">computers</span> <span class="tok-nv">are</span> <span class="tok-nv">intelligent</span> <span class="tok-nv">until</span> <span class="tok-nv">they</span> <span class="tok-nv">start</span>
+<span class="tok-nv">coming</span> <span class="tok-nv">in</span> <span class="tok-nv">late</span> <span class="tok-nb">and </span><span class="tok-nv">lying</span> <span class="tok-nv">about</span> <span class="tok-nv">it.</span>
+<span class="tok-nv">===</span> <span class="tok-nv">END</span> <span class="tok-nv">QUOTE</span> <span class="tok-nv">===</span>
+
+<span class="tok-nv">===</span> <span class="tok-nv">BEGIN</span> <span class="tok-nv">QUOTE</span> <span class="tok-nv">===</span>
+<span class="tok-nv">Give</span> <span class="tok-nv">your</span> <span class="tok-nv">child</span> <span class="tok-nv">mental</span> <span class="tok-nv">blocks</span> <span class="tok-nb">for </span><span class="tok-nv">Christmas.</span>
+<span class="tok-nv">===</span> <span class="tok-nv">END</span> <span class="tok-nv">QUOTE</span> <span class="tok-nv">===</span>
+</code></pre></div></div>
+
+      <p class="Body">This kind of queuing differs from the example in Chapter 9. In that example, each task was handled in the order it was created. Here, each quote-retrieving task is handled in the order that it finishes. In both cases, you ensure that only one quote at a time is written to a file.</p>
+      <h2>Escape Callback Hell with Process Pipelines</h2>
+      <p class="BodyFirst"><span>In languages without channels, you need to express the idea “when </span><em>x</em><span> </span><span>happens</span>, do <em>y</em>” with <code>callbacks</code>. In a language like JavaScript, callbacks are <span>a way to define code that executes asynchronously once other code finishes. If you’ve worked with JavaScript, you’ve probably spent some time wallowing in </span><em>callback hell</em><span>. </span></p>
+      <p class="Body">The reason it’s called callback hell is that it’s very easy to create dependencies among layers of callbacks that aren’t immediately obvious. They end up sharing state, making it difficult to reason about the state of the overall system as the callbacks get triggered. You can avoid this depressing outcome by creating a process pipeline. That way, each unit of logic lives in its own isolated process, and all communication between units of logic occurs through explicitly defined input and output channels. </p>
+      <p class="Body">In the following example, we create three infinitely looping processes connected through channels, passing the <em>out</em> channel of one process as the <em>in</em> channel of the next process in the pipeline:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-kd">defn </span><span class="tok-nv">upper-caser</span>
+  <span class="tok-p">[</span><span class="tok-nv">in</span><span class="tok-p">]</span>
+  <span class="tok-p">(</span><span class="tok-k">let </span><span class="tok-p">[</span><span class="tok-nv">out</span> <span class="tok-p">(</span><span class="tok-nf">chan</span><span class="tok-p">)]</span>
+    <span class="tok-p">(</span><span class="tok-nf">go</span> <span class="tok-p">(</span><span class="tok-nf">while</span> <span class="tok-nv">true</span> <span class="tok-p">(</span><span class="tok-nf">&gt;!</span> <span class="tok-nv">out</span> <span class="tok-p">(</span><span class="tok-nf">clojure.string/upper-case</span> <span class="tok-p">(</span><span class="tok-nf">&lt;!</span> <span class="tok-nv">in</span><span class="tok-p">)))))</span>
+    <span class="tok-nv">out</span><span class="tok-p">))</span>
+
+<span class="tok-p">(</span><span class="tok-kd">defn </span><span class="tok-nv">reverser</span>
+  <span class="tok-p">[</span><span class="tok-nv">in</span><span class="tok-p">]</span>
+  <span class="tok-p">(</span><span class="tok-k">let </span><span class="tok-p">[</span><span class="tok-nv">out</span> <span class="tok-p">(</span><span class="tok-nf">chan</span><span class="tok-p">)]</span>
+    <span class="tok-p">(</span><span class="tok-nf">go</span> <span class="tok-p">(</span><span class="tok-nf">while</span> <span class="tok-nv">true</span> <span class="tok-p">(</span><span class="tok-nf">&gt;!</span> <span class="tok-nv">out</span> <span class="tok-p">(</span><span class="tok-nf">clojure.string/reverse</span> <span class="tok-p">(</span><span class="tok-nf">&lt;!</span> <span class="tok-nv">in</span><span class="tok-p">)))))</span>
+    <span class="tok-nv">out</span><span class="tok-p">))</span>
+
+<span class="tok-p">(</span><span class="tok-kd">defn </span><span class="tok-nv">printer</span>
+  <span class="tok-p">[</span><span class="tok-nv">in</span><span class="tok-p">]</span>
+  <span class="tok-p">(</span><span class="tok-nf">go</span> <span class="tok-p">(</span><span class="tok-nf">while</span> <span class="tok-nv">true</span> <span class="tok-p">(</span><span class="tok-nb">println </span><span class="tok-p">(</span><span class="tok-nf">&lt;!</span> <span class="tok-nv">in</span><span class="tok-p">)))))</span>
+
+<span class="tok-p">(</span><span class="tok-k">def </span><span class="tok-nv">in-chan</span> <span class="tok-p">(</span><span class="tok-nf">chan</span><span class="tok-p">))</span>
+<span class="tok-p">(</span><span class="tok-k">def </span><span class="tok-nv">upper-caser-out</span> <span class="tok-p">(</span><span class="tok-nf">upper-caser</span> <span class="tok-nv">in-chan</span><span class="tok-p">))</span>
+<span class="tok-p">(</span><span class="tok-k">def </span><span class="tok-nv">reverser-out</span> <span class="tok-p">(</span><span class="tok-nf">reverser</span> <span class="tok-nv">upper-caser-out</span><span class="tok-p">))</span>
+<span class="tok-p">(</span><span class="tok-nf">printer</span> <span class="tok-nv">reverser-out</span><span class="tok-p">)</span>
+
+<span class="tok-p">(</span><span class="tok-nf">&gt;!!</span> <span class="tok-nv">in-chan</span> <span class="tok-s">"redrum"</span><span class="tok-p">)</span>
+<span class="tok-c1">; =&gt; MURDER</span>
+
+<span class="tok-p">(</span><span class="tok-nf">&gt;!!</span> <span class="tok-nv">in-chan</span> <span class="tok-s">"repaid"</span><span class="tok-p">)</span>
+<span class="tok-c1">; =&gt; DIAPER</span>
+</code></pre></div></div>
+
+      <p class="Body">By handling events using processes like this, it’s easier to reason about the individual steps of the overall data transformation system. You can look at each step and understand what it does without having to refer to what might have happened before it or what might happen after it; each process is as easy to reason about as a pure function.</p>
+      <h2>Additional Resources</h2>
+      <p class="BodyFirst"><span>Clojure’s core.async library was largely inspired by Go’s concurrency model, </span><span>which is based on the work by Tony Hoare in </span><em>Communicating Sequential </em><em>Processes</em> and is available at <em><a href="http://www.usingcsp.com/">http://www.usingcsp.com/</a>.</em></p>
+      <p class="Body">Rob Pike, co-creator of Go, has a good talk on concurrency, which is available at <em><a href="https://www.youtube.com/watch?v=f6kdp27TYZs">https://www.youtube.com/watch?v=f6kdp27TYZs</a></em>.</p>
+      <p class="Body">ClojureScript, also known as the best thing to happen to the browser, uses core.async. No more callback hell! You can learn about ClojureScript at <em><a href="https://github.com/clojure/clojurescript&lt;/span&gt;">https://github.com/clojure/clojurescript</a></em>.</p>
+      <p class="Body">Finally, check out the API docs at <em><a href="http://clojure.github.io/core.async/">http://clojure.github.io/core.async/</a></em>.</p>
+      <h2>Summary</h2>
+      <p class="BodyFirst">In this chapter, you learned about how core.async allows you to create concurrent processes that respond to the put and take communication events on channels. You learned about how to use <code>go</code> and <code>thread</code> to create concurrent processes that wait for communication events by parking and blocking. You also learned how to create process pipelines by making the <em>out</em> channel of one process the<em> in</em> channel of another, and how this allows you to write code that’s way more intelligible than nested callbacks. Finally, you meditated on whether or not you’re just a fancy hot dog vending machine.</p>
+    
+  
+

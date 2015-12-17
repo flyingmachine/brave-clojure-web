@@ -1,0 +1,156 @@
+$home: (
+  columns: 6,
+  column-width: 4em,
+  gutters: 1/4,
+  math: fluid,
+  output: static,
+  container-position: center
+);
+
+@include layout($home);
+
+.home .content .container {
+  @include container;
+}
+
+
+$home-hero: (
+  columns: 9,
+  column-width: 4em,
+  gutters: 1/4,
+  math: fluid,
+  output: static,
+  container-position: center
+);
+
+@include layout($home-hero);
+
+.home {
+  .container {
+    @include container;
+  }
+
+  .hero {
+    @include container;
+    @include padding-trailer(2);
+  }
+
+  .cover {
+    @include span(4 at 6 of 9);
+  }
+
+  .hype {
+    @include span(5);
+    @include padding-leader;
+  }
+
+  .header {
+    padding: 0;
+    position: relative;
+    height: 216px;
+
+    .container {
+      background: $plum;
+    }
+
+    .images {
+      position: absolute;
+      bottom: 0;
+      height: 188px;
+    }
+  }
+
+  h1 {
+    color: $orange;
+  }
+
+  .buy {
+    text-align: center;
+    clear:both;
+
+    a {
+      display: inline-block;
+      background: $orange;
+      color: $paper;
+      padding: .25em .5em;
+      border-radius: 2px;
+      font-family: $title-family;
+      &:hover {
+        background: $plum;
+      }
+    }
+  }
+
+  .toc {
+    @include padding-leader(2);
+    @include padding-trailer(2);
+    background: #333;
+    background: #262b2e;
+
+    h1 {
+      color: $orange;
+      margin-bottom: 0;
+    }
+
+    h2 {
+      color: $paper;
+      @include leader(1, $ms-up2);
+      margin-bottom: 0;
+    }
+
+    a {
+      color: $gold;
+      display: block;
+      &:hover {
+        color: white;
+      }
+    }
+  }
+
+  .testimonials {
+    @include padding-leader(2);
+    @include padding-trailer(2);
+    /*
+    background: $salmon;
+    h1 {
+      color: white;
+    }
+    a {
+      color: white;
+      &:hover {
+        color: $plum;
+      }
+    }
+   .buy a {
+      background: $plum;
+      color: $paper;
+    }
+   */
+    blockquote {
+      font-style: italic;
+      @include trailer;
+    }
+    cite {
+      display: block;
+      font-style: normal;
+    }
+  }
+  
+  .deal {
+    width: 80%;
+    margin: 0 auto;
+    padding: .75em 1em;
+    background: white;
+    @include trailer;
+    p {
+      margin: 0;
+    }
+  }
+
+  .twitter {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    z-index: 1;
+  }
+}

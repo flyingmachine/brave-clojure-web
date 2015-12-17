@@ -13,91 +13,83 @@
 #   “content/about.html”). To select all children, grandchildren, … of an
 #   item, use the pattern “/about/*/”; “/about/*” will also select the parent,
 #   because “*” matches zero or more characters.
-require "rubygems"
-require "bundler/setup"
-Bundler.require(:default)
 
+require "susy"
+require "nokogiri"
+require "compass-core"
+require "breakpoint"
 require "./lib/rule_helper"
-require "./lib/filters/toc_filter"
 
-Compass.add_project_configuration 'compass/config.rb'
-
-compile '/assets/javascripts/tipuesearch-data/' do
-  filter :erb
+#static
+compile '/static/*/' do
 end
 
+route '/static/*/' do
+  item.identifier.to_s.gsub(/^\/static(\/.*)\/$/, "\\1")
+end
+
+sass_options = {
+  syntax: :scss,
+  load_paths: Compass.configuration.to_sass_engine_options[:load_paths],
+}
+
+# sass
 compile '/assets/stylesheets/*' do
-  unless item.identifier =~ /stylesheets\/_/ || item.identifier =~ /documentation/
-    filter(:sass, Compass.sass_engine_options)
-  end
-end
-
-compile '*' do
-  unless item.identifier.include?("#") 
-    if item.binary?
-      # don’t filter binary items
-    else
-      item_layout = "default"
-      
-      case item.attributes[:filename]
-      when /home/ then
-        filter :redcarpet, :options => {fenced_code_blocks: true, tables: true}, :renderer => RedcarpetSyntaxHighlighter
-        layout "home"
-      when /haml$/ then
-        filter :haml
-        layout item_layout
-      when /textile$/ then
-        filter :redcloth
-        layout item_layout
-      when /(markdown|md)$/ then
-        filter :redcarpet, :options => {fenced_code_blocks: true, tables: true}, :renderer => RedcarpetSyntaxHighlighter
-        layout item_layout
-      when /coffee$/ then filter :coffeescript
-      end
-      if item.attributes[:kind] == "documentation" && !item.attributes[:notoc]
-        filter :toc
-      end
-    end
-  end
-end
-
-route '/assets/javascripts/*' do
-  unless item.identifier.include?("#") # emacs tmp file
-    "/javascripts/#{basename(item.attributes[:filename])}.js"
+  unless sass_partial?(item)
+    filter(:sass, sass_options)
   end
 end
 
 route '/assets/stylesheets/*' do
-  unless item.identifier.include?("#") || item.identifier =~ /stylesheets\/_/ # emacs tmp file
-    "/stylesheets/#{basename(item.attributes[:filename])}.css" 
+  unless sass_partial?(item)
+    "/assets/stylesheets/#{basename(item.attributes[:filename])}.css" 
   end
 end
 
-route '/*home*' do
-  "/index.html"
+# js
+route '/assets/scripts/*' do
+  unless item.identifier.include?("#") # emacs tmp file
+    "/assets/scripts/#{basename(item.attributes[:filename])}.js"
+  end
+end
+
+
+compile '*' do
+  if item.binary?
+  elsif item.attributes[:filename] =~ /index.html/
+    filter :erb
+  elsif item.attributes[:filename] =~ /md$/
+    filter :redcarpet, {
+      options: {
+        fenced_code_blocks: true,
+        tables: true
+      },
+      renderer: RedcarpetSyntaxHighlighter
+    }
+    layout 'default'
+  elsif item.attributes[:filename] =~ /html$/
+    layout 'default'
+    filter :toc
+  elsif item.attributes[:filename] =~ /asc$/
+    filter :asciidoctor, notitle: false
+    layout 'default'
+    filter :toc
+  end
 end
 
 route '*' do
-  if item.binary?
+  if item[:extension] == 'css'
+    # Write item with identifier /foo/ to /foo.css
+    item.identifier.chop.to_s + '.css'
+  elsif item.binary?
     # Write item with identifier /foo/ to /foo.ext
-    begin
-      item.identifier.chop + '.' + item[:extension]
-    rescue
-      puts "ERROR: #{item.identifier}"
-    end
+    item.identifier.chop.to_s + '.' + item[:extension].to_s
+  elsif item.identifier =~ /cftbat/
+    item.identifier.gsub(/\/cftbat/, "") + 'index.html'
   else
     # Write item with identifier /foo/ to /foo/index.html
-
-    # Source file handling is experimental
-    if item.identifier.include? "/source/"
-      # TODO use the actual item extension
-      item.identifier.chop + ".rb"
-    else
-      item.identifier + 'index.html'
-    end
-    
+    item.identifier + 'index.html'
   end
 end
 
-
-layout '*', :haml
+layout '*', :erb

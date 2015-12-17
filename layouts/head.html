@@ -1,0 +1,15 @@
+<head>
+  <meta charset="utf-8">
+  <meta path="<%=@item.path%>">
+  <% if @item[:full_title] %>
+  <title><%= @item[:full_title] %></title>
+  <% else %>
+  <title><%= @item[:title] %> | Clojure for the Brave and True</title>
+  <% end %>
+  <link rel="stylesheet" href="/assets/stylesheets/main.css">
+  <link rel="stylesheet" href="/assets/stylesheets/pygments.css">
+  <link href='http://fonts.googleapis.com/css?family=Source+Code+Pro:400,700|Fjalla+One|Gentium+Book+Basic:400,400italic,700,700italic|Courgette' rel='stylesheet' type='text/css'>
+
+  <!-- you don't need to keep this, but it's cool for stats! -->
+  <meta name="generator" content="nanoc <%= Nanoc::VERSION %>">
+</head>

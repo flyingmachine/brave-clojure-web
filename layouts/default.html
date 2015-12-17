@@ -1,0 +1,99 @@
+<% index = chapters.index(@item)%>
+<!DOCTYPE HTML>
+<html lang="en">
+  <%= render 'head' %>
+  <body>
+    <div class="header">
+      <div class="logoy">
+        <div class="container">
+          <div class="title">
+            <a href="/">
+              <strong>Clojure</strong> for the <strong>Brave</strong> and <strong>True</strong>
+            </a>
+          </div>
+          <div class="subtitle">
+            learn the ultimate language and become a better programmer
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="callout">
+      <div class="container">
+        <p>
+          Be a pal and buy print and ebooks from
+          <a href="http://nostarch.com">No Starch</a>
+          or <a href="http://amzn.to/1H7MqmT">Amazon</a>
+        </p>
+        <form action="http://flyingmachinestudios.us1.list-manage.com/subscribe/post?u=60763b0c4890c24bd055f32e6&amp;amp;id=0b40ffd1e1" class="validate" id="mc-embedded-subscribe-form" method="post" name="mc-embedded-subscribe-form" novalidate="" target="_blank">
+          <p>
+            Follow
+            <a href="https://twitter.com/nonrecursive">@nonrecursive</a>
+            to hear about new content
+            or subscribe:
+            <input class="email" id="mce-EMAIL" name="EMAIL" placeholder="email address" required="" type="email" value="">
+            <input class="button" id="mc-embedded-subscribe" name="subscribe" type="submit" value="get updates!">
+          </p>
+        </form>
+      </div>
+    </div>
+    <div id="top-nav"></div>
+    <div class="container wrap">
+      <div class="main">
+        <%= render 'chapter-nav' %>
+        <%= yield %>
+        <%= render 'chapter-nav' %>
+      </div>
+      <div class="secondary">
+        <div class="wrapper">
+        </div>
+      </div>
+    </div>
+    <div class="footer">
+      <div class="container">
+        <div class="buy">
+          buy print and ebooks from 
+          <a href="http://amzn.to/1H7MqmT">Amazon</a> or
+          <a href="https://www.nostarch.com/clojure">No Starch</a> :)
+        </div>
+        <div>
+          &copy; 2015 Daniel Higginbotham
+        </div>
+      </div>
+    </div>
+    <div class="topnav-content callout">
+      <div class="container">
+        <ul>
+          <li>
+            buy from <a href="http://nostarch.com">No Starch</a>
+            or <a href="http://amzn.to/1H7MqmT">Amazon</a>
+          </li>
+          <li class="subscribe">
+            <form action="http://flyingmachinestudios.us1.list-manage.com/subscribe/post?u=60763b0c4890c24bd055f32e6&amp;amp;amp;id=0b40ffd1e1" class="validate" id="mc-embedded-subscribe-form" method="post" name="mc-embedded-subscribe-form" novalidate="" target="_blank">
+              <input class="email" id="mce-EMAIL" name="EMAIL" placeholder="email address" required="" type="email" value="">
+              <input class="button" id="mc-embedded-subscribe" name="subscribe" type="submit" value="get email updates">
+            </form>
+          </li>
+          <li class="tweet">
+            <a class="twitter-share-button" href="https://twitter.com/share">tweet bravely and truly</a>
+            <script>
+              !function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs')
+            </script>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+    <script src="/assets/scripts/jquery.sticky.js"></script>
+    <script src="/assets/scripts/sticky.js"></script>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-43463851-1', 'auto');
+      ga('send', 'pageview');
+
+    </script>
+  </body>
+</html>

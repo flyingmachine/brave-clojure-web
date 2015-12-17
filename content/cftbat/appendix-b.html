@@ -1,0 +1,204 @@
+---
+title: "Boot, the Fancy Clojure Build Framework"
+kind: chapter
+---
+
+  
+  
+    <div id="clojureAB.html">
+      
+	<div class="chapter-number">Appendix B</div>
+	<h1>Boot, the Fancy Clojure Build Framework</h1>
+	<p class="x1st-Para"><span>Boot is an alternative to Leiningen that </span><span>provides the same functionality. Leiningen’s </span><span>more popular (as of the summer of 2015), but I personally like to work with Boot because it’s easier to extend. This appendix explains Boot’s underlying concepts and guides you through writ</span><span>ing your first Boot tasks. If you’re interested in using Boot to build projects right this second, check out its GitHub README (</span><em><a href="https://github.com/boot-clj/boot/">https://github.com/boot-clj/boot/</a></em><span>) and its wiki (</span><a href="https://github.com/boot-clj/boot/wiki/"><em>https://github.com/boot-clj/boot/wiki/</em></a><em><span>).</span></em></p>
+	<p class="Note"><span class="Note-Head">Note</span>	As of this writing, Boot has limited support for Windows. The Boot team welcomes contributions!</p>
+	<h2>Boot’s Abstractions</h2>
+	<p class="BodyFirst">Created by Micha Niskin and Alan Dipert, Boot is a fun and powerful addition to the Clojure tooling landscape. On the surface, it’s a convenient way to build Clojure applications and run Clojure tasks from the command line. Dig a little deeper and you’ll see that Boot is like the Lisped-up lovechild of Git and Unix in that it provides abstractions that make it more pleasant to write code that exists at the intersection of your operating system and your application.</p>
+	<p class="Body">Unix provides abstractions that we’re all familiar with to the point where we take them for granted. (Would it kill you to take your computer out to a nice restaurant once in a while?) The process abstraction lets you reason about programs as isolated units of logic that can be easily composed into a stream-processing pipeline through the STDIN and STDOUT file descriptors. These abstractions make certain kinds of operations, like text processing, very straightforward.</p>
+	<p class="Body"><span>Similarly, Boot provides abstractions that make it easy to compose </span><span>independent operations into the kinds of complex, coordinated operations that build tools end up doing, like converting ClojureScript into JavaScript.</span> <span>Boot’s task abstraction lets you easily define units of logic that communi</span>cate through <em>filesets</em>. The fileset abstraction keeps track of the evolving build context and provides a well-defined, reliable method of task coordination.</p>
+	<p class="Body">That’s a lot of high-level description, which hopefully has hooked your attention. But I would be ashamed to leave you with a plateful of metaphors. Oh no, dear reader, that was only the appetizer. Throughout the rest of this appendix, you’ll learn how to build your own Boot tasks. Along the way, you’ll discover that build tools can actually have a conceptual foundation.</p>
+	<h2>Tasks</h2>
+	<p class="BodyFirst">Like make, rake, grunt, and other build tools of yore, Boot lets you define tasks. <em>Tasks</em> are named operations that take command line options dispatched by some intermediary program (make, rake, Boot). </p>
+	<p class="Body">Boot provides the dispatching program, <em>boot</em>, and a Clojure library that makes it easy for you to define named operations and their command line options with the <code>deftask</code> macro. To see what all the fuss is about, let’s create your first task. Normally, programming tutorials encourage you to write code that prints “Hello World,” but I like my examples to have real-world utility, so your task is to print “My pants are on fire!” This information is objectively more useful. First, install Boot; then create a new directory named <em>boot-walkthrough</em>, navigate to that directory, create a file named <em>build.boot</em><em>,</em> and write this:</p>
+	<div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-nf">deftask</span> <span class="tok-nv">fire</span>
+  <span class="tok-s">"Prints 'My pants are on fire!'"</span>
+  <span class="tok-p">[]</span>
+  <span class="tok-p">(</span><span class="tok-nb">println </span><span class="tok-s">"My pants are on fire!"</span><span class="tok-p">))</span>
+</code></pre></div></div>
+
+	<p class="Body">Now run this task from the command line with <code>boot fire</code>; you should <span>see the message you wrote printed to your terminal. This task demonstrates </span><span>two out of the three task components: the task is named (</span><code>fire</code><span>), and it’s </span>dispatched by boot. This is super cool. You’ve essentially created a Clojure shell script, stand-alone Clojure code that you can run from the command line with ease. No <em>project.clj</em>, directory structure, or namespaces needed!</p>
+	<p class="Body">Let’s extend the example to demonstrate how you’d write command line options:</p>
+	<div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-nf">deftask</span> <span class="tok-nv">fire</span>
+  <span class="tok-s">"Announces that something is on fire"</span>
+  <span class="tok-p">[</span><span class="tok-nv">t</span> <span class="tok-nv">thing</span>     <span class="tok-nv">THING</span> <span class="tok-nb">str </span> <span class="tok-s">"The thing that's on fire"</span>
+   <span class="tok-nv">p</span> <span class="tok-nv">pluralize</span>       <span class="tok-nv">bool</span> <span class="tok-s">"Whether to pluralize"</span><span class="tok-p">]</span>
+  <span class="tok-p">(</span><span class="tok-k">let </span><span class="tok-p">[</span><span class="tok-nv">verb</span> <span class="tok-p">(</span><span class="tok-k">if </span><span class="tok-nv">pluralize</span> <span class="tok-s">"are"</span> <span class="tok-s">"is"</span><span class="tok-p">)]</span>
+    <span class="tok-p">(</span><span class="tok-nb">println </span><span class="tok-s">"My"</span> <span class="tok-nv">thing</span> <span class="tok-nv">verb</span> <span class="tok-s">"on fire!"</span><span class="tok-p">)))</span>
+</code></pre></div></div>
+
+	<p class="Body">Try running the task like so:</p>
+	<div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-nv">boot</span> <span class="tok-nv">fire</span> <span class="tok-nv">-t</span> <span class="tok-nv">heart</span>
+<span class="tok-o">#</span> <span class="tok-nv">=&gt;</span> <span class="tok-nv">My</span> <span class="tok-nv">heart</span> <span class="tok-nv">is</span> <span class="tok-nv">on</span> <span class="tok-nv">fire!</span>
+
+<span class="tok-nv">boot</span> <span class="tok-nv">fire</span> <span class="tok-nv">-t</span> <span class="tok-nv">logs</span> <span class="tok-nv">-p</span>
+<span class="tok-o">#</span> <span class="tok-nv">=&gt;</span> <span class="tok-nv">My</span> <span class="tok-nv">logs</span> <span class="tok-nv">are</span> <span class="tok-nv">on</span> <span class="tok-nv">fire!</span>
+</code></pre></div></div>
+
+	<p class="Body"><span>In the first instance, either you’re newly in love or you need to be rushed to the emergency room. In the second, you are a Boy Scout awkwardly expressing your excitement over meeting the requirements for a merit badge. In both instances, you were able to easily specify options for the task.</span></p>
+	<p class="Body"><span>This refinement of the </span><code>fire</code><span> task introduced two command line options, </span><code>thing</code><span> and </span><code>pluralize</code><span>. Both options are defined using a </span><em>domain-specific language (DSL)</em><span>. DSLs are their own topic, but briefly, the term refers to mini-</span><span>languages</span><span> </span>that you can use within a larger program to write compact, expressive code for narrowly defined domains (like defining options).</p>
+	<p class="Body">In the option <code>thing</code>, <code>t</code> specifies its short name, and <code>thing</code> specifies its long name. <code>THING</code> is a bit complicated, and I’ll get to it in a second. <code>str</code> specifies the option’s type, and Boot uses that to validate the argument and convert it. <code>"The thing that's on fire"</code> is the documentation for the option. You can view a task’s documentation in the terminal with <code>boot task-name -h</code>:</p>
+	<div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-nv">boot</span> <span class="tok-nv">fire</span> <span class="tok-nv">-h</span>
+<span class="tok-o">#</span> <span class="tok-nv">Announces</span> <span class="tok-nv">that</span> <span class="tok-nv">something</span> <span class="tok-nv">is</span> <span class="tok-nv">on</span> <span class="tok-nv">fire</span>
+<span class="tok-o">#</span> 
+<span class="tok-o">#</span> <span class="tok-nv">Options</span><span class="tok-err">:</span>
+<span class="tok-o">#</span>   <span class="tok-nv">-h</span>, <span class="tok-nv">--help</span>         <span class="tok-nv">Print</span> <span class="tok-nv">this</span> <span class="tok-nv">help</span> <span class="tok-nv">info.</span>
+<span class="tok-o">#</span>   <span class="tok-nv">-t</span>, <span class="tok-nv">--thing</span> <span class="tok-nv">THING</span>  <span class="tok-nv">Set</span> <span class="tok-nv">the</span> <span class="tok-nv">thing</span> <span class="tok-nv">that</span><span class="tok-ss">'s</span> <span class="tok-nv">on</span> <span class="tok-nv">fire</span> <span class="tok-nv">to</span> <span class="tok-nv">THING.</span>
+<span class="tok-o">#</span>   <span class="tok-nv">-p</span>, <span class="tok-nv">--pluralize</span>    <span class="tok-nv">Whether</span> <span class="tok-nv">to</span> <span class="tok-nv">pluralize</span>
+</code></pre></div></div>
+
+	<p class="Body">Pretty groovy! Boot makes it very easy to write code that’s meant to be invoked from the command line.</p>
+	<p class="Body"><span>Now, let’s look at </span><code>THING</code><span>. </span><code>THING</code><span> is an </span><em>optarg</em><span>, and it indicates that this option expects an argument. You don’t have to include an optarg when </span>you’re defining an option (notice that the <code>pluralize</code> option has no optarg). The optarg doesn’t have to correspond to the full name of the option; you could replace <code>THING</code> with <code>BILLY_JOEL</code> or whatever you want and the task would <span>work the same. You can also designate complex options using the optarg. </span>
+          (<a href="https://github.com/boot-clj/boot/wiki/Task-Options-DSL#complex-options">Visit <em>https://github.com/boot-clj/boot/wiki/Task-Options-DSL#complex-options</em></a> for Boot’s documentation on the subject.) Basically, complex options allow you to specify that option arguments should be treated as maps, sets, vectors, or even nested collections. It’s pretty powerful.</p>
+	<p class="Body">Boot provides you with all the tools you could ask for to build command line interfaces with Clojure. And you’ve only just started learning about it!</p>
+	<h2>The REPL</h2>
+	<p class="BodyFirst"><span>Boot comes with a number of useful built-in tasks, including a REPL task. Run </span><code>boot repl</code><span> to fire up that puppy. The Boot REPL is similar to Leiningen’s in that it handles loading your project code so you can play </span>around with it. You might not think this applies to the project you’ve been writing because you’ve only written tasks, but you can actually run tasks in the REPL (I’ve omitted the <code>boot.user=&gt;</code> prompt). You can specify options using a string:</p>
+	<div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-nf">fire</span> <span class="tok-s">"-t"</span> <span class="tok-s">"NBA Jam guy"</span><span class="tok-p">)</span>
+<span class="tok-c1">; My NBA Jam guy is on fire!</span>
+<span class="tok-c1">; =&gt; nil</span>
+</code></pre></div></div>
+
+	<p class="Body">Notice that the option’s value comes right after the option. </p>
+	<p class="Body">You can also specify an option using a keyword:</p>
+	<div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-nf">fire</span> <span class="tok-ss">:thing</span> <span class="tok-s">"NBA Jam guy"</span><span class="tok-p">)</span>
+<span class="tok-c1">; My NBA Jam guy is on fire!</span>
+<span class="tok-c1">; =&gt; nil</span>
+</code></pre></div></div>
+
+	<p class="Body">You can also combine options:</p>
+	<div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-nf">fire</span> <span class="tok-s">"-p"</span> <span class="tok-s">"-t"</span> <span class="tok-s">"NBA Jam guys"</span><span class="tok-p">)</span>
+<span class="tok-c1">; My NBA Jam guys are on fire!</span>
+<span class="tok-c1">; =&gt; nil</span>
+
+<span class="tok-p">(</span><span class="tok-nf">fire</span> <span class="tok-ss">:pluralize</span> <span class="tok-nv">true</span> <span class="tok-ss">:thing</span> <span class="tok-s">"NBA Jam guys"</span><span class="tok-p">)</span>
+<span class="tok-c1">; My NBA Jam guys are on fire!</span>
+<span class="tok-c1">; =&gt; nil</span>
+</code></pre></div></div>
+
+	<p class="Body"><span>And of course, you can use </span><code>deftask</code><span> in the REPL as well—it’s just Clojure, after all. The takeaway is that Boot lets you interact with your tasks as Clojure functions, because that’s what they are.</span></p>
+	<h2>Composition and Coordination</h2>
+	<p class="BodyFirst">If what you’ve seen so far was all that Boot had to offer, it’d be a pretty swell tool, but it wouldn’t be very different from other build tools. One feature that sets Boot apart is how it lets you compose tasks. For comparison’s sake, here’s an example Rake invocation (Rake is the premier Ruby build tool):</p>
+	<div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-nv">rake</span> <span class="tok-nv">db</span><span class="tok-ss">:create</span> <span class="tok-nv">d</span><span class="tok-p">{</span><span class="tok-ss">:tag</span> <span class="tok-ss">:a</span>, <span class="tok-ss">:attrs</span> <span class="tok-p">{</span><span class="tok-ss">:href</span> <span class="tok-s">"db:seed"</span><span class="tok-p">}</span>, <span class="tok-ss">:content</span> <span class="tok-p">[</span><span class="tok-s">"b:migra"</span><span class="tok-p">]}</span><span class="tok-nv">te</span> <span class="tok-nv">db</span><span class="tok-ss">:seed</span>
+</code></pre></div></div>
+
+	<p class="Body">This code will create a database, run migrations on it, and populate it with seed data when run in a Rails project. However, worth noting is that <span>Rake doesn’t provide any way for these tasks to communicate with each other. Specifying multiple tasks is just a convenience, saving you from hav</span>ing to run <code>rake db:create; rake db:migrate; rake db:seed</code>. If you want to access the result of Task A within Task B, the build tool doesn’t help you; you have to manage that coordination yourself. Usually, you’ll do this by shoving the result of Task A into a special place on the filesystem and then making sure Task B reads that special place. This looks like programming with mutable, global variables, and it’s just as brittle.</p>
+	<h3>Handlers and Middleware</h3>
+	<p class="BodyFirst"><span>Boot addresses this task communication problem by treating tasks as </span><em>middle</em><em>ware factories</em>. If you’re familiar with Ring, Boot’s tasks work very similarly, so feel free to skip to <a href="#Anchor">“Tasks Are Middleware Factories” on page <span>287</span></a>. If you’re not familiar with the concept of middleware, allow me to explain! <em>Middleware</em> refers to a set of <em>conventions</em> that programmers adhere to so they can flexibly create domain-specific function pipelines. That’s pretty dense, so let’s un-dense it. I’ll discuss the <em>flexible</em> part in this section and cover <em>domain-specific</em> in <a href="#Anchor-12">“Filesets” on page <span>288</span></a>.</p>
+	<p class="Body">To understand how the middleware approach differs from run-of-the-mill function composition, here’s an example of composing everyday functions:</p>
+	<div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-k">def </span><span class="tok-nv">strinc</span> <span class="tok-p">(</span><span class="tok-nb">comp str </span><span class="tok-nv">inc</span><span class="tok-p">))</span>
+<span class="tok-p">(</span><span class="tok-nf">strinc</span> <span class="tok-mi">3</span><span class="tok-p">)</span>
+<span class="tok-c1">; =&gt; "4"</span>
+</code></pre></div></div>
+
+	<p class="Body">There’s nothing interesting about this function composition. In fact, this function composition is so unremarkable that it strains my abilities as a writer to actually say anything about it. There are two functions, each does its own thing, and now they’ve been composed into one. Whoop-dee-doo!</p>
+	<p class="Body">Middleware introduces an extra step to function composition, giving you more flexibility in defining your function pipeline. Suppose, in the preceding example, that you wanted to return <code>"I don't like the number X"</code> for arbitrary numbers but return a string-ified number for everything else. Here’s how you could do that:</p>
+	<div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-kd">defn </span><span class="tok-nv">whiney-str</span>
+  <span class="tok-p">[</span><span class="tok-nv">rejects</span><span class="tok-p">]</span>
+  <span class="tok-p">{</span><span class="tok-ss">:pre</span> <span class="tok-p">[(</span><span class="tok-nf">set?</span> <span class="tok-nv">rejects</span><span class="tok-p">)]}</span>
+  <span class="tok-p">(</span><span class="tok-k">fn </span><span class="tok-p">[</span><span class="tok-nv">x</span><span class="tok-p">]</span>
+    <span class="tok-p">(</span><span class="tok-k">if </span><span class="tok-p">(</span><span class="tok-nf">rejects</span> <span class="tok-nv">x</span><span class="tok-p">)</span>
+      <span class="tok-p">(</span><span class="tok-nb">str </span><span class="tok-s">"I don't like "</span> <span class="tok-nv">x</span><span class="tok-p">)</span>
+      <span class="tok-p">(</span><span class="tok-nb">str </span><span class="tok-nv">x</span><span class="tok-p">))))</span>
+
+<span class="tok-p">(</span><span class="tok-k">def </span><span class="tok-nv">whiney-strinc</span> <span class="tok-p">(</span><span class="tok-nb">comp </span><span class="tok-p">(</span><span class="tok-nf">whiney-str</span> <span class="tok-o">#</span><span class="tok-p">{</span><span class="tok-mi">2</span><span class="tok-p">})</span> <span class="tok-nv">inc</span><span class="tok-p">))</span>
+<span class="tok-p">(</span><span class="tok-nf">whiney-strinc</span> <span class="tok-mi">1</span><span class="tok-p">)</span>
+<span class="tok-c1">; =&gt; "I don't like 2"</span>
+</code></pre></div></div>
+
+	<p class="Body">Now let’s take it one step further. What if you want to decide whether or not to call <code>inc</code> in the first place? Listing B-1 shows how you could do that:</p>
+	<div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-kd">defn </span><span class="tok-nv">whiney-middleware</span>
+  <span class="tok-p">[</span><span class="tok-nv">next-handler</span> <span class="tok-nv">rejects</span><span class="tok-p">]</span>
+  <span class="tok-p">{</span><span class="tok-ss">:pre</span> <span class="tok-p">[(</span><span class="tok-nf">set?</span> <span class="tok-nv">rejects</span><span class="tok-p">)]}</span>
+  <span class="tok-p">(</span><span class="tok-k">fn </span><span class="tok-p">[</span><span class="tok-nv">x</span><span class="tok-p">]</span>
+<span class="tok-err">➊</span>     <span class="tok-p">(</span><span class="tok-k">if </span><span class="tok-p">(</span><span class="tok-nb">= </span><span class="tok-nv">x</span> <span class="tok-mi">1</span><span class="tok-p">)</span>
+      <span class="tok-s">"I'm not going to bother doing anything to that"</span>
+      <span class="tok-p">(</span><span class="tok-k">let </span><span class="tok-p">[</span><span class="tok-nv">y</span> <span class="tok-p">(</span><span class="tok-nf">next-handler</span> <span class="tok-nv">x</span><span class="tok-p">)]</span>
+        <span class="tok-p">(</span><span class="tok-k">if </span><span class="tok-p">(</span><span class="tok-nf">rejects</span> <span class="tok-nv">y</span><span class="tok-p">)</span>
+          <span class="tok-p">(</span><span class="tok-nb">str </span><span class="tok-s">"I don't like "</span> <span class="tok-nv">y</span><span class="tok-p">)</span>
+          <span class="tok-p">(</span><span class="tok-nb">str </span><span class="tok-nv">y</span><span class="tok-p">))))))</span>
+
+<span class="tok-p">(</span><span class="tok-k">def </span><span class="tok-nv">whiney-strinc</span> <span class="tok-p">(</span><span class="tok-nf">whiney-middleware</span> <span class="tok-nb">inc </span><span class="tok-o">#</span><span class="tok-p">{</span><span class="tok-mi">2</span><span class="tok-p">}))</span>
+<span class="tok-p">(</span><span class="tok-nf">whiney-strinc</span> <span class="tok-mi">1</span><span class="tok-p">)</span>
+<span class="tok-c1">; =&gt; "I don't like 2"</span>
+</code></pre></div></div>
+
+	<ol class="List-1">
+	  <li class="Listing">The middleware approach to function composition lets you introduce choice</li>
+	</ol>
+	<p class="Body"><span>Here, instead of using </span><code>comp</code><span> to create your function pipeline, you pass </span><span>the next function in the pipeline as the first argument to the middleware function. In this case, you’re passing </span><code>inc</code><span> as the first argument to </span><code>whiney-middleware</code> as <code>next-handler</code>. <code>whiney-middleware</code> then returns an anonymous function that closes over <code>inc </code>and has the ability to choose whether<span> to call it or not. You can see this choice at </span>➊<span>.</span></p>
+	<p class="Body">We say that a middleware takes a handler as its first argument and returns a handler. In this example, <code>whiney-middleware</code> takes a handler as its first argument, <code>inc</code>, and it returns another handler, the anonymous <span>function with </span><code>x</code><span> as its only argument. Middleware can also take extra arguments, like </span><code>rejects</code><span>, that act as configuration. The result is that the handler returned by the middleware can behave more flexibly (thanks to </span><span>configuration</span><span>), and it has more control over the function pipeline (because </span>it can choose whether or not to call the next handler).</p>
+	<h3><a id="Anchor"></a>Tasks Are Middleware Factories</h3>
+	<p class="BodyFirst">Boot takes this pattern of making function composition more flexible one step further by separating middleware configuration from handler creation. First, you create a function that takes <em>n</em> configuration arguments. This is the <em>middleware factory</em>, and it returns a middleware function. The middleware function expects one argument, the next handler, and it returns a handler, just like in the preceding example. Here’s a whiney middleware factory:</p>
+	<div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-kd">defn </span><span class="tok-nv">whiney-middleware-factory</span>
+  <span class="tok-p">[</span><span class="tok-nv">rejects</span><span class="tok-p">]</span>
+  <span class="tok-p">{</span><span class="tok-ss">:pre</span> <span class="tok-p">[(</span><span class="tok-nf">set?</span> <span class="tok-nv">rejects</span><span class="tok-p">)]}</span>
+  <span class="tok-p">(</span><span class="tok-k">fn </span><span class="tok-p">[</span><span class="tok-nv">handler</span><span class="tok-p">]</span>
+    <span class="tok-p">(</span><span class="tok-k">fn </span><span class="tok-p">[</span><span class="tok-nv">x</span><span class="tok-p">]</span>
+      <span class="tok-p">(</span><span class="tok-k">if </span><span class="tok-p">(</span><span class="tok-nb">= </span><span class="tok-nv">x</span> <span class="tok-mi">1</span><span class="tok-p">)</span>
+        <span class="tok-s">"I'm not going to bother doing anything to that"</span>
+        <span class="tok-p">(</span><span class="tok-k">let </span><span class="tok-p">[</span><span class="tok-nv">y</span> <span class="tok-p">(</span><span class="tok-nf">handler</span> <span class="tok-nv">x</span><span class="tok-p">)]</span>
+          <span class="tok-p">(</span><span class="tok-k">if </span><span class="tok-p">(</span><span class="tok-nf">rejects</span> <span class="tok-nv">y</span><span class="tok-p">)</span>
+            <span class="tok-p">(</span><span class="tok-nb">str </span><span class="tok-s">"I don't like "</span> <span class="tok-nv">y</span> <span class="tok-s">" :'("</span><span class="tok-p">)</span>
+            <span class="tok-p">(</span><span class="tok-nb">str </span><span class="tok-nv">y</span><span class="tok-p">)))))))</span>
+
+<span class="tok-p">(</span><span class="tok-k">def </span><span class="tok-nv">whiney-strinc</span> <span class="tok-p">((</span><span class="tok-nf">whiney-middleware-factory</span> <span class="tok-o">#</span><span class="tok-p">{</span><span class="tok-mi">3</span><span class="tok-p">})</span> <span class="tok-nv">inc</span><span class="tok-p">))</span>
+</code></pre></div></div>
+
+	<p class="Body">As you can see, this code is nearly identical to Listing B-1. The change is that the topmost function, <code>whiney-middleware-factory</code>, now only accepts one argument, <code>rejects</code>. It returns an anonymous function, the middleware, which expects one argument, a handler. The rest of the code is the same.</p>
+	<p class="Body">In Boot, tasks can act as middleware factories. To show this, let’s split the <code>fire</code> task into two tasks: <code>what</code> and <code>fire</code> (see Listing B-2). <code>what</code> lets you specify an object and whether it’s plural, and <code>fire</code> announces that it’s on fire. This is great modular software engineering because it allows you to add other tasks, like <code>gnomes</code>, to announce that a thing is being overrun with gnomes, which is just as objectively useful. (As an exercise, try creating the gnome task. It should compose with the <code>what</code> task, just as <code>fire</code> does.)</p>
+	<div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-nf">deftask</span> <span class="tok-nv">what</span>
+  <span class="tok-s">"Specify a thing"</span>
+  <span class="tok-p">[</span><span class="tok-nv">t</span> <span class="tok-nv">thing</span>     <span class="tok-nv">THING</span> <span class="tok-nb">str </span> <span class="tok-s">"An object"</span>
+   <span class="tok-nv">p</span> <span class="tok-nv">pluralize</span>       <span class="tok-nv">bool</span> <span class="tok-s">"Whether to pluralize"</span><span class="tok-p">]</span>
+  <span class="tok-p">(</span><span class="tok-k">fn </span><span class="tok-nv">middleware</span> <span class="tok-p">[</span><span class="tok-nv">next-handler</span><span class="tok-p">]</span>
+<span class="tok-err">➊</span>     <span class="tok-p">(</span><span class="tok-k">fn </span><span class="tok-nv">handler</span> <span class="tok-p">[</span><span class="tok-nv">fileset</span><span class="tok-p">]</span>
+      <span class="tok-p">(</span><span class="tok-nf">next-handler</span> <span class="tok-p">(</span><span class="tok-nb">merge </span><span class="tok-nv">fileset</span> <span class="tok-p">{</span><span class="tok-ss">:thing</span> <span class="tok-nv">thing</span> <span class="tok-ss">:pluralize</span> <span class="tok-nv">pluralize</span><span class="tok-p">})))))</span>
+
+<span class="tok-p">(</span><span class="tok-nf">deftask</span> <span class="tok-nv">fire</span>
+  <span class="tok-s">"Announce a thing is on fire"</span>
+  <span class="tok-p">[]</span>
+  <span class="tok-p">(</span><span class="tok-k">fn </span><span class="tok-nv">middleware</span> <span class="tok-p">[</span><span class="tok-nv">next-handler</span><span class="tok-p">]</span>
+<span class="tok-err">➋</span>     <span class="tok-p">(</span><span class="tok-k">fn </span><span class="tok-nv">handler</span> <span class="tok-p">[</span><span class="tok-nv">fileset</span><span class="tok-p">]</span>
+      <span class="tok-p">(</span><span class="tok-k">let </span><span class="tok-p">[</span><span class="tok-nv">verb</span> <span class="tok-p">(</span><span class="tok-k">if </span><span class="tok-p">(</span><span class="tok-ss">:pluralize</span> <span class="tok-nv">fileset</span><span class="tok-p">)</span> <span class="tok-s">"are"</span> <span class="tok-s">"is"</span><span class="tok-p">)]</span>
+        <span class="tok-p">(</span><span class="tok-nb">println </span><span class="tok-s">"My"</span> <span class="tok-p">(</span><span class="tok-ss">:thing</span> <span class="tok-nv">fileset</span><span class="tok-p">)</span> <span class="tok-nv">verb</span> <span class="tok-s">"on fire!"</span><span class="tok-p">)</span>
+        <span class="tok-nv">fileset</span><span class="tok-p">))))</span>
+</code></pre></div></div>
+
+	<ol class="List-1">
+	  <li class="Listing">The full code for composable Boot tasks that announce something’s on fire</li>
+	</ol>
+	<p class="Body">Here’s how you’d run this on the command line:</p>
+	<div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-nv">boot</span> <span class="tok-nv">what</span> <span class="tok-nv">-t</span> <span class="tok-s">"pants"</span> <span class="tok-nv">-p</span> <span class="tok-err">–</span> <span class="tok-nv">fire</span>
+</code></pre></div></div>
+
+	<p class="Body">And here’s how you’d run it in the REPL:</p>
+	<div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-nf">boot</span> <span class="tok-p">(</span><span class="tok-nf">what</span> <span class="tok-ss">:thing</span> <span class="tok-s">"pants"</span> <span class="tok-ss">:pluralize</span> <span class="tok-nv">true</span><span class="tok-p">)</span> <span class="tok-p">(</span><span class="tok-nf">fire</span><span class="tok-p">))</span>
+</code></pre></div></div>
+
+	<p class="Body"><span>Wait a minute, what’s that </span><code>boot</code><span> call doing there? And what’s with </span><code>fileset</code><span> at </span>➊<span> and </span>➋<span>? In Micha’s words, “The </span><code>boot</code><span> macro takes care of setup </span>and cleanup (creating the initial fileset, stopping servers started by tasks, things like that). Tasks are functions, so you can call them directly, but if they use the fileset, they will fail unless you call them via the <code>boot</code> macro.” Let’s take a closer look at filesets.</p>
+	<h2><a id="Anchor-12"></a>Filesets</h2>
+	<p class="BodyFirst">Earlier I mentioned that middleware is for creating <em>domain-specific</em> function pipelines. All that means is that each handler expects to receive domain-specific data and returns domain-specific data. With Ring, for example, each handler expects to receive a request map representing the HTTP request, which might look something like this:</p>
+	<div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">{</span><span class="tok-ss">:server-port</span> <span class="tok-mi">80</span>
+ <span class="tok-ss">:request-method</span> <span class="tok-ss">:get</span>
+ <span class="tok-ss">:scheme</span> <span class="tok-ss">:http</span><span class="tok-p">}</span>
+</code></pre></div></div>
+
+	<p class="Body"><span>Each handler can choose to modify this request map in some way </span>before passing it on to the next handler, say, by adding a <code>:params</code> key with a nice Clojure map of all query string and POST parameters. Ring handlers return a <em>response map</em>, which consists of the keys <code>:status</code>, <code>:headers</code>, and <code>:body</code>, and once again each handler can transform this data in some way before returning it to its parent handler.</p>
+	<p class="Body">In Boot, each handler receives and returns a <em>fileset</em>. The fileset abstraction lets you treat files on your filesystem as immutable data, and this is a great innovation for build tools because building projects is so file-centric. For example, your project might need to place temporary, intermediary files on the filesystem. Usually, with most build tools, these files get placed in some specially named place, say, <em>project/target/tmp</em>. The problem with this is that <em>project/target/tmp</em> is effectively a global variable, and other tasks can accidentally muck it up.</p>
+	<p class="Body">Boot’s fileset abstraction solves this problem by adding a layer of indi<span>rection on top of the filesystem. Let’s say Task A creates File X and tells the fileset to store it. Behind the scenes, the fileset stores the file in an </span>anonymous, temporary directory. The fileset then gets passed to Task B, and Task B modifies File X and asks the fileset to store the result. Behind <span>the scenes, a new file, File Y, is created and stored, but File X remains untouched. In Task B, an updated fileset is returned. This is the equivalent of doing </span><code>assoc-in</code><span> with a map: Task A can still access the original fileset and the files it references.</span></p>
+	<p class="Body">And you didn’t even use any of this cool file management functionality in the <code>what</code> and <code>fire</code> tasks in Listing B-2! Nevertheless, when Boot composes tasks, it expects handlers to receive and return fileset records. Therefore, to convey your data across tasks, you sneakily added it to the fileset record using <code>(merge fileset {:thing thing :pluralize pluralize})</code>.</p>
+	<p class="Body">Although that covers the basic concept of a middleware factory, you’ll need to learn a bit more to take full advantage of filesets. The mechanics of working with filesets are all explained in the fileset wiki (<em><a href="https://github.com/boot-clj/boot/wiki/Filesets">https://github.com/boot-clj/boot/wiki/Filesets</a></em>). In the meantime, I hope this information gave you a good conceptual overview!</p>
+	<h2>Next Steps</h2>
+	<p class="BodyFirst"><span>The point of this appendix was to explain the concepts behind Boot. However, Boot also has a bunch of other functions, like </span><code>set-env!</code><span> and </span><code>task-options!</code><span>, that make your programming life easier when you’re actually </span>using it. It offers amazing magical features, like providing classpath isolation so you can run multiple projects using one JVM, and letting you add new dependencies to your project without having to restart your REPL. If Boot tickles your fancy, check out its README for more information on real-world usage. Also, its wiki provides top-notch documentation.</p>
+      
+    </div>
+  
+

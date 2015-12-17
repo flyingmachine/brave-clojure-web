@@ -15,3 +15,4 @@ quotes.txt
 .nrepl-port
 code/**/*.class
 code/**/*.jar
+*.zip

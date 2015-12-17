@@ -1,0 +1,796 @@
+---
+title: "Functional Programming"
+kind: chapter
+---
+
+  
+  
+    
+      <div class="chapter-number">Chapter 5</div>
+      <h1>Functional Programming</h1>
+      <p class="x1st-Para"><span>So far, you’ve focused on becoming famil</span>iar with the tools that Clojure provides: immutable data structures, functions, abstractions, and so on. In this chapter, you’ll learn how to <span>think about your programming tasks in a way that makes the best use of those tools. You’ll begin integrating your experience into a new functional pro</span>gramming mindset.</p>
+      <p class="Body">The core concepts you’ll learn include: what pure functions are and why they’re useful; how to work with immutable data structures and why they’re superior to their mutable cousins; how disentangling data and functions gives you more power and flexibility; and why it’s powerful to program to a small set of data abstractions. Once you shove all this knowledge into your brain matter, you’ll have an entirely new approach to problem solving!</p>
+      <p class="Body"><span>After going over these topics, you’ll put everything you’ve learned to use </span><span>by writing a terminal-based game inspired by an ancient, mystic mind-</span><span>training</span><span> </span><span>device found in Cracker Barrel restaurants across America: Peg Thing<a id="Anchor"></a>!</span></p>
+      <h2>Pure Functions: What and Why</h2>
+      <p class="BodyFirst">Except for <code>println</code> and <code>rand</code>, all the functions you’ve used up till now have been pure functions. What makes them pure functions, and why does it matter? A function is pure if it meets two qualifications:</p>
+      <ul class="List-1">
+	<li class="BulletA">It always returns the same result if given the same arguments. This is called <em>referential transparency</em>, and you can add it to your list of $5 programming terms.</li>
+	<li class="BulletC"><span>It can’t cause any </span><span>side effects. That is, the function can’t make any </span><span>changes that are observable outside the function itself—for example, by </span>changing an externally accessible mutable object or writing to a file.</li>
+      </ul>
+      <p class="Body">These qualities make it easier for you to reason about your programs because the functions are completely isolated, unable to impact other parts of your system. When you use them, you don’t have to ask yourself, “What could I break by calling this function?” They’re also consistent: you’ll never need to figure out why passing a function the same arguments results in different return values, because that will never happen.</p>
+      <p class="Body">Pure functions are as stable and problem free as arithmetic (when was the last time you fretted over adding two numbers?). They’re stupendous little bricks of functionality that you can confidently use as the foundation of your program. Let’s look at referential transparency and lack of side effects in more detail to see exactly what they are and how they’re help<a id="Anchor-3"></a>ful.</p>
+      <h3>Pure Functions Are Referentially Transparent</h3>
+      <p class="BodyFirst"><span>To return the same result when called with the same argument, pure </span>functions rely only on 1) their own arguments and 2) immutable values to determine their return value. Mathematical functions, for example, are referentially transparent:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-nb">+ </span><span class="tok-mi">1</span> <span class="tok-mi">2</span><span class="tok-p">)</span>
+<span class="tok-c1">; =&gt; 3</span>
+</code></pre></div></div>
+
+      <p class="Body">If a function relies on an immutable value, it’s referentially transparent. The string <code>", Daniel-san"</code> is immutable, so the following function is also referentially transparent:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-kd">defn </span><span class="tok-nv">wisdom</span>
+  <span class="tok-p">[</span><span class="tok-nv">words</span><span class="tok-p">]</span>
+  <span class="tok-p">(</span><span class="tok-nb">str </span><span class="tok-nv">words</span> <span class="tok-s">", Daniel-san"</span><span class="tok-p">))</span>
+
+<span class="tok-p">(</span><span class="tok-nf">wisdom</span> <span class="tok-s">"Always bathe on Fridays"</span><span class="tok-p">)</span>
+<span class="tok-c1">; =&gt; "Always bathe on Fridays, Daniel-san"</span>
+</code></pre></div></div>
+
+      <p class="Body">By contrast, the following functions do not yield the same result with the same arguments; therefore, they are not referentially transparent. Any function that relies on a random number generator cannot be referentially transparent:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-kd">defn </span><span class="tok-nv">year-end-evaluation</span>
+  <span class="tok-p">[]</span>
+  <span class="tok-p">(</span><span class="tok-k">if </span><span class="tok-p">(</span><span class="tok-nb">&gt; </span><span class="tok-p">(</span><span class="tok-nf">rand</span><span class="tok-p">)</span> <span class="tok-mf">0.5</span><span class="tok-p">)</span>
+    <span class="tok-s">"You get a raise!"</span>
+    <span class="tok-s">"Better luck next year!"</span><span class="tok-p">))</span>
+</code></pre></div></div>
+
+      <p class="Body"><span>If your function reads from a file, it’s not referentially transparent </span><span>because the file’s contents can change. The following function, </span><code>analyze-file</code><span>, </span>is not referentially transparent, but the function <code>analysis</code> is:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-kd">defn </span><span class="tok-nv">analyze-file</span>
+  <span class="tok-p">[</span><span class="tok-nv">filename</span><span class="tok-p">]</span>
+  <span class="tok-p">(</span><span class="tok-nf">analysis</span> <span class="tok-p">(</span><span class="tok-nb">slurp </span><span class="tok-nv">filename</span><span class="tok-p">)))</span>
+
+<span class="tok-p">(</span><span class="tok-kd">defn </span><span class="tok-nv">analysis</span>
+  <span class="tok-p">[</span><span class="tok-nv">text</span><span class="tok-p">]</span>
+  <span class="tok-p">(</span><span class="tok-nb">str </span><span class="tok-s">"Character count: "</span> <span class="tok-p">(</span><span class="tok-nb">count </span><span class="tok-nv">text</span><span class="tok-p">)))</span>
+</code></pre></div></div>
+
+      <p class="Body"><span>When using a referentially transparent function, you never have to </span>consider what possible external conditions could affect the return value of the function. This is especially important if your function is used multiple places or if it’s nested deeply in a chain of function calls. In both cases, you can rest easy knowing that changes to external conditions won’t cause your code to break.</p>
+      <p class="Body">Another way to think about this is that reality is largely referentially transparent. If you think of gravity as a function, then gravitational force is the return value of calling that function on two objects. Therefore, the next time you’re in a programming interview, you can demonstrate your functional programming knowledge by knocking everything off your interviewer’s desk. (This also demonstrates that you know how to apply a function over a colle<a id="Anchor-4"></a>ction.)</p>
+      <h3>Pure Functions Have No Side Effects</h3>
+      <p class="BodyFirst">To perform a side effect is to change the association between a name and its value within a given scope. Here is an example in JavaScript:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-k">var </span><span class="tok-nv">haplessObject</span> <span class="tok-nb">= </span><span class="tok-p">{</span>
+  <span class="tok-nv">emotion</span><span class="tok-err">:</span> <span class="tok-s">"Carefree!"</span>
+<span class="tok-p">}</span><span class="tok-c1">;</span>
+
+<span class="tok-k">var </span><span class="tok-nv">evilMutator</span> <span class="tok-nb">= </span><span class="tok-nv">function</span><span class="tok-p">(</span><span class="tok-nf">object</span><span class="tok-p">){</span>
+  <span class="tok-nv">object.emotion</span> <span class="tok-nb">= </span><span class="tok-s">"So emo :'("</span><span class="tok-c1">;</span>
+<span class="tok-p">}</span>
+
+<span class="tok-nv">evilMutator</span><span class="tok-p">(</span><span class="tok-nf">haplessObject</span><span class="tok-p">)</span><span class="tok-c1">;</span>
+<span class="tok-nv">haplessObject.emotion</span><span class="tok-c1">;</span>
+<span class="tok-nv">//</span> <span class="tok-nv">=&gt;</span> <span class="tok-s">"So emo :'("</span>
+</code></pre></div></div>
+
+      <p class="Body">Of course, your program has to have some side effects. It writes to a disk, which changes the association between a filename and a collection of disk sectors; it changes the RGB values of your monitor’s pixels; and so on. Otherwise, there’d be no point in running it.</p>
+      <p class="Body">Side effects are potentially harmful, however, because they introduce <span>uncertainty about what the names in your code are referring to. This leads to </span>situations where it’s very difficult to trace why and how a name came to be associated with a value, which makes it hard to debug the program. When you call a function that doesn’t have side effects, you only have to consider the relationship between the input and the output. You don’t have to worry about other changes that could be rippling through your system.</p>
+      <p class="Body">Functions with side effects, on the other hand, place more of a burden on your mind grapes: now you have to worry about how the world is affected when you call the function. Not only that, but every function that <span>depends on a side-effecting function gets infected by this worry; it, too, </span>becomes another component that requires extra care and thought as you build your program.</p>
+      <p class="Body">If you have any significant experience with a language like Ruby or JavaScript, you’ve probably run into this problem. As an object gets passed around, its attributes somehow change, and you can’t figure out why. Then you have to buy a new computer because you’ve chucked yours out the window. If you’ve read anything about object-oriented design, you know that a lot of writing has been devoted to strategies for managing state and reducing side effects for just this reason.</p>
+      <p class="Body">For all these reasons, it’s a good idea to look for ways to limit the use of side effects in your code. Lucky for you, Clojure makes your job easier by going to great lengths to limit side effects—all of its core data structures are immutable. You cannot change them in place, no matter how hard you try! However, if you’re unfamiliar with immutable data structures, you might feel like your favorite tool has been taken from you. How can you <em>do</em> anything without side effects? Well, that’s what the next section is all about! How about that segu<a id="Anchor-5"></a>e, eh? Eh?</p>
+      <h2>Living with Immutable Data Structures</h2>
+      <p class="BodyFirst">Immutable data structures ensure that your code won’t have side effects. As you now know with all your heart, this is a good thing. But how do you get anything done without s<a id="Anchor-6"></a>ide effects?</p>
+      <h3>Recursion Instead of for/while</h3>
+      <p class="BodyFirst">Raise your hand if you’ve ever written something like this in JavaScript:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-k">var </span><span class="tok-nv">wrestlers</span> <span class="tok-nb">= </span><span class="tok-nv">getAlligatorWrestlers</span><span class="tok-p">()</span><span class="tok-c1">;</span>
+<span class="tok-k">var </span><span class="tok-nv">totalBites</span> <span class="tok-nb">= </span><span class="tok-mi">0</span><span class="tok-c1">;</span>
+<span class="tok-k">var </span><span class="tok-nv">l</span> <span class="tok-nb">= </span><span class="tok-nv">wrestlers.length</span><span class="tok-c1">;</span>
+
+<span class="tok-nv">for</span><span class="tok-p">(</span><span class="tok-k">var </span><span class="tok-nv">i=0</span><span class="tok-c1">; i &lt; l; i++){</span>
+  <span class="tok-nv">totalBites</span> <span class="tok-nv">+=</span> <span class="tok-nv">wrestlers</span><span class="tok-p">[</span><span class="tok-nv">i</span><span class="tok-p">]</span><span class="tok-nv">.timesBitten</span><span class="tok-c1">;</span>
+<span class="tok-p">}</span>
+</code></pre></div></div>
+
+      <p class="Body">Or this:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-k">var </span><span class="tok-nv">allPatients</span> <span class="tok-nb">= </span><span class="tok-nv">getArkhamPatients</span><span class="tok-p">()</span><span class="tok-c1">;</span>
+<span class="tok-k">var </span><span class="tok-nv">analyzedPatients</span> <span class="tok-nb">= </span><span class="tok-p">[]</span><span class="tok-c1">;</span>
+<span class="tok-k">var </span><span class="tok-nv">l</span> <span class="tok-nb">= </span><span class="tok-nv">allPatients.length</span><span class="tok-c1">;</span>
+
+<span class="tok-nv">for</span><span class="tok-p">(</span><span class="tok-k">var </span><span class="tok-nv">i=0</span><span class="tok-c1">; i &lt; l; i++){</span>
+  <span class="tok-nv">if</span><span class="tok-p">(</span><span class="tok-nf">allPatients</span><span class="tok-p">[</span><span class="tok-nv">i</span><span class="tok-p">]</span><span class="tok-nv">.analyzed</span><span class="tok-p">){</span>
+    <span class="tok-nv">analyzedPatients.push</span><span class="tok-p">(</span><span class="tok-nf">allPatients</span><span class="tok-p">[</span><span class="tok-nv">i</span><span class="tok-p">])</span><span class="tok-c1">;</span>
+  <span class="tok-p">}</span>
+<span class="tok-p">}</span>
+</code></pre></div></div>
+
+      <p class="Body">Notice that both examples induce side effects on the looping variable <code>i</code><span>, as well as a variable outside the loop (</span><code>totalBites</code><span> in the first example and </span><code>analyzedPatients</code><span> in the second). Using side effects this way—mutating </span><em>inter</em><em>nal</em> <span>variables—is pretty much harmless. You’re creating new values, as opposed to changing an object </span>you’ve received from elsewhere in your program.</p>
+      <img src="/assets/images/cftbat/functional-programming/bloodthunder.png" class="right" />
+      <p class="Body"><span>But Clojure’s core data structures don’t even allow these harmless </span>mutations. So what can you do instead? First, ignore the fact that you could easily use <code>map</code> and <code>reduce</code> to accomplish the preceding work. In these situations—iterating over some collection to build a result—the functional alternative to mutation is recursion.</p>
+      <p class="Body">Let’s look at the first example, building a sum. Clojure has no assignment operator. You can’t associate a new value with a name without creating a new scope:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-k">def </span><span class="tok-nv">great-baby-name</span> <span class="tok-s">"Rosanthony"</span><span class="tok-p">)</span>
+<span class="tok-nv">great-baby-name</span>
+<span class="tok-c1">; =&gt; "Rosanthony"</span>
+
+<span class="tok-p">(</span><span class="tok-k">let </span><span class="tok-p">[</span><span class="tok-nv">great-baby-name</span> <span class="tok-s">"Bloodthunder"</span><span class="tok-p">]</span>
+  <span class="tok-nv">great-baby-name</span><span class="tok-p">)</span>
+<span class="tok-c1">; =&gt; "Bloodthunder"</span>
+
+<span class="tok-nv">great-baby-name</span>
+<span class="tok-c1">; =&gt; "Rosanthony"</span>
+</code></pre></div></div>
+
+      <p class="Body">In this example, you first bind the name <code>great-baby-name</code> to <code>"Rosanthony"</code> within the global scope. Next, you introduce a new scope with <code>let</code><span>. Within that scope, you bind </span><code>great-baby-name</code><span> to </span><code>"Bloodthunder"</code><span>. Once Clojure finishes evaluating the </span><code>let</code><span> expression, you’re back in the global </span>scope, and<code> great-baby-name</code> evaluates to <code>"Rosanthony"</code> once again.</p>
+      <p class="Body"><span>Clojure lets you work around this apparent limitation with recursion. The following example shows the general approach to recursive problem solving:</span></p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-kd">defn </span><span class="tok-nv">sum</span>
+<span class="tok-err">➊</span>   <span class="tok-p">([</span><span class="tok-nv">vals</span><span class="tok-p">]</span> <span class="tok-p">(</span><span class="tok-nf">sum</span> <span class="tok-nb">vals </span><span class="tok-mi">0</span><span class="tok-p">))</span> 
+  <span class="tok-p">([</span><span class="tok-nb">vals </span><span class="tok-nv">accumulating-total</span><span class="tok-p">]</span>
+<span class="tok-err">➋</span>      <span class="tok-p">(</span><span class="tok-k">if </span><span class="tok-p">(</span><span class="tok-nf">empty?</span> <span class="tok-nv">vals</span><span class="tok-p">)</span>  
+       <span class="tok-nv">accumulating-total</span>
+       <span class="tok-p">(</span><span class="tok-nf">sum</span> <span class="tok-p">(</span><span class="tok-nb">rest </span><span class="tok-nv">vals</span><span class="tok-p">)</span> <span class="tok-p">(</span><span class="tok-nb">+ </span><span class="tok-p">(</span><span class="tok-nb">first </span><span class="tok-nv">vals</span><span class="tok-p">)</span> <span class="tok-nv">accumulating-total</span><span class="tok-p">)))))</span>
+</code></pre></div></div>
+
+      <p class="Body">This function takes two arguments, a collection to process (<code>vals</code>) and an accumulator (<code>accumulating-total</code>), and it uses arity overloading (covered in Chapter 3) to provide a default value of <code>0</code> for <code>accumulating-total</code> at ➊.</p>
+      <p class="Body"><span>Like all recursive solutions, this function checks the argument it’s processing against a base condition. In this case, we check whether </span><code>vals</code><span> is empty at </span>➋<span>. If it is, we know that we’ve processed all the elements in the collection, so we return </span><code>accumulating-total</code><span>.</span></p>
+      <p class="Body"><span>If </span><code>vals</code><span> isn’t empty, it means we’re still working our way through the </span>sequence, so we recursively call <code>sum</code> passing it two arguments: the <em>tail</em> of vals with <code>(rest vals)</code> and the sum of the first element of <code>vals</code> plus the accumulating total with <code>(+ (first vals) accumulating-total)</code>. In this way, we build up <code>accumulating-total</code> and at the same time reduce <code>vals</code> until it reaches the base case of an empty collection.</p>
+      <p class="Body">Here’s what the recursive function call might look like if we separate out each time it recurs:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-nf">sum</span> <span class="tok-p">[</span><span class="tok-mi">39</span> <span class="tok-mi">5</span> <span class="tok-mi">1</span><span class="tok-p">])</span> <span class="tok-c1">; single-arity body calls two-arity body</span>
+<span class="tok-p">(</span><span class="tok-nf">sum</span> <span class="tok-p">[</span><span class="tok-mi">39</span> <span class="tok-mi">5</span> <span class="tok-mi">1</span><span class="tok-p">]</span> <span class="tok-mi">0</span><span class="tok-p">)</span>
+<span class="tok-p">(</span><span class="tok-nf">sum</span> <span class="tok-p">[</span><span class="tok-mi">5</span> <span class="tok-mi">1</span><span class="tok-p">]</span> <span class="tok-mi">39</span><span class="tok-p">)</span>
+<span class="tok-p">(</span><span class="tok-nf">sum</span> <span class="tok-p">[</span><span class="tok-mi">1</span><span class="tok-p">]</span> <span class="tok-mi">44</span><span class="tok-p">)</span>
+<span class="tok-p">(</span><span class="tok-nf">sum</span> <span class="tok-p">[]</span> <span class="tok-mi">45</span><span class="tok-p">)</span> <span class="tok-c1">; base case is reached, so return accumulating-total</span>
+<span class="tok-c1">; =&gt; 45</span>
+</code></pre></div></div>
+
+      <p class="Body"><span>Each recursive call to </span><code>sum</code><span> creates a new scope where </span><code>vals</code><span> and </span><code>accumulating-total</code><span> are bound to different values, all without needing to alter the values originally passed to the function or perform any internal </span>mutation. As you can see, you can get along fine without mutation.</p>
+      <p class="Body"><span>Note that you should generally use </span><code>recur</code><span> when doing recursion for performance reasons. The reason is that Clojure doesn’t provide </span><span>tail call </span>optimization, a topic I will never bring up again! (Check out this URL for more information: <em><a href="http://en.wikipedia.org/wiki/Tail_call">http://en.wikipedia.org/wiki/Tail_call</a></em>.) So here’s how you’d do this with <code>recur</code>:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-kd">defn </span><span class="tok-nv">sum</span>
+  <span class="tok-p">([</span><span class="tok-nv">vals</span><span class="tok-p">]</span>
+     <span class="tok-p">(</span><span class="tok-nf">sum</span> <span class="tok-nb">vals </span><span class="tok-mi">0</span><span class="tok-p">))</span>
+  <span class="tok-p">([</span><span class="tok-nb">vals </span><span class="tok-nv">accumulating-total</span><span class="tok-p">]</span>
+     <span class="tok-p">(</span><span class="tok-k">if </span><span class="tok-p">(</span><span class="tok-nf">empty?</span> <span class="tok-nv">vals</span><span class="tok-p">)</span>
+       <span class="tok-nv">accumulating-total</span>
+       <span class="tok-p">(</span><span class="tok-nf">recur</span> <span class="tok-p">(</span><span class="tok-nb">rest </span><span class="tok-nv">vals</span><span class="tok-p">)</span> <span class="tok-p">(</span><span class="tok-nb">+ </span><span class="tok-p">(</span><span class="tok-nb">first </span><span class="tok-nv">vals</span><span class="tok-p">)</span> <span class="tok-nv">accumulating-total</span><span class="tok-p">)))))</span>
+</code></pre></div></div>
+
+      <p class="Body">Using <code>recur</code> isn’t that important if you’re recursively operating on a <span>small collection, but if your collection contains thousands or millions </span><span>values</span>, you will definitely need to whip out <code>recur </code>so you don’t blow up your program with a stack overflow.</p>
+      <p class="Body">One last thing! You might be saying, “Wait a minute—what if I end up creating thousands of intermediate values? Doesn’t this cause the program to thrash because of garbage collection or whatever?”</p>
+      <p class="Body">Very good question, eagle-eyed reader! The answer is no! The reason <span>is that, behind the scenes, Clojure’s immutable data structures are implemented using </span><em>structural sharing</em><span>, which is totally beyond the scope of this </span>book. It’s kind of like Git! Read this great article if you want to know more: <em><a href="http://hypirion.com/musings/understanding-persistent-vector-pt-1">http://hypirion.com/musings/understanding-persistent-vector-pt-1</a></em>.</p>
+      <h3><a id="Anchor-20"></a>Function Composition Instead of Attribute Mutation</h3>
+      <p class="BodyFirst">Another way you might be used to using mutation is to build up the final state of an object. In the following Ruby example, the <code>GlamourShotCaption</code> object uses mutation to clean input by removing trailing spaces and capitalizing <code>"lol"</code>:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-nb">class </span><span class="tok-nv">GlamourShotCaption</span>
+  <span class="tok-nv">attr_reader</span> <span class="tok-ss">:text</span>
+  <span class="tok-k">def </span><span class="tok-nv">initialize</span><span class="tok-p">(</span><span class="tok-nf">text</span><span class="tok-p">)</span>
+    <span class="tok-o">@</span><span class="tok-nv">text</span> <span class="tok-nb">= </span><span class="tok-nv">text</span>
+    <span class="tok-nv">clean!</span>
+  <span class="tok-nv">end</span>
+
+  <span class="tok-nv">private</span>
+  <span class="tok-k">def </span><span class="tok-nv">clean!</span>
+    <span class="tok-nv">text.trim!</span>
+    <span class="tok-nv">text.gsub!</span><span class="tok-p">(</span><span class="tok-nf">/lol/</span>, <span class="tok-s">"LOL"</span><span class="tok-p">)</span>
+  <span class="tok-nv">end</span>
+<span class="tok-nv">end</span>
+
+<span class="tok-nv">best</span> <span class="tok-nb">= </span><span class="tok-nv">GlamourShotCaption.new</span><span class="tok-p">(</span><span class="tok-s">"My boa constrictor is so sassy lol!  "</span><span class="tok-p">)</span>
+<span class="tok-nv">best.text</span>
+<span class="tok-c1">; =&gt; "My boa constrictor is so sassy LOL!"</span>
+</code></pre></div></div>
+
+      <p class="Body">In this code, the class <code>GlamourShotCaption</code> encapsulates the knowledge of how to clean a glamour shot caption. On creating a <code>GlamourShotCaption</code> object, you assign text to an instance variable and progressively mutate it.</p>
+      <p class="Body">Listing 5-1 shows how you might do this in Clojure:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-nf">require</span> <span class="tok-o">'</span><span class="tok-p">[</span><span class="tok-nv">clojure.string</span> <span class="tok-ss">:as</span> <span class="tok-nv">s</span><span class="tok-p">])</span>
+<span class="tok-p">(</span><span class="tok-kd">defn </span><span class="tok-nv">clean</span>
+  <span class="tok-p">[</span><span class="tok-nv">text</span><span class="tok-p">]</span>
+  <span class="tok-p">(</span><span class="tok-nf">s/replace</span> <span class="tok-p">(</span><span class="tok-nf">s/trim</span> <span class="tok-nv">text</span><span class="tok-p">)</span> <span class="tok-o">#</span><span class="tok-s">"lol"</span> <span class="tok-s">"LOL"</span><span class="tok-p">))</span>
+
+<span class="tok-p">(</span><span class="tok-nf">clean</span> <span class="tok-s">"My boa constrictor is so sassy lol!  "</span><span class="tok-p">)</span>
+<span class="tok-c1">; =&gt; "My boa constrictor is so sassy LOL!"</span>
+</code></pre></div></div>
+
+      <ol class="List-1">
+	<li class="Listing">Using function composition to modify a glamour shot caption</li>
+      </ol>
+      <img src="/assets/images/cftbat/functional-programming/glamour-boa.png" class="left" />
+      <p class="Body">In the first line, we use <code>require</code> to access the string function library (I’ll discuss this function and related concepts in Chapter 6). Otherwise, the code is easy peasy. No mutation required. Instead of progressively mutating an object, the <code>clean</code> function works by passing an immutable value, <code>text</code>, to a pure function, <code>s/trim</code>, which returns an immutable value (<code>"My boa constrictor is so sassy lol!"</code>; the spaces at the end of the string have been trimmed). That value is then passed to the pure function <code>s/replace</code>, which returns another immutable value (<code>"My boa constrictor is so sassy LOL!"</code>).</p>
+      <p class="Body">Combining functions like this—so that the return value of one function is passed as an argument to another—is called <em>function composition</em>. In fact, <span>this isn’t so different from the previous example, which used recursion, </span>because recursion continually passes the result of a function to another function; it just happens to be the same function. In general, functional programming encourages you to build more complex functions by combining simpler functions.</p>
+      <p class="Body"><span>This comparison also starts to reveal some limitations of </span><span>object-oriented programming (OOP). In OOP, one of the main purposes of classes is to </span>protect against unwanted modification of private data—something that isn’t necessary with immutable data structures. You also have to tightly couple methods with classes, thus limiting the reusability of the methods. In the Ruby example, you have to do extra work to reuse the <code>clean!</code> method. In Clojure, <code>clean</code> will work on any string at all. By both a) decoupling functions and data, and b) programming to a small set of abstractions, you end up with more reusable, composable code. You gain power and lose nothing.</p>
+      <p class="Body">Going beyond immediately practical concerns, the differences between <span>the way you write object-oriented and functional code point to a deeper difference between the two mindsets. Programming is about manipulat</span>ing data for your own nefarious purposes (as much as you can say it’s<em> about </em>anything). In OOP, you think about data as something you can embody in an object, and you poke and prod it until it looks right. During this process, your original data is lost forever unless you’re very careful about preserving it. By contrast, in functional programming you think of data as unchanging, and you derive new data from existing data. During this process, the original data remains safe and sound. In the preceding Clojure example, <span>the original caption doesn’t get modified. It’s safe in the same way that </span>numbers are safe when you add them together; you don’t somehow transform 4 into 7 when you add 3 to it.</p>
+      <p class="Body">Once you are confident using immutable data structures to get stuff done, you’ll feel even more confident because you won’t have to worry about what dirty code might be getting its greasy paws on your precious, mutable variables. I<a id="Anchor-8"></a>t’ll be great!</p>
+      <h2>Cool Things to Do with Pure Functions</h2>
+      <p class="BodyFirst">You can derive new functions from existing functions in the same way that you derive new data from existing data. You’ve already seen one function, <code>partial</code>, that creates new functions. This section introduces you to two more functions, <code>comp</code><span> and </span><code>memoize</code><span>, which rely on referential transparency, immutab<a id="Anchor-9"></a>ility, or both.</span></p>
+      <h3>comp</h3>
+      <p class="BodyFirst">It’s always safe to compose pure functions like we just did in the previous section, because you only need to worry about their input/output relationship. Composing functions is so common that Clojure provides a function, <code>comp</code>, for creating a new function from the composition of any number of functions. Here’s a simple example:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">((</span><span class="tok-nb">comp inc </span><span class="tok-nv">*</span><span class="tok-p">)</span> <span class="tok-mi">2</span> <span class="tok-mi">3</span><span class="tok-p">)</span>
+<span class="tok-c1">; =&gt; 7</span>
+</code></pre></div></div>
+
+      <p class="Body">Here, you create an anonymous function by composing the <code>inc</code> and <code>*</code> functions. Then, you immediately apply this function to the arguments <code>2</code> and <code>3</code>. The function multiplies the numbers 2 and 3 and then increments <span>the result. Using math notation, you’d say that, in general, using </span><code>comp</code><span> on the functions </span><em>f</em><span class="Subscript">1</span><span>, </span><em>f</em><span class="Subscript">2</span><span>, ... </span><em>f</em><span class="Subscript-Italic">n</span><span>, creates a new function </span><em>g</em><span> such that </span><em>g</em><span>(</span><em>x</em><span class="Subscript">1</span><span>, </span><em>x</em><span class="Subscript">2</span><span>, ... </span><em>x</em><span class="Subscript-Italic">n</span><span>) equals</span> <em>f</em><span class="Subscript">1</span><span>( </span><em>f</em><span class="Subscript">2</span><span>( </span><em>f</em><span class="Subscript-Italic">n</span><span>(</span><em>x</em><span class="Subscript">1</span><span>, </span><em>x</em><span class="Subscript">2</span><span>, ... </span><em>x</em><span class="Subscript-Italic">n</span><span>))). One detail to note here is that the first function </span>applied—<code>*</code> in the code shown here—can take any number of arguments, whereas the remaining functions must be able to take only one argument.</p>
+      <p class="Body">Here’s an example that shows how you could use <code>comp</code> to retrieve character attributes in role-playing games:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-k">def </span><span class="tok-nv">character</span>
+  <span class="tok-p">{</span><span class="tok-ss">:name</span> <span class="tok-s">"Smooches McCutes"</span>
+   <span class="tok-ss">:attributes</span> <span class="tok-p">{</span><span class="tok-ss">:intelligence</span> <span class="tok-mi">10</span>
+                <span class="tok-ss">:strength</span> <span class="tok-mi">4</span>
+                <span class="tok-ss">:dexterity</span> <span class="tok-mi">5</span><span class="tok-p">}})</span>
+<span class="tok-p">(</span><span class="tok-k">def </span><span class="tok-nv">c-int</span> <span class="tok-p">(</span><span class="tok-nb">comp </span><span class="tok-ss">:intelligence</span> <span class="tok-ss">:attributes</span><span class="tok-p">))</span>
+<span class="tok-p">(</span><span class="tok-k">def </span><span class="tok-nv">c-str</span> <span class="tok-p">(</span><span class="tok-nb">comp </span><span class="tok-ss">:strength</span> <span class="tok-ss">:attributes</span><span class="tok-p">))</span>
+<span class="tok-p">(</span><span class="tok-k">def </span><span class="tok-nv">c-dex</span> <span class="tok-p">(</span><span class="tok-nb">comp </span><span class="tok-ss">:dexterity</span> <span class="tok-ss">:attributes</span><span class="tok-p">))</span>
+
+<span class="tok-p">(</span><span class="tok-nf">c-int</span> <span class="tok-nv">character</span><span class="tok-p">)</span>
+<span class="tok-c1">; =&gt; 10</span>
+
+<span class="tok-p">(</span><span class="tok-nf">c-str</span> <span class="tok-nv">character</span><span class="tok-p">)</span>
+<span class="tok-c1">; =&gt; 4</span>
+
+<span class="tok-p">(</span><span class="tok-nf">c-dex</span> <span class="tok-nv">character</span><span class="tok-p">)</span>
+<span class="tok-c1">; =&gt; 5</span>
+</code></pre></div></div>
+
+      <p class="Body">In this example, you created three functions that help you look up a <span>character’s attributes. Instead of using </span><code>comp</code><span>, you could just have written </span>something like this for each attribute:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-k">fn </span><span class="tok-p">[</span><span class="tok-nv">c</span><span class="tok-p">]</span> <span class="tok-p">(</span><span class="tok-ss">:strength</span> <span class="tok-p">(</span><span class="tok-ss">:attributes</span> <span class="tok-nv">c</span><span class="tok-p">)))</span>
+</code></pre></div></div>
+
+      <p class="Body">But <code>comp</code> is more elegant because it uses less code to convey more meaning. When you see <code>comp</code>, you immediately know that the resulting function’s purpose is to combine existing functions in a well-known way.</p>
+      <p class="Body"><span>What do you do if one of the functions you want to compose needs </span>to take more than one argument? You wrap it in an anonymous function. Have a look at this next snippet, which calculates the number of spell slots your character has based on her intelligence attribute:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-kd">defn </span><span class="tok-nv">spell-slots</span>
+  <span class="tok-p">[</span><span class="tok-nv">char</span><span class="tok-p">]</span>
+  <span class="tok-p">(</span><span class="tok-nb">int </span><span class="tok-p">(</span><span class="tok-nb">inc </span><span class="tok-p">(</span><span class="tok-nb">/ </span><span class="tok-p">(</span><span class="tok-nf">c-int</span> <span class="tok-nv">char</span><span class="tok-p">)</span> <span class="tok-mi">2</span><span class="tok-p">))))</span>
+
+<span class="tok-p">(</span><span class="tok-nf">spell-slots</span> <span class="tok-nv">character</span><span class="tok-p">)</span>
+<span class="tok-c1">; =&gt; 6</span>
+</code></pre></div></div>
+
+      <p class="Body">First, you divide intelligence by two, then you add one, and then you <span>use the </span><code>int</code><span> function to round down. Here’s how you could do the same </span>thing with <code>comp</code>:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-k">def </span><span class="tok-nv">spell-slots-comp</span> <span class="tok-p">(</span><span class="tok-nb">comp int inc </span><span class="tok-o">#</span><span class="tok-p">(</span><span class="tok-nb">/ </span><span class="tok-nv">%</span> <span class="tok-mi">2</span><span class="tok-p">)</span> <span class="tok-nv">c-int</span><span class="tok-p">))</span>
+</code></pre></div></div>
+
+      <p class="Body"><span>To divide by two, all you needed to do was wrap the division in an </span>anony­mous function.</p>
+      <p class="Body">Clojure’s <code>comp</code> function can compose any number of functions. To get a hint of how it does this, here’s an implementation that composes just two functions:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-kd">defn </span><span class="tok-nv">two-comp</span>
+  <span class="tok-p">[</span><span class="tok-nv">f</span> <span class="tok-nv">g</span><span class="tok-p">]</span>
+  <span class="tok-p">(</span><span class="tok-k">fn </span><span class="tok-p">[</span><span class="tok-o">&amp;</span> <span class="tok-nv">args</span><span class="tok-p">]</span>
+    <span class="tok-p">(</span><span class="tok-nf">f</span> <span class="tok-p">(</span><span class="tok-nb">apply </span><span class="tok-nv">g</span> <span class="tok-nv">args</span><span class="tok-p">))))</span>
+</code></pre></div></div>
+
+      <p class="Body">I encourage you to evaluate this code and use <code>two-comp</code> to compose two functions! Also, try reimplementing Clojure’s <code>comp</code> function so you can compose any number of functions.</p>
+      <h3><a id="Anchor-10"></a>memoize</h3>
+      <p class="BodyFirst"><span>Another cool thing you can do with pure functions is memoize them so that Clojure remembers the result of a particular function call. You can do this because, as you learned earlier, pure functions are referentially </span>transparent. For example, <code>+</code> is referentially transparent. You can replace </p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-nb">+ </span><span class="tok-mi">3</span> <span class="tok-p">(</span><span class="tok-nb">+ </span><span class="tok-mi">5</span> <span class="tok-mi">8</span><span class="tok-p">))</span>
+</code></pre></div></div>
+
+      <p class="BodyFirst">with</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-nb">+ </span><span class="tok-mi">3</span> <span class="tok-mi">13</span><span class="tok-p">)</span>
+</code></pre></div></div>
+
+      <p class="BodyFirst">or</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-mi">16</span>
+</code></pre></div></div>
+
+      <p class="BodyFirst">and the program will have the same behavior.</p>
+      <p class="Body">Memoization lets you take advantage of referential transparency by storing the arguments passed to a function and the return value of the function. That way, subsequent calls to the function with the same arguments can return the result immediately. This is especially useful for functions that take a lot of time to run. For example, in this unmemoized function, the result is returned after one second:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-kd">defn </span><span class="tok-nv">sleepy-identity</span>
+  <span class="tok-s">"Returns the given value after 1 second"</span>
+  <span class="tok-p">[</span><span class="tok-nv">x</span><span class="tok-p">]</span>
+  <span class="tok-p">(</span><span class="tok-nf">Thread/sleep</span> <span class="tok-mi">1000</span><span class="tok-p">)</span>
+  <span class="tok-nv">x</span><span class="tok-p">)</span>
+<span class="tok-p">(</span><span class="tok-nf">sleepy-identity</span> <span class="tok-s">"Mr. Fantastico"</span><span class="tok-p">)</span>
+<span class="tok-c1">; =&gt; "Mr. Fantastico" after 1 second</span>
+
+<span class="tok-p">(</span><span class="tok-nf">sleepy-identity</span> <span class="tok-s">"Mr. Fantastico"</span><span class="tok-p">)</span>
+<span class="tok-c1">; =&gt; "Mr. Fantastico" after 1 second</span>
+</code></pre></div></div>
+
+      <p class="Body">However, if you create a new, memoized version of <code>sleepy-identity</code> with <code>memoize</code>, only the first call waits one second; every subsequent function call returns immediately:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-k">def </span><span class="tok-nv">memo-sleepy-identity</span> <span class="tok-p">(</span><span class="tok-nf">memoize</span> <span class="tok-nv">sleepy-identity</span><span class="tok-p">))</span>
+<span class="tok-p">(</span><span class="tok-nf">memo-sleepy-identity</span> <span class="tok-s">"Mr. Fantastico"</span><span class="tok-p">)</span>
+<span class="tok-c1">; =&gt; "Mr. Fantastico" after 1 second</span>
+
+<span class="tok-p">(</span><span class="tok-nf">memo-sleepy-identity</span> <span class="tok-s">"Mr. Fantastico"</span><span class="tok-p">)</span>
+<span class="tok-c1">; =&gt; "Mr. Fantastico" immediately</span>
+</code></pre></div></div>
+
+      <p class="Body"><span>Pretty cool! From here on out, </span><code>memo-sleepy-identity</code><span> will not incur the </span>initial one-second cost when called with <code>"Mr. Fantastico"</code>. This implementation could be useful for functions that are computationally intensive or that make network requests.<a id="Anchor-11"></a></p>
+      <h2>Peg Thing</h2>
+      <p class="BodyFirst">It’s that time! Time to build a terminal implementation of Peg Thing using everything you’ve learned so far: immutable data structures, lazy sequences, pure functions, recursion—everything! Doing this will help you understand <span>how to combine these concepts and techniques to solve larger problems. Most important, you’ll learn how to model the changes that result from </span>each move a player makes without having to mutate objects like you would in OOP.</p>
+      <p class="Body">To build the game, you’ll first learn the game’s mechanics and how to start and play the program. Then, I’ll explain the code’s organization. Finally, I’ll walk through each function.</p>
+      <p class="Body">You can find the complete code repository for Peg Thing at <em><a href="https://www.nostarch.com/clojure/">https://www.nostarch.com/clojure/</a></em>.</p>
+      <h3>Playing</h3>
+      <p class="BodyFirst">As mentioned earlier, Peg Thing is based on the secret mind-sharpening tool passed down from ye olden days and is now distributed by Cracker Barrel.</p>
+      <p class="Body">If you’re not familiar with the game, here are the mechanics. You start <span>out with a triangular board consisting of holes filled with pegs, and one </span>hole has a missing a peg, as shown in Figure 5-1.</p>
+      <img src="/assets/images/cftbat/functional-programming/peg-thing-starting.png" class="figure" />
+      
+	<div class="caption">Figure 5-1: The initial setup for Peg Thing</div>
+      
+      <p class="Body">The object of the game is to remove as many pegs as possible. You do this by <em>jumping</em> over pegs. In Figure 5-2, peg A jumps over peg B into the empty hole, and you remove peg B from the board.</p>
+      <img src="/assets/images/cftbat/functional-programming/peg-thing-jumping.png" class="figure" />
+      
+	<div class="caption">Figure 5-2: Jump a peg to remove it from the board.</div>
+      
+      <p class="Body">To start Peg Thing, download the code, and then run <code>lein run</code> in your <span>terminal while in the </span><em>pegthing</em><span> directory. A prompt appears that looks like this:</span></p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-nv">Get</span> <span class="tok-nv">ready</span> <span class="tok-nv">to</span> <span class="tok-nv">play</span> <span class="tok-nv">Peg</span> <span class="tok-nv">Thing!</span>
+<span class="tok-nv">How</span> <span class="tok-nv">many</span> <span class="tok-nv">rows?</span> <span class="tok-p">[</span><span class="tok-mi">5</span><span class="tok-p">]</span>
+</code></pre></div></div>
+
+      <p class="Body">Now you can enter the number of rows the board will have, using <code>5</code> as <span>the default. If you want five rows, just press </span><span class="Keycap">enter</span><span> (otherwise, type a number </span>and press <span class="Keycap">enter)</span>. You’ll then see this:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-nv">Here</span><span class="tok-ss">'s</span> <span class="tok-nv">your</span> <span class="tok-nv">board</span><span class="tok-err">:</span>
+       <span class="tok-nv">a0</span>
+      <span class="tok-nv">b0</span> <span class="tok-nv">c0</span>
+    <span class="tok-nv">d0</span> <span class="tok-nv">e0</span> <span class="tok-nv">f0</span>
+   <span class="tok-nv">g0</span> <span class="tok-nv">h0</span> <span class="tok-nv">i0</span> <span class="tok-nv">j0</span>
+ <span class="tok-nv">k0</span> <span class="tok-nv">l0</span> <span class="tok-nv">m0</span> <span class="tok-nv">n0</span> <span class="tok-nv">o0</span>
+<span class="tok-nv">Remove</span> <span class="tok-nv">which</span> <span class="tok-nv">peg?</span> <span class="tok-p">[</span><span class="tok-nv">e</span><span class="tok-p">]</span>
+</code></pre></div></div>
+
+      <p class="Body">Each letter identifies a position on the board. The number <code>0</code> (which should be blue, but if it’s not, it’s no big deal) indicates that a position is filled. Before gameplay begins, one peg must be empty, so the prompt asks you to enter the position of the first to peg to remove. The default is the center peg, <code>e</code>, but you can choose a different one. After you remove the peg, you’ll see this:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-nv">Here</span><span class="tok-ss">'s</span> <span class="tok-nv">your</span> <span class="tok-nv">board</span><span class="tok-err">:</span>
+       <span class="tok-nv">a0</span>
+      <span class="tok-nv">b0</span> <span class="tok-nv">c0</span>
+    <span class="tok-nv">d0</span> <span class="tok-nv">e-</span> <span class="tok-nv">f0</span>
+   <span class="tok-nv">g0</span> <span class="tok-nv">h0</span> <span class="tok-nv">i0</span> <span class="tok-nv">j0</span>
+ <span class="tok-nv">k0</span> <span class="tok-nv">l0</span> <span class="tok-nv">m0</span> <span class="tok-nv">n0</span> <span class="tok-nv">o0</span>
+<span class="tok-nv">Move</span> <span class="tok-nv">from</span> <span class="tok-nv">where</span> <span class="tok-nv">to</span> <span class="tok-nv">where?</span> <span class="tok-nv">Enter</span> <span class="tok-nv">two</span> <span class="tok-nv">letters</span><span class="tok-err">:</span>
+</code></pre></div></div>
+
+      <p class="Body">Notice that the <code>e</code> position now has a dash, <code>-</code> (which should be red, but if it’s not, it’s no big deal). The dash indicates that the position is empty. To move, you enter the position of the peg you want to <em>pick up</em> followed by the position of the empty position that you want to place it in. If you enter <code>le</code>, for example, you’ll get this:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-nv">Here</span><span class="tok-ss">'s</span> <span class="tok-nv">your</span> <span class="tok-nv">board</span><span class="tok-err">:</span>
+       <span class="tok-nv">a0</span>
+      <span class="tok-nv">b0</span> <span class="tok-nv">c0</span>
+    <span class="tok-nv">d0</span> <span class="tok-nv">e0</span> <span class="tok-nv">f0</span>
+   <span class="tok-nv">g0</span> <span class="tok-nv">h-</span> <span class="tok-nv">i0</span> <span class="tok-nv">j0</span>
+ <span class="tok-nv">k0</span> <span class="tok-nv">l-</span> <span class="tok-nv">m0</span> <span class="tok-nv">n0</span> <span class="tok-nv">o0</span>
+<span class="tok-nv">Move</span> <span class="tok-nv">from</span> <span class="tok-nv">where</span> <span class="tok-nv">to</span> <span class="tok-nv">where?</span> <span class="tok-nv">Enter</span> <span class="tok-nv">two</span> <span class="tok-nv">letters</span><span class="tok-err">:</span>
+</code></pre></div></div>
+
+      <p class="Body">You’ve moved the peg from <code>l</code> to <code>e</code>, jumping over <code>h</code> and removing its peg according to the rule shown in Figure 5-2. The game continues to prompt you for moves until no moves are available, whereupon it prompts you to play again.</p>
+      <h3><a id="Anchor-13"></a>Code Organization</h3>
+      <p class="BodyFirst"><span>The program has to handle four major tasks, and the source code is organized </span><span>accordingly, with the functions for each of these tasks grouped together:</span></p>
+      <ol class="List-1">
+	<li class="NumListA">Creating a new board</li>
+	<li class="NumListB">Returning a board with the result of the player’s move</li>
+	<li class="NumListB">Representing a board textually</li>
+	<li class="NumListC">Handling user interaction</li>
+      </ol>
+      <p class="Body">Two more points about the organization: First, the code has a basic <em>architecture</em><span>, or conceptual organization, of two layers. The top layer consists </span><span>of the functions for handling user interaction. These functions produce all of the program’s side effects, printing out the board and presenting </span><span>prompts for player interaction. The functions in this layer use the functions in the bottom layer to create a new board, make moves, and create a textual </span><span>representation, but the functions in the bottom layer don’t use those in </span>the top layer at all. Even for a program this small, a little architecture helps make the code more manageable.</p>
+      <p class="Body"><span>Second, I’ve tried as much as possible to decompose tasks into small </span><span>functions so that each does one tiny, understandable task. Some of these functions are used by only one other function. I find this helpful because it lets me name each tiny subtask, allowing me to better express the intention of the code.</span></p>
+      <p class="Body">But before all the architecture, there’s this:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-kd">ns </span><span class="tok-nv">pegthing.core</span>
+  <span class="tok-p">(</span><span class="tok-nf">require</span> <span class="tok-p">[</span><span class="tok-nv">clojure.set</span> <span class="tok-ss">:as</span> <span class="tok-nv">set</span><span class="tok-p">])</span>
+  <span class="tok-p">(</span><span class="tok-ss">:gen-class</span><span class="tok-p">))</span>
+
+<span class="tok-p">(</span><span class="tok-kd">declare </span><span class="tok-nv">successful-move</span> <span class="tok-nv">prompt-move</span> <span class="tok-nv">game-over</span> <span class="tok-nv">query-rows</span><span class="tok-p">)</span>
+</code></pre></div></div>
+
+      <p class="Body">I’ll explain the functions here in more detail in Chapter 6. If you’re <span>curious about what’s going on, the short explanation is that </span><code>(</code><code>require </code><code>[</code><code>clojure</code><code>.set :as set])</code><span> allows you to easily use functions in the </span><code>clojure.set</code><span> namespace, </span><code>(:gen-class)</code><span> allows you to run the program from the command </span>line, and <code>(declare successful-move prompt-move game-over query-rows)</code> allows functions to refer to those names before they’re defined. If that doesn’t quite make sense yet, trust that I will explain it soon<a id="Anchor-14"></a>.</p>
+      <h3>Creating the Board</h3>
+      <p class="BodyFirst">The data structure you use to represent the board should make it easy for you to print the board, check whether a player has made a valid move, actually perform a move, and check whether the game is over. You could structure the board in many ways to allow these tasks. In this case, you’ll represent the board using a map with numerical keys corresponding to each board position and values containing information about that position’s connections. The map will also contain a <code>:rows</code> key, storing the total number of rows. Figure 5-3 shows a board with each position numbered.</p>
+      <img src="/assets/images/cftbat/functional-programming/peg-thing-data-structure.png" class="figure" />
+      
+	<div class="caption">Figure 5-3: The numbered pegboard</div>
+      
+      <p class="Body">Here’s the data structure built to represent it:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">{</span><span class="tok-mi">1</span>  <span class="tok-p">{</span><span class="tok-ss">:pegged</span> <span class="tok-nv">true</span>, <span class="tok-ss">:connections</span> <span class="tok-p">{</span><span class="tok-mi">6</span> <span class="tok-mi">3</span>, <span class="tok-mi">4</span> <span class="tok-mi">2</span><span class="tok-p">}}</span>,
+ <span class="tok-mi">2</span>  <span class="tok-p">{</span><span class="tok-ss">:pegged</span> <span class="tok-nv">true</span>, <span class="tok-ss">:connections</span> <span class="tok-p">{</span><span class="tok-mi">9</span> <span class="tok-mi">5</span>, <span class="tok-mi">7</span> <span class="tok-mi">4</span><span class="tok-p">}}</span>,
+ <span class="tok-mi">3</span>  <span class="tok-p">{</span><span class="tok-ss">:pegged</span> <span class="tok-nv">true</span>, <span class="tok-ss">:connections</span> <span class="tok-p">{</span><span class="tok-mi">10</span> <span class="tok-mi">6</span>, <span class="tok-mi">8</span> <span class="tok-mi">5</span><span class="tok-p">}}</span>,
+ <span class="tok-mi">4</span>  <span class="tok-p">{</span><span class="tok-ss">:pegged</span> <span class="tok-nv">true</span>, <span class="tok-ss">:connections</span> <span class="tok-p">{</span><span class="tok-mi">13</span> <span class="tok-mi">8</span>, <span class="tok-mi">11</span> <span class="tok-mi">7</span>, <span class="tok-mi">6</span> <span class="tok-mi">5</span>, <span class="tok-mi">1</span> <span class="tok-mi">2</span><span class="tok-p">}}</span>,
+ <span class="tok-mi">5</span>  <span class="tok-p">{</span><span class="tok-ss">:pegged</span> <span class="tok-nv">true</span>, <span class="tok-ss">:connections</span> <span class="tok-p">{</span><span class="tok-mi">14</span> <span class="tok-mi">9</span>, <span class="tok-mi">12</span> <span class="tok-mi">8</span><span class="tok-p">}}</span>,
+ <span class="tok-mi">6</span>  <span class="tok-p">{</span><span class="tok-ss">:pegged</span> <span class="tok-nv">true</span>, <span class="tok-ss">:connections</span> <span class="tok-p">{</span><span class="tok-mi">15</span> <span class="tok-mi">10</span>, <span class="tok-mi">13</span> <span class="tok-mi">9</span>, <span class="tok-mi">4</span> <span class="tok-mi">5</span>, <span class="tok-mi">1</span> <span class="tok-mi">3</span><span class="tok-p">}}</span>,
+ <span class="tok-mi">7</span>  <span class="tok-p">{</span><span class="tok-ss">:pegged</span> <span class="tok-nv">true</span>, <span class="tok-ss">:connections</span> <span class="tok-p">{</span><span class="tok-mi">9</span> <span class="tok-mi">8</span>, <span class="tok-mi">2</span> <span class="tok-mi">4</span><span class="tok-p">}}</span>,
+ <span class="tok-mi">8</span>  <span class="tok-p">{</span><span class="tok-ss">:pegged</span> <span class="tok-nv">true</span>, <span class="tok-ss">:connections</span> <span class="tok-p">{</span><span class="tok-mi">10</span> <span class="tok-mi">9</span>, <span class="tok-mi">3</span> <span class="tok-mi">5</span><span class="tok-p">}}</span>,
+ <span class="tok-mi">9</span>  <span class="tok-p">{</span><span class="tok-ss">:pegged</span> <span class="tok-nv">true</span>, <span class="tok-ss">:connections</span> <span class="tok-p">{</span><span class="tok-mi">7</span> <span class="tok-mi">8</span>, <span class="tok-mi">2</span> <span class="tok-mi">5</span><span class="tok-p">}}</span>,
+ <span class="tok-mi">10</span> <span class="tok-p">{</span><span class="tok-ss">:pegged</span> <span class="tok-nv">true</span>, <span class="tok-ss">:connections</span> <span class="tok-p">{</span><span class="tok-mi">8</span> <span class="tok-mi">9</span>, <span class="tok-mi">3</span> <span class="tok-mi">6</span><span class="tok-p">}}</span>,
+ <span class="tok-mi">11</span> <span class="tok-p">{</span><span class="tok-ss">:pegged</span> <span class="tok-nv">true</span>, <span class="tok-ss">:connections</span> <span class="tok-p">{</span><span class="tok-mi">13</span> <span class="tok-mi">12</span>, <span class="tok-mi">4</span> <span class="tok-mi">7</span><span class="tok-p">}}</span>,
+ <span class="tok-mi">12</span> <span class="tok-p">{</span><span class="tok-ss">:pegged</span> <span class="tok-nv">true</span>, <span class="tok-ss">:connections</span> <span class="tok-p">{</span><span class="tok-mi">14</span> <span class="tok-mi">13</span>, <span class="tok-mi">5</span> <span class="tok-mi">8</span><span class="tok-p">}}</span>,
+ <span class="tok-mi">13</span> <span class="tok-p">{</span><span class="tok-ss">:pegged</span> <span class="tok-nv">true</span>, <span class="tok-ss">:connections</span> <span class="tok-p">{</span><span class="tok-mi">15</span> <span class="tok-mi">14</span>, <span class="tok-mi">11</span> <span class="tok-mi">12</span>, <span class="tok-mi">6</span> <span class="tok-mi">9</span>, <span class="tok-mi">4</span> <span class="tok-mi">8</span><span class="tok-p">}}</span>,
+ <span class="tok-mi">14</span> <span class="tok-p">{</span><span class="tok-ss">:pegged</span> <span class="tok-nv">true</span>, <span class="tok-ss">:connections</span> <span class="tok-p">{</span><span class="tok-mi">12</span> <span class="tok-mi">13</span>, <span class="tok-mi">5</span> <span class="tok-mi">9</span><span class="tok-p">}}</span>,
+ <span class="tok-mi">15</span> <span class="tok-p">{</span><span class="tok-ss">:pegged</span> <span class="tok-nv">true</span>, <span class="tok-ss">:connections</span> <span class="tok-p">{</span><span class="tok-mi">13</span> <span class="tok-mi">14</span>, <span class="tok-mi">6</span> <span class="tok-mi">10</span><span class="tok-p">}}</span>,
+ <span class="tok-ss">:rows</span> <span class="tok-mi">5</span><span class="tok-p">}</span>
+</code></pre></div></div>
+
+      <p class="Body">You might be wondering why, when you play the game, each position is represented by a letter but here the positions are represented by numbers. Using numbers for the<em> </em>internal representation allows you to take advantage of some mathematical properties of the board layout when validating and making moves. Letters, on the other hand, are better for display because they take up only one character space. Some conversion functions are covered in <a href="#Anchor-19">“Rendering and Printing the Board” on page <span>120</span></a>.</p>
+      <p class="Body">In the data structure, each position is associated with a map that reads something like this:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">{</span><span class="tok-ss">:pegged</span> <span class="tok-nv">true</span>, <span class="tok-ss">:connections</span> <span class="tok-p">{</span><span class="tok-mi">6</span> <span class="tok-mi">3</span>, <span class="tok-mi">4</span> <span class="tok-mi">2</span><span class="tok-p">}}</span>
+</code></pre></div></div>
+
+      <p class="Body">The meaning of <code>:pegged</code> is clear; it represents whether that position has a peg in it. <code>:connections</code> is a bit more cryptic. It’s a map where each key iden<span>tifies a </span><em>legal destination</em><span>, and each value represents </span><em>the position that would be </em><em>jumped over</em>. So pegs in position 1, for example, can jump <em>to</em> position 6 <em>over</em> position 3. This might seem backward, but you’ll learn the rationale for it later when you see how move validation is implemented.</p>
+      <p class="Body">Now that you’ve seen what the final map representing the board should look like, we can start exploring the functions that actually build up this map in the program. You won’t simply start assigning mutable states willy-<span>nilly to represent each position and whether it’s pegged or not. Instead, </span>you’ll use nested recursive function calls to build up the final board posi<span>tion by position. It’s analogous to the way you created the glamour shot </span><span>caption</span><span> earlier, deriving new data from input by passing an argument </span>through a chain of functions to get your final result.</p>
+      <p class="Body">The first few expressions in this section of the code deal with triangular numbers. Triangular numbers are generated by adding the first <em>n</em> natural numbers. The first triangular number is 1, the second is 3 (1 + 2), the third is 6 (1 + 2 + 3), and so on. These numbers line up nicely with the position numbers at the end of every row on the board, which will turn out to be a very useful property. First, you define the function <code>tri*</code>, which can create a lazy sequence of triangular numbers:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-kd">defn </span><span class="tok-nv">tri*</span>
+  <span class="tok-s">"Generates lazy sequence of triangular numbers"</span>
+  <span class="tok-p">([]</span> <span class="tok-p">(</span><span class="tok-nf">tri*</span> <span class="tok-mi">0</span> <span class="tok-mi">1</span><span class="tok-p">))</span>
+  <span class="tok-p">([</span><span class="tok-nv">sum</span> <span class="tok-nv">n</span><span class="tok-p">]</span>
+     <span class="tok-p">(</span><span class="tok-k">let </span><span class="tok-p">[</span><span class="tok-nv">new-sum</span> <span class="tok-p">(</span><span class="tok-nb">+ </span><span class="tok-nv">sum</span> <span class="tok-nv">n</span><span class="tok-p">)]</span>
+       <span class="tok-p">(</span><span class="tok-nb">cons </span><span class="tok-nv">new-sum</span> <span class="tok-p">(</span><span class="tok-nf">lazy-seq</span> <span class="tok-p">(</span><span class="tok-nf">tri*</span> <span class="tok-nv">new-sum</span> <span class="tok-p">(</span><span class="tok-nb">inc </span><span class="tok-nv">n</span><span class="tok-p">)))))))</span>
+</code></pre></div></div>
+
+      <p class="Body">To quickly recap how this works, calling <code>tri*</code> with no arguments will recursively call <code>(tri* 0 1)</code>. This returns a lazy list whose element is <code>new-sum</code>, which in this case evaluates to <code>1</code>. The lazy list includes a recipe for generating the next element of the list when it’s requested, as described in Chapter 4.</p>
+      <p class="Body">The next expression calls <code>tri*</code>, actually creating the lazy sequence and binding it to <code>tri</code>:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-k">def </span><span class="tok-nv">tri</span> <span class="tok-p">(</span><span class="tok-nf">tri*</span><span class="tok-p">))</span>
+</code></pre></div></div>
+
+      <p class="Body">You can verify that it actually works:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-nb">take </span><span class="tok-mi">5</span> <span class="tok-nv">tri</span><span class="tok-p">)</span>
+<span class="tok-c1">; =&gt; (1 3 6 10 15)</span>
+</code></pre></div></div>
+
+      <p class="Body"><span>And the next few functions operate on the sequence of triangular </span>numbers. <code>triangular?</code> figures out if its argument is in the <code>tri</code> lazy sequence. <span>It works by using </span><code>take-while</code><span> to create a sequence of triangular numbers whose last element is a triangular number that’s less than or equal to the argument. Then it compares the last element to the argument:</span></p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-kd">defn </span><span class="tok-nv">triangular?</span>
+  <span class="tok-s">"Is the number triangular? e.g. 1, 3, 6, 10, 15, etc"</span>
+  <span class="tok-p">[</span><span class="tok-nv">n</span><span class="tok-p">]</span>
+  <span class="tok-p">(</span><span class="tok-nb">= </span><span class="tok-nv">n</span> <span class="tok-p">(</span><span class="tok-nb">last </span><span class="tok-p">(</span><span class="tok-nb">take-while </span><span class="tok-o">#</span><span class="tok-p">(</span><span class="tok-nb">&gt;= </span><span class="tok-nv">n</span> <span class="tok-nv">%</span><span class="tok-p">)</span> <span class="tok-nv">tri</span><span class="tok-p">))))</span>
+<span class="tok-p">(</span><span class="tok-nf">triangular?</span> <span class="tok-mi">5</span><span class="tok-p">)</span> 
+<span class="tok-c1">; =&gt; false</span>
+
+<span class="tok-p">(</span><span class="tok-nf">triangular?</span> <span class="tok-mi">6</span><span class="tok-p">)</span> 
+<span class="tok-c1">; =&gt; true</span>
+</code></pre></div></div>
+
+      <p class="Body">Next, there’s <code>row-tri</code>, which takes a row number and gives you the triangular number at the end of that row:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-kd">defn </span><span class="tok-nv">row-tri</span>
+  <span class="tok-s">"The triangular number at the end of row n"</span>
+  <span class="tok-p">[</span><span class="tok-nv">n</span><span class="tok-p">]</span>
+  <span class="tok-p">(</span><span class="tok-nb">last </span><span class="tok-p">(</span><span class="tok-nb">take </span><span class="tok-nv">n</span> <span class="tok-nv">tri</span><span class="tok-p">)))</span>
+<span class="tok-p">(</span><span class="tok-nf">row-tri</span> <span class="tok-mi">1</span><span class="tok-p">)</span> 
+<span class="tok-c1">; =&gt; 1</span>
+
+<span class="tok-p">(</span><span class="tok-nf">row-tri</span> <span class="tok-mi">2</span><span class="tok-p">)</span> 
+<span class="tok-c1">; =&gt; 3</span>
+
+<span class="tok-p">(</span><span class="tok-nf">row-tri</span> <span class="tok-mi">3</span><span class="tok-p">)</span> 
+<span class="tok-c1">; =&gt; 6</span>
+</code></pre></div></div>
+
+      <p class="Body">Lastly, there’s <code>row-num</code>, which takes a board position and returns the row that it belongs to:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-kd">defn </span><span class="tok-nv">row-num</span>
+  <span class="tok-s">"Returns row number the position belongs to: pos 1 in row 1,</span>
+<span class="tok-s">  positions 2 and 3 in row 2, etc"</span>
+  <span class="tok-p">[</span><span class="tok-nv">pos</span><span class="tok-p">]</span>
+  <span class="tok-p">(</span><span class="tok-nb">inc </span><span class="tok-p">(</span><span class="tok-nb">count </span><span class="tok-p">(</span><span class="tok-nb">take-while </span><span class="tok-o">#</span><span class="tok-p">(</span><span class="tok-nb">&gt; </span><span class="tok-nv">pos</span> <span class="tok-nv">%</span><span class="tok-p">)</span> <span class="tok-nv">tri</span><span class="tok-p">))))</span>
+<span class="tok-p">(</span><span class="tok-nf">row-num</span> <span class="tok-mi">1</span><span class="tok-p">)</span> 
+<span class="tok-c1">; =&gt; 1</span>
+<span class="tok-p">(</span><span class="tok-nf">row-num</span> <span class="tok-mi">5</span><span class="tok-p">)</span> 
+<span class="tok-c1">; =&gt; 3</span>
+</code></pre></div></div>
+
+      <p class="Body">After that comes <code>connect</code>, which is used to actually form a mutual connection between two positions:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-kd">defn </span><span class="tok-nv">connect</span>
+  <span class="tok-s">"Form a mutual connection between two positions"</span>
+  <span class="tok-p">[</span><span class="tok-nv">board</span> <span class="tok-nv">max-pos</span> <span class="tok-nv">pos</span> <span class="tok-nv">neighbor</span> <span class="tok-nv">destination</span><span class="tok-p">]</span>
+  <span class="tok-p">(</span><span class="tok-k">if </span><span class="tok-p">(</span><span class="tok-nb">&lt;= </span><span class="tok-nv">destination</span> <span class="tok-nv">max-pos</span><span class="tok-p">)</span>
+    <span class="tok-p">(</span><span class="tok-nb">reduce </span><span class="tok-p">(</span><span class="tok-k">fn </span><span class="tok-p">[</span><span class="tok-nv">new-board</span> <span class="tok-p">[</span><span class="tok-nv">p1</span> <span class="tok-nv">p2</span><span class="tok-p">]]</span>
+              <span class="tok-p">(</span><span class="tok-nf">assoc-in</span> <span class="tok-nv">new-board</span> <span class="tok-p">[</span><span class="tok-nv">p1</span> <span class="tok-ss">:connections</span> <span class="tok-nv">p2</span><span class="tok-p">]</span> <span class="tok-nv">neighbor</span><span class="tok-p">))</span>
+            <span class="tok-nv">board</span>
+            <span class="tok-p">[[</span><span class="tok-nv">pos</span> <span class="tok-nv">destination</span><span class="tok-p">]</span> <span class="tok-p">[</span><span class="tok-nv">destination</span> <span class="tok-nv">pos</span><span class="tok-p">]])</span>
+    <span class="tok-nv">board</span><span class="tok-p">))</span>
+
+<span class="tok-p">(</span><span class="tok-nf">connect</span> <span class="tok-p">{}</span> <span class="tok-mi">15</span> <span class="tok-mi">1</span> <span class="tok-mi">2</span> <span class="tok-mi">4</span><span class="tok-p">)</span>
+<span class="tok-c1">; =&gt; {1 {:connections {4 2}}</span>
+      <span class="tok-mi">4</span> <span class="tok-p">{</span><span class="tok-ss">:connections</span> <span class="tok-p">{</span><span class="tok-mi">1</span> <span class="tok-mi">2</span><span class="tok-p">}}}</span>
+</code></pre></div></div>
+
+      <p class="Body"><span>The first thing </span><code>connect</code><span> does is check whether the destination is actually a position on the board by confirming that it’s less than the board’s max position. For example, if you have five rows, the max position is 15. However, when the game board is created, the </span><code>connect</code><span> function will be </span>called with arguments like <code>(connect {} 15 7 16 22)</code>. The <code>if</code> statement at the beginning of <code>connect</code> makes sure your program doesn’t allow such outrageous connections, and simply returns the unmodified board when you ask it to do something silly.</p>
+      <p class="Body">Next, <code>connect</code> uses recursion through <code>reduce</code> to progressively build up<em> </em>the final state of the board. In this example, you’re reducing over the nested vectors <code>[[1 4] [4 1]]</code>. This is what allows you to return an updated <span>board with both </span><code>pos</code><span> and </span><code>destination</code><span> (1 and 4) pointing to each other in </span>their connections.</p>
+      <p class="Body"><span>The anonymous function passed to </span><code>reduce</code><span> uses a function, </span><code>assoc-in</code><span>, which you haven’t seen before. Whereas the function </span><code>get-in</code><span> lets you look</span> up values in nested maps, <code>assoc-in</code> lets you return a new map with the given value at the specified nesting. Here are a couple of examples:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-nf">assoc-in</span> <span class="tok-p">{}</span> <span class="tok-p">[</span><span class="tok-ss">:cookie</span> <span class="tok-ss">:monster</span> <span class="tok-ss">:vocals</span><span class="tok-p">]</span> <span class="tok-s">"Finntroll"</span><span class="tok-p">)</span>
+<span class="tok-c1">; =&gt; {:cookie {:monster {:vocals "Finntroll"}}}</span>
+
+<span class="tok-p">(</span><span class="tok-nf">get-in</span> <span class="tok-p">{</span><span class="tok-ss">:cookie</span> <span class="tok-p">{</span><span class="tok-ss">:monster</span> <span class="tok-p">{</span><span class="tok-ss">:vocals</span> <span class="tok-s">"Finntroll"</span><span class="tok-p">}}}</span> <span class="tok-p">[</span><span class="tok-ss">:cookie</span> <span class="tok-ss">:monster</span><span class="tok-p">])</span>
+<span class="tok-c1">; =&gt; {:vocals "Finntroll"}</span>
+
+<span class="tok-p">(</span><span class="tok-nf">assoc-in</span> <span class="tok-p">{}</span> <span class="tok-p">[</span><span class="tok-mi">1</span> <span class="tok-ss">:connections</span> <span class="tok-mi">4</span><span class="tok-p">]</span> <span class="tok-mi">2</span><span class="tok-p">)</span>
+<span class="tok-c1">; =&gt; {1 {:connections {4 2}}}</span>
+</code></pre></div></div>
+
+      <p class="Body">In these examples, you can see that new, nested maps are created to accommodate all the keys provided.</p>
+      <p class="Body">Now we have a way to connect two positions, but how should the program choose two positions to connect in the first place? That’s handled by <code>connect-right</code>, <code>connect-down-left</code>, and <code>connect-down-right</code>: </p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-kd">defn </span><span class="tok-nv">connect-right</span>
+  <span class="tok-p">[</span><span class="tok-nv">board</span> <span class="tok-nv">max-pos</span> <span class="tok-nv">pos</span><span class="tok-p">]</span>
+  <span class="tok-p">(</span><span class="tok-k">let </span><span class="tok-p">[</span><span class="tok-nv">neighbor</span> <span class="tok-p">(</span><span class="tok-nb">inc </span><span class="tok-nv">pos</span><span class="tok-p">)</span>
+        <span class="tok-nv">destination</span> <span class="tok-p">(</span><span class="tok-nb">inc </span><span class="tok-nv">neighbor</span><span class="tok-p">)]</span>
+    <span class="tok-p">(</span><span class="tok-nb">if-not </span><span class="tok-p">(</span><span class="tok-nb">or </span><span class="tok-p">(</span><span class="tok-nf">triangular?</span> <span class="tok-nv">neighbor</span><span class="tok-p">)</span> <span class="tok-p">(</span><span class="tok-nf">triangular?</span> <span class="tok-nv">pos</span><span class="tok-p">))</span>
+      <span class="tok-p">(</span><span class="tok-nf">connect</span> <span class="tok-nv">board</span> <span class="tok-nv">max-pos</span> <span class="tok-nv">pos</span> <span class="tok-nv">neighbor</span> <span class="tok-nv">destination</span><span class="tok-p">)</span>
+      <span class="tok-nv">board</span><span class="tok-p">)))</span>
+
+<span class="tok-p">(</span><span class="tok-kd">defn </span><span class="tok-nv">connect-down-left</span>
+  <span class="tok-p">[</span><span class="tok-nv">board</span> <span class="tok-nv">max-pos</span> <span class="tok-nv">pos</span><span class="tok-p">]</span>
+  <span class="tok-p">(</span><span class="tok-k">let </span><span class="tok-p">[</span><span class="tok-nv">row</span> <span class="tok-p">(</span><span class="tok-nf">row-num</span> <span class="tok-nv">pos</span><span class="tok-p">)</span>
+        <span class="tok-nv">neighbor</span> <span class="tok-p">(</span><span class="tok-nb">+ </span><span class="tok-nv">row</span> <span class="tok-nv">pos</span><span class="tok-p">)</span>
+        <span class="tok-nv">destination</span> <span class="tok-p">(</span><span class="tok-nb">+ </span><span class="tok-mi">1</span> <span class="tok-nv">row</span> <span class="tok-nv">neighbor</span><span class="tok-p">)]</span>
+    <span class="tok-p">(</span><span class="tok-nf">connect</span> <span class="tok-nv">board</span> <span class="tok-nv">max-pos</span> <span class="tok-nv">pos</span> <span class="tok-nv">neighbor</span> <span class="tok-nv">destination</span><span class="tok-p">)))</span>
+
+<span class="tok-p">(</span><span class="tok-kd">defn </span><span class="tok-nv">connect-down-right</span>
+  <span class="tok-p">[</span><span class="tok-nv">board</span> <span class="tok-nv">max-pos</span> <span class="tok-nv">pos</span><span class="tok-p">]</span>
+  <span class="tok-p">(</span><span class="tok-k">let </span><span class="tok-p">[</span><span class="tok-nv">row</span> <span class="tok-p">(</span><span class="tok-nf">row-num</span> <span class="tok-nv">pos</span><span class="tok-p">)</span>
+        <span class="tok-nv">neighbor</span> <span class="tok-p">(</span><span class="tok-nb">+ </span><span class="tok-mi">1</span> <span class="tok-nv">row</span> <span class="tok-nv">pos</span><span class="tok-p">)</span>
+        <span class="tok-nv">destination</span> <span class="tok-p">(</span><span class="tok-nb">+ </span><span class="tok-mi">2</span> <span class="tok-nv">row</span> <span class="tok-nv">neighbor</span><span class="tok-p">)]</span>
+    <span class="tok-p">(</span><span class="tok-nf">connect</span> <span class="tok-nv">board</span> <span class="tok-nv">max-pos</span> <span class="tok-nv">pos</span> <span class="tok-nv">neighbor</span> <span class="tok-nv">destination</span><span class="tok-p">)))</span>
+</code></pre></div></div>
+
+      <p class="Body">These functions each take the board’s max position and a board position and use a little triangle math to figure out which numbers to feed to <code>connect</code><span>. For example, </span><code>connect-down-left</code><span> will attempt to connect position 1 t</span>o position 4. In case you’re wondering why the functions <code>connect-left</code>, <code>connect-up-left</code>, and <code>connect-up-right</code> aren’t defined, the reason is that the existing functions actually cover these cases. <code>connect</code> returns a board with the mutual connection established; when 4 <em>connects right</em> to 6, 6 <em>connects left</em> to 4. Here are a couple of examples:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-nf">connect-down-left</span> <span class="tok-p">{}</span> <span class="tok-mi">15</span> <span class="tok-mi">1</span><span class="tok-p">)</span>
+<span class="tok-c1">; =&gt; {1 {:connections {4 2}</span>
+      <span class="tok-mi">4</span> <span class="tok-p">{</span><span class="tok-ss">:connections</span> <span class="tok-p">{</span><span class="tok-mi">1</span> <span class="tok-mi">2</span><span class="tok-p">}}}}</span>
+
+<span class="tok-p">(</span><span class="tok-nf">connect-down-right</span> <span class="tok-p">{}</span> <span class="tok-mi">15</span> <span class="tok-mi">3</span><span class="tok-p">)</span>
+<span class="tok-c1">; =&gt; {3  {:connections {10 6}}</span>
+      <span class="tok-mi">10</span> <span class="tok-p">{</span><span class="tok-ss">:connections</span> <span class="tok-p">{</span><span class="tok-mi">3</span> <span class="tok-mi">6</span><span class="tok-p">}}}</span>
+</code></pre></div></div>
+
+      <p class="Body"><span>In the first example, </span><code>connect-down-left</code><span> takes an empty board with a max position of 15 and returns a new board populated with the mutual connection between the 1 position and the position below and to the left of it. </span><code>connect</code><code>-down-right</code><span> does something similar, returning a board populated with the mutual connection between 3 and the position below it and to its right.</span></p>
+      <p class="Body">The next function, <code>add-pos</code>, is interesting because it actually reduces on a vector of <em>functions</em>, applying each in turn to build up the resulting board. But first it updates the board to indicate that a peg is in the given position:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-kd">defn </span><span class="tok-nv">add-pos</span>
+  <span class="tok-s">"Pegs the position and performs connections"</span>
+  <span class="tok-p">[</span><span class="tok-nv">board</span> <span class="tok-nv">max-pos</span> <span class="tok-nv">pos</span><span class="tok-p">]</span>
+  <span class="tok-p">(</span><span class="tok-k">let </span><span class="tok-p">[</span><span class="tok-nv">pegged-board</span> <span class="tok-p">(</span><span class="tok-nf">assoc-in</span> <span class="tok-nv">board</span> <span class="tok-p">[</span><span class="tok-nv">pos</span> <span class="tok-ss">:pegged</span><span class="tok-p">]</span> <span class="tok-nv">true</span><span class="tok-p">)]</span>
+    <span class="tok-p">(</span><span class="tok-nb">reduce </span><span class="tok-p">(</span><span class="tok-k">fn </span><span class="tok-p">[</span><span class="tok-nv">new-board</span> <span class="tok-nv">connection-creation-fn</span><span class="tok-p">]</span>
+              <span class="tok-p">(</span><span class="tok-nf">connection-creation-fn</span> <span class="tok-nv">new-board</span> <span class="tok-nv">max-pos</span> <span class="tok-nv">pos</span><span class="tok-p">))</span>
+            <span class="tok-nv">pegged-board</span>
+            <span class="tok-p">[</span><span class="tok-nv">connect-right</span> <span class="tok-nv">connect-down-left</span> <span class="tok-nv">connect-down-right</span><span class="tok-p">])))</span>
+
+<span class="tok-p">(</span><span class="tok-nf">add-pos</span> <span class="tok-p">{}</span> <span class="tok-mi">15</span> <span class="tok-mi">1</span><span class="tok-p">)</span>
+<span class="tok-p">{</span><span class="tok-mi">1</span> <span class="tok-p">{</span><span class="tok-ss">:connections</span> <span class="tok-p">{</span><span class="tok-mi">6</span> <span class="tok-mi">3</span>, <span class="tok-mi">4</span> <span class="tok-mi">2</span><span class="tok-p">}</span>, <span class="tok-ss">:pegged</span> <span class="tok-nv">true</span><span class="tok-p">}</span>
+ <span class="tok-mi">4</span> <span class="tok-p">{</span><span class="tok-ss">:connections</span> <span class="tok-p">{</span><span class="tok-mi">1</span> <span class="tok-mi">2</span><span class="tok-p">}}</span>
+ <span class="tok-mi">6</span> <span class="tok-p">{</span><span class="tok-ss">:connections</span> <span class="tok-p">{</span><span class="tok-mi">1</span> <span class="tok-mi">3</span><span class="tok-p">}}}</span>
+</code></pre></div></div>
+
+      <p class="Body">It’s like this function is first saying, in the <code>pegged-board</code> binding, “Add a peg to the board at position X.” Then, in <code>reduce</code>, it says, “Take the board <span>with its new peg at position X, and try to connect position X to a legal, </span>rightward position. Take the board that results from that operation, and try to connect position X to a legal, down-left position. Finally, take the board that results from <em>that</em> operation, and try to connect position X to a legal, down-right position. Return the resulting board.”</p>
+      <p class="Body">Reducing over functions like this is another way of composing functions. To illustrate, here’s another way of defining the <code>clean</code> function in Listing 5-1 (<a href="#Anchor-20">page <span>103</span></a>):</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-kd">defn </span><span class="tok-nv">clean</span>
+  <span class="tok-p">[</span><span class="tok-nv">text</span><span class="tok-p">]</span>
+  <span class="tok-p">(</span><span class="tok-nb">reduce </span><span class="tok-p">(</span><span class="tok-k">fn </span><span class="tok-p">[</span><span class="tok-nv">string</span> <span class="tok-nv">string-fn</span><span class="tok-p">]</span> <span class="tok-p">(</span><span class="tok-nf">string-fn</span> <span class="tok-nv">string</span><span class="tok-p">))</span>
+          <span class="tok-nv">text</span>
+          <span class="tok-p">[</span><span class="tok-nv">s/trim</span> <span class="tok-o">#</span><span class="tok-p">(</span><span class="tok-nf">s/replace</span> <span class="tok-nv">%</span> <span class="tok-o">#</span><span class="tok-s">"lol"</span> <span class="tok-s">"LOL"</span><span class="tok-p">)]))</span>
+</code></pre></div></div>
+
+      <p class="Body"><span>This redefinition of </span><code>clean</code><span> reduces a vector of functions by applying the first function, </span><code>s/trim</code><span>, to an initial string, then applying the next function, the anonymous function </span><code>#(s/replace % #"lol" "LOL")</code><span>, to the result.</span></p>
+      <p class="Body"><span>Reducing over a collection of functions is not a technique you’ll use </span>often, but it’s occasionally useful, and it demonstrates the versatility of functional programming.</p>
+      <p class="Body">Last among our board creation functions is <code>new-board</code>:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-kd">defn </span><span class="tok-nv">new-board</span>
+  <span class="tok-s">"Creates a new board with the given number of rows"</span>
+  <span class="tok-p">[</span><span class="tok-nv">rows</span><span class="tok-p">]</span>
+  <span class="tok-p">(</span><span class="tok-k">let </span><span class="tok-p">[</span><span class="tok-nv">initial-board</span> <span class="tok-p">{</span><span class="tok-ss">:rows</span> <span class="tok-nv">rows</span><span class="tok-p">}</span>
+        <span class="tok-nv">max-pos</span> <span class="tok-p">(</span><span class="tok-nf">row-tri</span> <span class="tok-nv">rows</span><span class="tok-p">)]</span>
+    <span class="tok-p">(</span><span class="tok-nb">reduce </span><span class="tok-p">(</span><span class="tok-k">fn </span><span class="tok-p">[</span><span class="tok-nv">board</span> <span class="tok-nv">pos</span><span class="tok-p">]</span> <span class="tok-p">(</span><span class="tok-nf">add-pos</span> <span class="tok-nv">board</span> <span class="tok-nv">max-pos</span> <span class="tok-nv">pos</span><span class="tok-p">))</span>
+            <span class="tok-nv">initial-board</span>
+            <span class="tok-p">(</span><span class="tok-nb">range </span><span class="tok-mi">1</span> <span class="tok-p">(</span><span class="tok-nb">inc </span><span class="tok-nv">max-pos</span><span class="tok-p">)))))</span>
+</code></pre></div></div>
+
+      <p class="Body"><span>The code first creates the initial, empty board and gets the max position. Assuming that you’re using five rows, the max position will be 15. Next, the function uses </span><code>(range 1 (inc max-pos))</code><span> to get a list of numbers from 1 to 15, other­wise known as the board’s positions. Finally, it reduces over the list of positions. Each iteration of the reduction calls </span><code>(add-pos board max-pos pos)</code><span>,</span> which, as you saw earlier, takes an existing board and returns a new one with the position add<a id="Anchor-15"></a>ed.</p>
+      <h3>Moving Pegs</h3>
+      <p class="BodyFirst"><span>The next section of code validates and performs peg moves. Many of the functions (</span><code>pegged?</code><span>, </span><code>remove-peg</code><span>, </span><code>place-peg</code><span>, </span><code>move-peg</code><span>) are simple, self-</span><span>explanatory</span><span> one-liners:</span></p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-kd">defn </span><span class="tok-nv">pegged?</span>
+  <span class="tok-s">"Does the position have a peg in it?"</span>
+  <span class="tok-p">[</span><span class="tok-nv">board</span> <span class="tok-nv">pos</span><span class="tok-p">]</span>
+  <span class="tok-p">(</span><span class="tok-nf">get-in</span> <span class="tok-nv">board</span> <span class="tok-p">[</span><span class="tok-nv">pos</span> <span class="tok-ss">:pegged</span><span class="tok-p">]))</span>
+
+<span class="tok-p">(</span><span class="tok-kd">defn </span><span class="tok-nv">remove-peg</span>
+  <span class="tok-s">"Take the peg at given position out of the board"</span>
+  <span class="tok-p">[</span><span class="tok-nv">board</span> <span class="tok-nv">pos</span><span class="tok-p">]</span>
+  <span class="tok-p">(</span><span class="tok-nf">assoc-in</span> <span class="tok-nv">board</span> <span class="tok-p">[</span><span class="tok-nv">pos</span> <span class="tok-ss">:pegged</span><span class="tok-p">]</span> <span class="tok-nv">false</span><span class="tok-p">))</span>
+
+<span class="tok-p">(</span><span class="tok-kd">defn </span><span class="tok-nv">place-peg</span>
+  <span class="tok-s">"Put a peg in the board at given position"</span>
+  <span class="tok-p">[</span><span class="tok-nv">board</span> <span class="tok-nv">pos</span><span class="tok-p">]</span>
+  <span class="tok-p">(</span><span class="tok-nf">assoc-in</span> <span class="tok-nv">board</span> <span class="tok-p">[</span><span class="tok-nv">pos</span> <span class="tok-ss">:pegged</span><span class="tok-p">]</span> <span class="tok-nv">true</span><span class="tok-p">))</span>
+
+<span class="tok-p">(</span><span class="tok-kd">defn </span><span class="tok-nv">move-peg</span>
+  <span class="tok-s">"Take peg out of p1 and place it in p2"</span>
+  <span class="tok-p">[</span><span class="tok-nv">board</span> <span class="tok-nv">p1</span> <span class="tok-nv">p2</span><span class="tok-p">]</span>
+  <span class="tok-p">(</span><span class="tok-nf">place-peg</span> <span class="tok-p">(</span><span class="tok-nf">remove-peg</span> <span class="tok-nv">board</span> <span class="tok-nv">p1</span><span class="tok-p">)</span> <span class="tok-nv">p2</span><span class="tok-p">))</span>
+</code></pre></div></div>
+
+      <p class="Body">Let’s take a moment to appreciate how neat this code is. This is where you would usually perform mutation in an object-oriented program; after <span>all, how else would you change the board? However, these are all </span><span>pure functions, and they do the job admirably. I also like that you don’t need the overhead of classes to use these little guys. It feels somehow lighter to program like this.</span></p>
+      <p class="Body">Next up is <code>valid-moves</code>:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-kd">defn </span><span class="tok-nv">valid-moves</span>
+  <span class="tok-s">"Return a map of all valid moves for pos, where the key is the</span>
+<span class="tok-s">  destination and the value is the jumped position"</span>
+  <span class="tok-p">[</span><span class="tok-nv">board</span> <span class="tok-nv">pos</span><span class="tok-p">]</span>
+  <span class="tok-p">(</span><span class="tok-nb">into </span><span class="tok-p">{}</span>
+        <span class="tok-p">(</span><span class="tok-nb">filter </span><span class="tok-p">(</span><span class="tok-k">fn </span><span class="tok-p">[[</span><span class="tok-nv">destination</span> <span class="tok-nv">jumped</span><span class="tok-p">]]</span>
+                  <span class="tok-p">(</span><span class="tok-nb">and </span><span class="tok-p">(</span><span class="tok-nb">not </span><span class="tok-p">(</span><span class="tok-nf">pegged?</span> <span class="tok-nv">board</span> <span class="tok-nv">destination</span><span class="tok-p">))</span>
+                       <span class="tok-p">(</span><span class="tok-nf">pegged?</span> <span class="tok-nv">board</span> <span class="tok-nv">jumped</span><span class="tok-p">)))</span>
+                <span class="tok-p">(</span><span class="tok-nf">get-in</span> <span class="tok-nv">board</span> <span class="tok-p">[</span><span class="tok-nv">pos</span> <span class="tok-ss">:connections</span><span class="tok-p">]))))</span>
+</code></pre></div></div>
+
+      <p class="Body">This code goes through each of the given position’s connections and tests whether the destination position is empty and the jumped position has a peg. To see this in action, you can create a board with the 4 position empty:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-k">def </span><span class="tok-nv">my-board</span> <span class="tok-p">(</span><span class="tok-nf">assoc-in</span> <span class="tok-p">(</span><span class="tok-nf">new-board</span> <span class="tok-mi">5</span><span class="tok-p">)</span> <span class="tok-p">[</span><span class="tok-mi">4</span> <span class="tok-ss">:pegged</span><span class="tok-p">]</span> <span class="tok-nv">false</span><span class="tok-p">))</span>
+</code></pre></div></div>
+
+      <p class="Body">Figure 5-4 shows what that board would look like.</p>
+      <img src="/assets/images/cftbat/functional-programming/peg-thing-valid-moves.png" class="figure" />
+      
+	<div class="caption">Figure 5-4: A pegboard with the 4 position empty</div>
+      
+      <p class="Body"><span>Given this board, positions 1, 6, and 11 have valid moves, but all </span>others don’t:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-nf">valid-moves</span> <span class="tok-nv">my-board</span> <span class="tok-mi">1</span><span class="tok-p">)</span>  <span class="tok-c1">; =&gt; {4 2}</span>
+<span class="tok-p">(</span><span class="tok-nf">valid-moves</span> <span class="tok-nv">my-board</span> <span class="tok-mi">6</span><span class="tok-p">)</span>  <span class="tok-c1">; =&gt; {4 5}</span>
+<span class="tok-p">(</span><span class="tok-nf">valid-moves</span> <span class="tok-nv">my-board</span> <span class="tok-mi">11</span><span class="tok-p">)</span> <span class="tok-c1">; =&gt; {4 7}</span>
+<span class="tok-p">(</span><span class="tok-nf">valid-moves</span> <span class="tok-nv">my-board</span> <span class="tok-mi">5</span><span class="tok-p">)</span>  <span class="tok-c1">; =&gt; {}</span>
+<span class="tok-p">(</span><span class="tok-nf">valid-moves</span> <span class="tok-nv">my-board</span> <span class="tok-mi">8</span><span class="tok-p">)</span>  <span class="tok-c1">; =&gt; {}</span>
+</code></pre></div></div>
+
+      <p class="Body">You might be wondering why <code>valid-moves</code> returns a map instead of, say, a set or vector. The reason is that returning a map allows you to easily look up a destination position to check whether a specific move is valid, which is what <code>valid-move?</code> (the next function) does:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-kd">defn </span><span class="tok-nv">valid-move?</span>
+  <span class="tok-s">"Return jumped position if the move from p1 to p2 is valid, nil</span>
+<span class="tok-s">  otherwise"</span>
+  <span class="tok-p">[</span><span class="tok-nv">board</span> <span class="tok-nv">p1</span> <span class="tok-nv">p2</span><span class="tok-p">]</span>
+  <span class="tok-p">(</span><span class="tok-nb">get </span><span class="tok-p">(</span><span class="tok-nf">valid-moves</span> <span class="tok-nv">board</span> <span class="tok-nv">p1</span><span class="tok-p">)</span> <span class="tok-nv">p2</span><span class="tok-p">))</span>
+  
+<span class="tok-p">(</span><span class="tok-nf">valid-move?</span> <span class="tok-nv">my-board</span> <span class="tok-mi">8</span> <span class="tok-mi">4</span><span class="tok-p">)</span> <span class="tok-c1">; =&gt; nil</span>
+<span class="tok-p">(</span><span class="tok-nf">valid-move?</span> <span class="tok-nv">my-board</span> <span class="tok-mi">1</span> <span class="tok-mi">4</span><span class="tok-p">)</span> <span class="tok-c1">; =&gt; 2</span>
+</code></pre></div></div>
+
+      <p class="Body">Notice that <code>valid-move?</code> looks up the destination position from the map and then returns the position of the peg that would be jumped over. This <span>is another nice benefit of having </span><code>valid-moves</code><span> return a map, because the </span>jumped position retrieved from the map is exactly what we want to pass on to the next function, <code>make-move</code>. When you take the time to construct a rich data structure, it’s easier to perform useful operations.</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-kd">defn </span><span class="tok-nv">make-move</span>
+  <span class="tok-s">"Move peg from p1 to p2, removing jumped peg"</span>
+  <span class="tok-p">[</span><span class="tok-nv">board</span> <span class="tok-nv">p1</span> <span class="tok-nv">p2</span><span class="tok-p">]</span>
+  <span class="tok-p">(</span><span class="tok-nb">if-let </span><span class="tok-p">[</span><span class="tok-nv">jumped</span> <span class="tok-p">(</span><span class="tok-nf">valid-move?</span> <span class="tok-nv">board</span> <span class="tok-nv">p1</span> <span class="tok-nv">p2</span><span class="tok-p">)]</span>
+    <span class="tok-p">(</span><span class="tok-nf">move-peg</span> <span class="tok-p">(</span><span class="tok-nf">remove-peg</span> <span class="tok-nv">board</span> <span class="tok-nv">jumped</span><span class="tok-p">)</span> <span class="tok-nv">p1</span> <span class="tok-nv">p2</span><span class="tok-p">)))</span>
+</code></pre></div></div>
+
+      <p class="Body"><code>if-let</code><span> is a nifty way to say, “If an expression evaluates to a truthy value, then bind that value to a name the same way that I can in a </span><code>let</code><span> expression. Otherwise, if I’ve provided an </span><code>else</code><span> clause, perform that </span><code>else</code><span> </span>clause; if I haven’t provided an <code>else</code> clause, return <code>nil</code>.” In this case, the test expression is <code>(valid-move? board p1 p2)</code>, and you’re assigning the result to the name <code>jumped</code> if the result is truthy. That’s used in the call to <code>move-peg</code>, which <span>returns a new board. You don’t supply an </span><code>else</code><span> clause, so if the move isn’t </span>valid, the return value of the whole expression is <code>nil</code>.</p>
+      <p class="Body">Finally, the function <code>can-move? </code>is used to determine whether the game is over by finding the first pegged positions with moves available:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-kd">defn </span><span class="tok-nv">can-move?</span>
+  <span class="tok-s">"Do any of the pegged positions have valid moves?"</span>
+  <span class="tok-p">[</span><span class="tok-nv">board</span><span class="tok-p">]</span>
+  <span class="tok-p">(</span><span class="tok-nb">some </span><span class="tok-p">(</span><span class="tok-nb">comp </span><span class="tok-nv">not-empty</span> <span class="tok-p">(</span><span class="tok-nb">partial </span><span class="tok-nv">valid-moves</span> <span class="tok-nv">board</span><span class="tok-p">))</span>
+        <span class="tok-p">(</span><span class="tok-nb">map first </span><span class="tok-p">(</span><span class="tok-nb">filter </span><span class="tok-o">#</span><span class="tok-p">(</span><span class="tok-nb">get </span><span class="tok-p">(</span><span class="tok-nb">second </span><span class="tok-nv">%</span><span class="tok-p">)</span> <span class="tok-ss">:pegged</span><span class="tok-p">)</span> <span class="tok-nv">board</span><span class="tok-p">))))</span>
+</code></pre></div></div>
+
+      <p class="Body"><span>The question mark at the end of this function name indicates it’s a </span><em>predicate function</em><span>, a function that’s meant to be used in Boolean expressions. </span><em>Predicate</em> is taken from predicate logic, which concerns itself with determining whether a statement is true or false. (You’ve already seen some built-in predicate functions, like <code>empty?</code> and <code>every?</code>.)</p>
+      <p class="Body"><code>can-move?</code><span> works by getting a sequence of all pegged positions with </span><code>(map first (filter #(get (second %) :pegged) board))</code><span>. You can break this </span>down further into the <code>filter</code> and <code>map</code> function calls: because <code>filter</code> is a seq function, it converts <code>board</code>, a map, into a seq of two-element vectors (also called<em> </em><em>tuples</em>), which looks something like this:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">([</span><span class="tok-mi">1</span> <span class="tok-p">{</span><span class="tok-ss">:connections</span> <span class="tok-p">{</span><span class="tok-mi">6</span> <span class="tok-mi">3</span>, <span class="tok-mi">4</span> <span class="tok-mi">2</span><span class="tok-p">}</span>, <span class="tok-ss">:pegged</span> <span class="tok-nv">true</span><span class="tok-p">}]</span>
+ <span class="tok-p">[</span><span class="tok-mi">2</span> <span class="tok-p">{</span><span class="tok-ss">:connections</span> <span class="tok-p">{</span><span class="tok-mi">9</span> <span class="tok-mi">5</span>, <span class="tok-mi">7</span> <span class="tok-mi">4</span><span class="tok-p">}</span>, <span class="tok-ss">:pegged</span> <span class="tok-nv">true</span><span class="tok-p">}])</span>
+</code></pre></div></div>
+
+      <p class="Body">The first element of the tuple is a position number, and the second is that position’s information. <code>filter</code> then applies the anonymous function <code>#(get (second %) :pegged)</code> to each of these tuples, filtering out the tuples where the position’s information indicates that the position is not currently housing a peg. Finally, the result is passed to <code>map</code>, which calls <code>first</code> on each tuple to grab just the position number from the tuples.</p>
+      <p class="Body">After you get a seq of pegged positions numbers, you call a predicate <span>function on each one to find the first position that returns a truthy value. The predicate function is created with </span><code>(</code><code>comp not-empty (</code><code>partial valid-moves board))</code><span>. The idea is to first return a map of all valid moves for a position </span>and then test whether that map is empty.</p>
+      <p class="Body">First, the expression <code>(partial valid-moves board)</code> derives an anonymous <span>function from </span><code>valid-moves</code><span> with the first argument, </span><code>board</code><span>, filled in using </span><code>partial</code><span> (because you’re using the same board each time you call </span><code>valid-moves</code><span>). </span>The new function can take a position and return the map of all its valid moves for the current board.</p>
+      <p class="Body">Second, you use <code>comp</code> to compose this function with <code>not-empty</code>. This function is self-descriptive; it returns <code>true</code> if the given collection is empty and <code>false</code> otherwise.</p>
+      <p class="Body"><span>What’s most interesting about this bit of code is that you’re using a </span>chain of functions to derive a new function, similar to how you use chains <span>of functions to derive new data. In Chapter 3, you learned that Clojure treats functions as data in that functions can receive functions as argu</span>ments and return them. Hopefully, this shows why that feature is fun and u<a id="Anchor-16"></a>seful.</p>
+      <h3><a id="Anchor-19"></a>Rendering and Printing the Board</h3>
+      <p class="BodyFirst">The first few expressions in the board representation and printing section just define constants:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-k">def </span><span class="tok-nv">alpha-start</span> <span class="tok-mi">97</span><span class="tok-p">)</span>
+<span class="tok-p">(</span><span class="tok-k">def </span><span class="tok-nv">alpha-end</span> <span class="tok-mi">123</span><span class="tok-p">)</span>
+<span class="tok-p">(</span><span class="tok-k">def </span><span class="tok-nv">letters</span> <span class="tok-p">(</span><span class="tok-nb">map </span><span class="tok-p">(</span><span class="tok-nb">comp str </span><span class="tok-nv">char</span><span class="tok-p">)</span> <span class="tok-p">(</span><span class="tok-nb">range </span><span class="tok-nv">alpha-start</span> <span class="tok-nv">alpha-end</span><span class="tok-p">)))</span>
+<span class="tok-p">(</span><span class="tok-k">def </span><span class="tok-nv">pos-chars</span> <span class="tok-mi">3</span><span class="tok-p">)</span>
+</code></pre></div></div>
+
+      <p class="Body">The bindings <code>alpha-start</code> and <code>alpha-end</code> set up the beginning and end of the numerical values for the letters <em>a</em> through <em>z</em>. We use those to build up a seq of <code>letters</code>. <code>char</code>, when applied to an integer, returns the character corresponding to that integer, and <code>str</code> turns the <code>char</code> into a string. <code>pos-chars</code> is used by the function <code>row-padding</code> to determine how much spacing to add to the beginning of each row. The next few definitions, <code>ansi-styles</code>, <code>ansi</code>, and <code>colorize</code> output colored text to the terminal.</p>
+      <p class="Body"><span>The functions </span><code>render-pos</code><span>, </span><code>row-positions</code><span>, </span><code>row-padding</code><span>, and </span><code>render-row</code> create strings to represent the board:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-kd">defn </span><span class="tok-nv">render-pos</span>
+  <span class="tok-p">[</span><span class="tok-nv">board</span> <span class="tok-nv">pos</span><span class="tok-p">]</span>
+  <span class="tok-p">(</span><span class="tok-nb">str </span><span class="tok-p">(</span><span class="tok-nb">nth </span><span class="tok-nv">letters</span> <span class="tok-p">(</span><span class="tok-nb">dec </span><span class="tok-nv">pos</span><span class="tok-p">))</span>
+       <span class="tok-p">(</span><span class="tok-k">if </span><span class="tok-p">(</span><span class="tok-nf">get-in</span> <span class="tok-nv">board</span> <span class="tok-p">[</span><span class="tok-nv">pos</span> <span class="tok-ss">:pegged</span><span class="tok-p">])</span>
+         <span class="tok-p">(</span><span class="tok-nf">colorize</span> <span class="tok-s">"0"</span> <span class="tok-ss">:blue</span><span class="tok-p">)</span>
+         <span class="tok-p">(</span><span class="tok-nf">colorize</span> <span class="tok-s">"-"</span> <span class="tok-ss">:red</span><span class="tok-p">))))</span>
+
+<span class="tok-p">(</span><span class="tok-kd">defn </span><span class="tok-nv">row-positions</span>
+  <span class="tok-s">"Return all positions in the given row"</span>
+  <span class="tok-p">[</span><span class="tok-nv">row-num</span><span class="tok-p">]</span>
+  <span class="tok-p">(</span><span class="tok-nb">range </span><span class="tok-p">(</span><span class="tok-nb">inc </span><span class="tok-p">(</span><span class="tok-nb">or </span><span class="tok-p">(</span><span class="tok-nf">row-tri</span> <span class="tok-p">(</span><span class="tok-nb">dec </span><span class="tok-nv">row-num</span><span class="tok-p">))</span> <span class="tok-mi">0</span><span class="tok-p">))</span>
+         <span class="tok-p">(</span><span class="tok-nb">inc </span><span class="tok-p">(</span><span class="tok-nf">row-tri</span> <span class="tok-nv">row-num</span><span class="tok-p">))))</span>
+
+<span class="tok-p">(</span><span class="tok-kd">defn </span><span class="tok-nv">row-padding</span>
+  <span class="tok-s">"String of spaces to add to the beginning of a row to center it"</span>
+  <span class="tok-p">[</span><span class="tok-nv">row-num</span> <span class="tok-nv">rows</span><span class="tok-p">]</span>
+  <span class="tok-p">(</span><span class="tok-k">let </span><span class="tok-p">[</span><span class="tok-nv">pad-length</span> <span class="tok-p">(</span><span class="tok-nb">/ </span><span class="tok-p">(</span><span class="tok-nb">* </span><span class="tok-p">(</span><span class="tok-nb">- </span><span class="tok-nv">rows</span> <span class="tok-nv">row-num</span><span class="tok-p">)</span> <span class="tok-nv">pos-chars</span><span class="tok-p">)</span> <span class="tok-mi">2</span><span class="tok-p">)]</span>
+    <span class="tok-p">(</span><span class="tok-nb">apply str </span><span class="tok-p">(</span><span class="tok-nb">take </span><span class="tok-nv">pad-length</span> <span class="tok-p">(</span><span class="tok-nb">repeat </span><span class="tok-s">" "</span><span class="tok-p">)))))</span>
+
+<span class="tok-p">(</span><span class="tok-kd">defn </span><span class="tok-nv">render-row</span>
+  <span class="tok-p">[</span><span class="tok-nv">board</span> <span class="tok-nv">row-num</span><span class="tok-p">]</span>
+  <span class="tok-p">(</span><span class="tok-nb">str </span><span class="tok-p">(</span><span class="tok-nf">row-padding</span> <span class="tok-nv">row-num</span> <span class="tok-p">(</span><span class="tok-ss">:rows</span> <span class="tok-nv">board</span><span class="tok-p">))</span>
+       <span class="tok-p">(</span><span class="tok-nf">clojure.string/join</span> <span class="tok-s">" "</span> <span class="tok-p">(</span><span class="tok-nb">map </span><span class="tok-p">(</span><span class="tok-nb">partial </span><span class="tok-nv">render-pos</span> <span class="tok-nv">board</span><span class="tok-p">)</span> 
+                                     <span class="tok-p">(</span><span class="tok-nf">row-positions</span> <span class="tok-nv">row-num</span><span class="tok-p">)))))</span>
+</code></pre></div></div>
+
+      <p class="Body">If you work from the bottom up, you can see that <code>render-row</code> calls each of the functions above it to return the string representation of the given row. Notice the expression <code>(map (partial render-pos board) (row-positions row-num))</code>. This demonstrates a good use case for partials by applying the same function multiple times with one or more arguments filled in, just like in the <code>can-move?</code> function shown earlier.</p>
+      <p class="Body">Notice too that <code>render-pos</code> uses a letter rather than a number to identify each position. This saves a little space when the board is displayed, because it allows only one character per position to represent a five-row board.</p>
+      <p class="Body"><span>Finally, </span><code>print-board</code><span> merely iterates over each row number with </span><code>doseq</code><span>, </span>printing the string representation of that row: </p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-kd">defn </span><span class="tok-nv">print-board</span>
+  <span class="tok-p">[</span><span class="tok-nv">board</span><span class="tok-p">]</span>
+  <span class="tok-p">(</span><span class="tok-nb">doseq </span><span class="tok-p">[</span><span class="tok-nv">row-num</span> <span class="tok-p">(</span><span class="tok-nb">range </span><span class="tok-mi">1</span> <span class="tok-p">(</span><span class="tok-nb">inc </span><span class="tok-p">(</span><span class="tok-ss">:rows</span> <span class="tok-nv">board</span><span class="tok-p">)))]</span>
+    <span class="tok-p">(</span><span class="tok-nb">println </span><span class="tok-p">(</span><span class="tok-nf">render-row</span> <span class="tok-nv">board</span> <span class="tok-nv">row-num</span><span class="tok-p">))))</span>
+</code></pre></div></div>
+
+      <p class="Body">You use <code>doseq</code> when you want to perform side-effecting operations (like <span>printing to a terminal) on the elements of a collection. The vector that </span>immediately follows the name <code>doseq</code> describes how to bind all the elements in a collection to a name one at a time so you can operate on them. In this instance, you’re assigning the numbers 1 through 5 (assuming there are five rows) to the name <code>row-num</code> so you can print each row.</p>
+      <p class="Body">Although printing the board technically falls under <em>interaction</em>, I wanted to show it here with the rendering functions. When I first started writing this game, the <code>print-board</code> function also generated the board’s string representation. However, now <code>print-board</code> defers all rendering to pure functions, which makes the code easier to understand and decreases the surface area of our impure f<a id="Anchor-17"></a>unctions.</p>
+      <h3>Player Interaction</h3>
+      <p class="BodyFirst">The next collection of functions handles player interaction. First, there’s <code>letter-&gt;pos</code>, which converts a letter (which is how the positions are displayed and identified by players) to the corresponding position number:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-kd">defn </span><span class="tok-nv">letter-&gt;pos</span>
+  <span class="tok-s">"Converts a letter string to the corresponding position number"</span>
+  <span class="tok-p">[</span><span class="tok-nv">letter</span><span class="tok-p">]</span>
+  <span class="tok-p">(</span><span class="tok-nb">inc </span><span class="tok-p">(</span><span class="tok-nb">- </span><span class="tok-p">(</span><span class="tok-nb">int </span><span class="tok-p">(</span><span class="tok-nb">first </span><span class="tok-nv">letter</span><span class="tok-p">))</span> <span class="tok-nv">alpha-start</span><span class="tok-p">)))</span>
+</code></pre></div></div>
+
+      <p class="Body"><span>Next, the helper function </span><code>get-input</code><span> allows you to read and clean the </span><span>player’s input. You can also provide a default value, which is used if the player presses</span> <span class="Keycap">enter</span> without typing anything:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-kd">defn </span><span class="tok-nv">get-input</span>
+  <span class="tok-s">"Waits for user to enter text and hit enter, then cleans the input"</span>
+  <span class="tok-p">([]</span> <span class="tok-p">(</span><span class="tok-nf">get-input</span> <span class="tok-nv">nil</span><span class="tok-p">))</span>
+  <span class="tok-p">([</span><span class="tok-nv">default</span><span class="tok-p">]</span>
+     <span class="tok-p">(</span><span class="tok-k">let </span><span class="tok-p">[</span><span class="tok-nv">input</span> <span class="tok-p">(</span><span class="tok-nf">clojure.string/trim</span> <span class="tok-p">(</span><span class="tok-nf">read-line</span><span class="tok-p">))]</span>
+       <span class="tok-p">(</span><span class="tok-k">if </span><span class="tok-p">(</span><span class="tok-nf">empty?</span> <span class="tok-nv">input</span><span class="tok-p">)</span>
+         <span class="tok-nv">default</span>
+         <span class="tok-p">(</span><span class="tok-nf">clojure.string/lower-case</span> <span class="tok-nv">input</span><span class="tok-p">)))))</span>
+</code></pre></div></div>
+
+      <p class="Body">The next function, <code>characters-as-strings</code>, is a tiny helper function used by <code>prompt-move</code> to take in a string and return a collection of letters with all nonalphabetic input discarded:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-nf">characters-as-strings</span> <span class="tok-s">"a   b"</span><span class="tok-p">)</span>
+<span class="tok-c1">; =&gt; ("a" "b")</span>
+
+<span class="tok-p">(</span><span class="tok-nf">characters-as-strings</span> <span class="tok-s">"a   cb"</span><span class="tok-p">)</span>
+<span class="tok-c1">; =&gt; ("a" "c" "b")</span>
+</code></pre></div></div>
+
+      <p class="Body">Next, <code>prompt-move</code> reads the player’s input and acts on it:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-kd">defn </span><span class="tok-nv">prompt-move</span>
+  <span class="tok-p">[</span><span class="tok-nv">board</span><span class="tok-p">]</span>
+  <span class="tok-p">(</span><span class="tok-nb">println </span><span class="tok-s">"\nHere's your board:"</span><span class="tok-p">)</span>
+  <span class="tok-p">(</span><span class="tok-nf">print-board</span> <span class="tok-nv">board</span><span class="tok-p">)</span>
+  <span class="tok-p">(</span><span class="tok-nb">println </span><span class="tok-s">"Move from where to where? Enter two letters:"</span><span class="tok-p">)</span>
+  <span class="tok-p">(</span><span class="tok-k">let </span><span class="tok-p">[</span><span class="tok-nv">input</span> <span class="tok-p">(</span><span class="tok-nb">map </span><span class="tok-nv">letter-&gt;pos</span> <span class="tok-p">(</span><span class="tok-nf">characters-as-strings</span> <span class="tok-p">(</span><span class="tok-nf">get-input</span><span class="tok-p">)))]</span>
+    <span class="tok-p">(</span><span class="tok-nb">if-let </span><span class="tok-p">[</span><span class="tok-nv">new-board</span> <span class="tok-p">(</span><span class="tok-nf">make-move</span><span class="tok-err">➊</span> <span class="tok-nv">board</span> <span class="tok-p">(</span><span class="tok-nb">first </span><span class="tok-nv">input</span><span class="tok-p">)</span> <span class="tok-p">(</span><span class="tok-nb">second </span><span class="tok-nv">input</span><span class="tok-p">))]</span>
+      <span class="tok-p">(</span><span class="tok-nf">user-entered-valid-move</span> <span class="tok-nv">new-board</span><span class="tok-p">)</span>
+      <span class="tok-p">(</span><span class="tok-nf">user-entered-invalid-move</span> <span class="tok-nv">board</span><span class="tok-p">))))</span>
+</code></pre></div></div>
+
+      <p class="Body">At ➊, <code>make-move</code> returns<code> nil </code>if the player’s move was invalid, and you use that information to inform her of her mistake with the <code>user-entered-invalid-move</code> function. You pass the unmodified board to <code>user-entered-invalid-move</code> so that it can prompt the player with the board again. Here’s the function definition:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-kd">defn </span><span class="tok-nv">user-entered-invalid-move</span>
+  <span class="tok-s">"Handles the next step after a user has entered an invalid move"</span>
+  <span class="tok-p">[</span><span class="tok-nv">board</span><span class="tok-p">]</span>
+  <span class="tok-p">(</span><span class="tok-nb">println </span><span class="tok-s">"\n!!! That was an invalid move :(\n"</span><span class="tok-p">)</span>
+  <span class="tok-p">(</span><span class="tok-nf">prompt-move</span> <span class="tok-nv">board</span><span class="tok-p">))</span>
+</code></pre></div></div>
+
+      <p class="Body">However, if the move is valid, the <code>new-board</code> is passed off to <code>user-entered-valid-move</code>, which hands control back to <code>prompt-move</code> if there are still moves to be made:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-kd">defn </span><span class="tok-nv">user-entered-valid-move</span>
+  <span class="tok-s">"Handles the next step after a user has entered a valid move"</span>
+  <span class="tok-p">[</span><span class="tok-nv">board</span><span class="tok-p">]</span>
+  <span class="tok-p">(</span><span class="tok-k">if </span><span class="tok-p">(</span><span class="tok-nf">can-move?</span> <span class="tok-nv">board</span><span class="tok-p">)</span>
+    <span class="tok-p">(</span><span class="tok-nf">prompt-move</span> <span class="tok-nv">board</span><span class="tok-p">)</span>
+    <span class="tok-p">(</span><span class="tok-nf">game-over</span> <span class="tok-nv">board</span><span class="tok-p">)))</span>
+</code></pre></div></div>
+
+      <p class="Body">In our board creation functions, we saw how recursion was used to build up a value using immutable data structures. The same thing is happening here, only it involves two mutually recursive functions and some user input. No mutable attributes in sight!</p>
+      <p class="Body">What happens when the game is over? This is what happens:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-kd">defn </span><span class="tok-nv">game-over</span>
+  <span class="tok-s">"Announce the game is over and prompt to play again"</span>
+  <span class="tok-p">[</span><span class="tok-nv">board</span><span class="tok-p">]</span>
+  <span class="tok-p">(</span><span class="tok-k">let </span><span class="tok-p">[</span><span class="tok-nv">remaining-pegs</span> <span class="tok-p">(</span><span class="tok-nb">count </span><span class="tok-p">(</span><span class="tok-nb">filter </span><span class="tok-ss">:pegged</span> <span class="tok-p">(</span><span class="tok-nb">vals </span><span class="tok-nv">board</span><span class="tok-p">)))]</span>
+    <span class="tok-p">(</span><span class="tok-nb">println </span><span class="tok-s">"Game over! You had"</span> <span class="tok-nv">remaining-pegs</span> <span class="tok-s">"pegs left:"</span><span class="tok-p">)</span>
+    <span class="tok-p">(</span><span class="tok-nf">print-board</span> <span class="tok-nv">board</span><span class="tok-p">)</span>
+    <span class="tok-p">(</span><span class="tok-nb">println </span><span class="tok-s">"Play again? y/n [y]"</span><span class="tok-p">)</span>
+    <span class="tok-p">(</span><span class="tok-k">let </span><span class="tok-p">[</span><span class="tok-nv">input</span> <span class="tok-p">(</span><span class="tok-nf">get-input</span> <span class="tok-s">"y"</span><span class="tok-p">)]</span>
+      <span class="tok-p">(</span><span class="tok-k">if </span><span class="tok-p">(</span><span class="tok-nb">= </span><span class="tok-s">"y"</span> <span class="tok-nv">input</span><span class="tok-p">)</span>
+        <span class="tok-p">(</span><span class="tok-nf">prompt-rows</span><span class="tok-p">)</span>
+        <span class="tok-p">(</span><span class="tok-nf">do</span>
+          <span class="tok-p">(</span><span class="tok-nb">println </span><span class="tok-s">"Bye!"</span><span class="tok-p">)</span>
+          <span class="tok-p">(</span><span class="tok-nf">System/exit</span> <span class="tok-mi">0</span><span class="tok-p">))))))</span>
+</code></pre></div></div>
+
+      <p class="Body">All that’s going on here is that the game tells you how you did, prints the final board, and prompts you to play again. If you select <em>y</em>, the game calls <code>prompt-rows</code>, which brings us to the final set of functions, those used to start a new game:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-kd">defn </span><span class="tok-nv">prompt-empty-peg</span>
+  <span class="tok-p">[</span><span class="tok-nv">board</span><span class="tok-p">]</span>
+  <span class="tok-p">(</span><span class="tok-nb">println </span><span class="tok-s">"Here's your board:"</span><span class="tok-p">)</span>
+  <span class="tok-p">(</span><span class="tok-nf">print-board</span> <span class="tok-nv">board</span><span class="tok-p">)</span>
+  <span class="tok-p">(</span><span class="tok-nb">println </span><span class="tok-s">"Remove which peg? [e]"</span><span class="tok-p">)</span>
+  <span class="tok-p">(</span><span class="tok-nf">prompt-move</span> <span class="tok-p">(</span><span class="tok-nf">remove-peg</span> <span class="tok-nv">board</span> <span class="tok-p">(</span><span class="tok-nf">letter-&gt;pos</span> <span class="tok-p">(</span><span class="tok-nf">get-input</span> <span class="tok-s">"e"</span><span class="tok-p">)))))</span>
+
+<span class="tok-p">(</span><span class="tok-kd">defn </span><span class="tok-nv">prompt-rows</span>
+  <span class="tok-p">[]</span>
+  <span class="tok-p">(</span><span class="tok-nb">println </span><span class="tok-s">"How many rows? [5]"</span><span class="tok-p">)</span>
+  <span class="tok-p">(</span><span class="tok-k">let </span><span class="tok-p">[</span><span class="tok-nv">rows</span> <span class="tok-p">(</span><span class="tok-nf">Integer.</span> <span class="tok-p">(</span><span class="tok-nf">get-input</span> <span class="tok-mi">5</span><span class="tok-p">))</span>
+        <span class="tok-nv">board</span> <span class="tok-p">(</span><span class="tok-nf">new-board</span> <span class="tok-nv">rows</span><span class="tok-p">)]</span>
+    <span class="tok-p">(</span><span class="tok-nf">prompt-empty-peg</span> <span class="tok-nv">board</span><span class="tok-p">)))</span>
+</code></pre></div></div>
+
+      <p class="Body">You use <code>prompt-rows</code> to start a game, getting the player’s input on how many rows to include. Then you pass control on to <code>prompt-empty-peg</code> so the player can tell the game which peg to remove first. From there, the program prompts you for moves until there aren’t any moves left.</p>
+      <p class="Body"><span>Even though all of this program’s side effects are relatively harmless (all you’re doing is prompting and printing), sequestering them in their own functions like this is a best practice for functional programming. In </span>general, you will reap more benefits from functional programming if you identify the bits of functionality that are referentially transparent and side-effect free, and place those bits in their own functions. These functions are <span>not capable of causing bizarre bugs in unrelated parts of your program. </span><span>They’re easier to test and develop in the REPL because they rely only on the </span>arguments you pass them, not on some complicated hidden stat<a id="Anchor-18"></a>e object.</p>
+      <h2>Summary</h2>
+      <p class="BodyFirst"><span>Pure functions are referentially transparent and side-effect free, which makes them easy to reason about. To get the most from Clojure, try to keep your impure functions to a minimum. In an immutable world, you </span>use recursion instead of <code>for</code>/<code>while</code> loops, and function composition instead of successions of mutations. Pure functions allow powerful techniques like function composition functions and memoization. They’re also super fun!</p>
+      <h2>Exercises</h2>
+      <p class="BodyFirst">One of the best ways to develop your functional programming skills is to try to implement existing functions. To that end, most of the following exercises suggest a function for you to implement, but don’t stop there; <span>go through the Clojure cheat sheet (</span><em><a href="http://clojure.org/cheatsheet/">http://clojure.org/cheatsheet/</a></em><span>) and </span>pick more!</p>
+      <ol class="List-1">
+	<li class="NumListA"><span>You used </span><code>(comp :intelligence :attributes)</code><span> to create a function that </span>returns a character’s intelligence. Create a new function, <code>attr</code>, that you can call like <code>(attr :intelligence)</code> and that does the same thing.</li>
+	<li class="NumListB">Implement the <code>comp</code> function.</li>
+	<li class="NumListB">Implement the <code>assoc-in</code> function. Hint: use the <code>assoc</code> function and define its parameters as <code>[m [k &amp; ks] v]</code>.</li>
+	<li class="NumListB">Look up and use the <code>update-in</code> function.</li>
+	<li class="NumListC">Implement <code>update-in</code>.</li>
+      </ol>
+    
+  
+
