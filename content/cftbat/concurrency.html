@@ -197,7 +197,7 @@ kind: chapter
 	<div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-nf">realized?</span> <span class="tok-p">(</span><span class="tok-nf">future</span> <span class="tok-p">(</span><span class="tok-nf">Thread/sleep</span> <span class="tok-mi">1000</span><span class="tok-p">)))</span>
 <span class="tok-c1">; =&gt; false</span>
 
-<span class="tok-p">(</span><span class="tok-k">let </span><span class="tok-p">[</span><span class="tok-nv">f</span> <span class="tok-p">(</span><span class="tok-nf">future</span> <span class="tok-p">(</span><span class="tok-nf">Thread/sleep</span> <span class="tok-mi">1000</span><span class="tok-p">))))]</span>
+<span class="tok-p">(</span><span class="tok-k">let </span><span class="tok-p">[</span><span class="tok-nv">f</span> <span class="tok-p">(</span><span class="tok-nf">future</span> <span class="tok-p">(</span><span class="tok-nf">Thread/sleep</span> <span class="tok-mi">1000</span><span class="tok-p">))]</span>
   <span class="tok-o">@</span><span class="tok-nv">f</span>
   <span class="tok-p">(</span><span class="tok-nf">realized?</span> <span class="tok-nv">f</span><span class="tok-p">))</span>
 <span class="tok-c1">; =&gt; true</span>
