@@ -134,7 +134,7 @@ kind: chapter
 <span class="tok-c1">; =&gt; {:cuddle-hunger-level 12, :percent-deteriorated 1}</span>
 </code></pre></div></div>
 
-      <p class="Body">Note that this code doesn’t actually update <code>fred</code>, because we’re not using <code>swap!</code> We’re just making a normal function call to <code>increase-cuddle-</code><code>hunger</code><code>-level</code>, which returns a result.</p>
+      <p class="Body">Note that this code doesn’t actually update <code>fred</code>, because we’re not using <code>swap!</code> We’re just making a normal function call to <code>increase-cuddle-hunger-level</code>, which returns a result.</p>
       <p class="Body">Now call <code>swap!</code> with the additional arguments, and <code>@fred</code> will be updated, like this:</p>
       <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-nf">swap!</span> <span class="tok-nv">fred</span> <span class="tok-nv">increase-cuddle-hunger-level</span> <span class="tok-mi">10</span><span class="tok-p">)</span>
 <span class="tok-c1">; =&gt; {:cuddle-hunger-level 12, :percent-deteriorated 1}</span>
