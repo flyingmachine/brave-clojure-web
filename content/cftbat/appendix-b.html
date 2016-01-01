@@ -3,10 +3,10 @@ title: "Boot, the Fancy Clojure Build Framework"
 kind: chapter
 ---
 
-  
-  
+
+
     <div id="clojureAB.html">
-      
+
 	<div class="chapter-number">Appendix B</div>
 	<h1>Boot, the Fancy Clojure Build Framework</h1>
 	<p class="x1st-Para"><span>Boot is an alternative to Leiningen that </span><span>provides the same functionality. Leiningen’s </span><span>more popular (as of the summer of 2015), but I personally like to work with Boot because it’s easier to extend. This appendix explains Boot’s underlying concepts and guides you through writ</span><span>ing your first Boot tasks. If you’re interested in using Boot to build projects right this second, check out its GitHub README (</span><em><a href="https://github.com/boot-clj/boot/">https://github.com/boot-clj/boot/</a></em><span>) and its wiki (</span><a href="https://github.com/boot-clj/boot/wiki/"><em>https://github.com/boot-clj/boot/wiki/</em></a><em><span>).</span></em></p>
@@ -48,7 +48,7 @@ kind: chapter
 	<p class="Body">In the option <code>thing</code>, <code>t</code> specifies its short name, and <code>thing</code> specifies its long name. <code>THING</code> is a bit complicated, and I’ll get to it in a second. <code>str</code> specifies the option’s type, and Boot uses that to validate the argument and convert it. <code>"The thing that's on fire"</code> is the documentation for the option. You can view a task’s documentation in the terminal with <code>boot task-name -h</code>:</p>
 	<div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-nv">boot</span> <span class="tok-nv">fire</span> <span class="tok-nv">-h</span>
 <span class="tok-o">#</span> <span class="tok-nv">Announces</span> <span class="tok-nv">that</span> <span class="tok-nv">something</span> <span class="tok-nv">is</span> <span class="tok-nv">on</span> <span class="tok-nv">fire</span>
-<span class="tok-o">#</span> 
+<span class="tok-o">#</span>
 <span class="tok-o">#</span> <span class="tok-nv">Options</span><span class="tok-err">:</span>
 <span class="tok-o">#</span>   <span class="tok-nv">-h</span>, <span class="tok-nv">--help</span>         <span class="tok-nv">Print</span> <span class="tok-nv">this</span> <span class="tok-nv">help</span> <span class="tok-nv">info.</span>
 <span class="tok-o">#</span>   <span class="tok-nv">-t</span>, <span class="tok-nv">--thing</span> <span class="tok-nv">THING</span>  <span class="tok-nv">Set</span> <span class="tok-nv">the</span> <span class="tok-nv">thing</span> <span class="tok-nv">that</span><span class="tok-ss">'s</span> <span class="tok-nv">on</span> <span class="tok-nv">fire</span> <span class="tok-nv">to</span> <span class="tok-nv">THING.</span>
@@ -119,15 +119,15 @@ kind: chapter
   <span class="tok-p">{</span><span class="tok-ss">:pre</span> <span class="tok-p">[(</span><span class="tok-nf">set?</span> <span class="tok-nv">rejects</span><span class="tok-p">)]}</span>
   <span class="tok-p">(</span><span class="tok-k">fn </span><span class="tok-p">[</span><span class="tok-nv">x</span><span class="tok-p">]</span>
 <span class="tok-err">➊</span>     <span class="tok-p">(</span><span class="tok-k">if </span><span class="tok-p">(</span><span class="tok-nb">= </span><span class="tok-nv">x</span> <span class="tok-mi">1</span><span class="tok-p">)</span>
-      <span class="tok-s">"I'm not going to bother doing anything to that"</span>
-      <span class="tok-p">(</span><span class="tok-k">let </span><span class="tok-p">[</span><span class="tok-nv">y</span> <span class="tok-p">(</span><span class="tok-nf">next-handler</span> <span class="tok-nv">x</span><span class="tok-p">)]</span>
-        <span class="tok-p">(</span><span class="tok-k">if </span><span class="tok-p">(</span><span class="tok-nf">rejects</span> <span class="tok-nv">y</span><span class="tok-p">)</span>
-          <span class="tok-p">(</span><span class="tok-nb">str </span><span class="tok-s">"I don't like "</span> <span class="tok-nv">y</span><span class="tok-p">)</span>
-          <span class="tok-p">(</span><span class="tok-nb">str </span><span class="tok-nv">y</span><span class="tok-p">))))))</span>
+        <span class="tok-s">"I'm not going to bother doing anything to that"</span>
+        <span class="tok-p">(</span><span class="tok-k">let </span><span class="tok-p">[</span><span class="tok-nv">y</span> <span class="tok-p">(</span><span class="tok-nf">next-handler</span> <span class="tok-nv">x</span><span class="tok-p">)]</span>
+          <span class="tok-p">(</span><span class="tok-k">if </span><span class="tok-p">(</span><span class="tok-nf">rejects</span> <span class="tok-nv">y</span><span class="tok-p">)</span>
+            <span class="tok-p">(</span><span class="tok-nb">str </span><span class="tok-s">"I don't like "</span> <span class="tok-nv">y</span><span class="tok-p">)</span>
+            <span class="tok-p">(</span><span class="tok-nb">str </span><span class="tok-nv">y</span><span class="tok-p">))))))</span>
 
 <span class="tok-p">(</span><span class="tok-k">def </span><span class="tok-nv">whiney-strinc</span> <span class="tok-p">(</span><span class="tok-nf">whiney-middleware</span> <span class="tok-nb">inc </span><span class="tok-o">#</span><span class="tok-p">{</span><span class="tok-mi">2</span><span class="tok-p">}))</span>
 <span class="tok-p">(</span><span class="tok-nf">whiney-strinc</span> <span class="tok-mi">1</span><span class="tok-p">)</span>
-<span class="tok-c1">; =&gt; "I don't like 2"</span>
+<span class="tok-c1">; =&gt; "I'm not going to bother doing anything to that"</span>
 </code></pre></div></div>
 
 	<ol class="List-1">
@@ -198,7 +198,5 @@ kind: chapter
 	<p class="Body">Although that covers the basic concept of a middleware factory, you’ll need to learn a bit more to take full advantage of filesets. The mechanics of working with filesets are all explained in the fileset wiki (<em><a href="https://github.com/boot-clj/boot/wiki/Filesets">https://github.com/boot-clj/boot/wiki/Filesets</a></em>). In the meantime, I hope this information gave you a good conceptual overview!</p>
 	<h2>Next Steps</h2>
 	<p class="BodyFirst"><span>The point of this appendix was to explain the concepts behind Boot. However, Boot also has a bunch of other functions, like </span><code>set-env!</code><span> and </span><code>task-options!</code><span>, that make your programming life easier when you’re actually </span>using it. It offers amazing magical features, like providing classpath isolation so you can run multiple projects using one JVM, and letting you add new dependencies to your project without having to restart your REPL. If Boot tickles your fancy, check out its README for more information on real-world usage. Also, its wiki provides top-notch documentation.</p>
-      
-    </div>
-  
 
+    </div>
