@@ -3,7 +3,7 @@
 
 
 (defn scan
-  [f [x y & xs]]
+  [[x y & xs]]
   (if y
-    (cons x (scan f (cons (f x y) xs)))
+    (cons x (scan (cons (+ x y) xs)))
     (list x)))
