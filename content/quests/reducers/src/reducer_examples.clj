@@ -1,6 +1,20 @@
 (ns reducer-examples
   (:require [clojure.core.reducers :as r]))
 
+;;----- intermediate collections
+
+(defn ic1 []
+  (->> (list "Shake" "Bake")
+       (map #(str % " it off"))
+       (map clojure.string/lower-case)
+       (into [])))
+
+(defn ic2 []
+  (->> (range 1000)
+       (filter even?)
+       (map inc)
+       (into [])))
+
 ;;----- Just for printing out times for easy comparison
 (defn pretty-time
   [expr]
@@ -12,8 +26,11 @@
                   (quote ~expr)))))
 
 (defmacro times
+  "Prints a pretty time for each expression, waiting 100 ms between exprs"
   [& exprs]
-  `(do ~@(map pretty-time exprs)))
+  `(do ~@(butlast (interleave (map pretty-time exprs)
+                              (repeat '(Thread/sleep 100))))))
+
 
 ;;----- Simple operations
 (def snums  (range 10000000))
@@ -68,3 +85,4 @@
          (->> x (filter even?)   (pmap add-primes)  (reduce +))
          (->> x (filter even?)   (map add-primes)   (reduce +))))
 ;;-----
+()
