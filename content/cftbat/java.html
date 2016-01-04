@@ -251,7 +251,7 @@ kind: chapter
       <p class="BodyFirst"><span>One of Rich Hickey’s design goals for Clojure was to create a </span><em>practical</em><span> </span>language. For that reason, Clojure was designed to make it easy for you to interact with Java classes and objects, meaning you can use Java’s extensive<span> native functionality and its enormous ecosystem. The ability to use Java classes, objects, and methods is called </span><em>Java interop</em><span>. In this section, you’ll learn how to use Clojure’s interop syntax, how to import Java packages, and how to use the most frequently used Java classes.</span></p>
       <h3>Interop Syntax</h3>
       <p class="BodyFirst">Using Clojure’s interop syntax, interacting with Java objects and classes is straightforward. Let’s start with object interop syntax.</p>
-      <p class="Body">You can call methods on an object using (<code>.</code><span class="LiteralItal">methodName object</span>). For <span>example</span>, because all Clojure strings are implemented as Java strings, you can call Java methods on them:</p>
+      <p class="Body">You can call methods on an object using <code>(.</code><span class="LiteralItal">methodName object</span>)</code>. For <span>example</span>, because all Clojure strings are implemented as Java strings, you can call Java methods on them:</p>
       <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-nf">.toUpperCase</span> <span class="tok-s">"By Bluebeard's bananas!"</span><span class="tok-p">)</span>
 <span class="tok-c1">; =&gt; "BY BLUEBEARD'S BANANAS!"</span>
 
