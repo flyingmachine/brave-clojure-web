@@ -292,7 +292,7 @@ kind: chapter
       <p class="Body">The dot operator has a few more capabilities, and if you’re interested in exploring it further, you can look at clojure.org’s documentation on Java interop at <em><a href="http://clojure.org/java_interop#Java%20Interop-The%20Dot%20special%20form">http://clojure.org/java_interop#Java%20Interop-The%20Dot%20special%20form</a></em>.</p>
       <h3>Creating and Mutating Objects</h3>
       <p class="BodyFirst">The previous section showed you how to call methods on objects that already exist. This section shows you how to create new objects and how to interact with them.</p>
-      <p class="Body">You can create a new object in two ways: <code>(new </code><span class="LiteralItal">ClassName optional-args</span><code>*)</code> and <code>(</code><span class="LiteralItal">ClassName</span><code>. </code><span class="LiteralItal">optional-args</span><code>*)</code>:</p>
+      <p class="Body">You can create a new object in two ways: <code>(new <span class="LiteralItal">ClassName optional-args</span>)</code> and <code>(<span class="LiteralItal">ClassName</span>. <span class="LiteralItal">optional-args</span>)</code>:</p>
       <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-k">new </span><span class="tok-nv">String</span><span class="tok-p">)</span>
 <span class="tok-c1">; =&gt; ""</span>
 
@@ -303,7 +303,7 @@ kind: chapter
 <span class="tok-c1">; =&gt; "To Davey Jones's Locker with ye hardies"</span>
 </code></pre></div></div>
 
-      <p class="Body">Most people use the dot version, <code>(</code><span class="LiteralItal">ClassName</span><code>.)</code>.</p>
+      <p class="Body">Most people use the dot version, <code>(<span class="LiteralItal">ClassName</span>.)</code>.</p>
       <p class="Body">To modify an object, you call methods on it like you did in the previous section. To investigate this, let’s use <code>java.util.Stack</code>. This class represents a last-in, first-out (LIFO) stack of objects, or just <em>stack</em>. <em>Stacks</em> are a common data structure, and they’re called stacks because you can visualize them as a physical stack of objects, say, a stack of gold coins that you just plundered. When you add a coin to your stack, you add it to the top of the stack. When you remove a coin, you remove it from the top. Thus, the last object added is the first object removed.</p>
       <p class="Body">Unlike Clojure data structure, Java stacks are mutable. You can add items to them and remove items, changing the object instead of deriving a new value. Here’s how you might create a stack and add an object to it:</p>
       <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-nf">java.util.Stack.</span><span class="tok-p">)</span>
