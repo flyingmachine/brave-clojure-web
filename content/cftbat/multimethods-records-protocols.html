@@ -148,7 +148,7 @@ kind: chapter
 <span class="tok-c1">; =&gt; "meh about blorb"</span>
 </code></pre></div></div>
 
-      <p class="Body">Because we haven’t defined a <code>Psychodynamics</code> implementation for numbers, Clojure dispatches calls to <code>thoughts</code> and <code>feelings</code> to the implementation defined for <code>java.lang.Object</code>.</p>
+      <p class="Body">Because we haven’t defined a <code>Psychodynamics</code> implementation for numbers, Clojure dispatches calls to <code>thoughts</code> and <code>feelings-about</code> to the implementation defined for <code>java.lang.Object</code>.</p>
       <p class="Body">Instead of making multiple calls to <code>extend-type</code> to extend multiple types, you can use <code>extend-protocol</code>, which lets you define protocol implementations for multiple types at once. Here’s how you’d define the preceding protocol implementations:</p>
       <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-nf">extend-protocol</span> <span class="tok-nv">Psychodynamics</span>
   <span class="tok-nv">java.lang.String</span>
