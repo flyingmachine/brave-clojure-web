@@ -15,7 +15,18 @@
        (map inc)
        (into [])))
 
+
+;;----- basic usage
+
+(defn b1 []
+  (->> (range 1000)
+       (r/filter even?)
+       (r/map inc)
+       (into [])))
+
+
 ;;----- Just for printing out times for easy comparison
+
 (defn pretty-time
   [expr]
   `(let [start# (. System (nanoTime))
@@ -33,6 +44,7 @@
 
 
 ;;----- Simple operations
+
 (def snums  (range 10000000))
 (def snumsv (vec snums))
 
@@ -55,6 +67,7 @@
 
 
 ;;----- More computationally intensive ops
+
 (def pnums  (range 10000))
 (def pnumsv (vec pnums))
 
