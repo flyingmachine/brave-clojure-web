@@ -24,6 +24,11 @@
        (r/map inc)
        (into [])))
 
+(->> (range 1000)
+     (r/filter even?)
+     (r/map inc)
+     (into []))
+
 
 ;;----- Just for printing out times for easy comparison
 
