@@ -39,12 +39,16 @@ $ms-down1: $base-font-size / $ms-scale;
 .title {
   font-family: $title-family;
   color: #c1b2b7;
-  @include adjust-font-size-to($ms-up3, 2);
+  @include adjust-font-size-to($ms-up2, 2);
 
   strong {
     text-transform: uppercase;
     color: $orange;
-    @include adjust-font-size-to($ms-up4, 2, $ms-up3);
+    @include adjust-font-size-to($ms-up4, 2, $ms-up2);
+  }
+
+  span {
+    word-spacing: .08em;
   }
 }
 
