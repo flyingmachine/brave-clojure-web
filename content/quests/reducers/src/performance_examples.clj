@@ -1,59 +1,36 @@
-(ns reducer-examples
+(ns performance-examples
   (:require [clojure.core.reducers :as r]))
-
-;;----- map as reduce
-(defn map* [f col]
-  (reduce (fn [xs x] (conj xs (f x)))
-          (empty col)
-          col))
-
-(defn filter* [f col]
-  )
-
-;;----- intermediate collections
-
-(defn ic1 []
-  (->> (list "Shake" "Bake")
-       (map #(str % " it off"))
-       (map clojure.string/lower-case)
-       (into [])))
-
-(defn ic2 []
-  (->> (range 1000)
-       (filter even?)
-       (map inc)
-       (into [])))
-
-
-;;----- basic usage
-
-(defn b1 []
-  (->> (range 1000)
-       (r/filter even?)
-       (r/map inc)
-       (into [])))
-
-(defn b2 []
-  (->> (range 10)
-       (r/filter even?)
-       (r/map inc)
-       (r/take 2)))
-
-(->> (range 10)
-     (r/filter even?)
-     (r/map inc)
-     (r/take 2))
 
 ;;----- Just for printing out times for easy comparison
 
-(defn pretty-time
+;; Number of times to run a code snippet
+(def runs 4)
+
+(defn runs-and-pauses
+  "Return a bunch of functions that time execution when called"
   [expr]
-  `(let [start# (. System (nanoTime))
-         runs#  4]
-     (dotimes [n# runs#] ~expr)
-     (prn (format "%8.2f %s"
-                  (/ (double (- (. System (nanoTime)) start#)) 1000000.0 runs#)
-                  (quote ~expr)))))
+  (->> (repeat runs expr)
+       (interleave (repeat '(Thread/sleep 50)))
+       (map (fn [form]
+              `(fn []
+                 (let [start# (. System (nanoTime))]
+                   ~form
+                   (- (. System (nanoTime)) start#)))))))
+
+(defn pretty-time
+  "Give the times macro a form that executes the given expression
+  _runs_ times, pausing 100ms between each run"
+  [expr]
+  (let [exprs (runs-and-pauses expr)]
+    `(let [times#    (->> (list ~@exprs)
+                          (drop 1)
+                          (map (fn [f#] (f#)))
+                          (take-nth 2))
+           avg-time# (/ (double (reduce + times#))
+                        ~runs)]
+       (prn (format "%8.2f %s"
+                    (/ avg-time# 1000000.0)
+                    (quote ~expr))))))
 
 (defmacro times
   "Prints a pretty time for each expression, waiting 100 ms between exprs"
@@ -75,14 +52,12 @@
 (defn t2 [x]
   (times (->> x (r/map inc) (r/fold +))
          (->> x (r/map inc) (r/reduce +))
-         (->> x (pmap inc)  (reduce +))
          (->> x (map inc)   (reduce +))))
 
 (defn t3 [x]
-  (times (->> x (r/filter even?) (r/map inc) (r/fold +))
-         (->> x (r/filter even?) (r/map inc) (r/reduce +))
-         (->> x (filter even?)   (pmap inc)  (reduce +))
-         (->> x (filter even?)   (map inc)   (reduce +))))
+  (times (->> x (r/map inc) (r/filter even?) (r/fold +))
+         (->> x (r/map inc) (r/filter even?) (r/reduce +))
+         (->> x (map inc)   (filter even?)   (reduce +))))
 
 
 ;;----- More computationally intensive ops
@@ -108,12 +83,11 @@
 (defn p1 [x]
   (times (->> x (r/map add-primes) (r/fold +))
          (->> x (r/map add-primes) (r/reduce +))
-         (->> x (pmap add-primes)  (reduce +))
          (->> x (map add-primes)   (reduce +))))
 
 (defn p2 [x]
   (times (->> x (r/filter even?) (r/map add-primes) (r/fold +))
          (->> x (r/filter even?) (r/map add-primes) (r/reduce +))
-         (->> x (filter even?)   (pmap add-primes)  (reduce +))
          (->> x (filter even?)   (map add-primes)   (reduce +))))
-;;-----
+
+
