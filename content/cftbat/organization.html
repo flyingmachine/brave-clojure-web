@@ -268,7 +268,7 @@ kind: chapter
 <span class="tok-p">(</span><span class="tok-kd">defn </span><span class="tok-nv">latlng-&gt;point</span>
   <span class="tok-s">"Convert lat/lng map to comma-separated string"</span> 
   <span class="tok-p">[</span><span class="tok-nv">latlng</span><span class="tok-p">]</span>
-  <span class="tok-p">(</span><span class="tok-nb">str </span><span class="tok-p">(</span><span class="tok-ss">:lng</span> <span class="tok-nv">latlng</span><span class="tok-p">)</span> <span class="tok-s">","</span> <span class="tok-p">(</span><span class="tok-ss">:lat</span> <span class="tok-nv">latlng</span><span class="tok-p">)))</span>
+  <span class="tok-p">(</span><span class="tok-nb">str </span><span class="tok-p">(</span><span class="tok-ss">:lat</span> <span class="tok-nv">latlng</span><span class="tok-p">)</span> <span class="tok-s">","</span> <span class="tok-p">(</span><span class="tok-ss">:lng</span> <span class="tok-nv">latlng</span><span class="tok-p">)))</span>
 
 <span class="tok-p">(</span><span class="tok-kd">defn </span><span class="tok-nv">points</span>
   <span class="tok-p">[</span><span class="tok-nv">locations</span><span class="tok-p">]</span>
@@ -575,18 +575,19 @@ kind: chapter
        <span class="tok-p">(</span><span class="tok-nf">scale</span> <span class="tok-nv">width</span> <span class="tok-nv">height</span><span class="tok-p">)))</span>
 
 <span class="tok-p">(</span><span class="tok-kd">defn </span><span class="tok-nv">xml</span>
-  <span class="tok-s">"svg 'template', which also flips the coordinate system"</span>
+  <span class="tok-s">&quot;svg &#39;template&#39;, which also flips the coordinate system&quot;</span>
   <span class="tok-p">[</span><span class="tok-nv">width</span> <span class="tok-nv">height</span> <span class="tok-nv">locations</span><span class="tok-p">]</span>
-  <span class="tok-p">(</span><span class="tok-nb">str </span><span class="tok-s">"&lt;svg height=\""</span> <span class="tok-nv">height</span> <span class="tok-s">"\" width=\""</span> <span class="tok-nv">width</span> <span class="tok-s">"\"&gt;"</span>
-       <span class="tok-c1">;; These two &lt;g&gt; tags flip the coordinate system</span>
-       <span class="tok-s">"&lt;g transform=\"translate(0,"</span> <span class="tok-nv">height</span> <span class="tok-s">")\"&gt;"</span>
-       <span class="tok-s">"&lt;g transform=\"scale(1,-1)\"&gt;"</span>
+  <span class="tok-p">(</span><span class="tok-nb">str </span><span class="tok-s">&quot;&lt;svg height=\&quot;&quot;</span> <span class="tok-nv">height</span> <span class="tok-s">&quot;\&quot; width=\&quot;&quot;</span> <span class="tok-nv">width</span> <span class="tok-s">&quot;\&quot;&gt;&quot;</span>
+       <span class="tok-c1">;; These two &lt;g&gt; tags change the coordinate system so that</span>
+       <span class="tok-c1">;; 0,0 is in the lower-left corner, instead of SVG&#39;s default</span>
+       <span class="tok-c1">;; upper-left corner</span>
+       <span class="tok-s">&quot;&lt;g transform=\&quot;translate(0,&quot;</span> <span class="tok-nv">height</span> <span class="tok-s">&quot;)\&quot;&gt;&quot;</span>
+       <span class="tok-s">&quot;&lt;g transform=\&quot;rotate(-90)\&quot;&gt;&quot;</span>
        <span class="tok-p">(</span><span class="tok-nb">-&gt; </span><span class="tok-p">(</span><span class="tok-nf">transform</span> <span class="tok-nv">width</span> <span class="tok-nv">height</span> <span class="tok-nv">locations</span><span class="tok-p">)</span>
            <span class="tok-nv">points</span>
            <span class="tok-nv">line</span><span class="tok-p">)</span>
-       <span class="tok-s">"&lt;/g&gt;&lt;/g&gt;"</span>
-       <span class="tok-s">"&lt;/svg&gt;"</span><span class="tok-p">))</span>
-</code></pre></div></div>
+       <span class="tok-s">&quot;&lt;/g&gt;&lt;/g&gt;&quot;</span>
+       <span class="tok-s">&quot;&lt;/svg&gt;&quot;</span><span class="tok-p">))</span></code></pre></div></div>
 
       <p class="Body"><span>The functions here are pretty straightforward. They just take </span><code>{:lat x :lng y}</code><span> maps and transform them so that an SVG can be created. </span><code>latlng-&gt;point</code><span> returns a string that can be used to define a point in SVG markup. </span><code>points</code><span> converts a seq of </span><code>lat</code><span>/</span><code>lng</code><span> maps into a space-separated </span>string of points. <code>line</code> returns the SVG markup for a line that connects all given space-separated strings of points. <code>transform</code> takes a seq of locations, <span>translates them so they start at the point (0, 0), and scales them to the given width and height. Finally, </span><code>xml</code><span> produces the markup for displaying the given locations using SVG.</span></p>
       <p class="Body">With <em>svg.clj</em> all coded up, now make <em>core.clj</em> look like this:</p>

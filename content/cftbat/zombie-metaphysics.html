@@ -566,8 +566,7 @@ kind: chapter
           <span class="tok-nv">.start</span>
           <span class="tok-nv">.join</span><span class="tok-p">))</span>
 </code></pre></div></div>
-
-      <p class="Body">Using <code>with-redefs</code> may be more appropriate than using <code>bindings</code> for setting up a test environment. It’s also more widely applicable, in that you can use it for any var, not just dynamic ones.</p>
+      <p class="Body"><code>with-redefs</code> can be used with any var, not just dynamic ones. Because it has has such far-reaching effects, you should only use it during testing. For example, you could use it to redefine a function that returns data from a network call, so that the function returns mock data without having to actually make a network request.</p>
       <p class="Body">Now you know all about vars! Try not to hurt yourself or anyone you know with them.</p>
       <h2>Stateless Concurrency and Parallelism with pmap</h2>
       <p class="BodyFirst"><span>So far, this chapter has focused on tools that are designed to mitigate the risks inherent in concurrent programming. You’ve learned about the </span><span>dangers</span><span> born of shared access to mutable state and how Clojure implements </span>a reconceptualization of state that helps you write concurrent programs safely.</p>

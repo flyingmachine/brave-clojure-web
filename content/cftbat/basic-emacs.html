@@ -27,9 +27,9 @@ kind: chapter
       <p class="BodyFirst"><span>I’ve created a repository of</span><span> all the files you need to configure Emacs for Clojure, available at <em><a href="https://github.com/flyingmachine/emacs-for-clojure">https://github.com/flyingmachine/emacs-for-clojure</a></em>. Do </span>the following to delete your existing Emacs configuration and install the Clojure-friendly one:</p>
       <ol class="List-1">
 	<li class="NumListA para-style-override-2">Close Emacs.</li>
-	<li class="NumListB">Delete <em>~/.emacs</em> or <em>~/.emacs.d</em> if they exist. This is where Emacs looks for configuration files, and deleting these files and directories will ensure that you start with a clean slate.</li>
+        <li class="NumListB">Delete <em>~/.emacs</em> or <em>~/.emacs.d</em> if they exist. (Windows users, your emacs files will probably live in <em>C:\Users\your_user_name\AppData\Roaming\</em>. So, for example, you would delete <em>C:\Users\jason\AppData\Roaming\.emacs.d</em>.) This is where Emacs looks for configuration files, and deleting these files and directories will ensure that you start with a clean slate.</li>
 	<li class="NumListB"><span>Download the Emacs configuration zip file from the book’s resource page and unzip it. Its contents should be a folder, </span><em>emacs-for-clojure-book1</em><span>. Run </span><span class="LiteralBold">mv path/to/emacs-for-</span><span class="LiteralBold">clojure</span><span class="LiteralBold">-book1 ~/.emacs.d</span><span>.</span></li>
-	<li class="NumListB">Create the file <em>~/.lein/profiles.clj</em> and add this line to it: </li>
+	<li class="NumListB">Create the file <em>~/.lein/profiles.clj</em> (Windows users, this is probably <em>C:\Users\your_user_name\.lein\profiles.clj</em>) and add this line to it: and add this line to it: </li>
       </ol>
       <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">{</span><span class="tok-ss">:user</span> <span class="tok-p">{</span><span class="tok-ss">:plugins</span> <span class="tok-p">[[</span><span class="tok-nv">cider/cider-nrepl</span> <span class="tok-s">"0.8.1"</span><span class="tok-p">]]}}</span> 
 </code></pre></div></div>
@@ -37,7 +37,7 @@ kind: chapter
       <ol class="List-1" start="5">
 	<li class="NumListC para-style-override-4">Open Emacs.</li>
       </ol>
-      <p class="Body">When you open Emacs, you should see a lot of activity as Emacs downloads a bunch of useful packages. Once the activity stops, go ahead and just quit Emacs, and then open it again. After you do so, you should see a window like the one in Figure 2-3.</p>
+      <p class="Body">When you open Emacs, you may see a lot of activity as Emacs downloads a bunch of useful packages. Once the activity stops, go ahead and just quit Emacs, and then open it again. (If you don't see any activity, that's OK! Quit and restart Emacs just for funsies.) After you do so, you should see a window like the one in Figure 2-3.</p>
       <img src="/assets/images/cftbat/basic-emacs/emacs-configged.png" />
       
 	<div class="caption">Figure 2-3: How Emacs looks after installing your sweet new configuration</div>
