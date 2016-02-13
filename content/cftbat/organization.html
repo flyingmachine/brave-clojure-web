@@ -556,7 +556,7 @@ kind: chapter
       <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-kd">defn </span><span class="tok-nv">latlng-&gt;point</span>
   <span class="tok-s">"Convert lat/lng map to comma-separated string"</span> 
   <span class="tok-p">[</span><span class="tok-nv">latlng</span><span class="tok-p">]</span>
-  <span class="tok-p">(</span><span class="tok-nb">str </span><span class="tok-p">(</span><span class="tok-ss">:lng</span> <span class="tok-nv">latlng</span><span class="tok-p">)</span> <span class="tok-s">","</span> <span class="tok-p">(</span><span class="tok-ss">:lat</span> <span class="tok-nv">latlng</span><span class="tok-p">)))</span>
+  <span class="tok-p">(</span><span class="tok-nb">str </span><span class="tok-p">(</span><span class="tok-ss">:lat</span> <span class="tok-nv">latlng</span><span class="tok-p">)</span> <span class="tok-s">","</span> <span class="tok-p">(</span><span class="tok-ss">:lng</span> <span class="tok-nv">latlng</span><span class="tok-p">)))</span>
 
 <span class="tok-p">(</span><span class="tok-kd">defn </span><span class="tok-nv">points</span>
   <span class="tok-s">"Given a seq of lat/lng maps, return string of points joined by space"</span>
