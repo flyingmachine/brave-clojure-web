@@ -222,7 +222,7 @@ kind: chapter
 <span class="tok-c1">; =&gt; (clojure.core/+ 1 (clojure.core/inc 1))</span>
 </code></pre></div></div>
 
-	<p class="Body">If you’re familiar with string interpolation, you can think of syntax quoting/unquoting similarly. In both cases, you’re creating a kind of template, placing a few variables within a larger, static structure. For example, in Ruby you can create the string <code>"Churn your butter, Jebediah"</code> through concatenation:</p>
+	<p class="Body">If you’re familiar with string interpolation, you can think of syntax quoting/unquoting similarly. In both cases, you’re creating a kind of template, placing a few variables within a larger, static structure. For example, in Ruby you can create the string <code>"Churn your butter, Jebediah!"</code> through concatenation:</p>
 	<div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-nb">name = </span><span class="tok-s">"Jebediah"</span>
 <span class="tok-s">"Churn your butter, "</span> <span class="tok-nb">+ name + </span><span class="tok-s">"!"</span>
 </code></pre></div></div>
@@ -519,7 +519,7 @@ kind: chapter
                      <span class="tok-p">(</span><span class="tok-nf">partition</span> <span class="tok-mi">2</span> <span class="tok-nv">message-validator-pairs</span><span class="tok-p">))))</span>
 </code></pre></div></div>
 
-	<p class="Body">The first argument, <code>to-validate</code>, is the field you want to validate. The second argument, <code>message-validator-pairs</code>, should be a seq with an even number of elements. This seq gets grouped into pairs with <code>(partition 2 message-validator-pairs)</code>. The first element of the pair should be an error message, and the second element of the pair should be a function (just like the pairs are arranged in <code>order-details-validation</code>). The <code>error-messages-for</code> <span>function works by filtering out all error message and validation pairs where </span><span>the validation function returns </span><code>true</code><span> when applied to </span><code>to-validate</code><span>. It then </span>uses <code>map first</code> to get the first element of each pair, the error message. Here it is in action:</p>
+	<p class="Body">The first argument, <code>to-validate</code>, is the field you want to validate. The second argument, <code>message-validator-pairs</code>, should be a seq with an even number of elements. This seq gets grouped into pairs with <code>(partition 2 message-validator-pairs)</code>. The first element of the pair should be an error message, and the second element of the pair should be a function (just like the pairs are arranged in <code>order-details-validations</code>). The <code>error-messages-for</code> <span>function works by filtering out all error message and validation pairs where </span><span>the validation function returns </span><code>true</code><span> when applied to </span><code>to-validate</code><span>. It then </span>uses <code>map first</code> to get the first element of each pair, the error message. Here it is in action:</p>
 	<div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-nf">error-messages-for</span> <span class="tok-s">""</span> <span class="tok-p">[</span><span class="tok-s">"Please enter a name"</span> <span class="tok-nv">not-empty</span><span class="tok-p">])</span>
 <span class="tok-c1">; =&gt; ("Please enter a name")</span>
 </code></pre></div></div>
@@ -569,7 +569,7 @@ kind: chapter
 </code></pre></div></div>
 
 	<p class="Body">However, this wouldn’t work, because <code>success-code</code> and <code>failure-code</code> would get evaluated each time. A macro would work because macros let you control evaluation. Here’s how you’d use the macro:</p>
-	<div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-nf">if-valid</span> <span class="tok-nv">order-details</span> <span class="tok-nv">order-details-validation</span> <span class="tok-nv">errors</span>
+	<div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-nf">if-valid</span> <span class="tok-nv">order-details</span> <span class="tok-nv">order-details-validations</span> <span class="tok-nv">errors</span>
  <span class="tok-p">(</span><span class="tok-nf">render</span> <span class="tok-ss">:success</span><span class="tok-p">)</span>
  <span class="tok-p">(</span><span class="tok-nf">render</span> <span class="tok-ss">:failure</span> <span class="tok-nv">errors</span><span class="tok-p">))</span>
 </code></pre></div></div>
@@ -604,7 +604,7 @@ kind: chapter
 	<h2>Exercises</h2>
 	<ol class="List-1">
 	  <li class="NumListA">Write the macro <code>when-valid</code> so that it behaves similarly to <code>when</code>. Here is an example of calling it: 
-	<div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-nf">when-valid</span> <span class="tok-nv">order-details</span> <span class="tok-nv">order-details-validation</span>
+	<div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-nf">when-valid</span> <span class="tok-nv">order-details</span> <span class="tok-nv">order-details-validations</span>
  <span class="tok-p">(</span><span class="tok-nb">println </span><span class="tok-s">"It's a success!"</span><span class="tok-p">)</span>
  <span class="tok-p">(</span><span class="tok-nf">render</span> <span class="tok-ss">:success</span><span class="tok-p">))</span>
 </code></pre></div></div>
