@@ -57,7 +57,7 @@ body {
 
 .wrap {
   @include leader(2);
-  @include padding-trailer(4);
+  @include padding-trailer(5);
 }
 
 .footer {
