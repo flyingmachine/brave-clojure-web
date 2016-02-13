@@ -24,3 +24,9 @@ typos
 
 https://github.com/flyingmachine/brave-clojure-web/pull/81
 core fucntions fix
+
+https://github.com/flyingmachine/brave-clojure-web/pull/79/files
+
+https://github.com/flyingmachine/brave-clojure-web/pull/78/files
+
+https://github.com/flyingmachine/brave-clojure-web/pull/128
