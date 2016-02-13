@@ -39,6 +39,10 @@ kind: chapter
 <span class="tok-nv">fred.cuddle_hunger_level</span> <span class="tok-o">#</span> <span class="tok-nv">=&gt;</span> <span class="tok-mi">3</span>
 </code></pre></div></div>
 
+      <ol class="List-1">
+	  <li class="Listing">10-1. Modeling cuddle zombie behavior with Ruby</li>
+	</ol>
+
       <p class="Body"><span>In this example, you create a cuddle zombie, </span><code>fred</code><span>, with two attributes: </span><code>cuddle_hunger_level</code><span> and </span><code>percent_deteriorated</code><span>. </span><code>fred</code><span> starts out with a </span><code>cuddle_hunger_level</code><span> of just 2, but you can change it to whatever you want and it’s still good ol’ Fred, the same cuddle zombie. In this case, you changed its </span><code>cuddle_hunger_level</code><span> to 3.</span></p>
       <img src="/assets/images/cftbat/zombie-metaphysics/cuddle-zombie.png" class="figure" />
       <p class="Body">You can see that this object is just a fancy reference cell. It’s subject to the same nondeterministic results in a multithreaded environment. For example, if two threads try to increment Fred’s hunger level with something like <code>fred.cuddle_hunger_level = fred.cuddle_hunger_level + 1</code>, one of the increments could be lost, just like in the example with two threads writing to <code>X</code> in “The Three Goblins: Reference Cells, Mutual Exclusion, and Dwarven Berserkers” on page <span>193</span>.</p>

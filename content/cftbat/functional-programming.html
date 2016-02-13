@@ -184,7 +184,7 @@ kind: chapter
 </code></pre></div></div>
 
       <ol class="List-1">
-	<li class="Listing">Using function composition to modify a glamour shot caption</li>
+	<li class="Listing">5-1. Using function composition to modify a glamour shot caption</li>
       </ol>
       <img src="/assets/images/cftbat/functional-programming/glamour-boa.png" class="left" />
       <p class="Body">In the first line, we use <code>require</code> to access the string function library (I’ll discuss this function and related concepts in Chapter 6). Otherwise, the code is easy peasy. No mutation required. Instead of progressively mutating an object, the <code>clean</code> function works by passing an immutable value, <code>text</code>, to a pure function, <code>s/trim</code>, which returns an immutable value (<code>"My boa constrictor is so sassy lol!"</code>; the spaces at the end of the string have been trimmed). That value is then passed to the pure function <code>s/replace</code>, which returns another immutable value (<code>"My boa constrictor is so sassy LOL!"</code>).</p>

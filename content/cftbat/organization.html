@@ -117,7 +117,7 @@ kind: chapter
 </code></pre></div></div>
 
       <ol class="List-1">
-	<li class="Listing">Using <span class="LiteralCaption">in-ns</span> to create a namespace and switch to it</li>
+	<li class="Listing">6-1. Using <span class="LiteralCaption">in-ns</span> to create a namespace and switch to it</li>
       </ol>
       <p class="Body">Notice that your REPL prompt is now <code>cheese.analysis&gt;</code>, indicating that you are indeed in the new namespace you just created. Now when you use <code>def</code>, it will store the named object in the <code>cheese.analysis</code> namespace.</p>
       <p class="Body"><span>But what if you want to use functions and data from other name­spaces? To do that, you can use a </span><em>fully qualified</em><span> symbol. The general form is </span><span class="LiteralItal">namespace</span><code>/</code><span class="LiteralItal">name</span><span>:</span></p>
@@ -360,7 +360,7 @@ kind: chapter
 </code></pre></div></div>
 
       <ol class="List-1">
-	<li class="Listing">Sometimes it’s handy to both use and alias a namespace.</li>
+	<li class="Listing">6-2. Sometimes it’s handy to both use and alias a namespace.</li>
       </ol>
       <p class="Body">It may seem redundant to alias a namespace with <code>use</code> here because <code>use</code> already refers the namespace (which lets you simply call <code>points</code> instead of <code>svg/points</code>). In certain situations, though, it’s handy because <code>use</code> takes the same options as <code>refer</code> (<code>:only</code>, <code>:exclude</code>, <code>:as</code>, and <code>:rename</code>). You might want to alias a namespace with <code>use</code> when you’ve skipped referring a symbol. You could use this:</p>
       <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-nf">require</span> <span class="tok-ss">'the-divine-cheese-code.visualization.svg</span><span class="tok-p">)</span>
@@ -517,7 +517,7 @@ kind: chapter
 </code></pre></div></div>
 
       <ol class="List-1">
-	<li class="Listing">Constructing map comparison functions</li>
+	<li class="Listing">6-3. Constructing map comparison functions</li>
       </ol>
       <p class="Body">You define the <code>comparator-over-maps</code> function at ➊. This is probably the trickiest bit, so bear with me. <code>comparator-over-maps</code> is a function that returns a function. The returned function compares the values for the keys provided by the <code>ks</code> parameter using the supplied comparison function, <code>comparison-fn</code>.</p>
       <p class="Body">You use <code>comparator-over-maps</code> to construct the <code>min</code> and <code>max</code> functions ➍, which you’ll use to find the top-left and bottom-right corners of our drawing. Here’s <code>min</code> in action:</p>

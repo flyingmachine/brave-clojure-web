@@ -189,7 +189,7 @@ kind: chapter
 </code></pre></div></div>
 
       <ol class="List-1">
-	<li class="Listing">Interacting with a robust hot dog vending machine process</li>
+	<li class="Listing">Listing 11-1. Interacting with a robust hot dog vending machine process</li>
       </ol>
       <p class="Body">First, we try the ol’ pocket lint trick and get wilted lettuce. Next, we put in 3 dollars twice and get a hot dog both times. Then, we try to put in <span>another 3 dollars, but that’s ignored because the channel is closed; the number 3 is not put on the channel. When we try to take from the </span><code>out</code><span> channel</span>, we get <code>nil</code>, again because the channel is closed. You might notice a couple of interesting details about <code>hot-dog-machine-v2</code>. First, it does a put and a take within the same go block. This isn’t that unusual, and it’s one way you can create a <em>pipeline</em> of processes: just make the<em> in </em>channel of one process the <em>out </em>channel of another. The following example does just that, passing a string through a series of processes that perform transformations until the string finally gets printed by the last process: </p>
       <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-k">let </span><span class="tok-p">[</span><span class="tok-nv">c1</span> <span class="tok-p">(</span><span class="tok-nf">chan</span><span class="tok-p">)</span>

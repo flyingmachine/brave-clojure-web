@@ -350,7 +350,7 @@ kind: chapter
 </code></pre></div></div>
 
 	<ol class="List-1">
-	  <li class="Listing">The expansion of an <span class="LiteralCaption">enqueue</span> macro call</li>
+	  <li class="Listing">9-1. The expansion of an <span class="LiteralCaption">enqueue</span> macro call</li>
 	</ol>
 	<p class="Body"><span>The overall strategy is to create a promise for each task (in this case, printing part of the greeting) to create a corresponding future that will deliver a concurrently computed value to the promise. This ensures that </span>all of the futures are created before any of the promises are dereferenced, <span>and it ensures that the serialized portions are executed in the correct order. The value of </span><code>saying1</code><span> is printed first—</span><code>"'Ello, gov'na!"</code><span>—then the value of </span><code>saying2</code><span>, and finally </span><code>saying3</code><span>. Returning </span><code>saying1</code><span> in a </span><code>let</code><span> block and dereferencing the </span><code>let</code><span> block at </span>➊<span> ensures that you’ll be completely finished with </span><code>saying1</code><span> before the code moves on to do anything to </span><code>saying2</code><span>, and this pattern is repeated with </span><code>saying2</code><span> and </span><code>saying3</code><span>.</span></p>
 	<p class="Body">It might seem silly to dereference the <code>let</code> block, but doing so lets you abstract this code with a macro. And you will definitely want to use a macro, because writing out code like the previous example would drive you mental (as the British would say). Ideally, the macro would work as shown in Listing 9-2:</p>

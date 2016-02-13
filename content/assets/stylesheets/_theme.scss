@@ -118,3 +118,16 @@ table {
 .footer {
   background: #f2f1db;
 }
+
+.Listing {
+  font-style: italic;
+  list-style: none;
+  text-align: center;
+}
+
+.Text-Box {
+  background: #fff;
+  .HeadBox {
+    font-weight: bold;
+  }
+}
