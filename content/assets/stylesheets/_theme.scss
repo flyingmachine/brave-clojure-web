@@ -5,7 +5,7 @@ body {
 
 a {
   text-decoration: none;
-  color: $dark-salmon;
+  color: $color-c;
 
   &:hover {
     color: $dark-teal;
@@ -18,8 +18,10 @@ a {
 }
 
 .header {
-  background: $plum;
+  background: $color-a;
   text-align: left;
+  box-sizing: border-box;
+  border-bottom: 2px solid rgba(0,0,0,0.5);
 }
 
 .header .container {
@@ -32,7 +34,9 @@ img {
 }
 
 .callout {
-  background: $salmon;
+  background: $color-b;
+  box-sizing: border-box;
+  border-bottom: 2px solid rgba(0,0,0,0.5);
   a, input[type=submit] {
     font-size: 17px;
     line-height: 1.45em;
@@ -40,7 +44,7 @@ img {
     padding: 2px .25em 0;
     border-radius: 2px;
     background: $lighto;
-    color: $plum;
+    color: $color-c;
     box-shadow: 0 2px 0 0 rgba(0,0,0,0.3);
     font-family: $title-family;
   }

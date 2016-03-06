@@ -33,20 +33,23 @@ $ms-down1: $base-font-size / $ms-scale;
 }
 
 .header, .header a, .header a:hover {
-  color: #c1b2b7;
+  color: rgba(0,0,0,0.5);
+  span {
+    text-transform: uppercase;
+  }
 }
 
 .title {
   font-family: $title-family;
-  color: #c1b2b7;
+  letter-spacing: 3px;
   @include adjust-font-size-to($ms-up2, 2);
 
   strong {
     text-transform: uppercase;
-    color: $orange;
+    color: white;
     @include adjust-font-size-to($ms-up4, 2, $ms-up2);
   }
-
+  
   span {
     word-spacing: .08em;
   }
@@ -54,7 +57,7 @@ $ms-down1: $base-font-size / $ms-scale;
 
 .subtitle {
   font-family: $sub-family;
-  //@include adjust-font-size-to($ms-up1, 1);
+  letter-spacing: 1px;
   @include leader(-.5);
 }
 

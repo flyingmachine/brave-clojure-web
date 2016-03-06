@@ -50,7 +50,7 @@ $home-hero: (
     height: 216px;
 
     .container {
-      background: $plum;
+      background: $color-a;
     }
 
     .images {
@@ -109,14 +109,11 @@ $home-hero: (
 
   .testimonials {
     @include padding-leader(2);
-    &.negative {
-      padding-top: 0;
-      @include padding-trailer(2);
-    }
-
+    @include padding-trailer(2);
     blockquote {
       // font-style: italic;
       @include trailer;
+      background: rgba(255,255,255,0.4);
       border-radius: 5px;
       margin-bottom: 0;
       p:last-child {
