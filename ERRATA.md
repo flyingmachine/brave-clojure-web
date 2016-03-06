@@ -35,3 +35,5 @@ add listing caption in zombie-metaphysics,
 "10-1. Modeling cuddle zombie behavior with Ruby"
 
 https://github.com/flyingmachine/brave-clojure-web/pull/97/files
+
+explain what "assoc" does
