@@ -109,30 +109,26 @@ $home-hero: (
 
   .testimonials {
     @include padding-leader(2);
-    @include padding-trailer(2);
-    /*
-    background: $salmon;
-    h1 {
-      color: white;
+    &.negative {
+      padding-top: 0;
+      @include padding-trailer(2);
     }
-    a {
-      color: white;
-      &:hover {
-        color: $plum;
-      }
-    }
-   .buy a {
-      background: $plum;
-      color: $paper;
-    }
-   */
+
     blockquote {
-      font-style: italic;
+      // font-style: italic;
       @include trailer;
+      border-radius: 5px;
+      margin-bottom: 0;
+      p:last-child {
+        margin-bottom: 0;
+      }
     }
     cite {
       display: block;
-      font-style: normal;
+      font-style: italic;
+      padding-left: 1em;
+      @include trailer(1.5);
+      @include leader(.5)
     }
   }
   
