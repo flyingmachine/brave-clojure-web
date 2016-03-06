@@ -52,7 +52,7 @@ class NokogiriTOC
       parent << data if parent
     end
 
-    toc = doc.create_element("ol")
+    toc = doc.create_element("ol", :class => "toc")
     build_toc(toc, toc_data)
 
     doc.at_css(options[:toc_selector]).add_child(toc)

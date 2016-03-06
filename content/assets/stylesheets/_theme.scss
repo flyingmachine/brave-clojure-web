@@ -28,6 +28,12 @@ a {
   background: url("/assets/images/layout/bt-mid.png") no-repeat 100% 100%
 }
 
+.secondary ol {
+  margin-left: 1em;
+  list-style: disc;
+  color: rgba(0,0,0,0.1);
+}
+
 
 img {
   max-width: 100%;
@@ -37,18 +43,23 @@ img {
   background: $color-b;
   box-sizing: border-box;
   border-bottom: 2px solid rgba(0,0,0,0.5);
-  a, input[type=submit] {
-    font-size: 17px;
-    line-height: 1.45em;
-    display: inline-block;
-    padding: 2px .25em 0;
-    border-radius: 2px;
-    background: $lighto;
-    color: $charcoal;
-    box-shadow: 0 2px 0 0 rgba(0,0,0,0.3);
-    font-family: $title-family;
+  p {
+    margin-bottom:0;
   }
+}
+.callout a, .callout input[type=submit], .ads input[type=submit] {
+  font-size: 17px;
+  line-height: 1.45em;
+  display: inline-block;
+  padding: 2px .25em 0;
+  border-radius: 2px;
+  background: $lighto;
+  color: $charcoal;
+  box-shadow: 0 2px 0 0 rgba(0,0,0,0.3);
+  font-family: $title-family;
+}
 
+.callout, .ads {
   input[type=submit] {
     font-size: $base-font-size;
     border-radius: 2px;
@@ -56,10 +67,14 @@ img {
     padding: 0 .25em;
     display: inline-block;
   }
+}
 
-  p {
-    margin-bottom:0;
-  }
+.ads input[type=submit] {
+  font-size: 85%;
+}
+
+.ads {
+  border-bottom: 1px solid rgba(0,0,0,0.1);
 }
 
 input {

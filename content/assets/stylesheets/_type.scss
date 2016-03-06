@@ -17,6 +17,7 @@ $ms-up1: $base-font-size * $ms-scale;
 $ms-up2: $ms-up1 * $ms-scale;
 $ms-up3: $ms-up2 * $ms-scale;
 $ms-up4: $ms-up3 * $ms-scale;
+$ms-up5: $ms-up4 * $ms-scale;
 $ms-down1: $base-font-size / $ms-scale;
 
 @font-face {
@@ -47,7 +48,8 @@ $ms-down1: $base-font-size / $ms-scale;
   strong {
     text-transform: uppercase;
     color: white;
-    @include adjust-font-size-to($ms-up4, 2, $ms-up2);
+    text-shadow: -2px 2px rgba(0,0,0,0.5);
+    @include adjust-font-size-to($ms-up5, 2, $ms-up2);
   }
   
   span {
@@ -86,8 +88,8 @@ ol {
   @include trailer;
 }
 
-.secondary ol {
-  list-style: none;
+.secondary {
+  
 }
 
 li p {

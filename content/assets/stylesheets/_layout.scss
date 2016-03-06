@@ -49,9 +49,32 @@ body {
 .secondary {
   @include span(3 at 10 of 12);
 
+  .ads {
+    clear:both;
+    @include padding-leader;
+    @include trailer;
+  }
+
+  form {
+    @include trailer;
+  }
+  
+  .chapter-sections {
+    color: #999;
+    font-style: italic;
+  }
+  
   ol ol { margin-bottom: 0; }
   li a {
     display: block
+  }
+
+  .junk {
+    img {
+      max-height: 6em;
+      float: left;
+      margin-right: .5em;
+    }
   }
 }
 
