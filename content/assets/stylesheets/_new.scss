@@ -1,0 +1,173 @@
+$home: (
+  columns: 6,
+  column-width: 4em,
+  gutters: 1/4,
+  math: fluid,
+  output: static,
+  container-position: center
+);
+
+@include layout($home);
+
+.new-home .content .container {
+  @include container;
+}
+
+
+$home-hero: (
+  columns: 9,
+  column-width: 4em,
+  gutters: 1/4,
+  math: fluid,
+  output: static,
+  container-position: center
+);
+
+@include layout($home-hero);
+
+.new-home {
+  .container {
+    @include container;
+  }
+
+  .wrap {
+    background: #ffaa72 url(/assets/images/layout/hammer-outline-10.png) no-repeat 100% 20%;
+    background-size: 500px;
+    margin-top: 0;
+    @include padding-leader(3);
+    @include padding-trailer(3);
+  }
+
+  .hero {
+    @include container;
+    font-family: $title-family;
+
+    color: white;
+
+    .title {
+      font-weight: bold;
+      text-shadow: -2px 2px rgba(0,0,0,0.1);
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      @include adjust-font-size-to($ms-up4, 2);
+    }
+
+    .tagline {
+      font-weight: 300;
+      letter-spacing: 2px;
+      //@include adjust-font-size-to($ms-up1);
+    }
+  }
+
+  .cover {
+    @include span(4 at 6 of 9);
+  }
+
+  .hype {
+    @include span(5);
+    @include padding-leader;
+  }
+
+  .header {
+    padding: 0;
+    position: relative;
+    height: 216px;
+
+    .container {
+      background: $color-a;
+    }
+
+    .images {
+      position: absolute;
+      bottom: 0;
+      height: 188px;
+    }
+  }
+
+  h1 {
+    color: $orange;
+  }
+
+  .buy {
+    text-align: center;
+    clear:both;
+
+    a {
+      display: inline-block;
+      background: $orange;
+      color: $paper;
+      padding: .25em .5em;
+      border-radius: 2px;
+      font-family: $title-family;
+      &:hover {
+        background: $plum;
+      }
+    }
+  }
+
+  .toc {
+    @include padding-leader(2);
+    @include padding-trailer(2);
+    background: #333;
+    background: #262b2e;
+
+    h1 {
+      color: $orange;
+      margin-bottom: 0;
+    }
+
+    h2 {
+      color: $paper;
+      @include leader(1, $ms-up2);
+      margin-bottom: 0;
+    }
+
+    a {
+      color: $gold;
+      display: block;
+      &:hover {
+        color: white;
+      }
+    }
+  }
+
+  .testimonials {
+    @include padding-leader(2);
+    @include padding-trailer(2);
+    blockquote {
+      // font-style: italic;
+      @include trailer;
+      background: rgba(255,255,255,0.4);
+      border-radius: 5px;
+      margin-bottom: 0;
+      p:last-child {
+        margin-bottom: 0;
+      }
+    }
+    cite {
+      display: block;
+      font-style: italic;
+      padding-left: 1em;
+      @include trailer(1.5);
+      @include leader(.5)
+    }
+  }
+  
+  .deal {
+    width: 80%;
+    margin: 0 auto;
+    padding: .75em 1em;
+    background: white;
+    @include trailer;
+    p {
+      margin: 0;
+    }
+  }
+
+  .twitter {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    z-index: 1;
+  }
+}
