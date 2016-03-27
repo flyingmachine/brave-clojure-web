@@ -37,9 +37,12 @@ $home-hero: (
 
     background: #FF7F66 url(/assets/images/layout/circle-bg-hot.png) no-repeat center bottom;
 
-    background: #464d57 url(/assets/images/layout/circle-bg-steel.png) no-repeat center bottom;
+    background: #464d57;
+    background-image: url(/assets/images/layout/circle-bg-steel2.png), url(/assets/images/layout/bloodthunder-bg.png);
+    background-repeat: no-repeat, no-repeat;
+    background-position: bottom center, top right;
 
-    //background-size: 500px;
+    background-size: 300px, 400px;
     margin-top: 0;
     // border-bottom: .25em solid rgba(0,0,0,0.3);
     @include padding-leader(4);
