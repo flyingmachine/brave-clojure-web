@@ -35,9 +35,13 @@ $home-hero: (
     background: #ffaa72; //url(/assets/images/layout/hammer-outline-10.png) no-repeat 100% 20%;
     background: #ffaa72 url(/assets/images/layout/circle-bg.png) no-repeat center bottom;
 
+    background: #FF7F66 url(/assets/images/layout/circle-bg-hot.png) no-repeat center bottom;
+
+    background: #464d57 url(/assets/images/layout/circle-bg-steel.png) no-repeat center bottom;
+
     //background-size: 500px;
     margin-top: 0;
-    border-bottom: .25em solid #a16745;
+    // border-bottom: .25em solid rgba(0,0,0,0.3);
     @include padding-leader(4);
     @include padding-trailer(4);
   }
@@ -67,8 +71,8 @@ $home-hero: (
 
 
   .logo {
-    position:absolute;
-    max-width:200px;
+    position: absolute;
+    max-width: 200px;
     left: 50%;
     img {
       position: relative;
@@ -106,6 +110,22 @@ $home-hero: (
       position: absolute;
       bottom: 0;
       height: 188px;
+    }
+  }
+
+  .sites {
+    @include container;
+
+    h2 {
+      @include adjust-font-size-to($ms-up1, 1);
+      font-weight: normal;
+      margin: 0;
+      padding: 0;
+    }
+
+    div {
+      background: white;
+      @include trailer;
     }
   }
 
