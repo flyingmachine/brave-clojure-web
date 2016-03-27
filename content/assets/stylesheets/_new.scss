@@ -32,10 +32,12 @@ $home-hero: (
 
   .wrap {
     background: #ffaa72 url(/assets/images/layout/hammer-outline-10.png) no-repeat 100% 20%;
-    background-size: 500px;
+    background: #ffaa72; //url(/assets/images/layout/hammer-outline-10.png) no-repeat 100% 20%;
+    //background-size: 500px;
     margin-top: 0;
-    @include padding-leader(3);
-    @include padding-trailer(3);
+    border-bottom: .25em solid #a16745;
+    @include padding-leader(4);
+    @include padding-trailer(4);
   }
 
   .hero {
@@ -43,20 +45,41 @@ $home-hero: (
     font-family: $title-family;
 
     color: white;
+    text-align: center;
 
     .title {
       font-weight: bold;
-      text-shadow: -2px 2px rgba(0,0,0,0.1);
+      text-shadow: 0 4px rgba(0,0,0,0.3);
       letter-spacing: 4px;
       text-transform: uppercase;
-      @include adjust-font-size-to($ms-up4, 2);
+      @include adjust-font-size-to($ms-up5, 2);
     }
 
     .tagline {
-      font-weight: 300;
-      letter-spacing: 2px;
-      //@include adjust-font-size-to($ms-up1);
+      font-weight: 100;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      @include adjust-font-size-to($ms-up2);
     }
+  }
+
+
+  .logo {
+    position:absolute;
+    max-width:200px;
+    left: 50%;
+    img {
+      position: relative;
+      left: -50%;
+    }
+    //right: 50%;
+  }
+
+  .brief {
+    @include padding-leader;
+    //@include adjust-font-size-to($ms-up1);
+    //background: url(/assets/images/layout/skulls.png);
+    //font-family: $sans-family;
   }
 
   .cover {
