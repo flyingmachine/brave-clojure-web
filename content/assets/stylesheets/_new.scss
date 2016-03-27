@@ -33,6 +33,8 @@ $home-hero: (
   .wrap {
     background: #ffaa72 url(/assets/images/layout/hammer-outline-10.png) no-repeat 100% 20%;
     background: #ffaa72; //url(/assets/images/layout/hammer-outline-10.png) no-repeat 100% 20%;
+    background: #ffaa72 url(/assets/images/layout/circle-bg.png) no-repeat center bottom;
+
     //background-size: 500px;
     margin-top: 0;
     border-bottom: .25em solid #a16745;
@@ -76,7 +78,7 @@ $home-hero: (
   }
 
   .brief {
-    @include padding-leader;
+    @include padding-leader(4);
     //@include adjust-font-size-to($ms-up1);
     //background: url(/assets/images/layout/skulls.png);
     //font-family: $sans-family;
