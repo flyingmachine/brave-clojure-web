@@ -15,7 +15,7 @@ $home: (
 
 
 $home-hero: (
-  columns: 9,
+  columns: 12,
   column-width: 4em,
   gutters: 1/4,
   math: fluid,
@@ -30,6 +30,28 @@ $home-hero: (
   
   .container {
     @include container;
+  }
+
+  .nav {
+    position: absolute;
+    top: 0;
+    z-index: 1;
+    font-family: $title-family;
+    width: 100%;
+    font-weight: 100;
+    
+    a {
+      color: white;
+      display: block;
+      padding: .75em;
+      &:hover {
+        background: rgba(255,255,255,0.05);
+      }
+    }
+
+    li {
+      float: left;
+    }
   }
 
   .wrap {
@@ -79,7 +101,8 @@ $home-hero: (
   }
 
   .brief {
-    @include padding-leader(3);
+    background: url(/assets/images/layout/cuddle-zombie-bg.png) no-repeat center top fixed;
+    @include padding-leader(4);
     @include padding-trailer(1);
     //@include adjust-font-size-to($ms-up1);
     //background: url(/assets/images/layout/skulls.png);
@@ -87,6 +110,7 @@ $home-hero: (
 
     h2 {
       margin-bottom: 0;
+      margin-top: 0;
       font-weight: normal;
       font-style: italic;
       color: $teal;
@@ -96,17 +120,39 @@ $home-hero: (
   }
 
   .spiel {
-    width: 26em;
-    margin: 0 auto;
+    @include span(6);
   }
 
-  .cover {
-    @include span(4 at 6 of 9);
+  .menu {
+    @include span(6 of 12 at 7);
+    margin-top: 2.25em;
+    background: white;
+    padding: .75em 1em;
+    box-sizing: border-box;
+    border-radius: 3px;
+    box-shadow: 0 2px rgba(0,0,0,0.1);
+    
+    ul {
+      color: rgba(0,0,0,0.2);
+      padding-left: 1em;
+    }
+    li {
+      //border-bottom: 1px solid rgba(0,0,0,0.1);
+      //background: rgba(0,0,0,0.1);
+      font-family: $title-family;
+      font-weight: 100;
+      list-style: disc;
+      //text-decoration: underline;
+    }
   }
 
   .hype {
-    @include span(5);
-    @include padding-leader;
+    @include span(6);
+  }
+
+  .cover {
+    @include span(6 of 12 at 7);
+    text-align: center;
   }
 
   .header {
@@ -137,7 +183,7 @@ $home-hero: (
       padding: 0;
     }
 
-    .container div {
+    .container > div {
       background: white;
       padding: 1.5em;
       @include trailer;
@@ -150,7 +196,7 @@ $home-hero: (
 
   .buy {
     text-align: center;
-    clear:both;
+
 
     a {
       display: inline-block;
