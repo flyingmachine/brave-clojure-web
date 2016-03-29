@@ -26,27 +26,20 @@ $home-hero: (
 @include layout($home-hero);
 
 .new-home {
+  @include padding-trailer(3);
+  
   .container {
     @include container;
   }
 
   .wrap {
-    background: #ffaa72 url(/assets/images/layout/hammer-outline-10.png) no-repeat 100% 20%;
-    background: #ffaa72; //url(/assets/images/layout/hammer-outline-10.png) no-repeat 100% 20%;
-    background: #ffaa72 url(/assets/images/layout/circle-bg.png) no-repeat center bottom;
-
-    background: #FF7F66 url(/assets/images/layout/circle-bg-hot.png) no-repeat center bottom;
-
-    background: #464d57;
-    background-image: url(/assets/images/layout/circle-bg-steel2.png), url(/assets/images/layout/hamster-bg.png);
-    background-repeat: no-repeat, no-repeat;
-    background-position: bottom center, top right;
-
-    background-size: 300px, 400px;
+    background: #464d57 url(/assets/images/layout/hamster-bg.png) no-repeat right bottom;
+    background-size: 400px;
     margin-top: 0;
+    position: relative;
     // border-bottom: .25em solid rgba(0,0,0,0.3);
-    @include padding-leader(4);
-    @include padding-trailer(4);
+    @include padding-leader(5);
+    @include padding-trailer(5);
   }
 
   .hero {
@@ -75,6 +68,7 @@ $home-hero: (
 
   .logo {
     position: absolute;
+    bottom: -100px;
     max-width: 200px;
     left: 50%;
     img {
@@ -85,10 +79,25 @@ $home-hero: (
   }
 
   .brief {
-    @include padding-leader(4);
+    @include padding-leader(3);
+    @include padding-trailer(1);
     //@include adjust-font-size-to($ms-up1);
     //background: url(/assets/images/layout/skulls.png);
     //font-family: $sans-family;
+
+    h2 {
+      margin-bottom: 0;
+      font-weight: normal;
+      font-style: italic;
+      color: $teal;
+      color: $hot;
+      @include adjust-font-size-to($ms-up2, 2);
+    }
+  }
+
+  .spiel {
+    width: 26em;
+    margin: 0 auto;
   }
 
   .cover {
@@ -117,17 +126,20 @@ $home-hero: (
   }
 
   .sites {
-    @include container;
+    background: $teal url(/assets/images/layout/point-bg.png) no-repeat bottom right fixed;
+    @include padding-leader(2);
+    @include padding-trailer(2);
 
     h2 {
-      @include adjust-font-size-to($ms-up1, 1);
+      //@include adjust-font-size-to($ms-up1, 1);
       font-weight: normal;
       margin: 0;
       padding: 0;
     }
 
-    div {
+    .container div {
       background: white;
+      padding: 1.5em;
       @include trailer;
     }
   }
