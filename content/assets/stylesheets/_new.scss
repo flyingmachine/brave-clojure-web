@@ -25,6 +25,23 @@ $home-hero: (
 
 @include layout($home-hero);
 
+
+/* media */
+$iphone4: 'only screen' (min-device-width 320px) (max-device-width 480px) (orientation portrait) (-webkit-min-device-pixel-ratio 2);
+$iphone5: 'only screen' (min-device-width 320px) (max-device-width 568px) (-webkit-min-device-pixel-ratio 2) (orientation portrait);
+$iphone6: 'only screen' (min-device-width 375px) (max-device-width 667px) (-webkit-min-device-pixel-ratio 2) (orientation portrait);
+$iphone6p: 'only screen' (min-device-width 414px) (max-device-width 736px) (-webkit-min-device-pixel-ratio 3) (orientation portrait);
+
+$galaxy: 'screen' (device-width: 320px) (device-height: 640px) (orientation: portrait);
+
+$mobile: $iphone4, $iphone5, $iphone6, $iphone6p, $galaxy;
+
+
+$narrow: 0 59em;
+
+$vnarrow: 0 40em;
+
+
 .new-home {
   @include padding-trailer(3);
   
@@ -129,7 +146,6 @@ $home-hero: (
     background: white;
     padding: .75em 1em;
     box-sizing: border-box;
-    border-radius: 3px;
     box-shadow: 0 2px rgba(0,0,0,0.1);
     
     ul {
@@ -146,13 +162,67 @@ $home-hero: (
     }
   }
 
-  .hype {
-    @include span(6);
+
+  .sites {
+    background: $teal url(/assets/images/layout/point-bg.png) no-repeat bottom right fixed;
+    @include padding-leader(2);
+    @include padding-trailer(2);
+
+    h2 {
+      //@include adjust-font-size-to($ms-up1, 1);
+      font-weight: normal;
+      margin: 0;
+      padding: 0;
+      color: $hot;
+    }
+
+    .container > div {
+      background: white;
+      position: relative;
+      @include trailer;
+    }
   }
 
-  .cover {
-    @include span(6 of 12 at 7);
+  .site-text {
+    padding: 1.5em;
+    box-sizing: border-box;
+
+    &.left {
+      @include span(6 of 12);
+    }
+    &.right {
+      @include span(6 of 12 at 7);
+    }
+  }
+
+  .screen {
+    background: $slate;
+    position: absolute;
+    top: 0;
+    bottom: 0;
     text-align: center;
+
+    a {
+      display: block;
+      box-sizing: border-box;
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      padding: 2em;
+      width: 100%;
+    }
+    
+    img {
+      max-height: 100%;
+    }
+    &.left {
+      left: 0;
+      right: 50%;
+    }
+    &.right {
+      left: 50%;
+      right: 0;
+    }
   }
 
   .header {
@@ -171,23 +241,8 @@ $home-hero: (
     }
   }
 
-  .sites {
-    background: $teal url(/assets/images/layout/point-bg.png) no-repeat bottom right fixed;
-    @include padding-leader(2);
-    @include padding-trailer(2);
-
-    h2 {
-      //@include adjust-font-size-to($ms-up1, 1);
-      font-weight: normal;
-      margin: 0;
-      padding: 0;
-    }
-
-    .container > div {
-      background: white;
-      padding: 1.5em;
-      @include trailer;
-    }
+  .jobs, .open-source {
+    min-height: 21em;
   }
 
   h1 {
@@ -211,69 +266,100 @@ $home-hero: (
     }
   }
 
-  .toc {
-    @include padding-leader(2);
-    @include padding-trailer(2);
-    background: #333;
-    background: #262b2e;
-
-    h1 {
-      color: $orange;
-      margin-bottom: 0;
-    }
-
-    h2 {
-      color: $paper;
-      @include leader(1, $ms-up2);
-      margin-bottom: 0;
-    }
-
-    a {
-      color: $gold;
-      display: block;
-      &:hover {
-        color: white;
-      }
-    }
-  }
-
-  .testimonials {
-    @include padding-leader(2);
-    @include padding-trailer(2);
-    blockquote {
-      // font-style: italic;
-      @include trailer;
-      background: rgba(255,255,255,0.4);
-      border-radius: 5px;
-      margin-bottom: 0;
-      p:last-child {
-        margin-bottom: 0;
-      }
-    }
-    cite {
-      display: block;
-      font-style: italic;
-      padding-left: 1em;
-      @include trailer(1.5);
-      @include leader(.5)
-    }
-  }
-  
-  .deal {
-    width: 80%;
-    margin: 0 auto;
-    padding: .75em 1em;
-    background: white;
-    @include trailer;
-    p {
-      margin: 0;
-    }
-  }
-
   .twitter {
     position: absolute;
-    top: 5px;
-    right: 5px;
+    top: 1em;
+    right: 1em;
     z-index: 1;
   }
+
+  .quests input[type=email] {
+    background: #eee;
+  }
+  .quests input[type=submit] {
+    font-family: $title-family;
+    display: inline-block;
+    padding: .25em .75em;
+    border-radius: 2px;
+    background: $hot;
+    color: white;
+    box-shadow: 0 2px 0 0 rgba(0,0,0,0.1);
+    border: none;
+  }
+
+  .callout, .ads {
+    input[type=submit] {
+      font-size: $base-font-size;
+      border-radius: 2px;
+      border: none;
+      padding: 0 .25em;
+      display: inline-block;
+    }
+  }
+
+  .ads input[type=submit] {
+    font-size: 85%;
+  }
+  @include breakpoint($mobile) {
+   
+  .nav {display: none;}
+  
+  .brief, .sites, .footer {
+    font-size: 150%;
+    line-height: 150%;
+  }
+
+  input {
+    font-size: 100%;
+  }
+
+  .brief {
+    background: url(/assets/images/layout/cuddle-zombie-bg.png) no-repeat center center fixed;
+  }
+
+  .spiel, .menu {
+    width: 100%;
+    float: none;
+    margin: 0;
+  }
+
+  .sites {
+    .site-text {
+      padding: 1.5em;
+      box-sizing: border-box;
+
+      &.left, &.right {
+        width: 100%;
+        float: none;
+        margin: 0;
+      }
+    }
+
+    .screen {
+      background: $slate;
+      position: inherit;
+      text-align: center;
+
+      a {
+        display: block;
+        box-sizing: border-box;
+        position: inherit;
+        top: inherit;
+        transform: none;
+        padding: 2em;
+        width: 100%;
+      }
+      
+      img {
+        max-height: 100%;
+      }
+      &.left, &.right {
+        left: inherit;
+        right: inherit;
+        float: none;
+      }
+    }
+  }
+  }
 }
+
