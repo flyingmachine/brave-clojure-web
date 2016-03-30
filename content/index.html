@@ -5,204 +5,177 @@ full_title: Learn to Program the World's Most Bodacious Language with Clojure fo
 <!DOCTYPE HTML>
 <html lang="en">
   <%= render 'head' %>
-  <body class="home">
+  <body class="new-home">
     <div class="twitter">
       <a class="twitter-share-button" href="https://twitter.com/share">tweet bravely and truly</a>
       <script>
         !function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs')
       </script>
     </div>
-    <div class="header">
+    <div class="nav">
       <div class="container">
-        <div class="images">
-          <img src="/assets/images/home/john-mccarthy.png">
-          <img src="/assets/images/home/wookie.png">
-          <img src="/assets/images/home/sock-gnome.png">
-          <img src="/assets/images/home/hamster.png">
-          <img src="/assets/images/home/pirate.png">
+        <div>
+        <ul>
+          <li><a href="/clojure-for-the-brave-and-true">Clojure for the Brave and True</a></li>
+          <li><a href="https://jobs.braveclojure.com">Jobs</a></li>
+          <li><a href="http://open-source.braveclojure.com">Open Source Projects</a></li>
+          <li><a href="#quests">Quests</a></li>
+          <li><a href="#quests">Email Learnin&rsquo;</a></li>
+        </ul>
         </div>
       </div>
     </div>
     <div class="wrap">
       <div class="hero">
-        <div class="hype">
-          <h1>Are You Ready for a Programming Adventure?</h1>
-          <p>
-            Do you want to learn Clojure, the most powerful and fun
-            programming language on the planet? Do you want to unravel
-            the mysteries of Lisp and functional programming? Do you
-            want to punch hobbits and track down glittery vampires?
-            <em>Then you need to read this book!</em>
-          </p>
-          <p>
-            Clojure&rsquo;s popularity continues to grow, with
-            companies like Netflix using it to build everything from
-            complex, distributed systems to simple microservices to
-            user interfaces. In <em>Clojure for the Brave and
-              True</em>, you'll learn to wield this awesome language to
-            its fullest!
-          </p>
-        </div>
-        <div class="cover">
-          <img src="/assets/images/home/book-cover.jpg" />
-        </div>
-        <div class="buy">
-          <a href="/foreword/">
-            Read Free
-            Online
-          </a>
-          or buy print and ebooks from 
-          <a href="http://amzn.to/1H7MqmT">Amazon</a> or
-          <a href="https://www.nostarch.com/clojure">No Starch</a>
+        <div class="title">Brave Clojure</div>
+        <div class="tagline">become a better programmer</div>
+        <div class="logo">
+          <img src="/assets/images/layout/logo-web-teal-dark.png" />
         </div>
       </div>
-      <div class="toc">
-        <div class="container">
-          <h1>Table of Contents</h1>
-          <h2>Front Matter</h2>
+    </div>
+    <div class="brief">
+      <div class="container">
+        <div class="spiel">
+          <h2>It was Socrates who first said...</h2>
+          <p>
+            &ldquo;Learning Clojure is
+            the best way you can improve as a programmer because it
+            introduces you to powerful concepts implemented in a
+            simple, cohesive, and practical language. You learn
+            Clojure here. Therefore, Brave Clojure is your very best
+            friend when it comes to programming.&rdquo; And lo, the
+            syllogism was born!
+          </p>
+          <div class="additional"></div>          
+        </div>
+        <div class="menu">
           <ul>
-            <li>
-              <a href="/foreword">Foreword</a>
-            </li>
-            <li>
-              <a href="/acknowledgements">Acknowledgements</a>
-            </li>
-            <li>
-              <a href="/introduction">Introduction</a>
-            </li>
-          </ul>
-          <h2>Part I: Environment Setup</h2>
-          <ul>
-            <li>
-              <a href="/getting-started">Chapter 1: Building, Running, and the REPL</a>
-            </li>
-            <li>
-              <a href="/basic-emacs">Chapter 2: How to Use Emacs, an Excellent Clojure Editor</a>
-            </li>
-          </ul>
-          <h2>Part II: Language Fundamentals</h2>
-          <ul>
-            <li>
-              <a href="/do-things">Chapter 3: Do Things: A Clojure Crash Course</a>
-            </li>
-            <li>
-              <a href="/core-functions-in-depth">Chapter 4: Core Functions in Depth</a>
-            </li>
-            <li>
-              <a href="/functional-programming">Chapter 5: Functional Programming</a>
-            </li>
-            <li>
-              <a href="/organization">Chapter 6: Organizing Your Project: A Librarian&rsquo;s Tale</a>
-            </li>
-            <li>
-              <a href="/read-and-eval">Chapter 7: Clojure Alchemy: Reading, Evaluation, and Macros</a>
-            </li>
-            <li>
-              <a href="/writing-macros">Chapter 8: Writing Macros</a>
-            </li>
-          </ul>
-          <h2>Part III: Advanced Topics</h2>
-          <ul>
-            <li>
-              <a href="/concurrency">Chapter 9: Concurrent and Parallel Programming</a>
-            </li>
-            <li>
-              <a href="/zombie-metaphysics">Chapter 10: Clojure Metaphysics: Atoms, Refs, Vars, and Cuddle Zombies</a>
-            </li>
-            <li>
-              <a href="/core-async">Chapter 11: Master Concurrent Processes with core.async</a>
-            </li>
-            <li>
-              <a href="/java">Chapter 12: Interacting with Java</a>
-            </li>
-            <li>
-              <a href="/multimethods-records-protocols">Chapter 13: Create and Extend Abstractions with Multimethods, Protocols, and Records</a>
-            </li>
-          </ul>
-          <h2>Back Matter</h2>
-          <ul>
-            <li>
-              <a href="/appendix-a">Appendix A: Building and Developing with Leiningen</a>
-            </li>
-            <li>
-              <a href="/appendix-b">Appendix B: Boot, the Fancy Clojure Build Framework</a>
-            </li>
-            <li>
-              <a href="/afterword">Farewell!</a>
-            </li>
+            <li><a href="/clojure-for-the-brave-and-true">Learn Clojure with Clojure for the Brave and True</a></li>
+            <li><a href="https://jobs.braveclojure.com">Find a Clojure Job</a></li>
+            <li><a href="http://open-source.braveclojure.com">Contribute to Open Source Clojure Projects</a></li>
+            <li><a href="#quests">Learn More Clojure and Programming Concepts</a></li>
+            <li><a href="#quests">Emails with useful content?!</a></li>
           </ul>
         </div>
       </div>
-      <div class="testimonials">
-        <div class="container">
-          <h1>Real People Like It For Real</h1>
-          <blockquote>
-            Clojure for the Brave and True is the go-to book for
-            learning to program in Clojure. The book distills
-            passion, and it's funny, very well written and covers in
-            great depth everything you need to start doing some
-            serious programming. I think I've bought the book more
-            than once!
-          </blockquote>
-          <cite>
-              &mdash; Alejandro Andres, Partner
-              at <a href="http://redradix.com">redradix.com</a>
-          </cite>
-
-          <blockquote>
-            I am not the target audience for this book as I not a new
-            Clojure developer, however it was so much fun to read that
-            I read it anyways. :) If you're looking for a way to start
-            Clojure with fun examples and engaging explanations, I
-            heartily recommend that you check out Clojure for the
-            Brave and True.
-          </blockquote>
-          <cite>&mdash; Alex Miller, Clojure community czar</cite>
-          
-          <blockquote>
-            <p>This is the book that every programming language
-            needs. It is more than just a technical write up about
-            features and style, it is a thoroughly pleasant and
-            engaging read that sucked me into Clojure faster than an
-            airplane toilet flush.</p>
-
-            <p>You could give this to a non programmer and they'd
-            still finish it just for the pleasure of it.</p>
-
-            <p>The lessons are carefully thought out and unique. From learning asynchronicity to the lyrics of Lady Gaga, to learning about thread lock in the context of drunken dwarves, every chapter is fresh and (in all honesty) beautiful.</p>
-
-            <p>The technical content is also just fantastic. I had
-            some previous lisp experience, but this book was my very
-            first contact with Clojure and it took me from knowing
-            nothing to being able to tackle the first 70 or so
-            4Clojure exercises like a pro.</p>
-          </blockquote>
-          <cite>&mdash; Artur Malabarba, CIDER (Clojure development tool for Emacs) maintainer</cite>
-          
-          <blockquote>
-            I am not especially brave, and I've been known to not tell
-            the truth. Nonetheless, this is the book I always
-            recommend to people who are already programmers in another
-            language and want a fun, lighthearted, yet solid
-            introduction to Clojure
-          </blockquote>
-          <cite>&mdash; Bridget Hillyer, Clojure Developer and Co-Founder of <a href="http://clojurebridge.org">ClojureBridge</a></cite>
-          
+    </div>
+    <div class="sites">
+      <div class="container">
+        <div class="cftbat clearfix">
+          <div class="hype site-text left">
+            <h2>Clojure for the Brave and True</h2>
+            <p>
+              Do you want to learn Clojure, the most powerful and fun
+              programming language on the planet? Do you want to unravel
+              the mysteries of Lisp and functional programming? Do you
+              want to punch hobbits and track down glittery vampires?
+              <em>Then you need to read this book!</em>
+            </p>
+            <p>
+              Clojure&rsquo;s popularity continues to grow, with
+              companies like Netflix using it to build everything from
+              complex, distributed systems to simple microservices to
+              user interfaces. In <em>Clojure for the Brave and
+                True</em>, you'll learn to wield this awesome language to
+              its fullest!
+            </p>
+            <div class="buy">
+              <a href="/clojure-for-the-brave-and-true/">
+                Read Free
+                Online
+              </a>
+              <a href="http://amzn.to/1H7MqmT">Amazon</a>
+              <a href="https://www.nostarch.com/clojure">No Starch</a>
+            </div>
+          </div>
+          <div class="screen right">
+            <a href="/clojure-for-the-brave-and-true"><img src="/assets/images/home/book-cover.png" /></a>
+          </div>
         </div>
-        <div class="buy">
-          <a href="/introduction">
-            Read Free
-            Online
-          </a>
-          or buy print and ebooks from 
-          <a href="http://amzn.to/1H7MqmT">Amazon</a> or
-          <a href="https://www.nostarch.com/clojure">No Starch</a>
+        <div class="jobs clearfix">
+          <div class="site-text right">
+            <h2>Brave Clojure Jobs</h2>
+            <p>
+              The first and only job board just for Clojurians! Become
+              a better programmer by <em>getting paid to write
+                Clojure</em>.
+            </p>
+            <p>
+              Employers: Brave Clojure is one of the most popular and
+              trusted sites for Clojure programmers. There's no
+              better way to find qualified candidates.
+            </p>
+            <div class="buy"><a href="https://jobs.braveclojure.com">Find or post a job now</a></div>
+          </div>
+          <div class="screen left">
+            <a href="https://jobs.braveclojure.com"><img src="/assets/images/home/cljobs.png" /></a>
+          </div>
+        </div>
+        <div class="open-source clearfix">
+          <div class="site-text left">
+            <h2>Open Source Clojure Projects</h2>
+            <p>
+              Looking to improve your skills and get involved in the
+              community? These projects are well documented and
+              actively seeking new contributors!
+            </p>
+          </div>
+          <div class="screen right">
+            <a href="http://open-source.braveclojure.com"><img src="/assets/images/home/open-source.png" /></a>
+          </div>
+        </div>
+        <div class="quests clearfix" id="quests">
+          <div class="site-text left">
+            <h2>Brave Clojure Quests</h2>
+            <p>
+              Part of the joy of learning Clojure is learning new ways
+              to think about programming, and then gloating to your
+              colleagues over your new found knowledge. <em>Brave
+              Clojure Quests</em> will provide you with a steady
+              stream of instructional material for deep topics so that
+              the gloating never has to end and you can become truly
+              insufferable.
+            </p>
+            <form action="http://flyingmachinestudios.us1.list-manage.com/subscribe/post?u=60763b0c4890c24bd055f32e6&amp;amp;id=0b40ffd1e1" class="validate" id="mc-embedded-subscribe-form" method="post" name="mc-embedded-subscribe-form" novalidate="" target="_blank">
+              <p>
+                The first quest will explain parallel programming and
+                Clojure's reducers library. It will be finished pretty
+                soon!  Follow
+                <a href="https://twitter.com/nonrecursive">@nonrecursive</a>
+                to hear about new content or subscribe to the
+                announcements mailing list:
+                <div>
+                  <input class="email" id="mce-EMAIL" name="EMAIL" placeholder="email address" required="" type="email" value="">
+                  <input class="button" id="mc-embedded-subscribe"
+                         name="subscribe" type="submit" value="gimme updates!">
+                </div>
+              </p>
+            </form>
+          </div>
+          <div class="site-text right">
+            <h2>Learn by Email</h2>
+            <form action="//braveclojure.us1.list-manage.com/subscribe/post?u=60763b0c4890c24bd055f32e6&amp;id=9232ef71ee" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate>
+              <p>
+                <em>The Clojure Atom</em> is a weekly email I'm
+                cooking up. Every Thursday, you'll get a single link
+                to a high-quality, free instructional resource. Once
+                it's ready, anyway. Sign up now so you don't miss a
+                single issue!
+                <div>
+                  <input class="email" id="mce-EMAIL" name="EMAIL" placeholder="email address" required="" type="email" value="">
+                  <input class="button" id="mc-embedded-subscribe"
+                         name="subscribe" type="submit" value="gimme that email learning!">
+                </div>
+              </p>
+            </form>
+          </div>
         </div>
       </div>
     </div>
     <div class="footer">
       <div class="container">
-        &copy; 2015 Daniel Higginbotham
+        &copy; 2016 Daniel Higginbotham
       </div>
     </div>
     <script>

@@ -21,7 +21,7 @@ a {
   background: $color-a;
   text-align: left;
   box-sizing: border-box;
-  border-bottom: 2px solid rgba(0,0,0,0.5);
+  //border-bottom: 2px solid rgba(0,0,0,0.5);
 }
 
 .header .container {
@@ -40,9 +40,9 @@ img {
 }
 
 .callout {
-  background: $color-b;
+  background: $slate;
+  color: rgba(255,255,255,0.8);
   box-sizing: border-box;
-  border-bottom: 2px solid rgba(0,0,0,0.5);
   p {
     margin-bottom:0;
   }
@@ -135,7 +135,8 @@ table {
 }
 
 .footer {
-  background: $paper;
+  background: $slate;
+  color: white;
 }
 
 .Listing {

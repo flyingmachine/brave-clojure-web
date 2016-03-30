@@ -253,3 +253,27 @@ dd {
   display: table;
   clear: both;
 }
+
+
+.nav {
+  position: absolute;
+  top: 0;
+  z-index: 1;
+  font-family: $title-family;
+  width: 100%;
+  font-weight: 100;
+  
+  a {
+    color: white;
+    display: block;
+    padding: .75em;
+    &:hover {
+      background: rgba(255,255,255,0.05);
+      color: white;
+    }
+  }
+
+  li {
+    float: left;
+  }
+}

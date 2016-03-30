@@ -56,7 +56,7 @@ end
 
 compile '*' do
   if item.binary?
-  elsif item.attributes[:filename] =~ /(index|new).html/
+  elsif item.attributes[:filename] =~ /(index|new|clojure-for-the-brave-and-true).html/
     filter :erb
   elsif item.attributes[:filename] =~ /md$/
     filter :redcarpet, {
