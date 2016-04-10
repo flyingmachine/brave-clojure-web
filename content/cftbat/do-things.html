@@ -69,7 +69,7 @@ kind: chapter
 <span class="tok-c1">; =&gt; "By Aquaman's trident!"</span>
 </code></pre></div></div>
 
-      <p class="Body">The first example returns <code>"By Zeus's hammer!"</code> because the Boolean form evaluates to <code>true</code>, a truthy value, and the second example returns <code>"By </code><code>Aquaman's trident!"</code><span> because its Boolean form, </span><code>false</code><span>, evaluates to a falsey value.</span></p>
+      <p class="Body">The first example returns <code>"By Zeus's hammer!"</code> because the Boolean form evaluates to <code>true</code>, a truthy value, and the second example returns <code>"By</code> <code>Aquaman's trident!"</code><span> because its Boolean form, </span><code>false</code><span>, evaluates to a falsey value.</span></p>
       <p class="Body">You can also omit the <code>else</code> branch. If you do that and the Boolean expression is false, Clojure returns <code>nil</code>, like this:</p>
       <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-k">if </span><span class="tok-nv">false</span>
   <span class="tok-s">"By Odin's Elbow!"</span><span class="tok-p">)</span>
@@ -540,7 +540,7 @@ kind: chapter
       <p class="Body">At ➊, <code>too-enthusiastic</code> is the name of the function, and it’s followed by a descriptive docstring at ➋. The parameter, <code>name</code>, is given at ➌, and the function body at ➍ takes the parameter and does what it says on the tin—returns a cheer that might be a bit too enthusiastic.</p>
       <p class="Body">Let’s dive deeper into the docstring, parameters, and function body.</p>
       <h4>The Docstring</h4>
-      <p class="BodyFirst">The <em>docstring</em> is a useful way to describe and document your code. You can view the docstring for a function in the REPL with <code>(doc </code><span class="LiteralItal">fn-name</span><code>)</code>—for <span>example</span>, <code>(doc map)</code>. The docstring also comes into play if you use a tool to generate documentation for your code. </p>
+      <p class="BodyFirst">The <em>docstring</em> is a useful way to describe and document your code. You can view the docstring for a function in the REPL with <code>(doc</code> <span class="LiteralItal">fn-name</span><code>)</code>—for <span>example</span>, <code>(doc map)</code>. The docstring also comes into play if you use a tool to generate documentation for your code. </p>
       <h4>Parameters and Arity</h4>
       <p class="BodyFirst">Clojure functions can be defined with zero or more parameters. The values you pass to functions are called <em>arguments</em>, and the arguments can be of any type. The number of parameters is the function’s <em>arity</em>. Here are some function definitions with different arities:</p>
       <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-kd">defn </span><span class="tok-nv">no-params</span>
@@ -657,7 +657,7 @@ kind: chapter
      <span class="tok-nv">you</span> <span class="tok-nv">need</span> <span class="tok-nv">to</span> <span class="tok-nv">cry</span> <span class="tok-nv">over</span> <span class="tok-nv">them</span><span class="tok-err">:</span> <span class="tok-nv">Pigpen</span>, <span class="tok-nv">Aquaman</span>
 </code></pre></div></div>
 
-      <p class="Body"><span>Here, the rest parameter </span><code>unimportant</code><code>-choices</code><span> handles any number of additional choices from the user after the first and second.</span></p>
+      <p class="Body"><span>Here, the rest parameter </span><code>unimportant-choices</code><span> handles any number of additional choices from the user after the first and second.</span></p>
       <p class="Body">You can also destructure maps. In the same way that you tell Clojure to destructure a vector or list by providing a vector as a parameter, you destructure maps by providing a map as a parameter:</p>
       <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-kd">defn </span><span class="tok-nv">announce-treasure-location</span>
 <span class="tok-err">➊</span>   <span class="tok-p">[{</span><span class="tok-nv">lat</span> <span class="tok-ss">:lat</span> <span class="tok-nv">lng</span> <span class="tok-ss">:lng</span><span class="tok-p">}]</span>
@@ -889,7 +889,7 @@ kind: chapter
 <span class="tok-c1">; =&gt; ("Pongo" "Perdita")</span>
 </code></pre></div></div>
 
-      <p class="Body"><span>In the first example, you bind the name </span><code>x</code><span> to the value </span><code>3</code><span>. In the second, you bind the name </span><code>dalmatians</code><span> to the result of the expression </span><code>(take 2 </code><code>dalmatian</code><code>-list)</code>, which was the list <code>("Pongo" "Perdita")</code>. <code>let</code> also introduces a new <em>scope</em>:</p>
+      <p class="Body"><span>In the first example, you bind the name </span><code>x</code><span> to the value </span><code>3</code><span>. In the second, you bind the name </span><code>dalmatians</code><span> to the result of the expression </span><code>(take 2</code> <code>dalmatian-list)</code>, which was the list <code>("Pongo" "Perdita")</code>. <code>let</code> also introduces a new <em>scope</em>:</p>
       <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-k">def </span><span class="tok-nv">x</span> <span class="tok-mi">0</span><span class="tok-p">)</span>
 <span class="tok-p">(</span><span class="tok-k">let </span><span class="tok-p">[</span><span class="tok-nv">x</span> <span class="tok-mi">1</span><span class="tok-p">]</span> <span class="tok-nv">x</span><span class="tok-p">)</span>
 <span class="tok-c1">; =&gt; 1</span>
@@ -938,7 +938,7 @@ kind: chapter
 
       <p class="Body">So, <code>let</code> is a handy way to introduce local names for values, which helps simplify the code.</p>
       <h3>loop</h3>
-      <p class="BodyFirst">In our <code>symmetrize-body-parts </code>function we use <code>loop</code>, which provides another way to do recursion in Clojure. Let’s look at a simple example:</p>
+      <p class="BodyFirst">In our <code>symmetrize-body-parts</code> function we use <code>loop</code>, which provides another way to do recursion in Clojure. Let’s look at a simple example:</p>
       <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-k">loop </span><span class="tok-p">[</span><span class="tok-nv">iteration</span> <span class="tok-mi">0</span><span class="tok-p">]</span>
   <span class="tok-p">(</span><span class="tok-nb">println </span><span class="tok-p">(</span><span class="tok-nb">str </span><span class="tok-s">"Iteration "</span> <span class="tok-nv">iteration</span><span class="tok-p">))</span>
   <span class="tok-p">(</span><span class="tok-k">if </span><span class="tok-p">(</span><span class="tok-nb">&gt; </span><span class="tok-nv">iteration</span> <span class="tok-mi">3</span><span class="tok-p">)</span>
@@ -1069,7 +1069,7 @@ kind: chapter
 </code></pre></div></div>
 
       <p class="Body">If you provide an initial value, <code>reduce</code> starts by applying the given function to the initial value and the first element of the sequence rather than the first two elements of the sequence.</p>
-      <p class="Body">One detail to note is that, in these examples, <code>reduce</code> takes a collection of elements, <code>[1 2 3 4]</code>, and returns a single number. Although programmers often use <code>reduce</code> this way, you can also use <code>reduce</code> to return an even larger collection than the one you started with, as we’re trying to do with <code>symmetrize</code><code>-body-parts</code>. <code>reduce</code> abstracts the task “process a collection and build a result,” which is agnostic about the type of result returned. To further understand how <code>reduce</code> works, here’s one way that you could implement it:</p>
+      <p class="Body">One detail to note is that, in these examples, <code>reduce</code> takes a collection of elements, <code>[1 2 3 4]</code>, and returns a single number. Although programmers often use <code>reduce</code> this way, you can also use <code>reduce</code> to return an even larger collection than the one you started with, as we’re trying to do with <code>symmetrize-body-parts</code>. <code>reduce</code> abstracts the task “process a collection and build a result,” which is agnostic about the type of result returned. To further understand how <code>reduce</code> works, here’s one way that you could implement it:</p>
       <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-kd">defn </span><span class="tok-nv">my-reduce</span>
   <span class="tok-p">([</span><span class="tok-nv">f</span> <span class="tok-nv">initial</span> <span class="tok-nv">coll</span><span class="tok-p">]</span>
    <span class="tok-p">(</span><span class="tok-k">loop </span><span class="tok-p">[</span><span class="tok-nv">result</span> <span class="tok-nv">initial</span>

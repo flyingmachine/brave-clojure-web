@@ -141,7 +141,7 @@ kind: chapter
 <span class="tok-c1">; =&gt; sweating-to-the-oldies</span>
 </code></pre></div></div>
 
-	<p class="Body">The single quote character is a reader macro for <code>(quote </code><span class="LiteralItal">x</span><code>)</code>:</p>
+	<p class="Body">The single quote character is a reader macro for <code>(quote</code> <span class="LiteralItal">x</span><code>)</code>:</p>
 	<div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-o">'</span><span class="tok-p">(</span><span class="tok-nb">+ </span><span class="tok-mi">1</span> <span class="tok-mi">2</span><span class="tok-p">)</span>
 <span class="tok-c1">; =&gt; (+ 1 2)</span>
 
@@ -217,7 +217,7 @@ kind: chapter
 <span class="tok-c1">; =&gt; (clojure.core/+ 1 2)</span>
 </code></pre></div></div>
 
-	<p class="Body">Because it comes after the tilde, <code>(inc 1) </code>is evaluated instead of being quoted. Without the unquote, syntax quoting returns the unevaluated form with fully qualified symbols:</p>
+	<p class="Body">Because it comes after the tilde, <code>(inc 1)</code> is evaluated instead of being quoted. Without the unquote, syntax quoting returns the unevaluated form with fully qualified symbols:</p>
 	<div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-o">`</span><span class="tok-p">(</span><span class="tok-nb">+ </span><span class="tok-mi">1</span> <span class="tok-p">(</span><span class="tok-nb">inc </span><span class="tok-mi">1</span><span class="tok-p">))</span>
 <span class="tok-c1">; =&gt; (clojure.core/+ 1 (clojure.core/inc 1))</span>
 </code></pre></div></div>
@@ -293,7 +293,7 @@ kind: chapter
               <span class="tok-p">[</span><span class="tok-s">"Sweet gorilla of Manila, this is good code:"</span> <span class="tok-nv">good</span><span class="tok-p">]])))</span>
 </code></pre></div></div>
 
-	<p class="Body">This is looking a little better. You’re mapping over each criticism/code pair and applying the <code>criticize-code </code>function to the pair. Let’s try to run the code:</p>
+	<p class="Body">This is looking a little better. You’re mapping over each criticism/code pair and applying the <code>criticize-code</code> function to the pair. Let’s try to run the code:</p>
 	<div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-nf">code-critic</span> <span class="tok-p">(</span><span class="tok-mi">1</span> <span class="tok-nb">+ </span><span class="tok-mi">1</span><span class="tok-p">)</span> <span class="tok-p">(</span><span class="tok-nb">+ </span><span class="tok-mi">1</span> <span class="tok-mi">1</span><span class="tok-p">))</span>
 <span class="tok-c1">; =&gt; NullPointerException</span>
 </code></pre></div></div>
@@ -399,7 +399,7 @@ kind: chapter
 <span class="tok-c1">; =&gt; I still need to say:  Oh, big deal! </span>
 </code></pre></div></div>
 
-	<p class="Body"><span>This example avoids variable capture by using </span><code>gensym</code><span> to create a new, unique symbol that then gets bound to </span><code>macro-message</code><span>. Within the syntax-quoted</span><code> let</code><span> expression, </span><code>macro-message</code><span> is unquoted, resolving to the </span>gensym’d symbol. This gensym’d symbol is distinct from any symbols within <code>stuff-to-do</code><span>, so you avoid variable capture. </span><span>Because this is such a common pattern, you can use an</span><em> auto-gensym</em><span>. Auto-gensyms are more concise and </span>convenient ways to use gensyms:</p>
+	<p class="Body"><span>This example avoids variable capture by using </span><code>gensym</code><span> to create a new, unique symbol that then gets bound to </span><code>macro-message</code><span>. Within the syntax-quoted</span> <code>let</code><span> expression, </span><code>macro-message</code><span> is unquoted, resolving to the </span>gensym’d symbol. This gensym’d symbol is distinct from any symbols within <code>stuff-to-do</code><span>, so you avoid variable capture. </span><span>Because this is such a common pattern, you can use an</span><em> auto-gensym</em><span>. Auto-gensyms are more concise and </span>convenient ways to use gensyms:</p>
 	<div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-o">`</span><span class="tok-p">(</span><span class="tok-nf">blarg#</span> <span class="tok-nv">blarg#</span><span class="tok-p">)</span>
 <span class="tok-p">(</span><span class="tok-nf">blarg__2869__auto__</span> <span class="tok-nv">blarg__2869__auto__</span><span class="tok-p">)</span>
 
@@ -595,7 +595,7 @@ kind: chapter
   <span class="tok-p">(</span><span class="tok-nb">println </span><span class="tok-ss">:failure</span> <span class="tok-nv">my-error-name</span><span class="tok-p">)))</span>
 </code></pre></div></div>
 
-	<p class="Body"><span>The syntax quote abstracts the general form of the </span><code>let/validate/if </code><span>pattern you saw earlier. Then we use unquote splicing to unpack the </span><code>if</code><span> </span>branches, which were packed into the <code>then-else</code> rest argument.</p>
+	<p class="Body"><span>The syntax quote abstracts the general form of the </span><code>let/validate/if</code> <span>pattern you saw earlier. Then we use unquote splicing to unpack the </span><code>if</code><span> </span>branches, which were packed into the <code>then-else</code> rest argument.</p>
 	<p class="Body">That’s pretty simple! After all this talk about macros and going through their mechanics in such detail, I bet you were expecting something more complicated. Sorry, friend. If you’re having a hard time coping with your disappointment, I know of a certain drink that will help.</p>
 	<h2>Summary</h2>
 	<p class="BodyFirst"><span>In this chapter, you learned how to write your own macros. Macros are </span><span>defined very similarly to functions: they have arguments, a docstring, and a </span>body. They can use argument destructuring and rest args, and they can be recursive. Your macros will almost always return lists. You’ll sometimes use <code>list</code> and <code>seq</code> functions for simple macros, but most of the time you’ll use the syntax quote, <code>`</code>, which lets you write macros using a safe template.</p>
