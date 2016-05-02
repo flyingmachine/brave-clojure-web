@@ -889,7 +889,7 @@ kind: chapter
 <span class="tok-c1">; =&gt; ("Pongo" "Perdita")</span>
 </code></pre></div></div>
 
-      <p class="Body"><span>In the first example, you bind the name </span><code>x</code><span> to the value </span><code>3</code><span>. In the second, you bind the name </span><code>dalmatians</code><span> to the result of the expression </span><code>(take 2 </code><code>dalmatian</code><code>-list)</code>, which was the list <code>("Pongo" "Perdita")</code>. <code>let</code> also introduces a new <em>scope</em>:</p>
+      <p class="Body"><span>In the first example, you bind the name </span><code>x</code><span> to the value </span><code>3</code><span>. In the second, you bind the name </span><code>dalmatians</code><span> to the result of the expression </span><code>(take 2 </code><code>dalmatian-list)</code>, which was the list <code>("Pongo" "Perdita")</code>. <code>let</code> also introduces a new <em>scope</em>:</p>
       <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-k">def </span><span class="tok-nv">x</span> <span class="tok-mi">0</span><span class="tok-p">)</span>
 <span class="tok-p">(</span><span class="tok-k">let </span><span class="tok-p">[</span><span class="tok-nv">x</span> <span class="tok-mi">1</span><span class="tok-p">]</span> <span class="tok-nv">x</span><span class="tok-p">)</span>
 <span class="tok-c1">; =&gt; 1</span>
