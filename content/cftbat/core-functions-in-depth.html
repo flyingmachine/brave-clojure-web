@@ -260,7 +260,7 @@ kind: chapter
        <span class="tok-ss">:min</span> <span class="tok-p">(</span><span class="tok-nb">inc </span><span class="tok-mi">10</span><span class="tok-p">))</span>
 </code></pre></div></div>
 
-      <p class="Body">The function <code>assoc<code> takes three arguments: a map, a key, and a value. It returns derives a new map from the map you give it by <em>associating</em> the given key with the given value. For example, <code>(assoc {:a 1} :b 2)</code> would return <code>{:a 1 :b 2}</code>.</p>
+      <p class="Body">The function <code>assoc</code> takes three arguments: a map, a key, and a value. It returns derives a new map from the map you give it by <em>associating</em> the given key with the given value. For example, <code>(assoc {:a 1} :b 2)</code> would return <code>{:a 1 :b 2}</code>.</p>
 
       <p class="Body"><span>Another use for </span><code>reduce</code><span> is to filter out keys from a map based on their value. In the following example, the anonymous function checks whether the value of a key-value pair is greather than 4. If it isn’t, then the key-value pair is filtered out. In the map </span><code>{:human 4.1 :critter 3.9}</code><span>, 3.9 is less than 4, so the </span><code>:critter</code><span> key and its 3.9 value are filtered out.</span></p>
       <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-nb">reduce </span><span class="tok-p">(</span><span class="tok-k">fn </span><span class="tok-p">[</span><span class="tok-nv">new-map</span> <span class="tok-p">[</span><span class="tok-nb">key </span><span class="tok-nv">val</span><span class="tok-p">]]</span>
