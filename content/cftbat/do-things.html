@@ -3,9 +3,9 @@ title: "Do Things: A Clojure Crash Course"
 kind: chapter
 ---
 
-  
-  
-    
+
+
+
       <div class="chapter-number">Chapter 3</div>
       <h1>Do Things: A Clojure Crash Course</h1>
       <p class="x1st-Para"><span>It’s time to learn how to actually </span><em>do</em><span> </span><em>things</em><span> with Clojure! Hot damn! Although you’ve undoubtedly heard of Clojure’s awesome concurrency support and other stupendous features, Clojure’s most salient characteristic is that it is a Lisp. In this chapter, you’ll explore the elements that compose this Lisp core: syntax, functions, and data. Together they will give you a solid foundation for representing and solving problems in Clojure.</span></p>
@@ -657,7 +657,7 @@ kind: chapter
      <span class="tok-nv">you</span> <span class="tok-nv">need</span> <span class="tok-nv">to</span> <span class="tok-nv">cry</span> <span class="tok-nv">over</span> <span class="tok-nv">them</span><span class="tok-err">:</span> <span class="tok-nv">Pigpen</span>, <span class="tok-nv">Aquaman</span>
 </code></pre></div></div>
 
-      <p class="Body"><span>Here, the rest parameter </span><code>unimportant</code><code>-choices</code><span> handles any number of additional choices from the user after the first and second.</span></p>
+      <p class="Body"><span>Here, the rest parameter </span><code>unimportant-choices</code><span> handles any number of additional choices from the user after the first and second.</span></p>
       <p class="Body">You can also destructure maps. In the same way that you tell Clojure to destructure a vector or list by providing a vector as a parameter, you destructure maps by providing a map as a parameter:</p>
       <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-kd">defn </span><span class="tok-nv">announce-treasure-location</span>
 <span class="tok-err">➊</span>   <span class="tok-p">[{</span><span class="tok-nv">lat</span> <span class="tok-ss">:lat</span> <span class="tok-nv">lng</span> <span class="tok-ss">:lng</span><span class="tok-p">}]</span>
@@ -889,7 +889,7 @@ kind: chapter
 <span class="tok-c1">; =&gt; ("Pongo" "Perdita")</span>
 </code></pre></div></div>
 
-      <p class="Body"><span>In the first example, you bind the name </span><code>x</code><span> to the value </span><code>3</code><span>. In the second, you bind the name </span><code>dalmatians</code><span> to the result of the expression </span><code>(take 2 </code><code>dalmatian</code><code>-list)</code>, which was the list <code>("Pongo" "Perdita")</code>. <code>let</code> also introduces a new <em>scope</em>:</p>
+      <p class="Body"><span>In the first example, you bind the name </span><code>x</code><span> to the value </span><code>3</code><span>. In the second, you bind the name </span><code>dalmatians</code><span> to the result of the expression </span><code>(take 2 </code><code>dalmatian-list)</code>, which was the list <code>("Pongo" "Perdita")</code>. <code>let</code> also introduces a new <em>scope</em>:</p>
       <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-k">def </span><span class="tok-nv">x</span> <span class="tok-mi">0</span><span class="tok-p">)</span>
 <span class="tok-p">(</span><span class="tok-k">let </span><span class="tok-p">[</span><span class="tok-nv">x</span> <span class="tok-mi">1</span><span class="tok-p">]</span> <span class="tok-nv">x</span><span class="tok-p">)</span>
 <span class="tok-c1">; =&gt; 1</span>
@@ -915,7 +915,7 @@ kind: chapter
       <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-k">let </span><span class="tok-p">[[</span><span class="tok-nv">part</span> <span class="tok-o">&amp;</span> <span class="tok-nv">remaining</span><span class="tok-p">]</span> <span class="tok-nv">remaining-asym-parts</span><span class="tok-p">]</span>
   <span class="tok-p">(</span><span class="tok-nf">recur</span> <span class="tok-nv">remaining</span>
          <span class="tok-p">(</span><span class="tok-nb">into </span><span class="tok-nv">final-body-parts</span>
-               <span class="tok-p">(</span><span class="tok-nb">set </span><span class="tok-p">[</span><span class="tok-nv">part</span> <span class="tok-p">(</span><span class="tok-nf">matching-part</span> <span class="tok-nv">part</span><span class="tok-p">)]))))</span>    
+               <span class="tok-p">(</span><span class="tok-nb">set </span><span class="tok-p">[</span><span class="tok-nv">part</span> <span class="tok-p">(</span><span class="tok-nf">matching-part</span> <span class="tok-nv">part</span><span class="tok-p">)]))))</span>
 </code></pre></div></div>
 
       <p class="Body">This code tells Clojure, “Create a new scope. Within it, associate <code>part</code> with the first element of <code>remaining-asym-parts</code>. Associate <code>remaining</code> with the rest of the elements in <code>remaining-asym-parts</code>.”</p>
@@ -1032,12 +1032,12 @@ kind: chapter
 <span class="tok-err">➊</span> <span class="tok-p">(</span><span class="tok-kd">defn </span><span class="tok-nv">symmetrize-body-parts</span>
   <span class="tok-s">"Expects a seq of maps that have a :name and :size"</span>
   <span class="tok-p">[</span><span class="tok-nv">asym-body-parts</span><span class="tok-p">]</span>
-<span class="tok-err">➋</span>   <span class="tok-p">(</span><span class="tok-k">loop </span><span class="tok-p">[</span><span class="tok-nv">remaining-asym-parts</span> <span class="tok-nv">asym-body-parts</span> 
+<span class="tok-err">➋</span>   <span class="tok-p">(</span><span class="tok-k">loop </span><span class="tok-p">[</span><span class="tok-nv">remaining-asym-parts</span> <span class="tok-nv">asym-body-parts</span>
          <span class="tok-nv">final-body-parts</span> <span class="tok-p">[]]</span>
-<span class="tok-err">➌</span>     <span class="tok-p">(</span><span class="tok-k">if </span><span class="tok-p">(</span><span class="tok-nf">empty?</span> <span class="tok-nv">remaining-asym-parts</span><span class="tok-p">)</span> 
+<span class="tok-err">➌</span>     <span class="tok-p">(</span><span class="tok-k">if </span><span class="tok-p">(</span><span class="tok-nf">empty?</span> <span class="tok-nv">remaining-asym-parts</span><span class="tok-p">)</span>
       <span class="tok-nv">final-body-parts</span>
-<span class="tok-err">➍</span>       <span class="tok-p">(</span><span class="tok-k">let </span><span class="tok-p">[[</span><span class="tok-nv">part</span> <span class="tok-o">&amp;</span> <span class="tok-nv">remaining</span><span class="tok-p">]</span> <span class="tok-nv">remaining-asym-parts</span><span class="tok-p">]</span> 
-<span class="tok-err">➎</span>         <span class="tok-p">(</span><span class="tok-nf">recur</span> <span class="tok-nv">remaining</span> 
+<span class="tok-err">➍</span>       <span class="tok-p">(</span><span class="tok-k">let </span><span class="tok-p">[[</span><span class="tok-nv">part</span> <span class="tok-o">&amp;</span> <span class="tok-nv">remaining</span><span class="tok-p">]</span> <span class="tok-nv">remaining-asym-parts</span><span class="tok-p">]</span>
+<span class="tok-err">➎</span>         <span class="tok-p">(</span><span class="tok-nf">recur</span> <span class="tok-nv">remaining</span>
                <span class="tok-p">(</span><span class="tok-nb">into </span><span class="tok-nv">final-body-parts</span>
                      <span class="tok-p">(</span><span class="tok-nb">set </span><span class="tok-p">[</span><span class="tok-nv">part</span> <span class="tok-p">(</span><span class="tok-nf">matching-part</span> <span class="tok-nv">part</span><span class="tok-p">)])))))))</span>
 </code></pre></div></div>
@@ -1114,9 +1114,9 @@ kind: chapter
 	  <img src="/assets/images/cftbat/do-things/hobbit-hit-line.png" class="figure" />
 	</div>
 	<div class="caption">
-	  
+
 	    Figure 3-1: Body parts correspond to ranges of numbers and get hit if the target falls within that range.
-	  
+
 	</div>
       </div>
       <p class="Body">Finally, one of these numbers is randomly chosen, and then we use <code>loop</code> at ➌ to find and return the body part that corresponds to the number. The loop does this by keeping track of the accumulated sizes of parts that we’ve checked and checking whether the accumulated size is greater than the target. I visualize this process as lining up the body parts with a row of numbered slots. After I line up a body part, I ask myself, “Have I reached the target yet?” If I have, that means the body part I just lined up was the one hit. Otherwise, I just keep lining up those parts.</p>
@@ -1136,7 +1136,7 @@ kind: chapter
       <h2>Summary</h2>
       <p class="BodyFirst">This chapter gave you a whirlwind tour of how to <em>do</em> <em>stuff</em> in Clojure. You now know how to represent information using strings, numbers, maps, keywords, vectors, lists, and sets, and how to name these representations with <code>def</code><span> and </span><code>let</code><span>. You’ve learned about how flexible functions are and how to </span><span>create</span> your own functions. Also, you’ve been introduced to Clojure’s philosophy of simplicity, including its uniform syntax and its emphasis on using large libraries of functions on primitive data types.</p>
       <p class="Body">Chapter 4 will take you through a detailed examination of Clojure’s core functions, and Chapter 5 explains the functional programming mind-set. This chapter has shown you how to write Clojure code—the next two will show you how to write Clojure <em>well</em>.</p>
-      <p class="Body">At this point I recommend, with every fiber of my being, that you start <span>writing code. There is no better way to solidify your Clojure knowledge. The Clojure Cheat Sheet (</span><em><a href="http://clojure.org/cheatsheet/">http://clojure.org/cheatsheet/</a></em><span>) is a great reference that </span>lists all the built-in functions that operate on the data structures covered in this chapter.</p>
+      <p class="Body">At this point I recommend, with every fiber of my being, that you start <span>writing code. There is no better way to solidify your Clojure knowledge. The Clojure Cheat Sheet (</span><em><a href="http://clojure.org/cheatsheet">http://clojure.org/cheatsheet</a></em><span>) is a great reference that </span>lists all the built-in functions that operate on the data structures covered in this chapter.</p>
       <p class="Body">The following exercises will really tickle your brain. If you’d like to test your new skills even more, try some Project Euler challenges at <em><a href="http://www.projecteuler.net/">http://www.projecteuler.net/</a></em>. You could also check out 4Clojure (<em><a href="http://www.4clojure.com/problems/">http://www.4clojure.com/problems/</a></em>), an online set of Clojure problems designed to test your knowledge. Just write something!</p>
       <h2>Exercises</h2>
       <p class="BodyFirst">These exercises are meant to be a fun way to test your Clojure knowledge and to learn more Clojure functions. The first three can be completed using only the information presented in this chapter, but the last three will require you to use functions that haven’t been covered so far. Tackle the last three if you’re really itching to write more code and explore Clojure’s standard library. If you find the exercises too difficult, revisit them after reading Chapters 4 and 5—you’ll find them much easier.</p>
@@ -1144,25 +1144,22 @@ kind: chapter
 	<li class="NumListA">Use the <code>str</code>, <code>vector</code>, <code>list</code>, <code>hash-map</code>, and <code>hash-set</code> functions.</li>
 	<li class="NumListB">Write a function that takes a number and adds 100 to it.</li>
 	<li class="NumListB"><span>Write a function, </span><code>dec-maker</code><span>, that works exactly like the function </span><code>inc-maker</code><span> </span>except with subtraction:
-      
+
       <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-k">def </span><span class="tok-nv">dec9</span> <span class="tok-p">(</span><span class="tok-nf">dec-maker</span> <span class="tok-mi">9</span><span class="tok-p">))</span>
 <span class="tok-p">(</span><span class="tok-nf">dec9</span> <span class="tok-mi">10</span><span class="tok-p">)</span>
 <span class="tok-c1">; =&gt; 1</span>
 </code></pre></div></div>
 
       </li>
-      
+
 	<li class="NumListB">Write a function, <code>mapset</code>, that works like <code>map</code> except the return value is a set:
-      
+
       <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-nf">mapset</span> <span class="tok-nb">inc </span><span class="tok-p">[</span><span class="tok-mi">1</span> <span class="tok-mi">1</span> <span class="tok-mi">2</span> <span class="tok-mi">2</span><span class="tok-p">])</span>
 <span class="tok-c1">; =&gt; #{2 3}</span>
 </code></pre></div></div>
 
       </li>
-      
+
 	<li class="NumListB"><span>Create a function that’s similar to </span><code>symmetrize-body-parts</code><span> except that it has to work with weird space aliens with radial symmetry. Instead of two </span>eyes, arms, legs, and so on, they have five.</li>
 	<li class="NumListB">Create a function that generalizes <code>symmetrize-body-parts</code> and the function you created in Exercise 5. The new function should take a <span>collection of body parts and the number of matching body parts to add. </span><span>If you’re completely new to Lisp languages and functional program</span>ming, it probably won’t be obvious how to do this. If you get stuck, just move on to the next chapter and revisit the problem later.</li>
       </ol>
-    
-  
-
