@@ -29,7 +29,7 @@ kind: chapter
 	<li class="NumListA para-style-override-2">Close Emacs.</li>
         <li class="NumListB">Delete <em>~/.emacs</em> or <em>~/.emacs.d</em> if they exist. (Windows users, your emacs files will probably live in <em>C:\Users\your_user_name\AppData\Roaming\</em>. So, for example, you would delete <em>C:\Users\jason\AppData\Roaming\.emacs.d</em>.) This is where Emacs looks for configuration files, and deleting these files and directories will ensure that you start with a clean slate.</li>
 	<li class="NumListB"><span>Download the Emacs configuration zip file from the book’s resource page and unzip it. Its contents should be a folder, </span><em>emacs-for-clojure-book1</em><span>. Run </span><span class="LiteralBold">mv path/to/emacs-for-</span><span class="LiteralBold">clojure</span><span class="LiteralBold">-book1 ~/.emacs.d</span><span>.</span></li>
-	<li class="NumListB">Create the file <em>~/.lein/profiles.clj</em> (Windows users, this is probably <em>C:\Users\your_user_name\.lein\profiles.clj</em>) and add this line to it: and add this line to it: </li>
+	<li class="NumListB">Create the file <em>~/.lein/profiles.clj</em> (Windows users, this is probably <em>C:\Users\your_user_name\.lein\profiles.clj</em>) and add this line to it: </li>
       </ol>
       <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">{</span><span class="tok-ss">:user</span> <span class="tok-p">{</span><span class="tok-ss">:plugins</span> <span class="tok-p">[[</span><span class="tok-nv">cider/cider-nrepl</span> <span class="tok-s">"0.8.1"</span><span class="tok-p">]]}}</span> 
 </code></pre></div></div>
