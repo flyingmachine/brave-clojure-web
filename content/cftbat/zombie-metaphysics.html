@@ -138,7 +138,7 @@ kind: chapter
 <span class="tok-c1">; =&gt; {:cuddle-hunger-level 12, :percent-deteriorated 1}</span>
 </code></pre></div></div>
 
-      <p class="Body">Note that this code doesn’t actually update <code>fred</code>, because we’re not using <code>swap!</code> We’re just making a normal function call to <code>increase-cuddle-</code><code>hunger</code><code>-level</code>, which returns a result.</p>
+      <p class="Body">Note that this code doesn’t actually update <code>fred</code>, because we’re not using <code>swap!</code> We’re just making a normal function call to <code>increase-cuddle-hunger-level</code>, which returns a result.</p>
       <p class="Body">Now call <code>swap!</code> with the additional arguments, and <code>@fred</code> will be updated, like this:</p>
       <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-nf">swap!</span> <span class="tok-nv">fred</span> <span class="tok-nv">increase-cuddle-hunger-level</span> <span class="tok-mi">10</span><span class="tok-p">)</span>
 <span class="tok-c1">; =&gt; {:cuddle-hunger-level 12, :percent-deteriorated 1}</span>
@@ -218,7 +218,7 @@ kind: chapter
 </code></pre></div></div>
 
       <p class="Body">Watch functions take four arguments: a key that you can use for report<span>ing, the atom being watched, the state of the atom before its update, and the state of the atom after its update. This watch function calculates the </span>shuffle speed of the new state and prints a warning message if it’s too high <span>and an all’s-well message when the shuffle speed is safe, as mentioned </span>above. In both sets of messages, the <code>key</code> is used to let you know the source <span>of the message.</span></p>
-      <p class="Body"><span>You can attach this function to </span><code>fred</code><span> with </span><code>add-watch.</code><span> The general form of </span><code>add-watch</code><span> is </span><code>(add-watch </code><span class="LiteralItal">ref key watch-fn</span><code>)</code><span>. In this example, we’re resetting </span><code>fred</code><span>’s state, adding the </span><code>shuffle-alert</code><span> watch function, and then updating </span><code>fred</code><span>’s state a couple of times to trigger </span><code>shuffle-alert</code><span>: </span></p>
+      <p class="Body"><span>You can attach this function to </span><code>fred</code><span> with </span><code>add-watch.</code><span> The general form of </span><code>add-watch</code><span> is </span><code>(add-watch</code> <span class="LiteralItal">ref key watch-fn</span><code>)</code><span>. In this example, we’re resetting </span><code>fred</code><span>’s state, adding the </span><code>shuffle-alert</code><span> watch function, and then updating </span><code>fred</code><span>’s state a couple of times to trigger </span><code>shuffle-alert</code><span>: </span></p>
       <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-nf">reset!</span> <span class="tok-nv">fred</span> <span class="tok-p">{</span><span class="tok-ss">:cuddle-hunger-level</span> <span class="tok-mi">22</span>
               <span class="tok-ss">:percent-deteriorated</span> <span class="tok-mi">2</span><span class="tok-p">})</span>
 <span class="tok-p">(</span><span class="tok-nf">add-watch</span> <span class="tok-nv">fred</span> <span class="tok-ss">:fred-shuffle-alert</span> <span class="tok-nv">shuffle-alert</span><span class="tok-p">)</span>
@@ -236,7 +236,7 @@ kind: chapter
 
       <p class="Body">This example watch function didn’t use <code>watched</code> or <code>old-state</code>, but they’re there for you if the need arises. Now let’s cover validators.</p>
       <h3>Validators</h3>
-      <p class="BodyFirst"><em>Validators</em><span> let you specify what states are allowable for a reference. For </span><span>example</span><span>, here’s a validator that you could use to ensure that a zombie’s</span><code> </code><code>:percent-deteriorated</code> is between 0 and 100:</p>
+      <p class="BodyFirst"><em>Validators</em><span> let you specify what states are allowable for a reference. For </span><span>example</span><span>, here’s a validator that you could use to ensure that a zombie’s</span> <code>:percent-deteriorated</code> is between 0 and 100:</p>
       <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-kd">defn </span><span class="tok-nv">percent-deteriorated-validator</span>
   <span class="tok-p">[{</span><span class="tok-ss">:keys</span> <span class="tok-p">[</span><span class="tok-nv">percent-deteriorated</span><span class="tok-p">]}]</span>
   <span class="tok-p">(</span><span class="tok-nb">and </span><span class="tok-p">(</span><span class="tok-nb">&gt;= </span><span class="tok-nv">percent-deteriorated</span> <span class="tok-mi">0</span><span class="tok-p">)</span>
@@ -524,10 +524,10 @@ kind: chapter
 <span class="tok-c1">; =&gt; nil</span>
 </code></pre></div></div>
 
-      <p class="Body"><span>Notice that you have to pass </span><code>#'*troll-thought* </code><span>(including </span><code>#'</code><span>), not </span><code>*troll-thought*</code>, to the function <code>thread-bound?</code>. This is because <code>thread-bound?</code> takes the var itself as an argument, not the value it refers to. </p>
+      <p class="Body"><span>Notice that you have to pass </span><code>#'*troll-thought*</code> <span>(including </span><code>#'</code><span>), not </span><code>*troll-thought*</code>, to the function <code>thread-bound?</code>. This is because <code>thread-bound?</code> takes the var itself as an argument, not the value it refers to. </p>
       <h4>Per-Thread Binding</h4>
       <p class="BodyFirst">One final point to note about binding: if you access a dynamically bound var from within a manually created thread, the var will evaluate to the original value. If you’re new to Clojure (and Java), this feature won’t be immediately relevant; you can probably skip this section and come back to it later.</p>
-      <p class="Body">Ironically, this binding behavior prevents us from easily creating a fun demonstration in the REPL, because the REPL binds <code>*out*</code>. It’s as if all the code you run in the REPL is implicitly wrapped in something like <code>(</code><code>binding</code><code> [*out* repl-printer] your-code</code>. If you create a new thread, <code>*out*</code> won’t be bound to the REPL printer.</p>
+      <p class="Body">Ironically, this binding behavior prevents us from easily creating a fun demonstration in the REPL, because the REPL binds <code>*out*</code>. It’s as if all the code you run in the REPL is implicitly wrapped in something like <code>(binding</code> <code>[*out* repl-printer] your-code</code>. If you create a new thread, <code>*out*</code> won’t be bound to the REPL printer.</p>
       <p class="Body">The following example uses some basic Java interop. Even if it looks unfamiliar, the gist of the following code should be clear, and you’ll learn exactly what’s going on in Chapter 12.</p>
       <p class="Body">This code prints output to the REPL:</p>
       <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-nf">.write</span> <span class="tok-nv">*out*</span> <span class="tok-s">"prints to repl"</span><span class="tok-p">)</span>
@@ -545,11 +545,11 @@ kind: chapter
                <span class="tok-p">(</span><span class="tok-nf">.write</span> <span class="tok-nv">*out*</span> <span class="tok-s">"prints to repl from thread"</span><span class="tok-p">)))))</span>
 </code></pre></div></div>
 
-      <p class="Body">Or you can use<code> </code><code>bound-fn</code>, which carries all the current bindings to the new thread:</p>
+      <p class="Body">Or you can use <code>bound-fn</code>, which carries all the current bindings to the new thread:</p>
       <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-nf">.start</span> <span class="tok-p">(</span><span class="tok-nf">Thread.</span> <span class="tok-p">(</span><span class="tok-nf">bound-fn</span> <span class="tok-p">[]</span> <span class="tok-p">(</span><span class="tok-nf">.write</span> <span class="tok-nv">*out*</span> <span class="tok-s">"prints to repl from thread"</span><span class="tok-p">))))</span>
 </code></pre></div></div>
 
-      <p class="Body">The <code>let</code> binding captures<code> *out* </code>so we can then rebind it in the child thread, which is goofy as hell. The point is that bindings don’t get passed on to <em>manually</em> created threads. They do, however, get passed on to futures. This is called <em>binding conveyance</em>. Throughout this chapter, we’ve been printing from futures without any problem, for example.</p>
+      <p class="Body">The <code>let</code> binding captures <code>*out*</code> so we can then rebind it in the child thread, which is goofy as hell. The point is that bindings don’t get passed on to <em>manually</em> created threads. They do, however, get passed on to futures. This is called <em>binding conveyance</em>. Throughout this chapter, we’ve been printing from futures without any problem, for example.</p>
       <p class="Body">That’s it for dynamic binding. Let’s turn our attention to the last var topic: altering var<em> roots</em>.</p>
       <h3>Altering the Var Root</h3>
       <p class="BodyFirst">When you create a new var, the initial value that you supply is its <em>root</em>:</p>

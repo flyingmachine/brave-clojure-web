@@ -74,7 +74,7 @@ kind: chapter
 <span class="tok-err">➌</span>   <span class="tok-p">(</span><span class="tok-nb">println </span><span class="tok-s">"Hello, World!"</span><span class="tok-p">))</span>
 </code></pre></div></div>
 
-      <p class="Body">The lines at ➊ declare a namespace, which you don’t need to worry <span>about right now. The </span><code>-main</code><span> function at </span>➋<span> is the </span><em>entry point</em><span> to your program, </span><span>a topic that is covered in Appendix A. For now, replace the text </span><code>"Hello, </code><code>World!"</code> at ➌ with <code>"I'm a little teapot!"</code>. The full line should read <code>(println "I'm a little teapot!"))</code>.</p>
+      <p class="Body">The lines at ➊ declare a namespace, which you don’t need to worry <span>about right now. The </span><code>-main</code><span> function at </span>➋<span> is the </span><em>entry point</em><span> to your program, </span><span>a topic that is covered in Appendix A. For now, replace the text </span><code>"Hello,</code> <code>World!"</code> at ➌ with <code>"I'm a little teapot!"</code>. The full line should read <code>(println "I'm a little teapot!"))</code>.</p>
       <p class="Body">Next, navigate to the <em>clojure_noob</em> directory in your terminal and enter:</p>
       <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-nv">lein</span> <span class="tok-nv">run</span>
 </code></pre></div></div>
@@ -118,7 +118,7 @@ kind: chapter
 <span class="tok-nv">clojure-noob.core=&gt;</span>
 </code></pre></div></div>
 
-      <p class="Body">The last line, <code>clojure-noob.core=&gt;</code>, tells you that you’re in the <code>clojure</code><code>-noob.core</code> namespace. You’ll learn about namespaces later, but for now <span>notice that the namespace basically matches the name of your </span><em>src/</em><em>clojure_noob</em><em>/core.clj</em> file. Also, notice that the REPL shows the version as <em>Clojure 1.7.0</em>, but as mentioned earlier, everything will work okay no <span>matter</span> which version you use.</p>
+      <p class="Body">The last line, <code>clojure-noob.core=&gt;</code>, tells you that you’re in the <code>clojure-noob.core</code> namespace. You’ll learn about namespaces later, but for now <span>notice that the namespace basically matches the name of your </span><em>src/</em><em>clojure_noob</em><em>/core.clj</em> file. Also, notice that the REPL shows the version as <em>Clojure 1.7.0</em>, but as mentioned earlier, everything will work okay no <span>matter</span> which version you use.</p>
       <p class="Body">The prompt also indicates that your code is loaded in the REPL, and you can execute the functions that are defined. Right now only one function, <code>-main</code>, is defined. Go ahead and execute it now:</p>
       <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-nv">clojure-noob.core=&gt;</span> <span class="tok-p">(</span><span class="tok-nf">-main</span><span class="tok-p">)</span>
 <span class="tok-nv">I</span><span class="tok-ss">'m</span> <span class="tok-nv">a</span> <span class="tok-nv">little</span> <span class="tok-nv">teapot!</span>
