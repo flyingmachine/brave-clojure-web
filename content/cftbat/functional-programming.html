@@ -652,18 +652,21 @@ kind: chapter
 
       <p class="Body">The bindings <code>alpha-start</code> and <code>alpha-end</code> set up the beginning and end of the numerical values for the letters <em>a</em> through <em>z</em>. We use those to build up a seq of <code>letters</code>. <code>char</code>, when applied to an integer, returns the character corresponding to that integer, and <code>str</code> turns the <code>char</code> into a string. <code>pos-chars</code> is used by the function <code>row-padding</code> to determine how much spacing to add to the beginning of each row. The next few definitions, <code>ansi-styles</code>, <code>ansi</code>, and <code>colorize</code> output colored text to the terminal:</p>
 
-<div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span></span><span class="tok-p">(</span><span class="tok-k">def </span><span class="tok-nv">ansi-styles</span> <span class="tok-p">{</span><span class="tok-ss">:reset</span> <span class="tok-s">"[0m"</span>
-                  <span class="tok-ss">:red</span>   <span class="tok-s">"[31m"</span>
-                  <span class="tok-ss">:blue</span>  <span class="tok-s">"[34m"</span><span class="tok-p">})</span>
+<div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-k">def </span><span class="tok-nv">ansi-styles</span>
+  <span class="tok-p">{</span><span class="tok-ss">:red</span>   <span class="tok-s">"[31m"</span>
+   <span class="tok-ss">:green</span> <span class="tok-s">"[32m"</span>
+   <span class="tok-ss">:blue</span>  <span class="tok-s">"[34m"</span>
+   <span class="tok-ss">:reset</span> <span class="tok-s">"[0m"</span><span class="tok-p">})</span>
 
 <span class="tok-p">(</span><span class="tok-kd">defn </span><span class="tok-nv">ansi</span>
-  <span class="tok-p">[</span><span class="tok-nv">code</span><span class="tok-p">]</span>
-  <span class="tok-p">(</span><span class="tok-nb">str </span><span class="tok-sc">\u</span><span class="tok-mi">001</span><span class="tok-nv">b</span> <span class="tok-p">(</span><span class="tok-nb">get </span><span class="tok-nv">ansi-styles</span> <span class="tok-nv">code</span><span class="tok-p">)))</span>
+  <span class="tok-s">"Produce a string which will apply an ansi style"</span>
+  <span class="tok-p">[</span><span class="tok-nv">style</span><span class="tok-p">]</span>
+  <span class="tok-p">(</span><span class="tok-nb">str </span><span class="tok-sc">\u</span><span class="tok-mi">001</span><span class="tok-nv">b</span> <span class="tok-p">(</span><span class="tok-nf">style</span> <span class="tok-nv">ansi-styles</span><span class="tok-p">)))</span>
 
-<span class="tok-p">(</span><span class="tok-kd">defn </span><span class="tok-nv">colorize</span> <span class="tok-p">[</span><span class="tok-nv">text</span> <span class="tok-nv">color</span><span class="tok-p">]</span>
-  <span class="tok-p">(</span><span class="tok-nb">str </span><span class="tok-p">(</span><span class="tok-nf">ansi</span> <span class="tok-nv">color</span><span class="tok-p">)</span> <span class="tok-nv">text</span> <span class="tok-p">(</span><span class="tok-nf">ansi</span> <span class="tok-ss">:reset</span><span class="tok-p">)))</span>
-
-</code></pre></div></div>
+<span class="tok-p">(</span><span class="tok-kd">defn </span><span class="tok-nv">colorize</span>
+  <span class="tok-s">"Apply ansi color to text"</span>
+  <span class="tok-p">[</span><span class="tok-nv">text</span> <span class="tok-nv">color</span><span class="tok-p">]</span>
+  <span class="tok-p">(</span><span class="tok-nb">str </span><span class="tok-p">(</span><span class="tok-nf">ansi</span> <span class="tok-nv">color</span><span class="tok-p">)</span> <span class="tok-nv">text</span> <span class="tok-p">(</span><span class="tok-nf">ansi</span> <span class="tok-ss">:reset</span><span class="tok-p">)))</span></code></pre></div></div>
 
       <p class="Body"><span>The functions </span><code>render-pos</code><span>, </span><code>row-positions</code><span>, </span><code>row-padding</code><span>, and </span><code>render-row</code> create strings to represent the board:</p>
       <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-kd">defn </span><span class="tok-nv">render-pos</span>
