@@ -726,7 +726,14 @@ kind: chapter
 </code></pre></div></div>
 
       <p class="Body">The next function, <code>characters-as-strings</code>, is a tiny helper function used by <code>prompt-move</code> to take in a string and return a collection of letters with all nonalphabetic input discarded:</p>
-      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-nf">characters-as-strings</span> <span class="tok-s">"a   b"</span><span class="tok-p">)</span>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight">
+<code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-kd">defn </span><span class="tok-nv">characters-as-strings</span>
+  <span class="tok-s">"Given a string, return a collection consisting of each individual</span>
+<span class="tok-s">  character"</span>
+  <span class="tok-p">[</span><span class="tok-nv">string</span><span class="tok-p">]</span>
+  <span class="tok-p">(</span><span class="tok-nb">re-seq </span><span class="tok-o">#</span><span class="tok-s">"[a-zA-Z]"</span> <span class="tok-nv">string</span><span class="tok-p">))</span>
+
+<span class="tok-p">(</span><span class="tok-nf">characters-as-strings</span> <span class="tok-s">"a   b"</span><span class="tok-p">)</span>
 <span class="tok-c1">; =&gt; ("a" "b")</span>
 
 <span class="tok-p">(</span><span class="tok-nf">characters-as-strings</span> <span class="tok-s">"a   cb"</span><span class="tok-p">)</span>
