@@ -7,4 +7,3 @@ class RedcarpetSyntaxHighlighter < Redcarpet::Render::HTML
     "<div class='code pygments'>" + Pygments.highlight(code, :lexer => language) + "</div>"
   end
 end
-
