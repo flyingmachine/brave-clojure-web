@@ -623,7 +623,7 @@ kind: chapter
 </code></pre></div></div>
 
       <p class="Body"><code>if-let</code><span> is a nifty way to say, “If an expression evaluates to a truthy value, then bind that value to a name the same way that I can in a </span><code>let</code><span> expression. Otherwise, if I’ve provided an </span><code>else</code><span> clause, perform that </span><code>else</code><span> </span>clause; if I haven’t provided an <code>else</code> clause, return <code>nil</code>.” In this case, the test expression is <code>(valid-move? board p1 p2)</code>, and you’re assigning the result to the name <code>jumped</code> if the result is truthy. That’s used in the call to <code>move-peg</code>, which <span>returns a new board. You don’t supply an </span><code>else</code><span> clause, so if the move isn’t </span>valid, the return value of the whole expression is <code>nil</code>.</p>
-      <p class="Body">Finally, the function <code>can-move? </code>is used to determine whether the game is over by finding the first pegged positions with moves available:</p>
+      <p class="Body">Finally, the function <code>can-move?</code> is used to determine whether the game is over by finding the first pegged positions with moves available:</p>
       <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-kd">defn </span><span class="tok-nv">can-move?</span>
   <span class="tok-s">"Do any of the pegged positions have valid moves?"</span>
   <span class="tok-p">[</span><span class="tok-nv">board</span><span class="tok-p">]</span>
