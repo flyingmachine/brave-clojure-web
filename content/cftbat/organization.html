@@ -108,7 +108,7 @@ kind: chapter
 
       <p class="Body">You can use the returned namespace as an argument in a function call:</p>
       <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-nv">user=&gt;</span> <span class="tok-p">(</span><span class="tok-nb">ns-name </span><span class="tok-p">(</span><span class="tok-nb">create-ns </span><span class="tok-ss">'cheese.taxonomy</span><span class="tok-p">))</span>
-<span class="tok-c1">; =&gt; cheese-taxonomy</span>
+<span class="tok-c1">; =&gt; cheese.taxonomy</span>
 </code></pre></div></div>
 
       <p class="Body">In practice, you’ll probably never use <code>create-ns</code> in your code, because it’s not very useful to create a namespace and not move into it. Using <code>in-ns</code> is more common because it creates the namespace if it doesn’t exist <em>and</em> switches to it, as shown in Listing 6-1.</p>
