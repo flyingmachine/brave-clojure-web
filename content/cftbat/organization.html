@@ -119,7 +119,7 @@ kind: chapter
       <ol class="List-1">
 	<li class="Listing">6-1. Using <span class="LiteralCaption">in-ns</span> to create a namespace and switch to it</li>
       </ol>
-      <p class="Body">Notice that your REPL prompt is now <code>cheese.analysis&gt;</code>, indicating that you are indeed in the new namespace you just created. Now when you use <code>def</code>, it will store the named object in the <code>cheese.analysis</code> namespace.</p>
+      <p class="Body">Notice that your REPL prompt is now <code>cheese.analysis=&gt;</code>, indicating that you are indeed in the new namespace you just created. Now when you use <code>def</code>, it will store the named object in the <code>cheese.analysis</code> namespace.</p>
       <p class="Body"><span>But what if you want to use functions and data from other name­spaces? To do that, you can use a </span><em>fully qualified</em><span> symbol. The general form is </span><span class="LiteralItal">namespace</span><code>/</code><span class="LiteralItal">name</span><span>:</span></p>
       <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-nv">cheese.analysis=&gt;</span> <span class="tok-p">(</span><span class="tok-nb">in-ns </span><span class="tok-ss">'cheese.taxonomy</span><span class="tok-p">)</span>
 <span class="tok-nv">cheese.taxonomy=&gt;</span> <span class="tok-p">(</span><span class="tok-k">def </span><span class="tok-nv">cheddars</span> <span class="tok-p">[</span><span class="tok-s">"mild"</span> <span class="tok-s">"medium"</span> <span class="tok-s">"strong"</span> <span class="tok-s">"sharp"</span> <span class="tok-s">"extra sharp"</span><span class="tok-p">])</span>
