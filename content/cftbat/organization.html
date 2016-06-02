@@ -3,9 +3,9 @@ title: "Organizing Your Project: A Librarian’s Tale"
 kind: chapter
 ---
 
-  
-  
-    
+
+
+
       <div class="chapter-number">Chapter 6</div>
       <h1>Organizing Your Project: A Librarian’s Tale</h1>
       <p class="x1st-Para">Within each of us lives a librarian named Melvil, a fantastical creature who delights in the organizational arts. Day and night, Melvil yearns to bring order to your codebase. Fortunately, Clojure provides a suite of tools designed specifically to aid this homunculus in its constant struggle against the forces of chaos.</p>
@@ -77,7 +77,7 @@ kind: chapter
 <span class="tok-c1">; =&gt; #'user/great-books</span>
 </code></pre></div></div>
 
-      <p class="Body"><span>By evaluating </span><code>(</code><code>ns-map *ns*)</code><span class="Default-Paragraph-Font">,</span><code> </code><span>you can also get the full map that the namespace uses for looking up a var when given a symbol</span><span class="Default-Paragraph-Font">.</span><span> </span><code>(ns-map *ns*) </code>gives you a very large map that I won’t print here, but try it out! </p>
+      <p class="Body"><span>By evaluating </span><code>(ns-map *ns*)</code><span class="Default-Paragraph-Font">,</span><span>you can also get the full map that the namespace uses for looking up a var when given a symbol</span><span class="Default-Paragraph-Font">.</span><span> </span><code>(ns-map *ns*) </code>gives you a very large map that I won’t print here, but try it out! </p>
       <p class="Body"><code>#'user/great-books</code> is the <em>reader form</em> of a var. I’ll explain more about reader forms in Chapter 7. For now, just know that you can use <code>#'</code> to grab hold of the var corresponding to the symbol that follows; <code>#'user/great-books</code> lets you use the var associated with the symbol <code>great-books</code> within the <code>user</code> namespace. We can <code>deref</code> vars to get the objects they point to:</p>
       <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-nb">deref </span><span class="tok-o">#</span><span class="tok-ss">'user/great-books</span><span class="tok-p">)</span>
 <span class="tok-c1">; =&gt; ["East of Eden" "The Glass Bead Game"]</span>
@@ -172,7 +172,7 @@ kind: chapter
       <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-nv">cheese.analysis=&gt;</span> <span class="tok-p">(</span><span class="tok-nf">clojure.core/refer</span> <span class="tok-ss">'cheese.taxonomy</span> <span class="tok-ss">:only</span> <span class="tok-p">[</span><span class="tok-ss">'bries</span><span class="tok-p">])</span>
 <span class="tok-nv">cheese.analysis=&gt;</span> <span class="tok-nv">bries</span>
 <span class="tok-c1">; =&gt; ["Wisconsin" "Somerset" "Brie de Meaux" "Brie de Melun"]</span>
-<span class="tok-nv">cheese.analysis=&gt;</span> <span class="tok-nv">cheddars</span> 
+<span class="tok-nv">cheese.analysis=&gt;</span> <span class="tok-nv">cheddars</span>
 <span class="tok-c1">; =&gt; RuntimeException: Unable to resolve symbol: cheddars</span>
 </code></pre></div></div>
 
@@ -180,7 +180,7 @@ kind: chapter
       <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-nv">cheese.analysis=&gt;</span> <span class="tok-p">(</span><span class="tok-nf">clojure.core/refer</span> <span class="tok-ss">'cheese.taxonomy</span> <span class="tok-ss">:exclude</span> <span class="tok-p">[</span><span class="tok-ss">'bries</span><span class="tok-p">])</span>
 <span class="tok-nv">cheese.analysis=&gt;</span> <span class="tok-nv">bries</span>
 <span class="tok-c1">; =&gt; RuntimeException: Unable to resolve symbol: bries</span>
-<span class="tok-nv">cheese.analysis=&gt;</span> <span class="tok-nv">cheddars</span> 
+<span class="tok-nv">cheese.analysis=&gt;</span> <span class="tok-nv">cheddars</span>
 <span class="tok-c1">; =&gt; ["mild" "medium" "strong" "sharp" "extra sharp"]</span>
 </code></pre></div></div>
 
@@ -266,7 +266,7 @@ kind: chapter
       <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-kd">ns </span><span class="tok-nv">the-divine-cheese-code.visualization.svg</span><span class="tok-p">)</span>
 
 <span class="tok-p">(</span><span class="tok-kd">defn </span><span class="tok-nv">latlng-&gt;point</span>
-  <span class="tok-s">"Convert lat/lng map to comma-separated string"</span> 
+  <span class="tok-s">"Convert lat/lng map to comma-separated string"</span>
   <span class="tok-p">[</span><span class="tok-nv">latlng</span><span class="tok-p">]</span>
   <span class="tok-p">(</span><span class="tok-nb">str </span><span class="tok-p">(</span><span class="tok-ss">:lat</span> <span class="tok-nv">latlng</span><span class="tok-p">)</span> <span class="tok-s">","</span> <span class="tok-p">(</span><span class="tok-ss">:lng</span> <span class="tok-nv">latlng</span><span class="tok-p">)))</span>
 
@@ -497,9 +497,9 @@ kind: chapter
         <img src="/assets/images/cftbat/organization/svg-before.png" />
         <img src="/assets/images/cftbat/organization/svg-after.png" />
       </div>
-      
+
 	<div class="caption">Figure 6-1: Flipping, translating, and scaling latitude coordinates to make an SVG image.</div>
-      
+
       <p class="Body"><span>Honestly, this is all completely arbitrary and it’s no longer directly related </span>to code organization, but it’s fun and I think you’ll have a good time going through the code! Make your <em>svg.clj</em> file match Listing 6-4:</p>
       <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-kd">ns </span><span class="tok-nv">the-divine-cheese-code.visualization.svg</span>
   <span class="tok-p">(</span><span class="tok-ss">:require</span> <span class="tok-p">[</span><span class="tok-nv">clojure.string</span> <span class="tok-ss">:as</span> <span class="tok-nv">s</span><span class="tok-p">])</span>
@@ -554,7 +554,7 @@ kind: chapter
       <p class="Body">Then we define the function <code>scale</code> at , which multiplies each point by the ratio between the maximum latitude and longitude and the desired height and width.</p>
       <p class="Body">Here’s the rest of the code for <em>svg.clj</em>:</p>
       <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-kd">defn </span><span class="tok-nv">latlng-&gt;point</span>
-  <span class="tok-s">"Convert lat/lng map to comma-separated string"</span> 
+  <span class="tok-s">"Convert lat/lng map to comma-separated string"</span>
   <span class="tok-p">[</span><span class="tok-nv">latlng</span><span class="tok-p">]</span>
   <span class="tok-p">(</span><span class="tok-nb">str </span><span class="tok-p">(</span><span class="tok-ss">:lat</span> <span class="tok-nv">latlng</span><span class="tok-p">)</span> <span class="tok-s">","</span> <span class="tok-p">(</span><span class="tok-ss">:lng</span> <span class="tok-nv">latlng</span><span class="tok-p">)))</span>
 
@@ -641,9 +641,9 @@ kind: chapter
 
       <p class="Body">Nothing too complicated is going on here. Within <code>-main</code> you build up the drawing using the <code>xml</code> and <code>template</code> functions, write the drawing to a file with <code>spit</code>, and then open it with <code>browse/browse-url</code>. You should try that now! Run <code>lein run </code>and you’ll see something that looks like Figure 6-2.</p>
       <p><style>polyline { fill:none; stroke:#5881d8; stroke-width:3}</style><svg height="100" width="50"><g transform="translate(0,100)"><g transform="scale(1,-1)"><polyline points="11.299435028248586,100.0 22.457627118644073,60.441988950276205 0.0,15.469613259668485 22.457627118644073,60.441988950276205 50.0,0.0"></polyline></g></g></svg></p>
-      
+
 	<div class="caption">Figure 6-2: The final SVG of the heist pattern!</div>
-      
+
       <p class="Body">Wait a minute . . . that looks a lot like . . . that looks a lot like a lambda. Clojure’s logo is a lambda . . . oh my god! Clojure, it was you this whole time!</p>
       <h2>Summary</h2>
       <p class="BodyFirst">You learned a lot in this chapter. At this point, you should have all the tools you need to start organizing your projects. You now know that namespaces organize maps between symbols and vars,<em> </em>and that vars are references to Clojure objects (data structures, functions, and so on). <code>def</code> stores an object and updates the current namespace with a map between a symbol and a var that points to the object. You can create private functions with <code>defn-</code>.</p>
@@ -652,6 +652,3 @@ kind: chapter
       <p class="Body"><code>require</code> and <code>use</code> ensure that a namespace exists and is ready to be used, and optionally let you <code>refer</code> and <code>alias</code> the corresponding namespaces. You <span>should use </span><code>ns</code><span> to call </span><code>require</code><span> and </span><code>use</code><span> in your source files. </span><em><a href="https://gist.github.com/ghoseb/287710/">https://gist.github.com/ghoseb/287710/</a></em> is a great reference for all the vagaries of using <code>ns</code>.</p>
       <p class="Body">Lastly and most importantly, it ain’t easy being cheesy.</p>
       <img src="/assets/images/cftbat/organization/cheese.png" class="figure" />
-    
-  
-
