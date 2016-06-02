@@ -77,7 +77,7 @@ kind: chapter
 <span class="tok-c1">; =&gt; #'user/great-books</span>
 </code></pre></div></div>
 
-      <p class="Body"><span>By evaluating </span><code>(ns-map *ns*)</code><span class="Default-Paragraph-Font">,</span><span>you can also get the full map that the namespace uses for looking up a var when given a symbol</span><span class="Default-Paragraph-Font">.</span><span> </span><code>(ns-map *ns*) </code>gives you a very large map that I won’t print here, but try it out! </p>
+      <p class="Body">By evaluating <code>(ns-map *ns*)</code>, you can also get the full map that the namespace uses for looking up a var when given a symbol.<code>(ns-map *ns*)</code> gives you a very large map that I won’t print here, but try it out! </p>
       <p class="Body"><code>#'user/great-books</code> is the <em>reader form</em> of a var. I’ll explain more about reader forms in Chapter 7. For now, just know that you can use <code>#'</code> to grab hold of the var corresponding to the symbol that follows; <code>#'user/great-books</code> lets you use the var associated with the symbol <code>great-books</code> within the <code>user</code> namespace. We can <code>deref</code> vars to get the objects they point to:</p>
       <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-nb">deref </span><span class="tok-o">#</span><span class="tok-ss">'user/great-books</span><span class="tok-p">)</span>
 <span class="tok-c1">; =&gt; ["East of Eden" "The Glass Bead Game"]</span>
