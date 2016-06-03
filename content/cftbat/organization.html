@@ -383,7 +383,7 @@ kind: chapter
 </code></pre></div></div>
 
       <ol class="List-1">
-	<li class="Listing"><span>Aliasing a namespace after you use it lets you refer to symbols that you excluded.</span></li>
+	<li class="Listing"><span>6-3. Aliasing a namespace after you use it lets you refer to symbols that you excluded.</span></li>
       </ol>
       <p class="Body"><span>If you try Listing 6-3 in a REPL and </span><code>latlng-&gt;point</code><span> doesn’t throw an </span>exception, it’s because you referred <code>latlng-&gt;point</code> in Listing 6-2. You’ll need to restart your REPL session for the code to behave as shown in Listing 6-3.</p>
       <p class="Body">The takeaway here is that <code>require</code> and <code>use</code> load files and optionally <code>alias</code> <span>or </span><code>refer</code><span> their namespaces. As you write Clojure programs and read code written by others, you might encounter even more ways of writing </span><code>require</code><span> and </span><code>use</code><span>, at which point it’ll make sense to read Clojure’s API docs (</span><em><a href="http://clojure.org/libs/">http://clojure.org/libs/</a></em><span>) to understand what’s going on. However, what you’ve learned so far about </span><code>require</code><span> and </span><code>use</code><span> should cover 95.3 percent of your needs.</span></p>
