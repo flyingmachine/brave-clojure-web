@@ -396,7 +396,7 @@ kind: chapter
 </code></pre></div></div>
 
       <p class="Body"><span>If you called this at the beginning of </span><em>divine_cheese_code.core.clj</em><span>, it would break your code, forcing you to use </span><code>clojure.core/println</code><span> </span>within the <code>-main</code> function.</p>
-      <p class="Body">Within <code>ns</code>, the form <code>(:</code><code>refer-clojure)</code> is called a <em>reference</em>. This might look weird to you. Is this reference a function call? A macro? What is it? You’ll learn more about the underlying machinery in Chapter 7. For now, you just <span>need to understand how each reference maps to function calls. For example, </span>the preceding code is equivalent to this:</p>
+      <p class="Body">Within <code>ns</code>, the form <code>(:refer-clojure)</code> is called a <em>reference</em>. This might look weird to you. Is this reference a function call? A macro? What is it? You’ll learn more about the underlying machinery in Chapter 7. For now, you just <span>need to understand how each reference maps to function calls. For example, </span>the preceding code is equivalent to this:</p>
       <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-nb">in-ns </span><span class="tok-ss">'the-divine-cheese-code.core</span><span class="tok-p">)</span>
 <span class="tok-p">(</span><span class="tok-nb">refer </span><span class="tok-ss">'clojure.core</span> <span class="tok-ss">:exclude</span> <span class="tok-p">[</span><span class="tok-ss">'println</span><span class="tok-p">])</span>
 </code></pre></div></div>
