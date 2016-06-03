@@ -533,25 +533,30 @@ kind: chapter
       <p class="Body">At ➋, the first argument to <code>zipmap</code> is <code>ks</code>, so the elements of <code>ks</code> will be the keys of the returned map. The second argument is the result of the map call at ➌. That map call actually performs the comparison.</p>
       <p class="Body"><span>Finally, at </span>➍<span> you use </span><code>comparator-over-maps</code><span> to create the comparison functions. If you think of the drawing as being inscribed in a rectangle, </span><code>min</code><span> is the corner of the rectangle closest to (0, 0) and </span><code>max</code><span> is the corner farthest from it.</span></p>
       <p class="Body">Here’s the next part of the code:</p>
-      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"> <span class="tok-p">(</span><span class="tok-kd">defn </span><span class="tok-nv">translate-to-00</span>
+      <div class="listingblock">
+        <div class="content"><pre class="pygments highlight">
+<code data-lang="clojure" class="block">➊<span class="tok-p">(</span><span class="tok-kd">defn </span><span class="tok-nv">translate-to-00</span>
   <span class="tok-p">[</span><span class="tok-nv">locations</span><span class="tok-p">]</span>
   <span class="tok-p">(</span><span class="tok-k">let </span><span class="tok-p">[</span><span class="tok-nv">mincoords</span> <span class="tok-p">(</span><span class="tok-nb">min </span><span class="tok-nv">locations</span><span class="tok-p">)]</span>
     <span class="tok-p">(</span><span class="tok-nb">map </span><span class="tok-o">#</span><span class="tok-p">(</span><span class="tok-nb">merge-with - </span><span class="tok-nv">%</span> <span class="tok-nv">mincoords</span><span class="tok-p">)</span> <span class="tok-nv">locations</span><span class="tok-p">)))</span>
 
- <span class="tok-p">(</span><span class="tok-kd">defn </span><span class="tok-nv">scale</span>
+➋<span class="tok-p">(</span><span class="tok-kd">defn </span><span class="tok-nv">scale</span>
   <span class="tok-p">[</span><span class="tok-nv">width</span> <span class="tok-nv">height</span> <span class="tok-nv">locations</span><span class="tok-p">]</span>
   <span class="tok-p">(</span><span class="tok-k">let </span><span class="tok-p">[</span><span class="tok-nv">maxcoords</span> <span class="tok-p">(</span><span class="tok-nb">max </span><span class="tok-nv">locations</span><span class="tok-p">)</span>
         <span class="tok-nv">ratio</span> <span class="tok-p">{</span><span class="tok-ss">:lat</span> <span class="tok-p">(</span><span class="tok-nb">/ </span><span class="tok-nv">height</span> <span class="tok-p">(</span><span class="tok-ss">:lat</span> <span class="tok-nv">maxcoords</span><span class="tok-p">))</span>
                <span class="tok-ss">:lng</span> <span class="tok-p">(</span><span class="tok-nb">/ </span><span class="tok-nv">width</span> <span class="tok-p">(</span><span class="tok-ss">:lng</span> <span class="tok-nv">maxcoords</span><span class="tok-p">))}]</span>
     <span class="tok-p">(</span><span class="tok-nb">map </span><span class="tok-o">#</span><span class="tok-p">(</span><span class="tok-nb">merge-with * </span><span class="tok-nv">%</span> <span class="tok-nv">ratio</span><span class="tok-p">)</span> <span class="tok-nv">locations</span><span class="tok-p">)))</span>
-</code></pre></div></div>
+          </code>
+        </pre>
+      </div>
+    </div>
 
-      <p class="Body"><code>translate-to-00</code>, defined at , works by finding the <code>min</code> of our locations and subtracting that value from each location. It uses <code>merge-with</code>, which works like this:</p>
+      <p class="Body"><code>translate-to-00</code>, defined at ➊, works by finding the <code>min</code> of our locations and subtracting that value from each location. It uses <code>merge-with</code>, which works like this:</p>
       <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-nb">merge-with - </span><span class="tok-p">{</span><span class="tok-ss">:lat</span> <span class="tok-mi">50</span> <span class="tok-ss">:lng</span> <span class="tok-mi">10</span><span class="tok-p">}</span> <span class="tok-p">{</span><span class="tok-ss">:lat</span> <span class="tok-mi">5</span> <span class="tok-ss">:lng</span> <span class="tok-mi">5</span><span class="tok-p">})</span>
 <span class="tok-c1">; =&gt; {:lat 45 :lng 5}</span>
 </code></pre></div></div>
 
-      <p class="Body">Then we define the function <code>scale</code> at , which multiplies each point by the ratio between the maximum latitude and longitude and the desired height and width.</p>
+      <p class="Body">Then we define the function <code>scale</code> at ➋, which multiplies each point by the ratio between the maximum latitude and longitude and the desired height and width.</p>
       <p class="Body">Here’s the rest of the code for <em>svg.clj</em>:</p>
       <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-kd">defn </span><span class="tok-nv">latlng-&gt;point</span>
   <span class="tok-s">"Convert lat/lng map to comma-separated string"</span>
