@@ -517,7 +517,7 @@ kind: chapter
 </code></pre></div></div>
 
       <ol class="List-1">
-	<li class="Listing">6-3. Constructing map comparison functions</li>
+	<li class="Listing">6-4. Constructing map comparison functions</li>
       </ol>
       <p class="Body">You define the <code>comparator-over-maps</code> function at ➊. This is probably the trickiest bit, so bear with me. <code>comparator-over-maps</code> is a function that returns a function. The returned function compares the values for the keys provided by the <code>ks</code> parameter using the supplied comparison function, <code>comparison-fn</code>.</p>
       <p class="Body">You use <code>comparator-over-maps</code> to construct the <code>min</code> and <code>max</code> functions ➍, which you’ll use to find the top-left and bottom-right corners of our drawing. Here’s <code>min</code> in action:</p>
