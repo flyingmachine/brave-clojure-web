@@ -124,7 +124,7 @@ $vnarrow: 0 40em;
     .alert {
       @include leader;
       background: white;
-      padding: .25em .5em;
+      padding: .75em;
       //font-style: italic;
       a {
         //color: $charcoal;
@@ -149,11 +149,33 @@ $vnarrow: 0 40em;
       margin-top: 0;
       font-style: italic;
     }
+    .container {
+      max-width: 44em;
+    }
   }
 
   .spiel {
-    width: 50%;
+    @include span(4 of 6);
     margin: 0 auto;
+    ul {
+      @include trailer;
+      li {
+        list-style: disc;
+        margin-left: 1em;
+      }
+    }
+  }
+
+  .testimonials {
+    @include span(2 of 6 at 5);
+    @include leader(3);
+    background: rgba(0,0,0,0.02);
+    padding: .75em;
+    box-sizing: border-box;
+    font-style: italic;
+    .source {
+      font-style: normal;
+    }
   }
 
   .twitter {
@@ -161,14 +183,6 @@ $vnarrow: 0 40em;
     top: 1em;
     right: 1em;
     z-index: 1;
-  }
-
-  ul {
-    @include trailer;
-    li {
-      list-style: disc;
-      margin-left: 1em;
-    }
   }
   
   @include breakpoint($mobile) {
