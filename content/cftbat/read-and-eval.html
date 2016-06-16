@@ -234,7 +234,7 @@ kind: chapter
 </code></pre></div></div>
 
       <p class="Body">When Clojure evaluates this code, it first evaluates the <code>map</code> symbol, looking up the corresponding function and applying it to its arguments. The symbol <code>map</code> refers to the map function, but it shouldn’t be confused with the function itself. The <code>map</code> symbol is still a data structure, the same way that the string <code>"fried salad"</code> is a data structure, but it’s not the same as the function itself:</p>
-      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-nf">read-string</span> <span class="tok-p">(</span><span class="tok-s">"+"</span><span class="tok-p">))</span>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-nf">read-string</span> <span class="tok-p"></span><span class="tok-s">"+"</span><span class="tok-p">)</span>
 <span class="tok-c1">; =&gt; +</span>
 
 <span class="tok-p">(</span><span class="tok-nf">type</span> <span class="tok-p">(</span><span class="tok-nf">read-string</span> <span class="tok-s">"+"</span><span class="tok-p">))</span>
