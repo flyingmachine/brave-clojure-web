@@ -169,12 +169,16 @@ $vnarrow: 0 40em;
   .testimonials {
     @include span(2 of 6 at 5);
     @include leader(3);
-    background: rgba(0,0,0,0.02);
-    padding: .75em;
-    box-sizing: border-box;
     font-style: italic;
     .source {
       font-style: normal;
+    }
+
+    .testimonial {
+      @include trailer;
+      background: rgba(0,0,0,0.02);
+      padding: .75em;
+      box-sizing: border-box;
     }
   }
 
