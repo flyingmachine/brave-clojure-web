@@ -60,7 +60,7 @@ $vnarrow: 0 40em;
     color: $teal;
     font-family: $title-font;
     font-weight: 100;
-    @include leader(5, $ms-up1);
+    @include leader(4, $ms-up1);
     @include trailer(2, $ms-up1);
     @include adjust-font-size-to($ms-up1);
 
@@ -77,14 +77,18 @@ $vnarrow: 0 40em;
 
   .nav {
     font-family: $title-family;
-    width: 100%;
+    width: 84%;
     font-weight: 100;
     position: static;
+    font-size: $ms-down1;
+    margin: 0 auto;
     
     a {
       color: white;
       display: block;
       padding: .75em;
+      margin-left: -.75em;
+      letter-spacing: 1px;
       &:hover {
         background: rgba(255,255,255,0.05);
       }
