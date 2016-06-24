@@ -44,14 +44,17 @@ $home-hero: (
     @include padding-leader;
   }
 
+  .nav a {
+    color: rgba(0,0,0,0.5);
+  }
+
   .header {
     padding: 0;
     position: relative;
     height: 216px;
-    background: $color-b;
 
     .container {
-      background: $color-b;
+      background: $teal;
     }
 
     .images {
@@ -85,8 +88,7 @@ $home-hero: (
   .toc {
     @include padding-leader(2);
     @include padding-trailer(2);
-    background: #333;
-    background: #262b2e;
+    background: $slate;
 
     h1 {
       color: $orange;
