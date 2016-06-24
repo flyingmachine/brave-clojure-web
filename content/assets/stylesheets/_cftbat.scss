@@ -50,9 +50,10 @@ $home-hero: (
     padding: 0;
     position: relative;
     height: 216px;
+    background: $slate;
 
     .container {
-      background: $teal;
+      background: $slate;
     }
 
     .images {
@@ -86,10 +87,10 @@ $home-hero: (
   .toc {
     @include padding-leader(2);
     @include padding-trailer(2);
-    background: $slate;
+    background: #5eb4ab;
 
     h1 {
-      color: $orange;
+      color: $slate;
       margin-bottom: 0;
     }
 
@@ -100,7 +101,7 @@ $home-hero: (
     }
 
     a {
-      color: $gold;
+      color: $slate;
       display: block;
       &:hover {
         color: white;
