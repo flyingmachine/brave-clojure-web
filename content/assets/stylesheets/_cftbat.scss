@@ -44,9 +44,7 @@ $home-hero: (
     @include padding-leader;
   }
 
-  .nav a {
-    color: rgba(0,0,0,0.5);
-  }
+
 
   .header {
     padding: 0;
@@ -148,5 +146,11 @@ $home-hero: (
     top: 5px;
     right: 5px;
     z-index: 1;
+  }
+}
+
+.cftbat-book {
+  .nav a {
+    color: rgba(0,0,0,0.5);
   }
 }
