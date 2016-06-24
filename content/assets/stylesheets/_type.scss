@@ -36,24 +36,20 @@ $ms-down1: $base-font-size / $ms-scale;
 .header, .header a, .header a:hover {
   color: rgba(0,0,0,0.5);
   span {
-    text-transform: uppercase;
+    // text-transform: uppercase;
   }
 }
 
 .title {
   font-family: $title-family;
-  letter-spacing: 3px;
   @include adjust-font-size-to($ms-up2, 2);
 
   strong {
     text-transform: uppercase;
     color: white;
-    text-shadow: 0 2px rgba(0,0,0,0.5);
     @include adjust-font-size-to($ms-up5, 2, $ms-up2);
-  }
-  
-  span {
-    word-spacing: .08em;
+    letter-spacing: 1px;
+    text-shadow: 0 2px rgba(0, 0, 0, 0.5)
   }
 }
 

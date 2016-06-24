@@ -48,9 +48,10 @@ $home-hero: (
     padding: 0;
     position: relative;
     height: 216px;
+    background: $color-b;
 
     .container {
-      background: $color-a;
+      background: $color-b;
     }
 
     .images {
