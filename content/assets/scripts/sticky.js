@@ -6,7 +6,7 @@ $(document).ready(function(){
   // Calculate the height of the visible portion of the footer
   visibleFooterHeight = function() {
     var footerHeight = $('.footer').outerHeight(),
-        visibleHeight = footerHeight - ($body.height() - $body.scrollTop() - $window.height());
+        visibleHeight = footerHeight - ($body.height() - $window.scrollTop() - $window.height());
 
     // If the result is < 0, reset it to 0
     if (visibleHeight < 0) { visibleHeight = 0; }
