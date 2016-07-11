@@ -31,7 +31,7 @@ kind: chapter
 	<li class="NumListB"><span>Download the Emacs configuration zip file listed above and unzip it. Its contents should be a folder, </span><em>emacs-for-clojure-book1</em><span>. Run </span><span class="LiteralBold">mv path/to/emacs-for-</span><span class="LiteralBold">clojure</span><span class="LiteralBold">-book1 ~/.emacs.d</span><span>.</span></li>
 	<li class="NumListB">Create the file <em>~/.lein/profiles.clj</em> (Windows users, this is probably <em>C:\Users\your_user_name\.lein\profiles.clj</em>) and add this line to it: </li>
       </ol>
-      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">{</span><span class="tok-ss">:user</span> <span class="tok-p">{</span><span class="tok-ss">:plugins</span> <span class="tok-p">[[</span><span class="tok-nv">cider/cider-nrepl</span> <span class="tok-s">"0.8.1"</span><span class="tok-p">]]}}</span> 
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">{</span><span class="tok-ss">:repl</span> <span class="tok-p">{</span><span class="tok-ss">:plugins</span> <span class="tok-p">[[</span><span class="tok-nv">cider/cider-nrepl</span> <span class="tok-s">"0.12.0"</span><span class="tok-p">]]}}</span> 
 </code></pre></div></div>
 
       <ol class="List-1" start="5">
