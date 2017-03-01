@@ -70,7 +70,7 @@ compile '*' do
   elsif item.attributes[:filename] =~ /html$/
     layout 'default'
     filter :toc
-  elsif item.attributes[:filename] =~ /asc$/
+  elsif item.attributes[:filename] =~ /(asc|adoc)$/
     filter :asciidoctor, notitle: false
     layout 'default'
     filter :toc
