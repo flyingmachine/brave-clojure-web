@@ -15,13 +15,13 @@ This is errata list isn't complete yet. Please create issues or visit [the googl
   small typo
 * https://github.com/flyingmachine/brave-clojure-web/pull/88/files
   typos
-* https://github.com/flyingmachine/brave-clojure-web/pull/81
+* https://github.com/flyingmachine/brave-clojure-web/pull/81/files
   core functions fix: `year, month, and day` -> `month and day`
 * https://github.com/flyingmachine/brave-clojure-web/pull/79/files
   remove `some-stuff` to reduce confusion
 * https://github.com/flyingmachine/brave-clojure-web/pull/78/files
   fix code block in appendix bo
-* https://github.com/flyingmachine/brave-clojure-web/pull/128
+* https://github.com/flyingmachine/brave-clojure-web/pull/128/files
   add listing caption in zombie-metaphysics,
   "10-1. Modeling cuddle zombie behavior with Ruby"
 * https://github.com/flyingmachine/brave-clojure-web/pull/97/files
