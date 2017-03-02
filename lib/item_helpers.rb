@@ -1,8 +1,10 @@
 include Nanoc::Helpers::Rendering
 include Nanoc::Helpers::LinkTo
 
-def chapter_order(item)
-  chapter_ids_ordered = %w{
+class Chapters
+  class << self
+    def chapter_ids_ordered
+      { "cftbat" => %w{
   foreword
   acknowledgements
   introduction
@@ -22,15 +24,30 @@ def chapter_order(item)
   appendix-a
   appendix-b
   afterword
-  }
-
-  m = /\/cftbat\/(.*)\//.match(item.identifier)[1]
-  chapter_ids_ordered.index(m)
+        },
+        "deploy" => %w{
+        preface
+        intro
+        set-up-a-server-and-deploy-a-clojure-app-to-it
+        ansible-tutorial
+        sweet-tooth-deep-dive
+        }
+      }
+    end
+  end
 end
 
-def chapters
-  @chapters ||= @items.select{|i| i[:kind] == 'chapter' && !i[:draft]}.sort{ |a, b|
-    chapter_order(a) <=> chapter_order(b)
+def chapter_order(item, book)
+  m = /\/([^\/]*)\/$/.match(item.identifier)[1]
+  Chapters.chapter_ids_ordered[book].index(m)
+end
+
+def chapters(item)
+  book = item[:book]
+  @chapters ||= @items.select{|i|
+    i[:kind] == 'chapter' && !i[:draft] && book && i[:book] == book
+  }.sort{ |a, b|
+    chapter_order(a, book) <=> chapter_order(b, book)
   }
 end
 
