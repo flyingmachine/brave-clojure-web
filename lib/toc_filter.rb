@@ -54,8 +54,10 @@ class NokogiriTOC
 
     toc = doc.create_element("ol", :class => "toc")
     build_toc(toc, toc_data)
-
-    doc.at_css(options[:toc_selector]).add_child(toc)
+    if (toc_data.size > 0)
+      doc.at_css(options[:toc_selector]).add_child(doc.create_element("div", "Chapter Sections", :class => "chapter-sections"))
+      doc.at_css(options[:toc_selector]).add_child(toc)
+    end
     doc.to_html
   end
 
