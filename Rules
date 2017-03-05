@@ -72,8 +72,13 @@ compile '*' do
     filter :toc
   elsif item.attributes[:filename] =~ /(asc|adoc)$/
     filter :asciidoctor, notitle: false
-    layout 'default'
     filter :toc
+
+    if item.attributes[:filename] =~ /quests\/deploy/
+      layout 'deploy'
+    else
+      layout 'default'
+    end
   end
 end
 

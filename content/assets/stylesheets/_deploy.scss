@@ -1,0 +1,24 @@
+.deploy-book {
+  .header {
+    background: #35343e;
+
+    .container {
+      @include padding-leader(2);      
+    }
+  }
+  .title {
+    font-family: $title-family;
+    @include adjust-font-size-to($ms-up2, 1);
+
+    strong {
+      text-transform: uppercase;
+      color: white;
+      @include adjust-font-size-to($ms-up4, 3, $ms-up2);
+      letter-spacing: 1px;
+      text-shadow: 0 2px rgba(0, 0, 0, 0.5)
+    }
+  }
+  .subtitle {
+    color: #f16060;
+  }
+}
