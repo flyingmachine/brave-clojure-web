@@ -40,27 +40,25 @@ $ms-down1: $base-font-size / $ms-scale;
   }
 }
 
-.title {
-  font-family: $title-family;
-  @include adjust-font-size-to($ms-up2, 2);
+.header {
+  .title {
+    font-family: $title-family;
+    @include adjust-font-size-to($ms-up2, 2);
 
-  strong {
-    text-transform: uppercase;
-    color: white;
-    @include adjust-font-size-to($ms-up5, 2, $ms-up2);
-    letter-spacing: 1px;
-    text-shadow: 0 2px rgba(0, 0, 0, 0.5)
+    strong {
+      text-transform: uppercase;
+      color: white;
+      @include adjust-font-size-to($ms-up5, 2, $ms-up2);
+      letter-spacing: 1px;
+      text-shadow: 0 2px rgba(0, 0, 0, 0.5)
+    }
   }
-}
 
-.subtitle {
-  font-family: $sub-family;
-  letter-spacing: 1px;
-  @include leader(-.5);
-}
-
-.fear {
-  font-family: Symbola;
+  .subtitle {
+    font-family: $sub-family;
+    letter-spacing: 1px;
+    @include leader(-.5);
+  }
 }
 
 body {

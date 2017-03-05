@@ -191,6 +191,9 @@ blockquote {
   @include padding-trailer(.5);
   padding-left: .75em;
   padding-right: .75em;
+  p:last-child {
+    margin-bottom: 0;
+  }
 }
 
 table {
