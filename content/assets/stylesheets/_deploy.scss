@@ -34,3 +34,8 @@
     @include padding-trailer(1, $ms-up1);
   }
 }
+
+
+.imageblock {
+  @include trailer;
+}
