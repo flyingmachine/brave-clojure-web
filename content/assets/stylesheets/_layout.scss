@@ -194,6 +194,12 @@ blockquote {
   p:last-child {
     margin-bottom: 0;
   }
+  .paragraph {
+    @include trailer;
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
 }
 
 table {
