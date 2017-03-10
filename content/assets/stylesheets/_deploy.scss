@@ -38,4 +38,17 @@
 
 .imageblock {
   @include trailer;
+
+  .title {
+    @include adjust-font-size-to($ms-down1);
+    font-style: italic;
+    text-align: center;
+  }
+}
+
+
+.listingblock .title {
+  font-style: italic;
+  color: #666;
+  @include adjust-font-size-to($ms-down1);
 }
