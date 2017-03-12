@@ -59,7 +59,7 @@ body {
     @include trailer;
   }
   
-  .chapter-sections {
+  .chapter-sections, .subtitle {
     color: #999;
     font-style: italic;
   }

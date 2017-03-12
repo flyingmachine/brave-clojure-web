@@ -4,7 +4,7 @@ class TocFilter < Nanoc::Filter
 
   def run(content, params ={})
     content
-    NokogiriTOC.run(content, :content_selector => ".wrap", :toc_selector => ".secondary .wrapper")
+    NokogiriTOC.run(content, :content_selector => ".wrap", :toc_selector => ".secondary .wrapper .ads")
   end
 end
 
@@ -55,8 +55,9 @@ class NokogiriTOC
     toc = doc.create_element("ol", :class => "toc")
     build_toc(toc, toc_data)
     if (toc_data.size > 0)
-      doc.at_css(options[:toc_selector]).add_child(doc.create_element("div", "Chapter Sections", :class => "chapter-sections"))
-      doc.at_css(options[:toc_selector]).add_child(toc)
+      doc.at_css(options[:toc_selector]).add_next_sibling(toc)
+      doc.at_css(options[:toc_selector]).add_next_sibling(doc.create_element("div", "Chapter Sections", :class => "chapter-sections"))
+      
     end
     doc.to_html
   end
