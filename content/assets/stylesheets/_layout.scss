@@ -70,6 +70,8 @@ body {
   }
 
   .junk {
+    clear: both;
+    @include trailer;
     img {
       max-height: 6em;
       float: left;

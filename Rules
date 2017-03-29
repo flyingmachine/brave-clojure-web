@@ -75,7 +75,7 @@ compile '*' do
     if item.attributes[:filename] =~ /quests\/deploy/
       layout 'deploy'
     elsif item.attributes[:filename] =~ /quests\/reducers/
-      layout 'deploy'
+      layout 'reducers'
     else
       layout 'default'
     end

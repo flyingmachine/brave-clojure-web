@@ -2,18 +2,18 @@
 <!DOCTYPE HTML>
 <html lang="en">
   <%= render 'deploy_head' %>
-  <body class="deploy-book">
+  <body class="reducers-book">
     <%= render 'main-nav' %>
     <div class="header">
       <div class="logoy">
         <div class="container">
-          <div class="title">
-            <a href="/quests/deploy">
-              <strong>Deploying Your First Clojure App</strong>
-            </a>
-          </div>
           <div class="subtitle">
-            ...From the Shadows
+            the palmco employee guide to
+          </div>
+          <div class="title">
+            <a href="/quests/reducers/intro">
+              <strong>Parallel Programming</strong> in <strong>Clojure</strong> with <strong>Reducers</strong>
+            </a>
           </div>
         </div>
       </div>
@@ -32,31 +32,93 @@
         </form>
       </div>
     </div>
+    <div class="buy">
+      <div class="container">
+      <div class="hero">
+        <h1>Buy the (beta) ebook!?</h1>
+        <div class="hype">
+          <p>
+            Hello, brave and true reader!
+          </p>
+          <p>
+            Someone recently informed that it's not completely
+            crazypants to try to try to make a reasonable amount of
+            money off the Clojure content I've been producing, so this
+            time around I'm trying something different.
+          </p>
+          <p>
+            For this book on parallel programming, I'm releasing the
+            <a href="/quests/reducers/intro">Introduction</a> and
+            <a href="/quests/reducers/know-your-reducers">Part 1</a>
+            for free (I guess I haven't really absorbed the
+            lesson?). Part 1 will teach you how to use reducers. If
+            you want Parts 2 and 3, you'll need to buy the (beta)
+            ebook.
+          </p>
+          <h3>Why should you pay for this?</h3>
+          <p>
+            <strong>Parts 2 and 3 are where are the awesome
+            is.</strong>
+
+            One of the reasons you love Clojure is that it makes
+            advanced (but relevant) programming concepts and
+            techniques accessible. It is <em>mentally stimulating</em>
+            and <em>fun</em> and <em>actually useful</em>. In Parts 2 and
+            3, you will explore exciting new programming
+            vistas. Recall how you felt learning about Clojure's state
+            model, or learning about programming with pure
+            functions. You'll get that sense of <em>wow!</em>
+            and <em>holy schnitzel, that's amazing!</em> in the paid
+            parts of the book.
+          </p>
+          <p>
+            Parallel programming has become more and more relevant
+            because of the inexorable lurch toward multi-core
+            processors. You'll learn about parallel programming
+            concepts and techniques in Part 2, adding
+            an <strong>invaluable tool</strong> to your mental
+            toolkit. These ideas are universal; you can apply them
+            outside Clojure.
+          </p>
+          <p>
+            In Part 3 (unreleased; still in progress), you'll look at
+            how the reducers library is implemented, and in the
+            process explore some <strong>grade-A functional
+            programming voodoo</strong>. You'll also see
+            how <em>protocols</em> and <em>reification</em> in Clojure
+            can be put to heart-breakingly elegant use. Once I release
+            Part 3, I'll send you an email and you'll be able to
+            download an update. I plan on releasing Part 3 within
+            four months.
+          </p>
+          <p>
+            Writing this stuff is a ton of work, and if you like what
+            you read, want to learn more, and want to help me finish
+            this book, then please purchase an ebook. When Gumroad
+            sends me the email notifying me of your purchase, I'll
+            blow a kiss at my monitor and whisper your email
+            address. Thank you for your support!
+          </p>
+          <p>
+            <em>&mdash; Daniel Higginbotham, programmer, author, and kiss blower</em>
+          </p>
+        </div>
+        <div class="cover">
+          <img src="/quests/reducers/images/parallel-cover-1.png" />
+        </div>
+        <div class="buy">
+          <script src="https://gumroad.com/js/gumroad.js"></script>
+          <a href="https://gum.co/gHcWk" target="_blank">Support the author, Buy DRM-free ebooks!</a>
+        </div>
+      </div>
+    </div>
+    </div>
     <div class="container wrap">
       <div class="main">
         <%= render 'chapter-nav' %>
         <%= yield %>
         <%= render 'chapter-nav' %>
-        <div id="disqus_thread"></div>
-        <script>
-
-          /**
-          *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
-          *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
-          /*
-          var disqus_config = function () {
-          this.page.url = PAGE_URL;  // Replace PAGE_URL with your page's canonical URL variable
-          this.page.identifier = PAGE_IDENTIFIER; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
-          };
-          */
-          (function() { // DON'T EDIT BELOW THIS LINE
-          var d = document, s = d.createElement('script');
-          s.src = 'https://clojureforthebraveandtrue.disqus.com/embed.js';
-          s.setAttribute('data-timestamp', +new Date());
-          (d.head || d.body).appendChild(s);
-          })();
-        </script>
-        <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+        <%= render 'disqus' %>
       </div>
       <div class="secondary">
         <div class="wrapper">
@@ -72,7 +134,6 @@
             </form>
             <ol>
               <li><a target="_blank" href="https://jobs.braveclojure.com">Find Clojure jobs</a></li>
-              <li><a target="_blank" href="http://open-source.braveclojure.com">Contribute to beginner-friendly open source projects</a></li>
             </ol>
           </div>
           <div class="chapters">
