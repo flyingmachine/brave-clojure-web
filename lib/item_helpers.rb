@@ -31,6 +31,12 @@ class Chapters
         set-up-a-server-and-deploy-a-clojure-app-to-it
         ansible-tutorial
         sweet-tooth-deep-dive
+        },
+        "reducers" => %w{
+        intro
+        know-your-reducers
+        appendix-x
+        references
         }
       }
     end

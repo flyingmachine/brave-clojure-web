@@ -74,6 +74,8 @@ compile '*' do
     filter :asciidoctor, notitle: false
     if item.attributes[:filename] =~ /quests\/deploy/
       layout 'deploy'
+    elsif item.attributes[:filename] =~ /quests\/reducers/
+      layout 'deploy'
     else
       layout 'default'
     end
