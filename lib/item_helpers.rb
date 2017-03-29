@@ -35,7 +35,7 @@ class Chapters
         "reducers" => %w{
         intro
         know-your-reducers
-        appendix-x
+        appendix-a
         references
         }
       }
