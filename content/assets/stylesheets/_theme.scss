@@ -151,3 +151,16 @@ table {
     font-weight: bold;
   }
 }
+
+.sidebarblock {
+  background: white;
+  padding: .75em 1em;
+  @include trailer;
+
+  .title {
+    @include adjust-font-size-to($ms-up1);
+    text-align: center;
+    font-weight: bold;
+    font-family: $title-family;
+  }
+}
