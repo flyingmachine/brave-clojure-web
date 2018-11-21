@@ -25,11 +25,11 @@ book: cftbat
       <p class="Body">Often, developers will use their company name or their GitHub username as the group ID.</p>
       <h3>Dependencies</h3>
       <p class="BodyFirst">Your <em>project.clj</em> file also includes a line that looks like this, which lists your project’s dependencies:</p>
-      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block">  <span class="tok-ss">:dependencies</span> <span class="tok-p">[[</span><span class="tok-nv">org.clojure/clojure</span> <span class="tok-s">"1.7.0"</span><span class="tok-p">]]</span>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block">  <span class="tok-ss">:dependencies</span> <span class="tok-p">[[</span><span class="tok-nv">org.clojure/clojure</span> <span class="tok-s">"1.9.0"</span><span class="tok-p">]]</span>
 </code></pre></div></div>
 
       <p class="Body">If you want to use a library, add it to this dependency vector using the same naming schema that you use to name your project. For example, if you want to easily work with dates and times, you could add the clj-time library, like this:</p>
-      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block">  <span class="tok-ss">:dependencies</span> <span class="tok-p">[[</span><span class="tok-nv">org.clojure/clojure</span> <span class="tok-s">"1.7.0"</span><span class="tok-p">]</span>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block">  <span class="tok-ss">:dependencies</span> <span class="tok-p">[[</span><span class="tok-nv">org.clojure/clojure</span> <span class="tok-s">"1.9.0"</span><span class="tok-p">]</span>
                  <span class="tok-p">[</span><span class="tok-nv">clj-time</span> <span class="tok-s">"0.9.0"</span><span class="tok-p">]]</span>
 </code></pre></div></div>
 
@@ -44,7 +44,7 @@ book: cftbat
 </code></pre></div></div>
 
       <p class="Body">This XML is how Java projects communicate their Maven identifier. To add it to your Clojure project, you’d change your <code>:dependencies</code> vector so it looks like this:</p>
-      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block">  <span class="tok-ss">:dependencies</span> <span class="tok-p">[[</span><span class="tok-nv">org.clojure/clojure</span> <span class="tok-s">"1.7.0"</span><span class="tok-p">]</span>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block">  <span class="tok-ss">:dependencies</span> <span class="tok-p">[[</span><span class="tok-nv">org.clojure/clojure</span> <span class="tok-s">"1.9.0"</span><span class="tok-p">]</span>
                  <span class="tok-p">[</span><span class="tok-nv">clj-time</span> <span class="tok-s">"0.9.0"</span><span class="tok-p">]</span>
                  <span class="tok-p">[</span><span class="tok-nv">org.apache.commons/commons-email</span> <span class="tok-s">"1.3.3"</span><span class="tok-p">]]</span>
 </code></pre></div></div>

@@ -31,7 +31,7 @@ book: cftbat
 	<li class="BulletB">The Java program <em>clojure.jar</em> reads Clojure source code and produces Java bytecode.</li>
 	<li class="BulletC">That Java bytecode is then executed by the same JVM process already running <em>clojure.jar</em>.</li>
       </ul>
-      <p class="Body">Clojure continues to evolve. As of this writing, it’s at version 1.7.0, and development is going strong. If you’re reading this book in the far future <span>and Clojure has a higher version number, don’t worry! This book covers </span>Clojure’s fundamentals, which shouldn’t change from one version to the <span>next. There’s no need for your robot butler to return this book to the </span>bookstore.</p>
+      <p class="Body">Clojure continues to evolve. As of this writing, it’s at version 1.9.0, and development is going strong. If you’re reading this book in the far future <span>and Clojure has a higher version number, don’t worry! This book covers </span>Clojure’s fundamentals, which shouldn’t change from one version to the <span>next. There’s no need for your robot butler to return this book to the </span>bookstore.</p>
       <p class="Body">Now that you know what Clojure is, let’s actually build a freakin’ Clojure program!</p>
       <h2>Leiningen</h2>
       <p class="BodyFirst">These days, most Clojurists use Leiningen to build and manage their projects. You can read a full description of Leiningen in Appendix A, but for now we’ll focus on using it for four tasks:</p>
@@ -105,7 +105,7 @@ book: cftbat
       <p class="Body">The output should look like this:</p>
       <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-nv">nREPL</span> <span class="tok-nv">server</span> <span class="tok-nv">started</span> <span class="tok-nv">on</span> <span class="tok-nv">port</span> <span class="tok-mi">28925</span>
 <span class="tok-nv">REPL-y</span> <span class="tok-mf">0.1</span><span class="tok-nv">.10</span>
-<span class="tok-nv">Clojure</span> <span class="tok-mf">1.7</span><span class="tok-nv">.0</span>
+<span class="tok-nv">Clojure</span> <span class="tok-mf">1.9</span><span class="tok-nv">.0</span>
     <span class="tok-nv">Exit</span><span class="tok-err">:</span> <span class="tok-nv">Control+D</span> <span class="tok-nb">or </span><span class="tok-p">(</span><span class="tok-nf">exit</span><span class="tok-p">)</span> <span class="tok-nb">or </span><span class="tok-p">(</span><span class="tok-nf">quit</span><span class="tok-p">)</span>
 <span class="tok-nv">Commands</span><span class="tok-err">:</span> <span class="tok-p">(</span><span class="tok-nf">user/help</span><span class="tok-p">)</span>
     <span class="tok-nv">Docs</span><span class="tok-err">:</span> <span class="tok-p">(</span><span class="tok-nb">doc </span><span class="tok-nv">function-name-here</span><span class="tok-p">)</span>
@@ -119,7 +119,7 @@ book: cftbat
 <span class="tok-nv">clojure-noob.core=&gt;</span>
 </code></pre></div></div>
 
-      <p class="Body">The last line, <code>clojure-noob.core=&gt;</code>, tells you that you’re in the <code>clojure</code><code>-noob.core</code> namespace. You’ll learn about namespaces later, but for now <span>notice that the namespace basically matches the name of your </span><em>src/</em><em>clojure_noob</em><em>/core.clj</em> file. Also, notice that the REPL shows the version as <em>Clojure 1.7.0</em>, but as mentioned earlier, everything will work okay no <span>matter</span> which version you use.</p>
+      <p class="Body">The last line, <code>clojure-noob.core=&gt;</code>, tells you that you’re in the <code>clojure</code><code>-noob.core</code> namespace. You’ll learn about namespaces later, but for now <span>notice that the namespace basically matches the name of your </span><em>src/</em><em>clojure_noob</em><em>/core.clj</em> file. Also, notice that the REPL shows the version as <em>Clojure 1.9.0</em>, but as mentioned earlier, everything will work okay no <span>matter</span> which version you use.</p>
       <p class="Body">The prompt also indicates that your code is loaded in the REPL, and you can execute the functions that are defined. Right now only one function, <code>-main</code>, is defined. Go ahead and execute it now:</p>
       <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-nv">clojure-noob.core=&gt;</span> <span class="tok-p">(</span><span class="tok-nf">-main</span><span class="tok-p">)</span>
 <span class="tok-nv">I</span><span class="tok-ss">'m</span> <span class="tok-nv">a</span> <span class="tok-nv">little</span> <span class="tok-nv">teapot!</span>

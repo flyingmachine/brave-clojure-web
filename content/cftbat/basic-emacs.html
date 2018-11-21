@@ -5,7 +5,8 @@ book: cftbat
 ---
       <div class="chapter-number">Chapter 2</div>
       <h1>How to Use Emacs, an Excellent Clojure Editor</h1>
-      <p class="x1st-Para">On your journey to Clojure mastery, your editor will be your closest ally. I highly recommend working with Emacs, but you can, of course, use any editor you want. If you don’t follow the thorough Emacs instructions in this chapter, or if you choose to use a different editor, it’s worthwhile to at least invest some time in setting up your editor to work with a REPL.</p>
+      <p class="x1st-Para">
+        On your journey to Clojure mastery, your editor will be your closest ally. I highly recommend working with Emacs, but you can, of course, use any editor you want. If you don’t follow the thorough Emacs instructions in this chapter, or if you choose to use a different editor, it’s worthwhile to at least invest some time in setting up your editor to work with a REPL. Two alternatives that I recommend and that are well regarded in the community are <a href="https://cursive-ide.com/">Cursive</a> and <a href="https://sekao.net/nightcode/">Nightcode</a>.</p>
       <p class="Body">The reason I recommend Emacs is that it offers tight integration with a Clojure REPL, which allows you to instantly try out your code as you write. That kind of tight feedback loop will be useful while learning Clojure and, later, when writing real Clojure programs. Emacs is also great for working with any Lisp dialect; in fact, Emacs is written in a Lisp dialect called Emacs Lisp (elisp). </p>
       <p class="Body">By the end of this chapter, your Emacs setup will look something like Figure 2-1.</p>
       <img src="/assets/images/cftbat/basic-emacs/emacs-final.png" />
@@ -25,12 +26,18 @@ book: cftbat
       
       <p class="Body">Welcome to the cult of Emacs! You’ve made Richard Stallman proud!</p>
       <h2><a id="Anchor"></a>Configuration</h2>
-      <p class="BodyFirst"><span>I’ve created a repository of</span><span> all the files you need to configure Emacs for Clojure, available at <em><a href="https://github.com/flyingmachine/emacs-for-clojure/archive/book1.zip">https://github.com/flyingmachine/emacs-for-clojure/archive/book1.zip</a></em>. Do </span>the following to delete your existing Emacs configuration and install the Clojure-friendly one:</p>
+      <p class="BodyFirst">
+        I’ve created a repository of all the files you need to configure Emacs for Clojure, available at <a href="https://github.com/flyingmachine/emacs-for-clojure/archive/book1.zip">https://github.com/flyingmachine/emacs-for-clojure/archive/book1.zip</a>.
+
+
+      </p>
+      <p class="Body">
+        NOTE: These tools are constantly being updated, so if the instructions below don't work for you or you want to use the latest configuration, please read the instructions at <a href="https://github.com/flyingmachine/emacs-for-clojure/">https://github.com/flyingmachine/emacs-for-clojure/</a>.</p>
+<p class="body">Do the following to delete your existing Emacs configuration and install the Clojure-friendly one:</p>
       <ol class="List-1">
 	<li class="NumListA para-style-override-2">Close Emacs.</li>
         <li class="NumListB">Delete <em>~/.emacs</em> or <em>~/.emacs.d</em> if they exist. (Windows users, your emacs files will probably live in <em>C:\Users\your_user_name\AppData\Roaming\</em>. So, for example, you would delete <em>C:\Users\jason\AppData\Roaming\.emacs.d</em>.) This is where Emacs looks for configuration files, and deleting these files and directories will ensure that you start with a clean slate.</li>
 	<li class="NumListB"><span>Download the Emacs configuration zip file listed above and unzip it. Its contents should be a folder, </span><em>emacs-for-clojure-book1</em><span>. Run </span><span class="LiteralBold">mv path/to/emacs-for-</span><span class="LiteralBold">clojure</span><span class="LiteralBold">-book1 ~/.emacs.d</span><span>.</span></li>
-	<li class="NumListB">Create the file <em>~/.lein/profiles.clj</em> (Windows users, this is probably <em>C:\Users\your_user_name\.lein\profiles.clj</em>) and add this line to it: </li>
       </ol>
       <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">{</span><span class="tok-ss">:user</span> <span class="tok-p">{</span><span class="tok-ss">:plugins</span> <span class="tok-p">[[</span><span class="tok-nv">cider/cider-nrepl</span> <span class="tok-s">"0.8.1"</span><span class="tok-p">]]}}</span> 
 </code></pre></div></div>
@@ -540,7 +547,7 @@ book: cftbat
       
       <p class="Body">The key binding <strong>C-x C-e</strong> runs the command <code>cider-eval-last-expression</code>. As the name suggests, this command sends the expression immediately preceding point to the REPL, which then evaluates the expression. You can also try <strong>C-u C-x C-e</strong>, which prints the result of the evaluation after point.</p>
       <p class="Body">Now let’s try to run the <code>-main</code> function we wrote in Chapter 1 so we can let the world know that we’re little teapots.</p>
-      <p class="Body"><span>In the </span><em>core.clj</em><span> buffer, use </span><strong>C-c M-n</strong><span>. This key binding sets the </span>namespace to the namespace listed at the top of your current file, so the prompt in the right window should now read <code>clojure-noob.core&gt;</code>. I haven’t gone into detail about namespaces yet, but for now it’s enough to know that a namespace is an organizational mechanism that allows us to avoid <span>naming conflicts. Next, enter </span><span class="LiteralBold">(-main)</span><span> at the prompt. The REPL should print </span><code>I'm a little teapot!</code><span> How exciting!</span></p>
+      <p class="Body"><span>In the </span><em>core.clj</em><span> buffer, use </span><strong>C-c M-n M-n</strong><span>. This key binding sets the </span>namespace to the namespace listed at the top of your current file, so the prompt in the right window should now read <code>clojure-noob.core&gt;</code>. I haven’t gone into detail about namespaces yet, but for now it’s enough to know that a namespace is an organizational mechanism that allows us to avoid <span>naming conflicts. Next, enter </span><span class="LiteralBold">(-main)</span><span> at the prompt. The REPL should print </span><code>I'm a little teapot!</code><span> How exciting!</span></p>
       <p class="Body">Now let’s create a new function and run it. At the bottom of <em>core.clj</em>, add the following:</p>
       <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-kd">defn </span><span class="tok-nv">train</span>
   <span class="tok-p">[]</span>
@@ -575,7 +582,7 @@ book: cftbat
 	<tbody>
 	  <tr>
 	    <td class="Body">
-	      <strong>C-c M-n</strong>
+	      <strong>C-c M-n M-n</strong>
 	    </td>
 	    <td class="Body">
 	      Switch to namespace of current buffer.
