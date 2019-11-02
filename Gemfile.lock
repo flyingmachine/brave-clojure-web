@@ -22,7 +22,7 @@ GEM
       eventmachine (>= 0.12.9)
       http_parser.rb (~> 0.6.0)
     eventmachine (1.0.7)
-    ffi (1.9.8)
+    ffi (1.11.1)
     formatador (0.2.5)
     guard (2.12.6)
       formatador (>= 0.2.4)
