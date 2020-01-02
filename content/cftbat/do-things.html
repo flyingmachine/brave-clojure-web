@@ -393,7 +393,7 @@ book: cftbat
 
       <p class="Body">You can also create sets from existing vectors and lists by using the <code>set</code> function:</p>
       <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-nb">set </span><span class="tok-p">[</span><span class="tok-mi">3</span> <span class="tok-mi">3</span> <span class="tok-mi">3</span> <span class="tok-mi">4</span> <span class="tok-mi">4</span><span class="tok-p">])</span>
-<span class="tok-c1">; =&gt; #{3 4}</span>
+<span class="tok-c1">; =&gt; #{4 3}</span>
 </code></pre></div></div>
 
       <p class="Body">You can check for set membership using the <code>contains?</code> function, by using <code>get</code>, or by using a keyword as a function with the set as its argument. <code>contains?</code> returns <code>true</code> or <code>false</code>, whereas <code>get</code> and keyword lookup will return the value if it exists, or <code>nil</code> if it doesn’t. </p>
