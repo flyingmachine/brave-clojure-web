@@ -1,0 +1,265 @@
+<!DOCTYPE HTML>
+<html lang="en">
+  <head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta charset="utf-8">
+  <meta path="/introduction/">
+  
+  <title>Introduction | Clojure for the Brave and True</title>
+  
+  <link rel="stylesheet" href="/assets/stylesheets/main.css">
+  <link rel="stylesheet" href="/assets/stylesheets/pygments.css">
+  <link href="//fonts.googleapis.com/css?family=Roboto+Condensed:400,700italic,700,400italic,300italic,300%7CSource+Sans+Pro:400,200,200italic,300,300italic,400italic,600italic,600,700,700italic,900italic,900%7CSource+Code+Pro:400,700%7CGentium+Book+Basic:400,400italic,700,700italic%7CCourgette" rel="stylesheet" type="text/css">
+
+  <!-- you don't need to keep this, but it's cool for stats! -->
+  <meta name="generator" content="nanoc 3.7.4">
+</head>
+
+  <body class="cftbat-book">
+    <div class="nav">
+  <div class="container">
+    <div>
+      <ul>
+        <li><a href="/">Brave Clojure</a></li>
+        <li><a href="https://jobs.braveclojure.com">Jobs</a></li>
+        <li><a href="http://open-source.braveclojure.com">Open Source Projects</a></li>
+        <li><a href="/quests/deploy">Deployment Book</a></li>
+        <li><a href="/quests/reducers/intro">Reducers Book</a></li>
+        <li><a href="/training">On-Site Training</a></li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+    <div class="header">
+      <div class="logoy">
+        <div class="container">
+          <div class="title">
+            <a href="/clojure-for-the-brave-and-true">
+              <strong>Clojure </strong><span>for the</span><strong> Brave </strong><span>and </span><strong>True</strong>
+            </a>
+          </div>
+          <div class="subtitle">
+            learn the ultimate language and become a better programmer
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="callout">
+      <div class="container">
+        <p>
+          Be a pal and buy print and ebooks from
+          <a href="http://nostarch.com" target="_blank">No Starch</a>
+          or <a href="http://amzn.to/1H7MqmT" target="_blank">Amazon</a>
+        </p>
+        <form action="//flyingmachinestudios.us1.list-manage.com/subscribe/post?u=60763b0c4890c24bd055f32e6&amp;amp;id=0b40ffd1e1" class="validate" id="mc-embedded-subscribe-form" method="post" name="mc-embedded-subscribe-form" novalidate="" target="_blank">
+          <p>
+            Follow
+            <a href="https://twitter.com/nonrecursive">@nonrecursive</a>
+            to hear about new content
+            or subscribe:
+            <input class="email" id="mce-EMAIL" name="EMAIL" placeholder="email address" required="" type="email" value="">
+            <input class="button" id="mc-embedded-subscribe" name="subscribe" type="submit" value="get updates!">
+          </p>
+        </form>
+      </div>
+    </div>
+    <div id="top-nav"></div>
+    <div class="container wrap">
+      <div class="main">
+        <div class="chapter-nav">
+
+
+
+<div class="prev"><a href="../acknowledgements/">← Acknowledgments</a></div>
+
+
+
+<div class="next"><a href="../getting-started/">Building, Running, and the REPL →</a></div>
+
+
+</div>
+
+        
+  
+  
+    <div id="clojure_intro.html">
+      
+	<h1>Introduction</h1>
+	<p class="x1st-Para"><span>Deep in your innermost being, you’ve always known you were destined to learn Clojure.</span> Every time you held your keyboard aloft, crying out in anguish over an incomprehensible class hierarchy; every time you lay awake at night, disturbing your loved ones with sobs over a mutation-induced heisenbug; every time a race condition caused you to pull out more of your ever-dwindling hair, some secret part of you has known that <em>there has to be a better way</em>.</p>
+	<p class="Body"><span>Now, at long last, the instructional material you have in front of your face will unite you with the programming language you’ve been longing for.</span></p>
+	<h2 id="Learning_a_New_Programming_Language__A_Journey_Through_the_Four_Labyrinths">Learning a New Programming Language: A Journey Through the Four Labyrinths</h2>
+	<p class="BodyFirst">To wield Clojure to its fullest, you’ll need to find your way through the four labyrinths that face every programmer learning a new language:</p>
+	<ul class="list-plain">
+<li>
+<strong>The Forest of Tooling</strong> A friendly and efficient programming environ<span>ment makes it easy to try your ideas. You’ll learn how to set up your </span>environment.</li>
+	<li>
+<strong>The Mountain of Language</strong> As you ascend, you’ll gain knowledge of Clojure’s syntax, semantics, and data structures. You’ll learn how to use one of the mightiest programming tools, the macro, and learn how to simplify your life with Clojure’s concurrency constructs.</li>
+	<li>
+<strong>The Cave of Artifacts</strong> <span>In its depths you’ll learn to build, run, and </span>distribute your own programs, and how to use code libraries. You’ll also learn Clojure’s relationship to the Java Virtual Machine ( JVM).</li>
+	<li>
+<strong>The Cloud Castle of Mindset</strong> In its rarefied air, you’ll come to know the why and how of Lisp and functional programming. You’ll learn about the philosophy of simplicity that permeates Clojure, and how to solve problems like a Clojurist.</li>
+</ul>
+	<p class="Body">Make no mistake, you will work. But this book will make the work feel exhilarating, not exhausting. That’s because this book follows three guidelines:</p>
+	<ul class="List-1">
+	  <li class="BulletA">It takes the dessert-first approach, giving you the development tools and language details you need to start playing with real programs immediately.</li>
+	  <li class="BulletB">It assumes zero experience with the JVM, functional programming, or Lisp. It covers these topics in detail so you’ll feel confident about what you’re doing when you build and run Clojure programs.</li>
+	  <li class="BulletC">It eschews <em>real-world</em> examples in favor of more interesting exercises, like <em>assaulting hobbits</em> and <em>tracking glittery vampires</em>.</li>
+	</ul>
+	<p class="Body">By the end, you’ll be able to use Clojure, one of the most exciting and fun programming languages in existence!</p>
+	<h2 id="How_This_Book_Is_Organized">How This Book Is Organized</h2>
+	<p class="BodyFirst">This book is split into three parts to better guide you through your valiant quest, brave fledgling Clojurist.</p>
+	<h3 id="Part_I__Environment_Setup">Part I: Environment Setup</h3>
+	<p class="BodyFirst">To stay motivated and learn efficiently, you need to actually write code and build executables. These chapters take you on a quick tour of the tools you’ll need to easily write programs. That way you can focus on learning Clojure, not fiddling with your environment.</p>
+	<dl>
+<dt>Chapter 1: Building, Running, and the REPL</dt>
+	<dd>There’s something powerful and motivating about getting a real program running. Once you can do that, you’re free to experiment, and you can actually share your work!</dd>
+	<dd>
+<span>In this short chapter, you’ll invest a small amount of time to </span><span>become familiar with a quick way to build and run Clojure programs. You’ll learn how to experiment with code in a running Clojure process </span>using a read-eval-print loop (REPL). This will tighten your feedback loop and help you learn more efficiently.</dd>
+	<dt>Chapter 2: How to Use Emacs, an Excellent Clojure Editor</dt>
+	<dd>A quick feedback loop is crucial for learning. In this chapter, I cover Emacs from the ground up to guarantee you have an efficient Emacs/Clojure workflow.</dd>
+</dl>
+	<h3 id="Part_II__Language_Fundamentals">Part II: Language Fundamentals</h3>
+	<p class="BodyFirst">These chapters give you a solid foundation on which to continue learning <span>Clojure. You’ll start by learning Clojure’s basics (syntax, semantics, and data </span><span>structures) so you can </span><em>do things</em><span>. Then you’ll take a step back to </span><span>examine</span><span> Clojure’s most used functions in detail and learn how to solve problems </span>with them using the <em>functional programming</em> mindset.</p>
+	<dl>
+<dt>Chapter 3: Do Things: A Clojure Crash Course</dt>
+	<dd>
+<span>This is where you’ll start to really dig into Clojure. It’s also where you’ll need to close your windows because you’ll start shouting, “</span><em>HOLY MOLEY THAT’S SPIFFY!</em><span>” at the top of your lungs and won’t stop until you’ve hit this book’s index.</span>
+</dd>
+	<dd>You’ve undoubtedly heard of Clojure’s awesome concurrency support and other stupendous features, but Clojure’s most salient characteristic is that it is a Lisp. You’ll explore this Lisp core, which is composed of two parts: functions and data.</dd>
+	<dt>Chapter 4: Core Functions in Depth</dt>
+	<dd>In this chapter, you’ll learn about a couple of Clojure’s underlying concepts. This will give you the grounding you need to read the documentation for functions you haven’t used before and to understand what’s happening when you try them.</dd>
+	<dd>You’ll also see usage examples of the functions you’ll be reaching for the most. This will give you a solid foundation for writing your own code and for reading and learning from other people’s projects. And remember how I mentioned tracking glittery vampires? You’ll do that in this chapter (unless you already do it in your spare time).</dd>
+	<dt>Chapter 5: Functional Programming</dt>
+	<dd>
+<span>In this chapter, you’ll take your concrete experience with functions </span>and data structures and integrate it with a new mindset: the functional programming mindset. You’ll show off your knowledge by constructing the hottest new game that’s sweeping the nation: Peg Thing!</dd>
+	<dt>Chapter 6: Organizing Your Project: A Librarian’s Tale</dt>
+	<dd>This chapter explains what namespaces are and how to use them to organize your code. I don’t want to give away too much, but it also involves an international cheese thief.</dd>
+	<dt>Chapter 7: Clojure Alchemy: Reading, Evaluation, and Macros</dt>
+	<dd>In this chapter, we’ll take a step back and describe how Clojure runs your code. This will give you the conceptual structure you need to truly understand how Clojure works and how it’s different from other, non-Lisp <span>languages</span>. With this structure in place, I’ll introduce the macro, one of the most powerful tools in existence.</dd>
+	<dt>Chapter 8: Writing Macros</dt>
+	<dd>This chapter thoroughly examines how to write macros, starting with basic examples and advancing in complexity. You’ll close by donning your make-believe cap, pretending that you run an online potion store and using <span>macros</span> to validate customer orders.</dd>
+</dl>
+	<h3 id="Part_III__Advanced_Topics">Part III: Advanced Topics</h3>
+	<p class="BodyFirst">These chapters cover Clojure’s extra-fun topics: concurrency, Java interop, and abstraction. Although you can write programs without understanding these tools and concepts, they’re intellectually rewarding and give you <span>tremendous</span> power as a programmer. One of the reasons people say that learning Clojure makes you a better programmer is that it makes the concepts covered in these chapters easy to understand and practical to use.</p>
+	<dl>
+<dt>Chapter 9: The Sacred Art of Concurrent and Parallel Programming</dt>
+	<dd>In this chapter, you’ll learn what concurrency and parallelism are and why they matter. You’ll learn about the challenges you’ll face when writing parallel programs and about how Clojure’s design helps to mitigate them. You’ll use futures, delays, and promises to safely write parallel programs.</dd>
+	<dt>Chapter 10: Clojure Metaphysics: Atoms, Refs, Vars, and Cuddle Zombies</dt>
+	<dd>This chapter goes into great detail about Clojure’s approach to managing state and how that simplifies concurrent programming. You’ll learn how to use atoms, refs, and vars, three constructs for managing state, and you’ll learn how to do stateless parallel computation with <code>pmap</code>. And there will be cuddle zombies.</dd>
+	<dt>Chapter 11: Mastering Concurrent Processes with core.async</dt>
+	<dd>In this chapter, you’ll ponder the idea that everything in the universe is a hot dog vending machine. By which I mean you’ll learn how to model systems of independently running processes that communicate with each other over channels using the core.async library.</dd>
+	<dt>Chapter 12: Working with the JVM</dt>
+	<dd>This chapter is like a cross between a phrase book and cultural introduction to the Land of Java. It gives you an overview of what the JVM is, how it runs programs, and how to compile programs for it. It also gives you a brief tour of frequently used Java classes and methods, and explains how to interact with them from Clojure. More than that, it shows you how to think about and understand Java so you can incorporate any Java library into your Clojure program.</dd>
+	<dt>Chapter 13: Creating and Extending Abstractions with Multimethods, Protocols, and Records</dt>
+	<dd>In Chapter 4 you learn that Clojure is written in terms of abstractions. This chapter serves as an introduction to the world of creating and implementing your own abstractions. You’ll learn the basics of multimethods, protocols, and records.</dd>
+	<dt>Appendix A: Building and Developing with Leiningen</dt>
+	<dd>
+<span>This appendix clarifies some of the finer points of working with Leiningen, like what Maven is and how to figure out the version </span><span>numbers</span> of Java libraries so that you can use them.</dd>
+	<dt>Appendix B: Boot, the Fancy Clojure Build Framework</dt>
+	<dd>Boot is an alternative to Leiningen that provides the same functionally, <span>but with the added bonus that it’s easier to extend and write composable </span>tasks. This appendix explains Boot’s underlying concepts and guides you through writing your first tasks.</dd>
+</dl>
+	<h2 id="The_Code">The Code</h2>
+	<p class="BodyFirst">You can download all the source code from the book at <em><a href="http://www.nostarch.com/clojure/">http://www.nostarch.com/clojure/</a></em>. The code is organized by chapter.</p>
+	<p class="Body">Chapter 1 describes the different ways that you can run Clojure code, including how to use a REPL. I recommend running most of the examples in the REPL as you encounter them, especially in Chapters 3 through 8. This will help you get used to writing and understanding Lisp code, and it will help you retain everything you’re learning. But for the examples that are long, it’s best to write your code to a file, and then run the code you wrote in a REPL.</p>
+	<h2 id="The_Journey_Begins_">The Journey Begins!</h2>
+	<p class="BodyFirst">Are you ready, brave reader? Are you ready to meet your true destiny? Grab your best pair of parentheses: you’re about to embark on the journey of a lifetime!</p>
+      
+    </div>
+  
+
+
+        <div class="chapter-nav">
+
+
+
+<div class="prev"><a href="../acknowledgements/">← Acknowledgments</a></div>
+
+
+
+<div class="next"><a href="../getting-started/">Building, Running, and the REPL →</a></div>
+
+
+</div>
+
+      </div>
+      <div class="secondary">
+        <div class="wrapper">
+          <div class="junk clearfix">
+            <a href="http://amzn.to/1H7MqmT" target="_blank">
+              <img src="/assets/images/home/book-cover.jpg">
+              The print book longs for you to own it
+            </a>
+          </div>
+          <div class="junk clearfix">
+            <a href="/quests/deploy">
+              <img src="/quests/deploy/images/deploy-cover-1.png">
+              OMG what!? Another book!?<br>Learn to deploy your app!
+            </a>
+          </div>
+          <div class="junk clearfix">
+            <a href="/quests/reducers/intro">
+              <img src="/quests/reducers/images/parallel-cover-1.png">
+              Great mama of the bahamas! Learn about reducers!
+            </a>
+          </div>
+          <div class="ads">
+            <a class="twitter-follow-button" href="https://twitter.com/nonrecursive">Follow @nonrecursive</a>
+            <form action="//flyingmachinestudios.us1.list-manage.com/subscribe/post?u=60763b0c4890c24bd055f32e6&amp;amp;amp;id=0b40ffd1e1" class="validate" id="mc-embedded-subscribe-form" method="post" name="mc-embedded-subscribe-form" novalidate="" target="_blank">
+              <input class="email" id="mce-EMAIL" name="EMAIL" placeholder="email address" required="" type="email" value="">
+              <input class="button" id="mc-embedded-subscribe" name="subscribe" type="submit" value="get email updates">
+            </form>
+            <ol>
+              <li><a target="_blank" href="https://jobs.braveclojure.com">Find Clojure jobs</a></li>
+              <li><a target="_blank" href="http://open-source.braveclojure.com">Contribute to beginner-friendly open source projects</a></li>
+            </ol>
+          </div>
+<div class="chapter-sections">Chapter Sections</div>
+<ol class="toc">
+<li><a href="/introduction/#Learning_a_New_Programming_Language__A_Journey_Through_the_Four_Labyrinths">Learning a New Programming Language: A Journey Through the Four Labyrinths</a></li>
+<li>
+<a href="/introduction/#How_This_Book_Is_Organized">How This Book Is Organized</a><ol>
+<li><a href="/introduction/#Part_I__Environment_Setup">Part I: Environment Setup</a></li>
+<li><a href="/introduction/#Part_II__Language_Fundamentals">Part II: Language Fundamentals</a></li>
+<li><a href="/introduction/#Part_III__Advanced_Topics">Part III: Advanced Topics</a></li>
+</ol>
+</li>
+<li><a href="/introduction/#The_Code">The Code</a></li>
+<li><a href="/introduction/#The_Journey_Begins_">The Journey Begins!</a></li>
+</ol>
+        </div>
+      </div>
+    </div>
+    <div class="footer">
+      <div class="container">
+        <div class="buy">
+          buy print and ebooks from 
+          <a href="http://amzn.to/1H7MqmT" target="_blank">Amazon</a> or
+          <a href="https://www.nostarch.com/clojure" target="_blank">No Starch</a> :)
+        </div>
+        <div>
+          <a href="https://groups.google.com/forum/#!forum/braveclojure">Ask questions and report errata at the Google Group</a>
+        </div>
+        <div>
+          © 2017 Daniel Higginbotham
+        </div>
+      </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+    <script src="/assets/scripts/jquery.sticky.js"></script>
+    <script src="/assets/scripts/sticky.js"></script>
+    <script>
+              !function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs')
+            </script>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-43463851-1', 'auto');
+      ga('send', 'pageview');
+
+    </script>
+  </body>
+</html>

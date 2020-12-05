@@ -1,0 +1,595 @@
+<!DOCTYPE HTML>
+<html lang="en">
+  <head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta charset="utf-8">
+  <meta path="/concurrency/">
+  
+  <title>The Sacred Art of Concurrent and Parallel Programming | Clojure for the Brave and True</title>
+  
+  <link rel="stylesheet" href="/assets/stylesheets/main.css">
+  <link rel="stylesheet" href="/assets/stylesheets/pygments.css">
+  <link href="//fonts.googleapis.com/css?family=Roboto+Condensed:400,700italic,700,400italic,300italic,300%7CSource+Sans+Pro:400,200,200italic,300,300italic,400italic,600italic,600,700,700italic,900italic,900%7CSource+Code+Pro:400,700%7CGentium+Book+Basic:400,400italic,700,700italic%7CCourgette" rel="stylesheet" type="text/css">
+
+  <!-- you don't need to keep this, but it's cool for stats! -->
+  <meta name="generator" content="nanoc 3.7.4">
+</head>
+
+  <body class="cftbat-book">
+    <div class="nav">
+  <div class="container">
+    <div>
+      <ul>
+        <li><a href="/">Brave Clojure</a></li>
+        <li><a href="https://jobs.braveclojure.com">Jobs</a></li>
+        <li><a href="http://open-source.braveclojure.com">Open Source Projects</a></li>
+        <li><a href="/quests/deploy">Deployment Book</a></li>
+        <li><a href="/quests/reducers/intro">Reducers Book</a></li>
+        <li><a href="/training">On-Site Training</a></li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+    <div class="header">
+      <div class="logoy">
+        <div class="container">
+          <div class="title">
+            <a href="/clojure-for-the-brave-and-true">
+              <strong>Clojure </strong><span>for the</span><strong> Brave </strong><span>and </span><strong>True</strong>
+            </a>
+          </div>
+          <div class="subtitle">
+            learn the ultimate language and become a better programmer
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="callout">
+      <div class="container">
+        <p>
+          Be a pal and buy print and ebooks from
+          <a href="http://nostarch.com" target="_blank">No Starch</a>
+          or <a href="http://amzn.to/1H7MqmT" target="_blank">Amazon</a>
+        </p>
+        <form action="//flyingmachinestudios.us1.list-manage.com/subscribe/post?u=60763b0c4890c24bd055f32e6&amp;amp;id=0b40ffd1e1" class="validate" id="mc-embedded-subscribe-form" method="post" name="mc-embedded-subscribe-form" novalidate="" target="_blank">
+          <p>
+            Follow
+            <a href="https://twitter.com/nonrecursive">@nonrecursive</a>
+            to hear about new content
+            or subscribe:
+            <input class="email" id="mce-EMAIL" name="EMAIL" placeholder="email address" required="" type="email" value="">
+            <input class="button" id="mc-embedded-subscribe" name="subscribe" type="submit" value="get updates!">
+          </p>
+        </form>
+      </div>
+    </div>
+    <div id="top-nav"></div>
+    <div class="container wrap">
+      <div class="main">
+        <div class="chapter-nav">
+
+
+
+<div class="prev"><a href="../writing-macros/">← Writing Macros</a></div>
+
+
+
+<div class="next"><a href="../zombie-metaphysics/">Clojure Metaphysics: Atoms, Refs, Vars, and Cuddle Zombies →</a></div>
+
+
+</div>
+
+        
+  
+  
+    <div id="clojure09.html">
+      
+	<div class="chapter-number">Chapter 9</div>
+	<h1>The Sacred Art of Concurrent and Parallel Programming</h1>
+	<p class="x1st-Para">If I were the lord of a manor and you were my heir, I would sit you down on your 13th name day and tell you, “The world of computing is changing, lass, and ye must be prepared for the new world of multi-core processors lest ye be trampled by it.</p>
+	<p class="Body">“Listen well: In recent years, CPU clock speeds have barely increased, but dual-core and quad-core computers have become common. The laws of physics are cruel and absolute, and they demand that increasing clock speed requires exponentially more power. The realm’s best engineers are unlikely to overcome this limitation anytime soon, if ever. Therefore, you can expect the trend of increasing cores on a single machine to continue—as will the expectation that you as a programmer will know how to make the most of modern hardware.</p>
+	<p class="Body">“Learning to program in this new paradigm will be fun and fascinating, verily. But beware: it is also fraught with peril. You must learn <em>concurrent and </em><em>parallel programming</em>, which is the sacred art of structuring your application to safely manage multiple, simultaneously executing tasks.</p>
+	<p class="Body">“You begin your instruction in this art with an overview of concurrency <span>and parallelism concepts. You’ll then study the three goblins that harry every </span><span>practitioner: reference cells, mutual exclusion, and dwarven berserkers. </span>And you’ll learn three tools that will aid you: futures, promises, and delays.”</p>
+	<p class="Body">And then I’d tap you on the shoulder with a keyboard, signaling that you were ready to begin.</p>
+	<h2 id="Concurrency_and_Parallelism_Concepts">Concurrency and Parallelism Concepts</h2>
+	<p class="BodyFirst">Concurrent and parallel programming involves a lot of messy details at all levels of program execution, from the hardware to the operating system to programming language libraries to the code that springs from your heart and lands in your editor. But before you worry your head with any of those details, in this section I’ll walk through the high-level concepts that surround concurrency and parallelism.</p>
+	<h3 id="Managing_Multiple_Tasks_vs__Executing_Tasks_Simultaneously">Managing Multiple Tasks vs. Executing Tasks Simultaneously</h3>
+	<p class="BodyFirst"><em>Concurrency</em> refers to managing more than one task at the same time. <em>Task</em> <span>just means “something that needs to get done,” and it doesn’t imply any</span><span>thing regarding implementation in your hardware or software. We can illus</span>trate concurrency with the song “Telephone” by Lady Gaga. Gaga sings,</p>
+	<blockquote>I cannot text you with a drink in my hand, eh</blockquote>
+	<p class="Body">Here, she’s explaining that she can only manage one task (drinking). She flat-out rejects the suggestion that she can manage more than one task. However, if she decided to process tasks concurrently, she would sing,</p>
+	<blockquote>I will put down this drink to text you, then put my phone away and continue drinking, eh</blockquote>
+	<p class="Body">In this hypothetical universe, Lady Gaga is managing two tasks: drinking and texting. However, she is not executing both tasks at the same time. Instead, she’s switching between the two, or <em>interleaving</em>. Note that, while interleaving, you don’t have to fully complete a task before switching: Gaga could type one word, put down her phone, pick up her drink and take a sip, and then switch back to her phone and type another word.</p>
+	<p class="Body"><em>Parallelism</em> refers to executing more than one task at the same time. If Madame Gaga were to execute her two tasks in parallel, she would sing,</p>
+	<blockquote>I can text you with one hand while I use the other to drink, eh</blockquote>
+	<p class="Body">Parallelism is a subclass of concurrency: before you execute multiple tasks simultaneously, you first have to manage multiple tasks. </p>
+	<p class="Body">Clojure has many features that allow you to achieve parallelism easily. While the Lady Gaga system achieves parallelism by simultaneously executing tasks on multiple hands, computer systems generally achieve parallelism by simultaneously executing tasks on multiple processors.</p>
+	<p class="Body">It’s important to distinguish parallelism from <em>distribution</em>. Distributed computing is a special version of parallel computing where the processors are in different computers and tasks are distributed to computers over a network. It’d be like Lady Gaga asking Beyoncé, “Please text this guy while I drink.” Although you can do distributed programming in Clojure with the aid of libraries, this book covers only parallel programming, and here I’ll use<em> parallel </em>to refer only to cohabiting processors. If you’re interested in distributed programming, check out Kyle Kingsbury’s <em>Call Me Maybe</em> series at <em>https://aphyr.com/</em>.</p>
+	<h3 id="Blocking_and_Asynchronous_Tasks">Blocking and Asynchronous Tasks</h3>
+	<p class="BodyFirst">One of the major use cases for concurrent programming is for <em>blocking</em> operations. Blocking really just means waiting for an operation to finish. You’ll most often hear it used in relation to I/O operations, like reading a file or waiting for an HTTP request to finish. Let’s examine this using the concurrent Lady Gaga example.</p>
+	<p class="Body">If Lady Gaga texts her interlocutor and then stands there with her phone in her hand, staring at the screen for a response and not drinking, then you would say that the <em>read next text message</em> operation is blocking and that these tasks are executing <em>synchronously</em>.</p>
+	<p class="Body">If, instead, she tucks her phone away so she can drink until it alerts her by beeping or vibrating, then the <em>read next text message</em> task is not blocking and you would say she’s handling the task <em>asynchronously.</em></p>
+	<h3 id="Concurrent_Programming_and_Parallel_Programming">Concurrent Programming and Parallel Programming</h3>
+	<p class="BodyFirst">Concurrent programming and parallel programming refer to techniques for decomposing a task into subtasks that can execute in parallel and managing the risks that arise when your program executes more than one task at the same time. For the rest of the chapter, I’ll use the two terms interchangeably because the risks are pretty much the same for both.</p>
+	<p class="Body">To better understand those risks and how Clojure helps you avoid them, let’s examine how concurrency and parallelism are implemented in Clojure.</p>
+	<h2 id="Clojure_Implementation__JVM_Threads">Clojure Implementation: JVM Threads</h2>
+	<p class="BodyFirst">I’ve been using the term <em>task </em>in an abstract sense to<em> </em>refer to a series of related operations without regard for how a computer might implement the task concept. For example, texting is a task that consists of a series of related operations that are totally separate from the operations involved in pouring a drink into your face.</p>
+	<p class="Body">In Clojure, you can think of your normal, <em>serial</em> code as a sequence of tasks. You indicate that tasks can be performed concurrently by placing them on JVM <em>threads</em>.</p>
+	<h3 id="What_s_a_Thread_">What’s a Thread?</h3>
+	<p class="BodyFirst">I’m glad you asked! A thread is a subprogram. A program can have many threads, and each thread executes its own set of instructions while enjoying shared access to the program’s state.</p>
+        <img src="/assets/images/cftbat/concurrency/alligator.png" class="right">
+	<p class="Body">Thread management functionality can exist at multiple levels in a computer. For example, the operating system kernel typically provides system <span>calls to create and manage threads. The JVM provides its own platform-</span><span>independent thread management functionality, and since Clojure programs </span>run in the JVM, they use JVM threads. You’ll learn more about the JVM in Chapter 12.</p>
+	<p class="Body">You can think of a thread as an actual, physical piece of thread that strings together a sequence of instructions. In my mind, the instructions are marshmallows, because marshmallows are delicious. The processor executes these instructions in order. I picture this as an alligator consuming the instruc<span>tions, because alligators love marsh­mallows (true fact!). So executing a program looks like a bunch of marsh</span>mallows strung out on a line with an alligator traveling down the line and eating them one by one. Figure 9-1 shows this model for a single-core processor executing a single-threaded program.</p>
+	<img src="/assets/images/cftbat/concurrency/single-thread.png" class="figure">
+	
+	  <div class="caption">Figure 9-1: Single-core processor executing a single-threaded program</div>
+	
+	<p class="Body">A thread can <em>spawn</em> a new thread to execute tasks concurrently. In a single-processor system, the processor switches back and forth between the threads (interleaving). Here’s where potential concurrency issues get introduced. Although the processor executes the instructions on each thread in order, it makes no guarantees about when it will switch back and forth between threads.</p>
+	<p class="Body">Figure 9-2 shows an illustration of two threads, A and B, and a timeline of how their instructions could be executed. I’ve shaded the instructions on thread B to help distinguish them from the instructions on thread A.</p>
+	<img src="/assets/images/cftbat/concurrency/two-threads-one-processor.png" class="figure">
+	
+	  <div class="caption">Single-core processor executing two threads</div>
+	
+	<p class="Body">Note that this is just one possible order of instruction execution. The processor could also have executed the instructions in the order A1, A2, A3, B1, A4, B2, B3 for example. This makes the program <em>nondeterministic</em>. You can’t know beforehand what the result will be because you can’t know the execution order, and different execution orders can yield different results.</p>
+	<p class="Body"><span>This example shows concurrent execution on a single processor through interleaving, whereas a multi-core system assigns a thread to each core, allow</span>ing the computer to execute more than one thread simultaneously. Each core executes its thread’s instructions in order, as shown in Figure 9-3.</p>
+	<img src="/assets/images/cftbat/concurrency/two-threads-two-processors.png" class="figure">
+	
+	  <div class="caption">Two threads, two processors</div>
+	
+	<p class="Body">As with interleaving on a single core, there are no guarantees for the overall execution order, so the program is nondeterministic. When you add a second thread to a program, it becomes nondeterministic, and this makes it possible for your program to fall prey to three kinds of problems.</p>
+	<h3 id="The_Three_Goblins__Reference_Cells__Mutual_Exclusion__and_Dwarven_Berserkers">
+<a id="Anchor-7"></a>The Three Goblins: Reference Cells, Mutual Exclusion, and Dwarven Berserkers</h3>
+	<p class="BodyFirst">There are three central challenges in concurrent programming, also known as the <em>The Three Concurrency Goblins</em>. To see why these are scary, <span>imagine</span> that the program in the image in Figure 9-3 includes the pseudo­instructions in Table 9-1.</p>
+	<ol class="List-1">
+	  <li class="Table-Title">Instructions for a Program with a Nondeterministic Outcome </li>
+	</ol>
+	<table id="table-1" class="NSP-Standard-Table">
+	  <thead>
+	    <tr>
+	      <th>
+		ID
+	      </th>
+	      <th>
+		<span>Instruction</span>
+	      </th>
+	    </tr>
+	  </thead>
+	  <tbody>
+	    <tr>
+	      <td class="Body">
+		<span>A1</span>
+	      </td>
+	      <td class="Body">
+		<span>WRITE </span><code>X = 0</code>
+	      </td>
+	    </tr>
+	    <tr>
+	      <td class="Body">
+		<span>A2</span>
+	      </td>
+	      <td class="Body">
+		<span>READ </span><code>X</code>
+	      </td>
+	    </tr>
+	    <tr>
+	      <td class="Body">
+		<span>A3</span>
+	      </td>
+	      <td class="Body">
+		<span>WRITE </span><code>X = X + 1</code>
+	      </td>
+	    </tr>
+	    <tr>
+	      <td class="Body">
+		<span>B1</span>
+	      </td>
+	      <td class="Body">
+		<span>READ </span><code>X</code>
+	      </td>
+	    </tr>
+	    <tr>
+	      <td class="Body-Footer-Row">
+		<span>B2</span>
+	      </td>
+	      <td class="Body-Footer-Row">
+		<span>WRITE </span><code>X = X + 1</code>
+	      </td>
+	    </tr>
+	  </tbody>
+	</table>
+	<p class="Body">If the processor follows the order A1, A2, A3, B1, B2, then <code>X</code> will have a value of <code>2</code>, as you’d expect. But if it follows the order A1, A2, B1, A3, B2, <code>X</code>’s value will be <code>1</code>, as you can see in Figure 9-4.</p>
+	<img src="/assets/images/cftbat/concurrency/reference-cell.png" class="figure">
+	
+	  <div class="caption">Two threads interacting with a reference cell</div>
+	
+	<p class="Body">We’ll call this the <em>reference cell</em> problem (the first Concurrency Goblin). <span>The reference cell problem occurs when two threads can read and write </span>to the same location, and the value at the location depends on the order of the reads and writes.</p>
+	<p class="Body"><span>The second Concurrency Goblin is </span><em>mutual exclusion</em><span>. Imagine two threads, each trying to write a spell to a file. Without any way to claim exclu</span>sive write access to the file, the spell will end up garbled because the write instructions will be interleaved. Consider the following two spells:</p>
+	<blockquote>By the power invested in me<br>by the state of California,<br>I now pronounce you man and wife</blockquote>
+	<blockquote>Thunder, lightning, wind, and rain,<br>a delicious sandwich, I summon again</blockquote>
+	<p class="Body">If you write these to a file without mutual exclusion, you could end up with this:</p>
+	<blockquote>By the power invested in me<br>by Thunder, lightning, wind, and rain,<br>the state of California,<br>I now pronounce you a delicious man sandwich, and wife<br>I summon again</blockquote>
+	<p class="Body">The third Concurrency Goblin is what I’ll call the <em>dwarven berserker</em> problem (aka <em>deadlock</em>). Imagine four berserkers sitting around a rough-hewn, circular wooden table comforting each other. “I know I’m distant toward my children, but I just don’t know how to communicate with them,” one growls. The rest sip their coffee and nod knowingly, care lines creasing their eye places.</p>
+	<p class="Body">Now, as everyone knows, the dwarven berserker ritual for ending a comforting coffee klatch is to pick up their “comfort sticks” (double-bladed war axes) and scratch each other’s backs. One war axe is placed between each pair of dwarves, as shown in Figure 9-5.</p>
+	<p class="Body">Their ritual proceeds thusly:</p>
+	<ol class="List-1">
+	  <li class="NumListA">Pick up the <em>left</em> war axe, when available.</li>
+	  <li class="NumListB">Pick up the <em>right</em> war axe, when available.</li>
+	  <li class="NumListB">Comfort your neighbor with vigorous swings of your<em> </em>“comfort sticks.”</li>
+	  <li class="NumListB">Release both war axes.</li>
+	  <li class="NumListC">Repeat.</li>
+	</ol>
+	<img src="/assets/images/cftbat/concurrency/deadlock.png" class="figure">
+	
+	  <div class="caption">Dwarven berserkers at a comforting coffee klatch</div>
+	
+	<p class="Body">Following this ritual, it’s entirely possible that all the dwarven berserkers will pick up their left comfort stick and then block indefinitely while waiting for the comfort stick to their right to become available, resulting in deadlock. (By the way, if you want to look into this phenomenon further, it’s usually referred to as the<em> dining philosophers problem</em>, but that’s a more boring scenario.) This book doesn’t discuss deadlock in much detail, but it’s good to know the concept and its terminology.</p>
+	<p class="Body">Concurrent programming has its goblins, but with the right tools, it’s manageable and even fun. Let’s start looking at the right tools.</p>
+	<h2 id="Futures__Delays__and_Promises">Futures, Delays, and Promises</h2>
+	<p class="BodyFirst">Futures, delays, and promises are easy, lightweight tools for concurrent programming. In this section, you’ll learn how each one works and how to use them together to defend against the reference cell Concurrency Goblin and the mutual exclusion Concurrency Goblin. You’ll discover that, although simple, these tools go a long way toward meeting your concurrency needs.</p>
+	<p class="Body">They do this by giving you more flexibility than is possible with serial code. When you write serial code, you bind together these three events:</p>
+	<ul class="List-1">
+	  <li class="BulletA">Task definition</li>
+	  <li class="BulletB">Task execution</li>
+	  <li class="BulletC">Requiring the task’s result</li>
+	</ul>
+	<p class="Body">As an example, look at this hypothetical code, which defines a simple API call task:</p>
+	<div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-nf">web-api/get</span> <span class="tok-ss">:dwarven-beard-waxes</span><span class="tok-p">)</span>
+</code></pre></div></div>
+
+	<p class="Body"><span>As soon as Clojure encounters this task definition, it executes it. It </span>also requires the result <em>right now</em>, blocking until the API call finishes. Part <span>of learning concurrent programming is learning to identify when these chronological couplings aren’t necessary. Futures, delays, and promises allow you to separate task definition, task execution, and requiring the result. Onward!</span></p>
+	<h3 id="Futures">Futures</h3>
+	<p class="BodyFirst">In Clojure, you can use <em>futures</em> to define a task and place it on another thread without requiring the result immediately. You can create a future with the <code>future</code> macro. Try this in a REPL:</p>
+	<div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-nf">future</span> <span class="tok-p">(</span><span class="tok-nf">Thread/sleep</span> <span class="tok-mi">4000</span><span class="tok-p">)</span>
+        <span class="tok-p">(</span><span class="tok-nb">println </span><span class="tok-s">"I'll print after 4 seconds"</span><span class="tok-p">))</span>
+<span class="tok-p">(</span><span class="tok-nb">println </span><span class="tok-s">"I'll print immediately"</span><span class="tok-p">)</span>
+</code></pre></div></div>
+
+	<p class="Body"><code>Thread/sleep</code> tells the current thread to just sit on its bum and do nothing for the specified number of milliseconds. Normally, if you evaluated <code>Thread/sleep</code> in your REPL, you wouldn’t be able to evaluate any other statements until the REPL was done sleeping; the thread executing your REPL would be blocked. However, <code>future</code> creates a new thread and places each expression you pass it on the new thread, including <code>Thread/sleep</code>, allowing the REPL’s thread to continue, unblocked.</p>
+	<p class="Body">You can use futures to run tasks on a separate thread and then forget about them, but often you’ll want to use the result of the task. The <code>future</code> function returns a reference value that you can use to request the result. The reference is like the ticket that a dry cleaner gives you: at any time you can use it to request your clean dress, but if your dress isn’t clean yet, you’ll have to wait. Similarly, you can use the reference value to request a future’s result, but if the future isn’t done computing the result, you’ll have to wait.</p>
+	<p class="Body">Requesting a future’s result is called <em>dereferencing</em> the future, and you do it with either the <code>deref</code> function or the <code>@</code> reader macro. A future’s result value is the value of the last expression evaluated in its body. A future’s body executes only once, and its value gets cached. Try the following:</p>
+	<div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-k">let </span><span class="tok-p">[</span><span class="tok-nv">result</span> <span class="tok-p">(</span><span class="tok-nf">future</span> <span class="tok-p">(</span><span class="tok-nb">println </span><span class="tok-s">"this prints once"</span><span class="tok-p">)</span>
+                     <span class="tok-p">(</span><span class="tok-nb">+ </span><span class="tok-mi">1</span> <span class="tok-mi">1</span><span class="tok-p">))]</span>
+  <span class="tok-p">(</span><span class="tok-nb">println </span><span class="tok-s">"deref: "</span> <span class="tok-p">(</span><span class="tok-nb">deref </span><span class="tok-nv">result</span><span class="tok-p">))</span>
+  <span class="tok-p">(</span><span class="tok-nb">println </span><span class="tok-s">"@: "</span> <span class="tok-o">@</span><span class="tok-nv">result</span><span class="tok-p">))</span>
+<span class="tok-c1">; =&gt; "this prints once"</span>
+<span class="tok-c1">; =&gt; deref: 2</span>
+<span class="tok-c1">; =&gt; @: 2</span>
+</code></pre></div></div>
+
+	<p class="Body">Notice that the string <code>"this prints once"</code> indeed prints only once, even though you dereference the future twice. This shows that the future’s body ran only once and the result, <code>2</code>, got cached.</p>
+	<p class="Body">Dereferencing a future will block if the future hasn’t finished running, like so:</p>
+	<div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-k">let </span><span class="tok-p">[</span><span class="tok-nv">result</span> <span class="tok-p">(</span><span class="tok-nf">future</span> <span class="tok-p">(</span><span class="tok-nf">Thread/sleep</span> <span class="tok-mi">3000</span><span class="tok-p">)</span>
+                     <span class="tok-p">(</span><span class="tok-nb">+ </span><span class="tok-mi">1</span> <span class="tok-mi">1</span><span class="tok-p">))]</span>
+  <span class="tok-p">(</span><span class="tok-nb">println </span><span class="tok-s">"The result is: "</span> <span class="tok-o">@</span><span class="tok-nv">result</span><span class="tok-p">)</span>
+  <span class="tok-p">(</span><span class="tok-nb">println </span><span class="tok-s">"It will be at least 3 seconds before I print"</span><span class="tok-p">))</span>
+<span class="tok-c1">; =&gt; The result is: 2</span>
+<span class="tok-c1">; =&gt; It will be at least 3 seconds before I print</span>
+</code></pre></div></div>
+
+	<p class="Body">Sometimes you want to place a time limit on how long to wait for a future. To do that, you can pass <code>deref</code> a number of milliseconds to wait along with the value to return if the <code>deref</code> times out:</p>
+	<div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-nb">deref </span><span class="tok-p">(</span><span class="tok-nf">future</span> <span class="tok-p">(</span><span class="tok-nf">Thread/sleep</span> <span class="tok-mi">1000</span><span class="tok-p">)</span> <span class="tok-mi">0</span><span class="tok-p">)</span> <span class="tok-mi">10</span> <span class="tok-mi">5</span><span class="tok-p">)</span>
+<span class="tok-c1">; =&gt; 5</span>
+</code></pre></div></div>
+
+	<p class="Body">This code tells <code>deref</code> to return the value <code>5</code> if the future doesn’t return a value within 10 milliseconds.</p>
+	<p class="Body">Finally, you can interrogate a future using <code>realized?</code> to see if it’s done running:</p>
+	<div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-nf">realized?</span> <span class="tok-p">(</span><span class="tok-nf">future</span> <span class="tok-p">(</span><span class="tok-nf">Thread/sleep</span> <span class="tok-mi">1000</span><span class="tok-p">)))</span>
+<span class="tok-c1">; =&gt; false</span>
+
+<span class="tok-p">(</span><span class="tok-k">let </span><span class="tok-p">[</span><span class="tok-nv">f</span> <span class="tok-p">(</span><span class="tok-nf">future</span><span class="tok-p">)]</span>
+  <span class="tok-o">@</span><span class="tok-nv">f</span>
+  <span class="tok-p">(</span><span class="tok-nf">realized?</span> <span class="tok-nv">f</span><span class="tok-p">))</span>
+<span class="tok-c1">; =&gt; true</span>
+</code></pre></div></div>
+
+	<p class="Body">Futures are a dead-simple way to sprinkle some concurrency on your program.</p>
+	<p class="Body"><span>On their own, they give you the power to chuck tasks onto other </span>threads, which can make your program more efficient. They also let your <span>program behave more flexibly by giving you control over when a task’s result is required.</span></p>
+	<p class="Body">When you dereference a future, you indicate that the result is required <em>right now</em> and that evaluation should stop until the result is obtained. You’ll <span>see how this can help you deal with the mutual exclusion problem in just a bit. Alternatively, you can ignore the result. For example, you can use futures to write to a log file asynchronously, in which case you don’t need to </span>dereference the future to get any value back. </p>
+	<p class="Body">The flexibility that futures give you is very cool. Clojure also allows you to treat task definition and requiring the result independently with delays and promises.</p>
+	<h3 id="Delays">
+<a id="Anchor"></a>Delays</h3>
+	<p class="BodyFirst"><em>Delays</em> allow you to define a task without having to execute it or require the result immediately. You can create a delay using <code>delay</code>:</p>
+	<div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-k">def </span><span class="tok-nv">jackson-5-delay</span>
+  <span class="tok-p">(</span><span class="tok-nf">delay</span> <span class="tok-p">(</span><span class="tok-k">let </span><span class="tok-p">[</span><span class="tok-nv">message</span> <span class="tok-s">"Just call my name and I'll be there"</span><span class="tok-p">]</span>
+           <span class="tok-p">(</span><span class="tok-nb">println </span><span class="tok-s">"First deref:"</span> <span class="tok-nv">message</span><span class="tok-p">)</span>
+           <span class="tok-nv">message</span><span class="tok-p">)))</span>
+</code></pre></div></div>
+
+	<p class="Body"><span>In this example, nothing is printed, because we haven’t yet asked the </span><code>let</code><span> form to be evaluated. You can evaluate the delay and get its result by </span>dereferencing it or by using <code>force</code>. <code>force</code> behaves identically to <code>deref</code> in that it communicates more clearly that you’re causing a task to start as opposed to waiting for a task to finish:</p>
+	<div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-nf">force</span> <span class="tok-nv">jackson-5-delay</span><span class="tok-p">)</span>
+<span class="tok-c1">; =&gt; First deref: Just call my name and I'll be there</span>
+<span class="tok-c1">; =&gt; "Just call my name and I'll be there"</span>
+</code></pre></div></div>
+
+	<p class="Body"><span>Like futures, a delay is run only once and its result is cached. Subsequent dereferencing will return the Jackson 5 message without printing anything:</span></p>
+	<div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-o">@</span><span class="tok-nv">jackson-5-delay</span>
+<span class="tok-c1">; =&gt; "Just call my name and I'll be there"</span>
+</code></pre></div></div>
+
+	<p class="Body">One way you can use a delay is to fire off a statement the first time one future out of a group of related futures finishes. For example, pretend your app uploads a set of headshots to a headshot-sharing site and notifies the owner as soon as the first one is up, as in the following:</p>
+	<div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-k">def </span><span class="tok-nv">gimli-headshots</span> <span class="tok-p">[</span><span class="tok-s">"serious.jpg"</span> <span class="tok-s">"fun.jpg"</span> <span class="tok-s">"playful.jpg"</span><span class="tok-p">])</span>
+<span class="tok-p">(</span><span class="tok-kd">defn </span><span class="tok-nv">email-user</span>
+  <span class="tok-p">[</span><span class="tok-nv">email-address</span><span class="tok-p">]</span>
+  <span class="tok-p">(</span><span class="tok-nb">println </span><span class="tok-s">"Sending headshot notification to"</span> <span class="tok-nv">email-address</span><span class="tok-p">))</span>
+<span class="tok-p">(</span><span class="tok-kd">defn </span><span class="tok-nv">upload-document</span>
+  <span class="tok-s">"Needs to be implemented"</span>
+  <span class="tok-p">[</span><span class="tok-nv">headshot</span><span class="tok-p">]</span>
+  <span class="tok-nv">true</span><span class="tok-p">)</span>
+<span class="tok-p">(</span><span class="tok-k">let </span><span class="tok-p">[</span><span class="tok-nv">notify</span> <span class="tok-p">(</span><span class="tok-nf">delay</span> <span class="tok-err">➊</span><span class="tok-p">(</span><span class="tok-nf">email-user</span> <span class="tok-s">"and-my-axe@gmail.com"</span><span class="tok-p">))]</span>
+  <span class="tok-p">(</span><span class="tok-nb">doseq </span><span class="tok-p">[</span><span class="tok-nv">headshot</span> <span class="tok-nv">gimli-headshots</span><span class="tok-p">]</span>
+    <span class="tok-p">(</span><span class="tok-nf">future</span> <span class="tok-p">(</span><span class="tok-nf">upload-document</span> <span class="tok-nv">headshot</span><span class="tok-p">)</span>
+            <span class="tok-err">➋</span><span class="tok-p">(</span><span class="tok-nf">force</span> <span class="tok-nv">notify</span><span class="tok-p">))))</span>
+</code></pre></div></div>
+
+	<p class="Body"><span>In this example, you define a vector of headshots to upload (</span><code>gimli-headshots</code><span>) and two functions (</span><code>email-user</code><span> and </span><code>upload-document</code><span>) to pretend-perform the two operations. Then you use </span><code>let</code><span> to bind </span><code>notify</code><span> to a delay. The body of the delay, </span><code>(email-user "and-my-axe@gmail.com")</code><span> </span>➊<span>, isn’t evaluated when the delay is created. Instead, it gets evaluated the first time one of the futures created by the </span><code>doseq</code><span> form evaluates </span><code>(force notify)</code><span> </span>➋<span>. Even though </span><code>(force notify)</code><span> will be evaluated three times, the </span>delay body is evaluated only once. Gimli will be grateful to know when the first headshot is available so he can begin tweaking it and sharing it. He’ll also appreciate not being spammed, and you’ll appreciate not facing his <span>dwarven wrath.</span></p>
+	<p class="Body"><span>This technique can help protect you from the </span><span>mutual exclusion </span>Concurrency Goblin—the problem of making sure that only one thread <span>can access a particular resource at a time. In this example, the delay guards the email server resource. Because the body of a delay is guaranteed to fire only once, you can be sure that you will never run into a situation where two threads send the same email. Of course, no thread will ever be able to use the delay to send an email again. That might be too drastic a constraint for most situations, but in cases like this example, it works perfectly.</span></p>
+	<h3 id="Promises">Promises</h3>
+	<p class="BodyFirst"><em>Promises</em><span> allow you to express that you expect a result without having to define the task that should produce it or when that task should run. You </span>create promises using <code>promise</code> and deliver a result to them using <code>deliver</code>. You obtain the result by dereferencing:</p>
+	<div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-k">def </span><span class="tok-nv">my-promise</span> <span class="tok-p">(</span><span class="tok-nf">promise</span><span class="tok-p">))</span>
+<span class="tok-p">(</span><span class="tok-nf">deliver</span> <span class="tok-nv">my-promise</span> <span class="tok-p">(</span><span class="tok-nb">+ </span><span class="tok-mi">1</span> <span class="tok-mi">2</span><span class="tok-p">))</span>
+<span class="tok-o">@</span><span class="tok-nv">my-promise</span>
+<span class="tok-c1">; =&gt; 3</span>
+</code></pre></div></div>
+
+	<p class="Body"><span>Here, you create a promise and then deliver a value to it. Finally, you </span><span>obtain the value by dereferencing the promise. Dereferencing is how you express that you expect a result, and if you had tried to dereference </span><code>my-promise</code><span> without first delivering a value, the program would block until a promise was delivered, just like with futures and delays. You can only deliver a result to a promise once. </span></p>
+	<p class="Body"><span>One use for promises is to find the first satisfactory element in a collection of data. Suppose, for example, that you’re gathering ingredients to make your parrot sound like James Earl Jones. Because James Earl </span>Jones has the smoothest voice on earth, one of the ingredi<span>ents is premium yak butter with </span>a smoothness rating of 97 or greater. You have a budget of $100 for one pound.</p>
+	<p class="Body"><span>You are a modern practitioner of the magico-</span><span>ornithological</span> arts, so rather than tediously navigating each yak butter retail site, you create a script to give you the URL of the first yak butter that meets your needs.</p>
+	<p class="Body">The following code defines some yak butter products, creates a function to mock up an API call, and creates another function to test whether a product is satisfactory:</p>
+	<div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-k">def </span><span class="tok-nv">yak-butter-international</span>
+  <span class="tok-p">{</span><span class="tok-ss">:store</span> <span class="tok-s">"Yak Butter International"</span>
+    <span class="tok-ss">:price</span> <span class="tok-mi">90</span>
+    <span class="tok-ss">:smoothness</span> <span class="tok-mi">90</span><span class="tok-p">})</span>
+<span class="tok-p">(</span><span class="tok-k">def </span><span class="tok-nv">butter-than-nothing</span>
+  <span class="tok-p">{</span><span class="tok-ss">:store</span> <span class="tok-s">"Butter Than Nothing"</span>
+   <span class="tok-ss">:price</span> <span class="tok-mi">150</span>
+   <span class="tok-ss">:smoothness</span> <span class="tok-mi">83</span><span class="tok-p">})</span>
+<span class="tok-c1">;; This is the butter that meets our requirements</span>
+<span class="tok-p">(</span><span class="tok-k">def </span><span class="tok-nv">baby-got-yak</span>
+  <span class="tok-p">{</span><span class="tok-ss">:store</span> <span class="tok-s">"Baby Got Yak"</span>
+   <span class="tok-ss">:price</span> <span class="tok-mi">94</span>
+   <span class="tok-ss">:smoothness</span> <span class="tok-mi">99</span><span class="tok-p">})</span>
+
+<span class="tok-p">(</span><span class="tok-kd">defn </span><span class="tok-nv">mock-api-call</span>
+  <span class="tok-p">[</span><span class="tok-nv">result</span><span class="tok-p">]</span>
+  <span class="tok-p">(</span><span class="tok-nf">Thread/sleep</span> <span class="tok-mi">1000</span><span class="tok-p">)</span>
+  <span class="tok-nv">result</span><span class="tok-p">)</span>
+
+<span class="tok-p">(</span><span class="tok-kd">defn </span><span class="tok-nv">satisfactory?</span>
+  <span class="tok-s">"If the butter meets our criteria, return the butter, else return false"</span>
+  <span class="tok-p">[</span><span class="tok-nv">butter</span><span class="tok-p">]</span>
+  <span class="tok-p">(</span><span class="tok-nb">and </span><span class="tok-p">(</span><span class="tok-nb">&lt;= </span><span class="tok-p">(</span><span class="tok-ss">:price</span> <span class="tok-nv">butter</span><span class="tok-p">)</span> <span class="tok-mi">100</span><span class="tok-p">)</span>
+       <span class="tok-p">(</span><span class="tok-nb">&gt;= </span><span class="tok-p">(</span><span class="tok-ss">:smoothness</span> <span class="tok-nv">butter</span><span class="tok-p">)</span> <span class="tok-mi">97</span><span class="tok-p">)</span>
+       <span class="tok-nv">butter</span><span class="tok-p">))</span>
+</code></pre></div></div>
+
+	<p class="Body">The API call waits one second before returning a result to simulate the time it would take to perform an actual call.</p>
+	<p class="Body">To show how long it will take to check the sites synchronously, we’ll use <code>some</code> to apply the <code>satisfactory?</code> function to each element of the collection and return the first truthy result, or nil if there are none. When you check each site synchronously, it could take more than one second per site to obtain a result, as the following code shows: </p>
+	<div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-nb">time </span><span class="tok-p">(</span><span class="tok-nb">some </span><span class="tok-p">(</span><span class="tok-nb">comp </span><span class="tok-nv">satisfactory?</span> <span class="tok-nv">mock-api-call</span><span class="tok-p">)</span>
+            <span class="tok-p">[</span><span class="tok-nv">yak-butter-international</span> <span class="tok-nv">butter-than-nothing</span> <span class="tok-nv">baby-got-yak</span><span class="tok-p">]))</span>
+<span class="tok-c1">; =&gt; "Elapsed time: 3002.132 msecs"</span>
+<span class="tok-c1">; =&gt; {:store "Baby Got Yak", :smoothness 99, :price 94}</span>
+</code></pre></div></div>
+
+	<p class="Body">Here I’ve used <code>comp</code> to compose functions, and I’ve used <code>time</code> to print the time taken to evaluate a form. You can use a promise and futures to perform each check on a separate thread. If your computer has multiple cores, this could reduce the time it takes to about one second:</p>
+	<div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-nf">time</span>
+ <span class="tok-p">(</span><span class="tok-k">let </span><span class="tok-p">[</span><span class="tok-nv">butter-promise</span> <span class="tok-p">(</span><span class="tok-nf">promise</span><span class="tok-p">)]</span>
+   <span class="tok-p">(</span><span class="tok-nb">doseq </span><span class="tok-p">[</span><span class="tok-nv">butter</span> <span class="tok-p">[</span><span class="tok-nv">yak-butter-international</span> <span class="tok-nv">butter-than-nothing</span> <span class="tok-nv">baby-got-yak</span><span class="tok-p">]]</span>
+     <span class="tok-p">(</span><span class="tok-nf">future</span> <span class="tok-p">(</span><span class="tok-nb">if-let </span><span class="tok-p">[</span><span class="tok-nv">satisfactory-butter</span> <span class="tok-p">(</span><span class="tok-nf">satisfactory?</span> <span class="tok-p">(</span><span class="tok-nf">mock-api-call</span> <span class="tok-nv">butter</span><span class="tok-p">))]</span>
+               <span class="tok-p">(</span><span class="tok-nf">deliver</span> <span class="tok-nv">butter-promise</span> <span class="tok-nv">satisfactory-butter</span><span class="tok-p">))))</span>
+   <span class="tok-p">(</span><span class="tok-nb">println </span><span class="tok-s">"And the winner is:"</span> <span class="tok-o">@</span><span class="tok-nv">butter-promise</span><span class="tok-p">)))</span>
+<span class="tok-c1">; =&gt; "Elapsed time: 1002.652 msecs"</span>
+<span class="tok-c1">; =&gt; And the winner is: {:store Baby Got Yak, :smoothness 99, :price 94}</span>
+</code></pre></div></div>
+
+	<p class="Body">In this example, you first create a promise, <code>butter-promise</code>, and then create three futures with access to that promise. Each future’s task is to evaluate a yak butter site and to deliver the site’s data to the promise if it’s satisfactory. Finally, you dereference <code>butter-promise</code>, causing the program to block until the site data is delivered. This takes about one second instead of three because the site evaluations happen in parallel. By decoupling the requirement for a result from how the result is actually computed, you can perform multiple computations in parallel and save some time.</p>
+	<p class="Body">You can view this as a way to protect yourself from the reference cell Concurrency Goblin. Because promises can be written to only once, you prevent the kind of inconsistent state that arises from nondeterministic reads and writes.</p>
+	<p class="Body">You might be wondering what happens if none of the yak butter is satisfactory. If that happens, the dereference would block forever and tie up the thread. To avoid that, you can include a timeout:</p>
+	<div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-k">let </span><span class="tok-p">[</span><span class="tok-nv">p</span> <span class="tok-p">(</span><span class="tok-nf">promise</span><span class="tok-p">)]</span>
+  <span class="tok-p">(</span><span class="tok-nb">deref </span><span class="tok-nv">p</span> <span class="tok-mi">100</span> <span class="tok-s">"timed out"</span><span class="tok-p">))</span>
+</code></pre></div></div>
+
+	<p class="Body">This creates a promise, <code>p</code>, and tries to dereference it. The number 100 tells <code>deref</code> to wait 100 milliseconds, and if no value is available by then, to use the timeout value, <code>"timed out"</code>.</p>
+	<p class="Body">The last detail I should mention is that you can also use promises to register callbacks, achieving the same functionality that you might be used to in JavaScript. JavaScript callbacks are a way of defining code that should execute asynchronously once some other code finishes. Here’s how to do it in Clojure:</p>
+	<div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-k">let </span><span class="tok-p">[</span><span class="tok-nv">ferengi-wisdom-promise</span> <span class="tok-p">(</span><span class="tok-nf">promise</span><span class="tok-p">)]</span>
+  <span class="tok-p">(</span><span class="tok-nf">future</span> <span class="tok-p">(</span><span class="tok-nb">println </span><span class="tok-s">"Here's some Ferengi wisdom:"</span> <span class="tok-o">@</span><span class="tok-nv">ferengi-wisdom-promise</span><span class="tok-p">))</span>
+  <span class="tok-p">(</span><span class="tok-nf">Thread/sleep</span> <span class="tok-mi">100</span><span class="tok-p">)</span>
+  <span class="tok-p">(</span><span class="tok-nf">deliver</span> <span class="tok-nv">ferengi-wisdom-promise</span> <span class="tok-s">"Whisper your way to success."</span><span class="tok-p">))</span>
+<span class="tok-c1">; =&gt; Here's some Ferengi wisdom: Whisper your way to success.</span>
+</code></pre></div></div>
+
+	<p class="Body">This example creates a future that begins executing immediately. However, the future’s thread is blocking because it’s waiting for a value to be delivered to <code>ferengi-wisdom-promise</code>. After 100 milliseconds, you deliver the value and the <code>println</code> statement in the future runs.</p>
+	<p class="Body">Futures, delays, and promises are great, simple ways to manage concurrency in your application. In the next section, we’ll look at one more fun way to keep your concurrent applications under control.</p>
+	<h3 id="Rolling_Your_Own_Queue">
+<a id="Anchor-6"></a>Rolling Your Own Queue</h3>
+	<p class="BodyFirst">So far you’ve looked at some simple ways to combine futures, delays, and promises to make your concurrent programs a little safer. In this section, <span>you’ll use a macro to combine futures and promises in a slightly more com</span><span>plex manner. You might not necessarily ever use this code, but it’ll show the power of these modest tools a bit more. The macro will require you to hold runtime logic and macro expansion logic in your head at the same time to understand what’s going on; if you get stuck, just skip ahead.</span></p>
+	<p class="Body">One characteristic The Three Concurrency Goblins have in common is that they all involve tasks concurrently accessing a shared resource—a variable, a printer, a dwarven war axe—in an uncoordinated way. If you want to ensure that only one task will access a resource at a time, you can place the resource access portion of a task on a queue that’s executed serially. It’s kind of like making a cake: you and a friend can separately retrieve the ingredients (eggs, flour, eye of newt, what have you), but some steps you’ll have to perform serially. You have to prepare the batter before you put it in the oven. Figure 9-6 illustrates this strategy.</p>
+	<img src="/assets/images/cftbat/concurrency/enqueue.png" class="figure">
+	
+	  <div class="para-style-override-2 caption">Dividing tasks into a serial portion and a concurrent portion lets you safely make your code more efficient.</div>
+	
+	<p class="Body">To implement the queuing macro, you’ll pay homage to the British, because they invented queues. You’ll use a queue to ensure that the custom<span>ary British greeting “Ello, gov’na! Pip pip! Cheerio!” is delivered in the correct order. This demonstration will involve an abundance of </span><code>sleep</code><span>ing, so</span> here’s a macro to do that more concisely:</p>
+	<div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-kd">defmacro </span><span class="tok-nv">wait</span>
+  <span class="tok-s">"Sleep `timeout` seconds before evaluating body"</span>
+  <span class="tok-p">[</span><span class="tok-nv">timeout</span> <span class="tok-o">&amp;</span> <span class="tok-nv">body</span><span class="tok-p">]</span>
+  <span class="tok-o">`</span><span class="tok-p">(</span><span class="tok-k">do </span><span class="tok-p">(</span><span class="tok-nf">Thread/sleep</span> <span class="tok-o">~</span><span class="tok-nv">timeout</span><span class="tok-p">)</span> <span class="tok-o">~@</span><span class="tok-nv">body</span><span class="tok-p">))</span>
+</code></pre></div></div>
+
+	<p class="Body">All this code does is take whatever forms you give it and insert a call to <code>Thread/sleep</code> before them, all wrapped up in <code>do</code>.</p>
+	<p class="Body">The code in Listing 9-1 splits up tasks into a concurrent portion and a serialized portion:</p>
+	<div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-k">let </span><span class="tok-p">[</span><span class="tok-nv">saying3</span> <span class="tok-p">(</span><span class="tok-nf">promise</span><span class="tok-p">)]</span>
+  <span class="tok-p">(</span><span class="tok-nf">future</span> <span class="tok-p">(</span><span class="tok-nf">deliver</span> <span class="tok-nv">saying3</span> <span class="tok-p">(</span><span class="tok-nf">wait</span> <span class="tok-mi">100</span> <span class="tok-s">"Cheerio!"</span><span class="tok-p">)))</span>
+  <span class="tok-o">@</span><span class="tok-p">(</span><span class="tok-k">let </span><span class="tok-p">[</span><span class="tok-nv">saying2</span> <span class="tok-p">(</span><span class="tok-nf">promise</span><span class="tok-p">)]</span>
+     <span class="tok-p">(</span><span class="tok-nf">future</span> <span class="tok-p">(</span><span class="tok-nf">deliver</span> <span class="tok-nv">saying2</span> <span class="tok-p">(</span><span class="tok-nf">wait</span> <span class="tok-mi">400</span> <span class="tok-s">"Pip pip!"</span><span class="tok-p">)))</span>
+<span class="tok-err">➊</span>      <span class="tok-o">@</span><span class="tok-p">(</span><span class="tok-k">let </span><span class="tok-p">[</span><span class="tok-nv">saying1</span> <span class="tok-p">(</span><span class="tok-nf">promise</span><span class="tok-p">)]</span>
+        <span class="tok-p">(</span><span class="tok-nf">future</span> <span class="tok-p">(</span><span class="tok-nf">deliver</span> <span class="tok-nv">saying1</span> <span class="tok-p">(</span><span class="tok-nf">wait</span> <span class="tok-mi">200</span> <span class="tok-s">"'Ello, gov'na!"</span><span class="tok-p">)))</span>
+        <span class="tok-p">(</span><span class="tok-nb">println </span><span class="tok-o">@</span><span class="tok-nv">saying1</span><span class="tok-p">)</span>
+        <span class="tok-nv">saying1</span><span class="tok-p">)</span>
+     <span class="tok-p">(</span><span class="tok-nb">println </span><span class="tok-o">@</span><span class="tok-nv">saying2</span><span class="tok-p">)</span>
+     <span class="tok-nv">saying2</span><span class="tok-p">)</span>
+  <span class="tok-p">(</span><span class="tok-nb">println </span><span class="tok-o">@</span><span class="tok-nv">saying3</span><span class="tok-p">)</span>
+  <span class="tok-nv">saying3</span><span class="tok-p">)</span>
+</code></pre></div></div>
+
+	<ol class="List-1">
+	  <li class="Listing">9-1. The expansion of an <span class="LiteralCaption">enqueue</span> macro call</li>
+	</ol>
+	<p class="Body"><span>The overall strategy is to create a promise for each task (in this case, printing part of the greeting) to create a corresponding future that will deliver a concurrently computed value to the promise. This ensures that </span>all of the futures are created before any of the promises are dereferenced, <span>and it ensures that the serialized portions are executed in the correct order. The value of </span><code>saying1</code><span> is printed first—</span><code>"'Ello, gov'na!"</code><span>—then the value of </span><code>saying2</code><span>, and finally </span><code>saying3</code><span>. Returning </span><code>saying1</code><span> in a </span><code>let</code><span> block and dereferencing the </span><code>let</code><span> block at </span>➊<span> ensures that you’ll be completely finished with </span><code>saying1</code><span> before the code moves on to do anything to </span><code>saying2</code><span>, and this pattern is repeated with </span><code>saying2</code><span> and </span><code>saying3</code><span>.</span></p>
+	<p class="Body">It might seem silly to dereference the <code>let</code> block, but doing so lets you abstract this code with a macro. And you will definitely want to use a macro, because writing out code like the previous example would drive you mental (as the British would say). Ideally, the macro would work as shown in Listing 9-2:</p>
+	<div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-nb">-&gt; </span><span class="tok-p">(</span><span class="tok-nf">enqueue</span> <span class="tok-err">➊</span><span class="tok-nv">saying</span> <span class="tok-err">➋</span><span class="tok-p">(</span><span class="tok-nf">wait</span> <span class="tok-mi">200</span> <span class="tok-s">"'Ello, gov'na!"</span><span class="tok-p">)</span> <span class="tok-err">➌</span><span class="tok-p">(</span><span class="tok-nb">println </span><span class="tok-o">@</span><span class="tok-nv">saying</span><span class="tok-p">))</span>
+   <span class="tok-err">➍</span><span class="tok-p">(</span><span class="tok-nf">enqueue</span> <span class="tok-nv">saying</span> <span class="tok-p">(</span><span class="tok-nf">wait</span> <span class="tok-mi">400</span> <span class="tok-s">"Pip pip!"</span><span class="tok-p">)</span> <span class="tok-p">(</span><span class="tok-nb">println </span><span class="tok-o">@</span><span class="tok-nv">saying</span><span class="tok-p">))</span>
+    <span class="tok-p">(</span><span class="tok-nf">enqueue</span> <span class="tok-nv">saying</span> <span class="tok-p">(</span><span class="tok-nf">wait</span> <span class="tok-mi">100</span> <span class="tok-s">"Cheerio!"</span><span class="tok-p">)</span> <span class="tok-p">(</span><span class="tok-nb">println </span><span class="tok-o">@</span><span class="tok-nv">saying</span><span class="tok-p">)))</span>
+</code></pre></div></div>
+
+	<ol class="List-1">
+	  <li class="Listing">This is how you’d use <span class="LiteralCaption">enqueue</span>.</li>
+	</ol>
+	<p class="Body">The macro lets you name the promise that gets created ➊, define how to derive the value to deliver that promise ➋, and define what to do with the promise ➌. The macro can also take another <code>enqueue</code> macro call as its first argument, which lets you thread it ➍. Listing 9-3 shows how you can define the <code>enqueue</code> macro. After defining <code>enqueue</code>, the code in Listing 9-2 will expand into the code in Listing 9-1, with all the nested <code>let</code> expressions:</p>
+	<div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-kd">defmacro </span><span class="tok-nv">enqueue</span>
+<span class="tok-err">➊</span>   <span class="tok-p">([</span><span class="tok-nv">q</span> <span class="tok-nv">concurrent-promise-name</span> <span class="tok-nv">concurrent</span> <span class="tok-nv">serialized</span><span class="tok-p">]</span>
+<span class="tok-err">➋</span>    <span class="tok-o">`</span><span class="tok-p">(</span><span class="tok-k">let </span><span class="tok-p">[</span><span class="tok-o">~</span><span class="tok-nv">concurrent-promise-name</span> <span class="tok-p">(</span><span class="tok-nf">promise</span><span class="tok-p">)]</span>
+      <span class="tok-p">(</span><span class="tok-nf">future</span> <span class="tok-p">(</span><span class="tok-nf">deliver</span> <span class="tok-o">~</span><span class="tok-nv">concurrent-promise-name</span> <span class="tok-o">~</span><span class="tok-nv">concurrent</span><span class="tok-p">))</span>
+<span class="tok-err">➌</span>       <span class="tok-p">(</span><span class="tok-nb">deref </span><span class="tok-o">~</span><span class="tok-nv">q</span><span class="tok-p">)</span>
+      <span class="tok-o">~</span><span class="tok-nv">serialized</span>
+      <span class="tok-o">~</span><span class="tok-nv">concurrent-promise-name</span><span class="tok-p">))</span>
+<span class="tok-err">➍</span>   <span class="tok-p">([</span><span class="tok-nv">concurrent-promise-name</span> <span class="tok-nv">concurrent</span> <span class="tok-nv">serialized</span><span class="tok-p">]</span>
+   <span class="tok-o">`</span><span class="tok-p">(</span><span class="tok-nf">enqueue</span> <span class="tok-p">(</span><span class="tok-nf">future</span><span class="tok-p">)</span> <span class="tok-o">~</span><span class="tok-nv">concurrent-promise-name</span> <span class="tok-o">~</span><span class="tok-nv">concurrent</span> <span class="tok-o">~</span><span class="tok-nv">serialized</span><span class="tok-p">)))</span>
+</code></pre></div></div>
+
+	<ol class="List-1">
+	  <li class="Listing">
+<span class="LiteralCaption">enqueue</span>’s implementation</li>
+	</ol>
+	<p class="Body"><span>Notice first that this macro has two arities in order to supply a default value. The first arity </span>➊<span> is where the real work is done. It has the parameter </span><code>q</code><span>, and the second arity does not. The second arity </span>➍<span> calls the first with value </span><code>(future)</code><span> supplied for </span><code>q</code><span>; you’ll see why in a minute. At </span>➋<span>, the macro returns a form that creates a promise, delivers its value in a future, dereferences whatever form is supplied for </span><code>q</code><span>, evaluates the serialized code, and finally returns the promise. </span><code>q</code><span> will usually be a nested </span><code>let</code><span> expression returned by another call to </span><code>enqueue</code><span>, like in Listing 9-2. If no value is supplied for </span><code>q</code><span>, the macro supplies a future so that the </span><code>deref</code><span> at </span>➌<span> doesn’t cause an exception.</span></p>
+	<p class="Body">Now that we’ve written the <code>enqueue</code> macro, let’s try it out to see whether it reduces the execution time!</p>
+	<div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-nb">time </span><span class="tok-o">@</span><span class="tok-p">(</span><span class="tok-nb">-&gt; </span><span class="tok-p">(</span><span class="tok-nf">enqueue</span> <span class="tok-nv">saying</span> <span class="tok-p">(</span><span class="tok-nf">wait</span> <span class="tok-mi">200</span> <span class="tok-s">"'Ello, gov'na!"</span><span class="tok-p">)</span> <span class="tok-p">(</span><span class="tok-nb">println </span><span class="tok-o">@</span><span class="tok-nv">saying</span><span class="tok-p">))</span>
+           <span class="tok-p">(</span><span class="tok-nf">enqueue</span> <span class="tok-nv">saying</span> <span class="tok-p">(</span><span class="tok-nf">wait</span> <span class="tok-mi">400</span> <span class="tok-s">"Pip pip!"</span><span class="tok-p">)</span> <span class="tok-p">(</span><span class="tok-nb">println </span><span class="tok-o">@</span><span class="tok-nv">saying</span><span class="tok-p">))</span>
+           <span class="tok-p">(</span><span class="tok-nf">enqueue</span> <span class="tok-nv">saying</span> <span class="tok-p">(</span><span class="tok-nf">wait</span> <span class="tok-mi">100</span> <span class="tok-s">"Cheerio!"</span><span class="tok-p">)</span> <span class="tok-p">(</span><span class="tok-nb">println </span><span class="tok-o">@</span><span class="tok-nv">saying</span><span class="tok-p">))))</span>
+<span class="tok-c1">; =&gt; 'Ello, gov'na!</span>
+<span class="tok-c1">; =&gt; Pip pip!</span>
+<span class="tok-c1">; =&gt; Cheerio!</span>
+<span class="tok-c1">; =&gt; "Elapsed time: 401.635 msecs"</span>
+</code></pre></div></div>
+
+	<p class="Body">Blimey! The greeting is delivered in the correct order, and you can see by the elapsed time that the “work” of sleeping was handled concurrently.</p>
+	<h2 id="Summary">Summary</h2>
+	<p class="BodyFirst">It’s important for programmers like you to learn concurrent and parallel programming techniques so you can design programs that run efficiently on modern hardware. Concurrency refers to a program’s ability to carry out more than one task, and in Clojure you achieve this by placing tasks on separate threads. Programs execute in parallel when a computer has more than one CPU, which allows more than one thread to be executed at the same time.</p>
+	<p class="Body"><span>Concurrent programming refers to the techniques used to manage three concurrency risks: reference cells, mutual exclusion, and deadlock. Clojure gives you three basic tools that help you mitigate those risks: futures, delays, and promises. Each tool lets you decouple the three events of defining a task, </span>executing a task, and requiring a task’s result. Futures let you define a task and execute it immediately, allowing you to require the result later or never. <span>Futures also cache their results. Delays let you define a task that doesn’t get executed until later, and a delay’s result gets cached. Promises let you </span>express that you require a result without having to know about the task that produces that result. You can only deliver a value to a promise once. </p>
+	<p class="Body">In the next chapter, you’ll explore the philosophical side of concurrent programming and learn more sophisticated tools for managing the risks.</p>
+	<h2 id="Exercises">Exercises</h2>
+	<ol class="List-1">
+	  <li class="NumListA">Write a function that takes a string as an argument and searches for it on Bing and Google using the <code>slurp</code> function. Your function should return the HTML of the first page returned by the search.</li>
+	  <li class="NumListB">Update your function so it takes a second argument consisting of the search engines to use.</li>
+	  <li class="NumListC">Create a new function that takes a search term and search engines as arguments, and returns a vector of the URLs from the first page of search results from each search engine.</li>
+	</ol>
+      
+    </div>
+  
+
+
+        <div class="chapter-nav">
+
+
+
+<div class="prev"><a href="../writing-macros/">← Writing Macros</a></div>
+
+
+
+<div class="next"><a href="../zombie-metaphysics/">Clojure Metaphysics: Atoms, Refs, Vars, and Cuddle Zombies →</a></div>
+
+
+</div>
+
+      </div>
+      <div class="secondary">
+        <div class="wrapper">
+          <div class="junk clearfix">
+            <a href="http://amzn.to/1H7MqmT" target="_blank">
+              <img src="/assets/images/home/book-cover.jpg">
+              The print book longs for you to own it
+            </a>
+          </div>
+          <div class="junk clearfix">
+            <a href="/quests/deploy">
+              <img src="/quests/deploy/images/deploy-cover-1.png">
+              OMG what!? Another book!?<br>Learn to deploy your app!
+            </a>
+          </div>
+          <div class="junk clearfix">
+            <a href="/quests/reducers/intro">
+              <img src="/quests/reducers/images/parallel-cover-1.png">
+              Great mama of the bahamas! Learn about reducers!
+            </a>
+          </div>
+          <div class="ads">
+            <a class="twitter-follow-button" href="https://twitter.com/nonrecursive">Follow @nonrecursive</a>
+            <form action="//flyingmachinestudios.us1.list-manage.com/subscribe/post?u=60763b0c4890c24bd055f32e6&amp;amp;amp;id=0b40ffd1e1" class="validate" id="mc-embedded-subscribe-form" method="post" name="mc-embedded-subscribe-form" novalidate="" target="_blank">
+              <input class="email" id="mce-EMAIL" name="EMAIL" placeholder="email address" required="" type="email" value="">
+              <input class="button" id="mc-embedded-subscribe" name="subscribe" type="submit" value="get email updates">
+            </form>
+            <ol>
+              <li><a target="_blank" href="https://jobs.braveclojure.com">Find Clojure jobs</a></li>
+              <li><a target="_blank" href="http://open-source.braveclojure.com">Contribute to beginner-friendly open source projects</a></li>
+            </ol>
+          </div>
+<div class="chapter-sections">Chapter Sections</div>
+<ol class="toc">
+<li>
+<a href="/concurrency/#Concurrency_and_Parallelism_Concepts">Concurrency and Parallelism Concepts</a><ol>
+<li><a href="/concurrency/#Managing_Multiple_Tasks_vs__Executing_Tasks_Simultaneously">Managing Multiple Tasks vs. Executing Tasks Simultaneously</a></li>
+<li><a href="/concurrency/#Blocking_and_Asynchronous_Tasks">Blocking and Asynchronous Tasks</a></li>
+<li><a href="/concurrency/#Concurrent_Programming_and_Parallel_Programming">Concurrent Programming and Parallel Programming</a></li>
+</ol>
+</li>
+<li>
+<a href="/concurrency/#Clojure_Implementation__JVM_Threads">Clojure Implementation: JVM Threads</a><ol>
+<li><a href="/concurrency/#What_s_a_Thread_">What’s a Thread?</a></li>
+<li><a href="/concurrency/#The_Three_Goblins__Reference_Cells__Mutual_Exclusion__and_Dwarven_Berserkers">The Three Goblins: Reference Cells, Mutual Exclusion, and Dwarven Berserkers</a></li>
+</ol>
+</li>
+<li>
+<a href="/concurrency/#Futures__Delays__and_Promises">Futures, Delays, and Promises</a><ol>
+<li><a href="/concurrency/#Futures">Futures</a></li>
+<li><a href="/concurrency/#Delays">Delays</a></li>
+<li><a href="/concurrency/#Promises">Promises</a></li>
+<li><a href="/concurrency/#Rolling_Your_Own_Queue">Rolling Your Own Queue</a></li>
+</ol>
+</li>
+<li><a href="/concurrency/#Summary">Summary</a></li>
+<li><a href="/concurrency/#Exercises">Exercises</a></li>
+</ol>
+        </div>
+      </div>
+    </div>
+    <div class="footer">
+      <div class="container">
+        <div class="buy">
+          buy print and ebooks from 
+          <a href="http://amzn.to/1H7MqmT" target="_blank">Amazon</a> or
+          <a href="https://www.nostarch.com/clojure" target="_blank">No Starch</a> :)
+        </div>
+        <div>
+          <a href="https://groups.google.com/forum/#!forum/braveclojure">Ask questions and report errata at the Google Group</a>
+        </div>
+        <div>
+          © 2017 Daniel Higginbotham
+        </div>
+      </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+    <script src="/assets/scripts/jquery.sticky.js"></script>
+    <script src="/assets/scripts/sticky.js"></script>
+    <script>
+              !function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs')
+            </script>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-43463851-1', 'auto');
+      ga('send', 'pageview');
+
+    </script>
+  </body>
+</html>

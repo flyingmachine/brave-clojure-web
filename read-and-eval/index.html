@@ -1,0 +1,580 @@
+<!DOCTYPE HTML>
+<html lang="en">
+  <head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta charset="utf-8">
+  <meta path="/read-and-eval/">
+  
+  <title>Clojure Alchemy: Reading, Evaluation, and Macros | Clojure for the Brave and True</title>
+  
+  <link rel="stylesheet" href="/assets/stylesheets/main.css">
+  <link rel="stylesheet" href="/assets/stylesheets/pygments.css">
+  <link href="//fonts.googleapis.com/css?family=Roboto+Condensed:400,700italic,700,400italic,300italic,300%7CSource+Sans+Pro:400,200,200italic,300,300italic,400italic,600italic,600,700,700italic,900italic,900%7CSource+Code+Pro:400,700%7CGentium+Book+Basic:400,400italic,700,700italic%7CCourgette" rel="stylesheet" type="text/css">
+
+  <!-- you don't need to keep this, but it's cool for stats! -->
+  <meta name="generator" content="nanoc 3.7.4">
+</head>
+
+  <body class="cftbat-book">
+    <div class="nav">
+  <div class="container">
+    <div>
+      <ul>
+        <li><a href="/">Brave Clojure</a></li>
+        <li><a href="https://jobs.braveclojure.com">Jobs</a></li>
+        <li><a href="http://open-source.braveclojure.com">Open Source Projects</a></li>
+        <li><a href="/quests/deploy">Deployment Book</a></li>
+        <li><a href="/quests/reducers/intro">Reducers Book</a></li>
+        <li><a href="/training">On-Site Training</a></li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+    <div class="header">
+      <div class="logoy">
+        <div class="container">
+          <div class="title">
+            <a href="/clojure-for-the-brave-and-true">
+              <strong>Clojure </strong><span>for the</span><strong> Brave </strong><span>and </span><strong>True</strong>
+            </a>
+          </div>
+          <div class="subtitle">
+            learn the ultimate language and become a better programmer
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="callout">
+      <div class="container">
+        <p>
+          Be a pal and buy print and ebooks from
+          <a href="http://nostarch.com" target="_blank">No Starch</a>
+          or <a href="http://amzn.to/1H7MqmT" target="_blank">Amazon</a>
+        </p>
+        <form action="//flyingmachinestudios.us1.list-manage.com/subscribe/post?u=60763b0c4890c24bd055f32e6&amp;amp;id=0b40ffd1e1" class="validate" id="mc-embedded-subscribe-form" method="post" name="mc-embedded-subscribe-form" novalidate="" target="_blank">
+          <p>
+            Follow
+            <a href="https://twitter.com/nonrecursive">@nonrecursive</a>
+            to hear about new content
+            or subscribe:
+            <input class="email" id="mce-EMAIL" name="EMAIL" placeholder="email address" required="" type="email" value="">
+            <input class="button" id="mc-embedded-subscribe" name="subscribe" type="submit" value="get updates!">
+          </p>
+        </form>
+      </div>
+    </div>
+    <div id="top-nav"></div>
+    <div class="container wrap">
+      <div class="main">
+        <div class="chapter-nav">
+
+
+
+<div class="prev"><a href="../organization/">← Organizing Your Project: A Librarian’s Tale</a></div>
+
+
+
+<div class="next"><a href="../writing-macros/">Writing Macros →</a></div>
+
+
+</div>
+
+        
+  
+  
+    
+      <div class="chapter-number">Chapter 7</div>
+      <h1>Clojure Alchemy: Reading, Evaluation, and Macros</h1>
+      <p class="x1st-Para">The philosopher’s stone, along with the elixir of life and Viagra, is one of the most well-known specimens of alchemical lore, pur<span>sued for its ability to transmute lead into gold. </span><span>Clojure, however, offers a tool that makes the philosopher’s stone look like a mere trinket: the </span><em>macro</em><span>. </span></p>
+      <p class="BodyFirst">Macros allow you to transform arbitrary expressions into valid Clojure, so you can extend the language itself to fit your needs. And you don’t even have to be a wizened old dude or lady in a robe to use them!</p>
+      <p class="Body">To get just a sip of this power, consider this trivial macro:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-kd">defmacro </span><span class="tok-nv">backwards</span>
+  <span class="tok-p">[</span><span class="tok-nv">form</span><span class="tok-p">]</span>
+  <span class="tok-p">(</span><span class="tok-nb">reverse </span><span class="tok-nv">form</span><span class="tok-p">))</span>
+
+<span class="tok-p">(</span><span class="tok-nf">backwards</span> <span class="tok-p">(</span><span class="tok-s">" backwards"</span> <span class="tok-s">" am"</span> <span class="tok-s">"I"</span> <span class="tok-nv">str</span><span class="tok-p">))</span>
+<span class="tok-c1">; =&gt; "I am backwards"</span>
+</code></pre></div></div>
+
+      <p class="Body">The <code>backwards</code> macro allows Clojure to successfully evaluate the expression <code>(" backwards" " am" "I" str)</code>, even though it doesn’t follow Clojure’s built-in syntax rules, which require an expression’s operand to appear first (not to mention the rule that an expression not be written in reverse order). Without <code>backwards</code>, the expression would fail harder than millennia of alchemists ironically spending their entire lives pursuing an impossible means of achieving immortality. With <code>backwards</code>, <em>you’ve created your own syntax! </em>You’ve extended Clojure so you can write code however you please! Better than turning lead into gold, I tell you!</p>
+      <p class="Body">This chapter gives you the conceptual foundation you need to go mad with power writing your own macros. It explains the elements of Clojure’s evaluation model: the <em>reader</em>, the <em>evaluator</em>, and the <em>macro expander</em>. It’s like the periodic table of Clojure elements. Think of how the periodic table reveals the properties of atoms: elements in the same column behave similarly because they have the same nuclear charge. Without the periodic table and its underlying theory, we’d be in the same position as the alchemists of yore, mixing stuff together randomly to see what blows up. But with a deeper understanding of the elements, you can see why stuff blows up and learn how to blow stuff up on purpose.</p>
+      <h2 id="An_Overview_of_Clojure_s_Evaluation_Model">An Overview of Clojure’s Evaluation Model</h2>
+      <p class="BodyFirst">Clojure (like all Lisps) has an evaluation model that differs from most other languages: it has a two-phase system where it <em>reads</em> textual source code, producing Clojure data structures. These data structures are then <em>evaluated</em>: Clojure traverses the data structures and performs actions like function application or var lookup based on the type of the data structure. For example, when Clojure reads the text <code>(+ 1 2)</code>, the result is a list data structure whose first element is a <code>+</code> symbol, followed by the numbers 1 and 2. This data structure is passed to Clojure’s evaluator, which looks up the function corresponding to <code>+</code> and applies that function to 1 and 2.</p>
+      <p class="Body">Languages that have this relationship between source code, data, and evaluation are called <em>homoiconic.</em> (Incidentally, if you say <em>homoiconic</em> in front of your bathroom mirror three times with the lights out, the ghost of John McCarthy appears and hands you a parenthesis.) Homoiconic languages empower you to <span>reason</span> about your code as a set of data structures that you can manipulate programmatically. To put this into context, let’s take a jaunt through the land of compilation.</p>
+      <p class="Body">Programming languages require a compiler or interpreter for translating the code you write, which consists of Unicode characters, into something else: machine instructions, code in another programming language, whatever. During this process, the compiler constructs an <em>abstract syntax tree (AST)</em>, which is a data structure that represents your program. You can think of the AST as the input to the <em>evaluator</em>, which you can think of as a function that traverses the tree to produce the machine code or whatever as its output. </p>
+      <p class="Body">So far this sounds a lot like what I described for Clojure. However, in most languages the AST’s data structure is inaccessible within the programming language; the programming language space and the compiler space are forever separated, and never the twain shall meet. Figure 7-1 shows how you might visualize the compilation process for an expression in a non-Lisp programming language.</p>
+      <img src="/assets/images/cftbat/read-and-eval/non-lisp-eval.png" class="figure">
+      
+	<div class="caption">Figure 7-1: Evaluation in a non-Lisp programming language</div>
+      
+      <p class="Body">But Clojure is different, because Clojure is a Lisp and Lisps are hotter than a stolen tamale. Instead of evaluating an AST that’s represented as some inaccessible internal data structure, Lisps evaluate native data structures. Clojure still evaluates tree structures, but the trees are structured using Clojure lists and the nodes are Clojure values.</p>
+      <p class="Body">Lists are ideal for constructing tree structures. The first element of a list is treated as the root, and each subsequent element is treated as a branch. To create a nested tree, you can just use nested lists, as shown in Figure 7-2.</p>
+      <img src="/assets/images/cftbat/read-and-eval/trees.png" class="figure">
+      
+	<div class="caption">Figure 7-2: Lists can easily be treated as trees.</div>
+      
+      <p class="Body">First, Clojure’s <em>reader</em> converts the text <code>(+ 1 (* 6 7))</code> into a nested list. (You’ll learn more about the reader in the next section.) Then, Clojure’s <span>evaluator takes that data as input and produces a result. (It also compiles </span><span>Java Virtual Machine ( JVM) bytecode, which you’ll learn about in </span>Chapter 12. For now, we’ll just focus on the evaluation model on a conceptual level.)</p>
+      <p class="Body">With this in mind, Figure 7-3 shows what Clojure’s evaluation process looks like.</p>
+      <div class="Text-Box">
+	<p class="HeadBox">S-Expressions</p>
+	<p class="BodyFirstBox">In your Lisp adventures, you’ll come across resources that explain that Lisps evaluate <span class="EmphasisItalicBox">s-expressions</span>. I avoid that term here because it’s ambiguous: you’ll see it used to refer to both the actual data object that gets evaluated and the source code that represents that data. Using the same term for two different components of Lisp evaluation (code and data) obscures what’s important: your text represents native data structures, and Lisps evaluate native data structures, which is unique and awesome. For a great treatment of s-expressions, check out <span class="EmphasisItalicBox"><a href="http://www.gigamonkeys.com/book/syntax-and-semantics.html">http://www.gigamonkeys.com/book/syntax-and-semantics.html</a></span>.</p>
+      </div>
+      <img src="/assets/images/cftbat/read-and-eval/lisp-eval.png" class="figure">
+      
+	<div class="caption">Figure 7-3: Evaluation in Clojure</div>
+      
+      <p class="Body">However, the evaluator doesn’t actually care where its input comes from; it doesn’t have to come from the reader. As a result, you can send your program’s data structures directly to the Clojure evaluator with <code>eval</code>. Behold!</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-k">def </span><span class="tok-nv">addition-list</span> <span class="tok-p">(</span><span class="tok-nb">list + </span><span class="tok-mi">1</span> <span class="tok-mi">2</span><span class="tok-p">))</span>
+<span class="tok-p">(</span><span class="tok-nb">eval </span><span class="tok-nv">addition-list</span><span class="tok-p">)</span>
+<span class="tok-c1">; =&gt; 3</span>
+</code></pre></div></div>
+
+      <p class="Body"><span>That’s right, baby! Your program just evaluated a Clojure list. You’ll read all about Clojure’s evaluation rules soon, but briefly, this is what happened: when Clojure evaluated the list, it looked up the list that </span><code>addition-list</code><span> refers to; then it looked up the function corresponding to the </span><code>+ </code><span>symbol; and then it called that function with </span><code>1</code><span> and </span><code>2</code><span> as arguments, returning </span><code>3</code><span>. The data structures of your running program and those </span>of the evaluator live in the same space, and the upshot is that you can use the full power of Clojure and all the code you’ve written to construct data structures for evaluation:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-nb">eval </span><span class="tok-p">(</span><span class="tok-nb">concat </span><span class="tok-nv">addition-list</span> <span class="tok-p">[</span><span class="tok-mi">10</span><span class="tok-p">]))</span>
+<span class="tok-c1">; =&gt; 13</span>
+
+<span class="tok-p">(</span><span class="tok-nb">eval </span><span class="tok-p">(</span><span class="tok-nb">list </span><span class="tok-ss">'def</span> <span class="tok-ss">'lucky-number</span> <span class="tok-p">(</span><span class="tok-nb">concat </span><span class="tok-nv">addition-list</span> <span class="tok-p">[</span><span class="tok-mi">10</span><span class="tok-p">])))</span>
+<span class="tok-c1">; =&gt; #'user/lucky-number</span>
+
+<span class="tok-nv">lucky-number</span>
+<span class="tok-c1">; =&gt; 13</span>
+</code></pre></div></div>
+
+      <p class="Body">Figure 7-4 shows the lists you sent to the evaluator in these two examples.</p>
+      <img src="/assets/images/cftbat/read-and-eval/data-to-eval.png" class="figure">
+      
+	<div class="caption">Figure 7-4: The lists you evaluated</div>
+      
+      <p class="Body">Your program can talk directly to its own evaluator, using its own func<span>tions and data to modify itself as it runs! Are you going mad with power yet? </span><span>I hope so! Hold on to some of your sanity, though, because there’s still </span>more to learn.</p>
+      <p class="Body">So Clojure is homoiconic: it represents abstract syntax trees using lists, and you write textual representations of lists when you write Clojure code. Because the code you write represents data structures that you’re used to manipulating and the evaluator consumes those data structures, it’s easy to reason about how to programmatically modify your program.</p>
+      <p class="Body">Macros are what allow you to perform those manipulations easily. The rest of this chapter covers Clojure’s reader and evaluation rules in detail to give you a precise understanding of how macros work.</p>
+      <h2 id="The_Reader">
+<a id="Anchor"></a>The Reader</h2>
+      <p class="BodyFirst">The reader converts the textual source code you save in a file or enter in the REPL into Clojure data structures. It’s like a translator between the human world of Unicode characters and Clojure’s world of lists, vectors, maps, symbols, and other data structures. In this section, you’ll interact directly with the reader and learn how a handy feature, the <em>reader macro</em>, lets you write code more succinctly.</p>
+      <h3 id="Reading">Reading</h3>
+      <p class="BodyFirst">To understand reading, let’s first take a close look at how Clojure handles the text you type in the REPL. First, the REPL prompts you for text:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-nv">user=&gt;</span>
+</code></pre></div></div>
+
+      <p class="Body">Then you enter a bit of text. Maybe something like this:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-nv">user=&gt;</span> <span class="tok-p">(</span><span class="tok-nb">str </span><span class="tok-s">"To understand what recursion is,"</span> <span class="tok-s">" you must first understand recursion."</span><span class="tok-p">)</span>
+</code></pre></div></div>
+
+      <p class="Body">That text is really just a sequence of Unicode characters, but it’s meant to represent a combination of Clojure data structures. This textual representation of data structures is called a <em>reader form</em>. In this example, the form <span>represents a list data structure that contains three more forms: the </span><code>str</code><span> sym</span>bol and two strings.</p>
+      <p class="Body">Once you type those characters into the prompt and press <span class="Keycap">enter</span>, that text goes to the reader<em> </em>(remember REPL stands for read-eval-print-loop). Clojure reads the stream of characters and internally produces the corresponding data structures. It then evaluates the data structures and prints the textual representation of the result:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-s">"To understand what recursion is, you must first understand recursion."</span>
+</code></pre></div></div>
+
+      <p class="Body">Reading and evaluation are discrete processes that you can perform independently. One way to interact with the reader directly is by using the <code>read-string</code> function. <code>read-string</code> takes a string as an argument and processes it using Clojure’s reader, returning a data structure:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-nf">read-string</span> <span class="tok-s">"(+ 1 2)"</span><span class="tok-p">)</span>
+<span class="tok-c1">; =&gt; (+ 1 2)</span>
+
+<span class="tok-p">(</span><span class="tok-nf">list?</span> <span class="tok-p">(</span><span class="tok-nf">read-string</span> <span class="tok-s">"(+ 1 2)"</span><span class="tok-p">))</span>
+<span class="tok-c1">; =&gt; true</span>
+
+<span class="tok-p">(</span><span class="tok-nb">conj </span><span class="tok-p">(</span><span class="tok-nf">read-string</span> <span class="tok-s">"(+ 1 2)"</span><span class="tok-p">)</span> <span class="tok-ss">:zagglewag</span><span class="tok-p">)</span>
+<span class="tok-c1">; =&gt; (:zagglewag + 1 2)</span>
+</code></pre></div></div>
+
+      <p class="Body">In the first example, <code>read-string</code> reads the string representation of a list containing a plus symbol and the numbers 1 and 2. The return value is an actual list, as proven by the second example. The last example uses <code>conj</code> to prepend a keyword to the list. The takeaway is that reading and evaluating are independent of each other. You can read text without evaluating it, and you can pass the result to other functions. You can also evaluate the result, if you want:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-nb">eval </span><span class="tok-p">(</span><span class="tok-nf">read-string</span> <span class="tok-s">"(+ 1 2)"</span><span class="tok-p">))</span>
+<span class="tok-c1">; =&gt; 3</span>
+</code></pre></div></div>
+
+      <p class="Body"><span>In all the examples so far, there’s been a one-to-one relationship </span><span>between the reader form and the corresponding data structures. Here are </span>more examples of simple reader forms that directly map to the data structures they represent:</p>
+      <ul class="list-plain">
+<li>
+<strong>()</strong> A list reader form</li>
+      <li>
+<strong>str</strong> A symbol reader form</li>
+      <li>
+<strong>[1 2]</strong> A vector reader form containing two number reader forms</li>
+      <li>
+<strong>{:sound "hoot"}</strong> A map reader form with a keyword reader form and string reader form</li>
+</ul>
+      <p class="Body">However, the reader can employ more complex behavior when converting text to data structures. For example, remember anonymous functions?</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-o">#</span><span class="tok-p">(</span><span class="tok-nb">+ </span><span class="tok-mi">1</span> <span class="tok-nv">%</span><span class="tok-p">)</span> <span class="tok-mi">3</span><span class="tok-p">)</span>
+<span class="tok-c1">; =&gt; 4</span>
+</code></pre></div></div>
+
+      <p class="Body">Well, try this out:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-nf">read-string</span> <span class="tok-s">"#(+ 1 %)"</span><span class="tok-p">)</span>
+<span class="tok-c1">; =&gt; (fn* [p1__423#] (+ 1 p1__423#))</span>
+</code></pre></div></div>
+
+      <p class="Body">Whoa! This is not the one-to-one mapping that we’re used to. Reading <code>#(+ 1 %)</code> somehow resulted in a list consisting of the <code>fn*</code> symbol, a vector containing a symbol, and a list containing three elements. What just happened?</p>
+      <h3 id="Reader_Macros">Reader Macros</h3>
+      <p class="BodyFirst">I’ll answer my own question: the reader used a <em>reader macro</em> to transform <code>#(+ 1 %)</code>. Reader macros are sets of rules for transforming text into data structures. They often allow you to represent data structures in more compact ways because they take an abbreviated reader form and expand it into <span>a full form. They’re designated by </span><em>macro characters</em><span>, like </span><code>'</code><span> (the single quote), </span><code>#</code><span>, and </span><code>@</code><span>. They’re also completely different from the macros we’ll get to later. So as </span>not to get the two confused, I’ll always refer to reader macros using the full term <em>reader macros</em>.</p>
+      <p class="Body">For example, you can see how the quote reader macro expands the single quote character here:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-nf">read-string</span> <span class="tok-s">"'(a b c)"</span><span class="tok-p">)</span>
+<span class="tok-c1">; =&gt; (quote (a b c))</span>
+</code></pre></div></div>
+
+      <p class="Body"><span>When the reader encounters the single quote, it expands it to a list whose first member is the symbol </span><code>quote</code><span> and whose second member is the </span>data structure that followed the single quote. The <code>deref</code> reader macro works similarly for the <code>@</code> character:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-nf">read-string</span> <span class="tok-s">"@var"</span><span class="tok-p">)</span>
+<span class="tok-c1">; =&gt; (clojure.core/deref var)</span>
+</code></pre></div></div>
+
+      <p class="Body">Reader macros can also do crazy stuff like cause text to be ignored. The semicolon designates the single-line comment reader macro:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-nf">read-string</span> <span class="tok-s">"; ignore!\n(+ 1 2)"</span><span class="tok-p">)</span>
+<span class="tok-c1">; =&gt; (+ 1 2)</span>
+</code></pre></div></div>
+
+      <p class="Body">And that’s the reader! Your humble companion, toiling away at transforming text into data structures. Now let’s look at how Clojure evaluates those data structures.</p>
+      <h2 id="The_Evaluator">The Evaluator</h2>
+      <div class="group">
+	<img src="/assets/images/cftbat/read-and-eval/simple-eval.png" class="figure">
+	<div class="caption">
+	  
+	    Figure 7-5: The data structure for <span class="LiteralCaption">(+ 1 2)</span>
+	  
+	</div>
+      </div>
+      <p class="BodyFirst">You can think of Clojure’s evaluator as a function that takes a data structure as an argument, processes the data structure using rules corresponding to the data structure’s type, and returns a result. To evaluate a symbol, Clojure <span>looks up what the symbol refers to. To evaluate a list, Clojure looks at the first element of the list and calls a function, macro, or special form. Any other values (including strings, numbers, and keywords) simply evaluate to </span>themselves.</p>
+      <p class="Body">For example, let’s say you’ve typed <code>(+ 1 2)</code> in the REPL. Figure 7-5 shows a diagram of the data structure that gets sent to the evaluator.</p>
+      <p class="Body">Because it’s a list, the evaluator starts by evaluating the first element in the list. The first element is the plus symbol, and the evaluator resolves that by returning the corresponding function. Because the first element in the list is a function, the evaluator evaluates each of the operands. The operands 1 and 2 evaluate to themselves because they’re not lists or symbols. Then the evaluator calls the addition function with 1 and 2 as the operands, and returns the result.</p>
+      <p class="Body">The rest of this section explains the evaluator’s rules for each kind of data structure more fully. To show how the evaluator works, we’ll just run each example in the REPL. Keep in mind that the REPL first reads your text to get a data structure, then sends that data structure to the evaluator, and then prints the result as text.</p>
+      <div class="Text-Box">
+	<p class="HeadBox">Data </p>
+	<p class="BodyFirstBox">I write about how Clojure evaluates data structures in this chapter, but that’s imprecise. Technically, <span class="EmphasisItalicBox">data structure</span> refers to some kind of collection, like a linked list or b-tree, or whatever, but I also use the term to refer to scalar (<span>singular</span>, noncollection) values like symbols and numbers. I considered using the term <span class="EmphasisItalicBox">data objects</span> but didn’t want to imply object-oriented programming, or using just <span class="EmphasisItalicBox">data</span> but didn’t want to confuse that with data as a concept. So, <span class="EmphasisItalicBox">data structure</span> it is, and if you find this offensive, I will give you a thousand <span>apologies</span>, thoughtfully organized in a Van Emde Boas tree.</p>
+      </div>
+      <h3 id="These_Things_Evaluate_to_Themselves">These Things Evaluate to Themselves</h3>
+      <p class="BodyFirst">Whenever Clojure evaluates data structures that aren’t a list or symbol, the result is the data structure itself:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-nv">true</span>
+<span class="tok-c1">; =&gt; true</span>
+
+<span class="tok-nv">false</span>
+<span class="tok-c1">; =&gt; false</span>
+
+<span class="tok-p">{}</span>
+<span class="tok-c1">; =&gt; {}</span>
+
+<span class="tok-ss">:huzzah</span>
+<span class="tok-c1">; =&gt; :huzzah</span>
+</code></pre></div></div>
+
+      <p class="Body">Empty lists evaluate to themselves, too:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">()</span>
+<span class="tok-c1">; =&gt; ()</span>
+</code></pre></div></div>
+
+      <h3 id="Symbols">Symbols</h3>
+      <p class="BodyFirst">One of your fundamental tasks as a programmer is creating abstractions by associating names with values. You learned how to do this in Chapter 3 by using <code>def</code>, <code>let</code>, and function definitions. Clojure uses <em>symbols</em> to name functions, macros, data, and anything else you can use, and evaluates them by <em>resolving</em><span> them. To resolve a symbol, Clojure traverses any bindings you’ve created and then looks up the symbol’s entry in a namespace mapping, which you learned about in Chapter 6. Ultimately, a symbol resolves to either a </span><em>value </em><span>or a </span><em>special form</em><span>—a built-in Clojure operator that provides fun</span>damental behavior. </p>
+      <p class="Body">In general, Clojure resolves a symbol by:</p>
+      <ol class="List-1">
+	<li class="NumListA">Looking up whether the symbol names a special form. If it doesn’t . . .  </li>
+	<li class="NumListB">Looking up whether the symbol corresponds to a local binding. If it doesn’t . . .</li>
+	<li class="NumListB">Trying to find a namespace mapping introduced by <code>def</code>. If it doesn’t . . .</li>
+	<li class="NumListC">Throwing an exception</li>
+      </ol>
+      <p class="Body">Let’s first look at a symbol resolving to a special form. Special forms, like <code>if</code>, are always used in the context of an operation; they’re always the first element in a list:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-k">if </span><span class="tok-nv">true</span> <span class="tok-ss">:a</span> <span class="tok-ss">:b</span><span class="tok-p">)</span>
+<span class="tok-c1">; =&gt; :a</span>
+</code></pre></div></div>
+
+      <p class="Body">In this case, <code>if</code> is a special form and it’s being used as an operator. If you try to refer to a special form outside of this context, you’ll get an exception:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-nv">if</span>
+<span class="tok-c1">; =&gt; CompilerException java.lang.RuntimeException: Unable to resolve symbol: if in this context, compiling:(NO_SOURCE_PATH:0:0) </span>
+</code></pre></div></div>
+
+      <p class="Body">Next, let’s evaluate some local bindings. A <em>local binding</em> is any association between a symbol and a value that wasn’t created by <code>def</code>. In the next example, the symbol <code>x</code> is bound to 5 using <code>let</code>. When the evaluator resolves <code>x</code>, it resolves the <em>symbol</em> <code>x</code> to the <em>value</em> 5:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-k">let </span><span class="tok-p">[</span><span class="tok-nv">x</span> <span class="tok-mi">5</span><span class="tok-p">]</span>
+  <span class="tok-p">(</span><span class="tok-nb">+ </span><span class="tok-nv">x</span> <span class="tok-mi">3</span><span class="tok-p">))</span>
+<span class="tok-c1">; =&gt; 8</span>
+</code></pre></div></div>
+
+      <p class="Body">Now if we create a namespace mapping of <code>x</code> to 15, Clojure resolves it accordingly:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-k">def </span><span class="tok-nv">x</span> <span class="tok-mi">15</span><span class="tok-p">)</span>
+<span class="tok-p">(</span><span class="tok-nb">+ </span><span class="tok-nv">x</span> <span class="tok-mi">3</span><span class="tok-p">)</span>
+<span class="tok-c1">; =&gt; 18</span>
+</code></pre></div></div>
+
+      <p class="Body">In the next example, <code>x</code> is mapped to 15, but we introduce a local binding of <code>x</code> to 5 using <code>let</code>. So <code>x</code> is resolved to 5:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-k">def </span><span class="tok-nv">x</span> <span class="tok-mi">15</span><span class="tok-p">)</span>
+<span class="tok-p">(</span><span class="tok-k">let </span><span class="tok-p">[</span><span class="tok-nv">x</span> <span class="tok-mi">5</span><span class="tok-p">]</span>
+  <span class="tok-p">(</span><span class="tok-nb">+ </span><span class="tok-nv">x</span> <span class="tok-mi">3</span><span class="tok-p">))</span>
+<span class="tok-c1">; =&gt; 8</span>
+</code></pre></div></div>
+
+      <p class="Body">You can nest bindings, in which case the most recently defined binding takes precedence:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-k">let </span><span class="tok-p">[</span><span class="tok-nv">x</span> <span class="tok-mi">5</span><span class="tok-p">]</span>
+  <span class="tok-p">(</span><span class="tok-k">let </span><span class="tok-p">[</span><span class="tok-nv">x</span> <span class="tok-mi">6</span><span class="tok-p">]</span>
+    <span class="tok-p">(</span><span class="tok-nb">+ </span><span class="tok-nv">x</span> <span class="tok-mi">3</span><span class="tok-p">)))</span>
+<span class="tok-c1">; =&gt; 9</span>
+</code></pre></div></div>
+
+      <p class="Body">Functions also create local bindings, binding parameters to arguments within the function body. In this next example, <code>exclaim</code> is mapped to a function. Within the function body, the parameter name <code>exclamation</code> is bound to the argument passed to the function:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-kd">defn </span><span class="tok-nv">exclaim</span>
+  <span class="tok-p">[</span><span class="tok-nv">exclamation</span><span class="tok-p">]</span>
+  <span class="tok-p">(</span><span class="tok-nb">str </span><span class="tok-nv">exclamation</span> <span class="tok-s">"!"</span><span class="tok-p">))</span>
+
+<span class="tok-p">(</span><span class="tok-nf">exclaim</span> <span class="tok-s">"Hadoken"</span><span class="tok-p">)</span>
+<span class="tok-c1">; =&gt; "Hadoken!"</span>
+</code></pre></div></div>
+
+      <p class="Body">Finally, in this last example, <code>map</code> and <code>inc</code> both refer to functions:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-nb">map inc </span><span class="tok-p">[</span><span class="tok-mi">1</span> <span class="tok-mi">2</span> <span class="tok-mi">3</span><span class="tok-p">])</span>
+<span class="tok-c1">; =&gt; (2 3 4)</span>
+</code></pre></div></div>
+
+      <p class="Body">When Clojure evaluates this code, it first evaluates the <code>map</code> symbol, looking up the corresponding function and applying it to its arguments. The symbol <code>map</code> refers to the map function, but it shouldn’t be confused with the function itself. The <code>map</code> symbol is still a data structure, the same way that the string <code>"fried salad"</code> is a data structure, but it’s not the same as the function itself:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-nf">read-string</span> <span class="tok-p">(</span><span class="tok-s">"+"</span><span class="tok-p">))</span>
+<span class="tok-c1">; =&gt; +</span>
+
+<span class="tok-p">(</span><span class="tok-nf">type</span> <span class="tok-p">(</span><span class="tok-nf">read-string</span> <span class="tok-s">"+"</span><span class="tok-p">))</span>
+<span class="tok-c1">; =&gt; clojure.lang.Symbol</span>
+
+<span class="tok-p">(</span><span class="tok-nb">list </span><span class="tok-p">(</span><span class="tok-nf">read-string</span> <span class="tok-s">"+"</span><span class="tok-p">)</span> <span class="tok-mi">1</span> <span class="tok-mi">2</span><span class="tok-p">)</span>
+<span class="tok-c1">; =&gt; (+ 1 2)</span>
+</code></pre></div></div>
+
+      <p class="Body">In these examples, you’re interacting with the plus symbol, <code>+</code>, as a data structure. You’re not interacting with the addition function that it refers to. If you evaluate it, Clojure looks up the function and applies it:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-nb">eval </span><span class="tok-p">(</span><span class="tok-nb">list </span><span class="tok-p">(</span><span class="tok-nf">read-string</span> <span class="tok-s">"+"</span><span class="tok-p">)</span> <span class="tok-mi">1</span> <span class="tok-mi">2</span><span class="tok-p">))</span>
+<span class="tok-c1">; =&gt; 3</span>
+</code></pre></div></div>
+
+      <p class="Body">On their own, symbols and their referents don’t actually do anything; Clojure performs work by evaluating lists.</p>
+      <h3 id="Lists">Lists</h3>
+      <p class="BodyFirst">If the data structure is an empty list, it evaluates to an empty list:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-nb">eval </span><span class="tok-p">(</span><span class="tok-nf">read-string</span> <span class="tok-s">"()"</span><span class="tok-p">))</span>
+<span class="tok-c1">; =&gt; ()</span>
+</code></pre></div></div>
+
+      <p class="Body">Otherwise, it is evaluated as a <em>call</em> to the first element in the list. The way the call is performed depends on the nature of that first element.</p>
+      <h4 id="Function_Calls">Function Calls</h4>
+      <p class="BodyFirst">When performing a function call, each operand is fully evaluated and then passed to the function as an argument. In this example, the <code>+</code> symbol resolves to a function:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-nb">+ </span><span class="tok-mi">1</span> <span class="tok-mi">2</span><span class="tok-p">)</span>
+<span class="tok-c1">; =&gt; 3</span>
+</code></pre></div></div>
+
+      <p class="Body">Clojure sees that the list’s head is a function, so it proceeds to evaluate the rest of the elements in the list. The operands 1 and 2 both evaluate to themselves, and after they’re evaluated, Clojure applies the addition function to them.</p>
+      <p class="Body">You can also nest function calls:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-nb">+ </span><span class="tok-mi">1</span> <span class="tok-p">(</span><span class="tok-nb">+ </span><span class="tok-mi">2</span> <span class="tok-mi">3</span><span class="tok-p">))</span>
+<span class="tok-c1">; =&gt; 6</span>
+</code></pre></div></div>
+
+      <p class="Body"><span>Even though the second argument is a list, Clojure follows the same process here: look up the </span><code>+</code><span> symbol and evaluate each argument. To evaluate the </span>list <code>(+ 2 3)</code>, Clojure resolves the first member to the addition function and proceeds to evaluate each of the arguments. In this way, evaluation is recursive.</p>
+      <h4 id="Special_Forms">Special Forms</h4>
+      <p class="BodyFirst">You can also call <em>special forms. </em>In general, special forms are special because they implement core behavior that can’t be implemented with functions. For example:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-k">if </span><span class="tok-nv">true</span> <span class="tok-mi">1</span> <span class="tok-mi">2</span><span class="tok-p">)</span>
+<span class="tok-c1">; =&gt; 1</span>
+</code></pre></div></div>
+
+      <p class="Body">Here, we ask Clojure to evaluate a list beginning with the symbol <code>if</code>. That <code>if</code> symbol gets resolved to the <code>if</code> special form, and Clojure calls that special form with the operands <code>true</code>, <code>1</code>, and <code>2</code>.</p>
+      <p class="Body">Special forms don’t follow the same evaluation rules as normal functions. For example, when you call a function, each operand gets evaluated. However, with <code>if</code> you don’t want each operand to be evaluated. You only want certain operands to be evaluated, depending on whether the condition is true or false.</p>
+      <p class="Body">Another important special form is <code>quote</code>. You’ve seen lists represented like this:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-o">'</span><span class="tok-p">(</span><span class="tok-nf">a</span> <span class="tok-nv">b</span> <span class="tok-nv">c</span><span class="tok-p">)</span>
+</code></pre></div></div>
+
+      <p class="Body">As you saw in <a href="#Anchor">“The Reader” on page <span>153</span></a>, this invokes a reader macro so that we end up with this:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-k">quote </span><span class="tok-p">(</span><span class="tok-nf">a</span> <span class="tok-nv">b</span> <span class="tok-nv">c</span><span class="tok-p">))</span>
+</code></pre></div></div>
+
+      <p class="Body">Normally, Clojure would try to resolve the <code>a</code> symbol and then call it because it’s the first element in a list. The <code>quote</code> special form tells the evaluator, “Instead of evaluating my next data structure like normal, just return <span>the data structure itself.” In this case, you end up with a list consisting </span>of the symbols <code>a</code>, <code>b</code>, and <code>c</code>.</p>
+      <p class="Body"><code>def</code>, <code>let</code>, <code>loop</code>, <code>fn</code>, <code>do</code>, and <code>recur</code> are all special forms as well. You can see why: they don’t get evaluated the same way as functions. For example, normally when the evaluator evaluates a symbol, it resolves that symbol, but <code>def</code> and <code>let</code> obviously don’t behave that way. Instead of resolving symbols, they actually create associations between symbols and values. So the evaluator receives a combination of data structures from the reader, and it goes about resolving the symbols and calling the functions or special forms at <span>the beginning of each list. But there’s more! You can also place a </span><em>macro</em><span> at the beginning of a list instead of a function or a special form, and this can give you tremendous power over how the rest of the data structures are evaluated.</span></p>
+      <h3 id="Macros">Macros</h3>
+      <p class="BodyFirst">Hmm . . . Clojure evaluates data structures—the same data structures that we write and manipulate in our Clojure programs. Wouldn’t it be awesome if we could use Clojure to manipulate the data structures that Clojure evaluates? Yes, yes it would! And guess what? You can do this with macros! Did your head just explode? Mine did!</p>
+      <p class="Body">To get an idea of what macros do, let’s look at some code. Say we want to write a function that makes Clojure read infix notation (such as <code>1 + 1</code>) instead of its normal notation with the operator first (<code>+ 1 1</code>). This example is <em>not</em> a macro. Rather, it merely shows that you can write code using infix notation and then use Clojure to transform it so it will actually execute. First, create a list that represents infix addition:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-nf">read-string</span> <span class="tok-s">"(1 + 1)"</span><span class="tok-p">)</span>
+<span class="tok-c1">; =&gt; (1 + 1)</span>
+</code></pre></div></div>
+
+      <p class="Body">Clojure will throw an exception if you try to make it evaluate this list:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-nb">eval </span><span class="tok-p">(</span><span class="tok-nf">read-string</span> <span class="tok-s">"(1 + 1)"</span><span class="tok-p">))</span>
+<span class="tok-c1">; =&gt; ClassCastException java.lang.Long cannot be cast to clojure.lang.IFn</span>
+</code></pre></div></div>
+
+      <p class="Body">However, <code>read-string</code> returns a list, and you can use Clojure to reorganize that list into something it <em>can</em> successfully evaluate:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-k">let </span><span class="tok-p">[</span><span class="tok-nv">infix</span> <span class="tok-p">(</span><span class="tok-nf">read-string</span> <span class="tok-s">"(1 + 1)"</span><span class="tok-p">)]</span>
+  <span class="tok-p">(</span><span class="tok-nb">list </span><span class="tok-p">(</span><span class="tok-nb">second </span><span class="tok-nv">infix</span><span class="tok-p">)</span> <span class="tok-p">(</span><span class="tok-nb">first </span><span class="tok-nv">infix</span><span class="tok-p">)</span> <span class="tok-p">(</span><span class="tok-nb">last </span><span class="tok-nv">infix</span><span class="tok-p">)))</span>
+<span class="tok-c1">; =&gt; (+ 1 1)</span>
+</code></pre></div></div>
+
+      <p class="Body">If you <code>eval</code> this, it returns <code>2</code>, just as you’d expect:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-nf">eval</span>
+ <span class="tok-p">(</span><span class="tok-k">let </span><span class="tok-p">[</span><span class="tok-nv">infix</span> <span class="tok-p">(</span><span class="tok-nf">read-string</span> <span class="tok-s">"(1 + 1)"</span><span class="tok-p">)]</span>
+   <span class="tok-p">(</span><span class="tok-nb">list </span><span class="tok-p">(</span><span class="tok-nb">second </span><span class="tok-nv">infix</span><span class="tok-p">)</span> <span class="tok-p">(</span><span class="tok-nb">first </span><span class="tok-nv">infix</span><span class="tok-p">)</span> <span class="tok-p">(</span><span class="tok-nb">last </span><span class="tok-nv">infix</span><span class="tok-p">))))</span>
+<span class="tok-c1">; =&gt; 2</span>
+</code></pre></div></div>
+
+      <p class="Body">This is cool, but it’s also quite clunky. That’s where macros come in. Macros give you a convenient way to manipulate lists before Clojure evaluates them. Macros are a lot like functions: they take arguments and return a value, just like a function would. They work on Clojure data structures, just like functions do. What makes them unique and powerful is the way they fit in to the evaluation process. They are executed in between the reader and the evaluator—so they can manipulate the data structures that the reader spits out and transform with those data structures before passing them to the evaluator.</p>
+      <p class="Body">Let’s look at an example:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-kd">defmacro </span><span class="tok-nv">ignore-last-operand</span>
+  <span class="tok-p">[</span><span class="tok-nv">function-call</span><span class="tok-p">]</span>
+  <span class="tok-p">(</span><span class="tok-nb">butlast </span><span class="tok-nv">function-call</span><span class="tok-p">))</span>
+
+<span class="tok-err">➊</span> <span class="tok-p">(</span><span class="tok-nf">ignore-last-operand</span> <span class="tok-p">(</span><span class="tok-nb">+ </span><span class="tok-mi">1</span> <span class="tok-mi">2</span> <span class="tok-mi">10</span><span class="tok-p">))</span>
+<span class="tok-c1">; =&gt; 3</span>
+
+<span class="tok-c1">;; This will not print anything</span>
+<span class="tok-p">(</span><span class="tok-nf">ignore-last-operand</span> <span class="tok-p">(</span><span class="tok-nb">+ </span><span class="tok-mi">1</span> <span class="tok-mi">2</span> <span class="tok-p">(</span><span class="tok-nb">println </span><span class="tok-s">"look at me!!!"</span><span class="tok-p">)))</span>
+<span class="tok-c1">; =&gt; 3</span>
+</code></pre></div></div>
+
+      <p class="Body">At ➊ the macro <code>ignore-last-operand</code> receives the list <code>(+ 1 2 10)</code> as its argument, <em>not</em> the value <code>13</code>. This is very different from a function call, because function calls always evaluate all of the arguments passed in, so there is no possible way for a function to reach into one of its operands and alter or ignore it. By contrast, when you call a macro, the operands are <em>not</em> evaluated. In particular, symbols are not resolved; they are passed as symbols. Lists are not evaluated either; that is, the first element in the list is not called as a function, special form, or macro. Rather, the unevaluated list data structure is passed in. </p>
+      <div class="group">
+	<img src="/assets/images/cftbat/read-and-eval/whole-shebang.png" class="figure">
+	<div class="caption">
+	  
+	    Figure 7-6: The full evaluation process for <span class="LiteralCaption">(infix (1 + 2))</span>
+	  
+	</div>
+      </div>
+      <p class="Body">Another difference is that the data structure returned by a function is <em>not</em> evaluated, but the data structure returned by a macro <em>is</em>. The process of determining the return value of a macro is called <em>macro expansion</em>, and you can use the function <code>macroexpand</code> to see what data structure a macro returns before that data structure is evaluated. Note that you have to quote the form that you pass to <code>macroexpand</code>:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-nb">macroexpand </span><span class="tok-o">'</span><span class="tok-p">(</span><span class="tok-nf">ignore-last-operand</span> <span class="tok-p">(</span><span class="tok-nb">+ </span><span class="tok-mi">1</span> <span class="tok-mi">2</span> <span class="tok-mi">10</span><span class="tok-p">)))</span>
+<span class="tok-c1">; =&gt; (+ 1 2)</span>
+
+<span class="tok-p">(</span><span class="tok-nb">macroexpand </span><span class="tok-o">'</span><span class="tok-p">(</span><span class="tok-nf">ignore-last-operand</span> <span class="tok-p">(</span><span class="tok-nb">+ </span><span class="tok-mi">1</span> <span class="tok-mi">2</span> <span class="tok-p">(</span><span class="tok-nb">println </span><span class="tok-s">"look at me!!!"</span><span class="tok-p">))))</span>
+<span class="tok-c1">; =&gt; (+ 1 2)</span>
+</code></pre></div></div>
+
+      <p class="Body">As you can see, both expansions result in the list <code>(+ 1 2)</code>. When this list is evaluated, as in the previous example, the result is <code>3</code>.</p>
+      <p class="Body">Just for fun, here’s a macro for doing simple infix notation: </p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-kd">defmacro </span><span class="tok-nv">infix</span>
+  <span class="tok-p">[</span><span class="tok-nv">infixed</span><span class="tok-p">]</span>
+  <span class="tok-p">(</span><span class="tok-nb">list </span><span class="tok-p">(</span><span class="tok-nb">second </span><span class="tok-nv">infixed</span><span class="tok-p">)</span> 
+        <span class="tok-p">(</span><span class="tok-nb">first </span><span class="tok-nv">infixed</span><span class="tok-p">)</span> 
+        <span class="tok-p">(</span><span class="tok-nf">last</span><span class="tok-err"> </span><span class="tok-nv">infixed</span><span class="tok-p">)))</span>
+
+<span class="tok-p">(</span><span class="tok-nf">infix</span> <span class="tok-p">(</span><span class="tok-mi">1</span> <span class="tok-nb">+ </span><span class="tok-mi">2</span><span class="tok-p">))</span>
+<span class="tok-c1">; =&gt; 3</span>
+</code></pre></div></div>
+
+      <p class="Body">The best way to think about this whole process is to picture a phase <span>between reading and evaluation: the </span><em>macro expansion</em><span> phase. Figure 7-6 shows </span>how you can visualize the entire evaluation process for <code>(infix (1 + 2))</code>.</p>
+      <p class="Body">And that’s how macros fit into the evaluation process. But why would you want to do this? The reason is that macros allow you to transform an arbitrary data structure like <code>(1 + 2)</code> into one that can Clojure can evaluate, <code>(+ 1 2)</code>. That means <em>you can use Clojure to extend itself</em> so you can write programs however you please. In other words, macros enable <em>syntactic abstraction</em>. Syntactic abstraction may sound a bit abstract (ha ha!), so let’s explore that a little.</p>
+      <h3 id="Syntactic_Abstraction_and_the____Macro">Syntactic Abstraction and the -&gt; Macro</h3>
+      <p class="BodyFirst">Often, Clojure code consists of a bunch of nested function calls. For <span>example</span>, I use the following function in one of my projects:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-kd">defn </span><span class="tok-nv">read-resource</span>
+  <span class="tok-s">"Read a resource into a string"</span>
+  <span class="tok-p">[</span><span class="tok-nv">path</span><span class="tok-p">]</span>
+  <span class="tok-p">(</span><span class="tok-nf">read-string</span> <span class="tok-p">(</span><span class="tok-nb">slurp </span><span class="tok-p">(</span><span class="tok-nf">clojure.java.io/resource</span> <span class="tok-nv">path</span><span class="tok-p">))))</span>
+</code></pre></div></div>
+
+      <p class="Body">To understand the function body, you have to find the innermost form, in this case <code>(clojure.java.io/resource path)</code>, and then work your way outward from right to left to see how the result of each function gets passed to another function. This right-to-left flow is opposite of what non-Lisp programmers are used to. As you get used to writing in Clojure, this kind of code gets easier and easier to understand. But if you want to translate Clojure code so you can read it in a more familiar, left-to-right, top-to-<span>bottom</span> manner, you can use the built-in <code>-&gt;</code> macro, which is also known as the<em> threading</em> or <em>stabby</em> macro. It lets you rewrite the preceding function like this:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-kd">defn </span><span class="tok-nv">read-resource</span>
+  <span class="tok-p">[</span><span class="tok-nv">path</span><span class="tok-p">]</span>
+  <span class="tok-p">(</span><span class="tok-nb">-&gt; </span><span class="tok-nv">path</span>
+      <span class="tok-nv">clojure.java.io/resource</span>
+      <span class="tok-nv">slurp</span>
+      <span class="tok-nv">read-string</span><span class="tok-p">))</span>
+</code></pre></div></div>
+
+      <p class="Body"><span>You can read this as a pipeline that goes from top to bottom instead of from inner parentheses to outer parentheses. First, </span><code>path</code><span> gets passed to </span><code>io/</code><code>resource</code>, then the result gets passed to <code>slurp</code>, and finally the result of that gets passed to <code>read-string</code>.</p>
+      <p class="Body"><span>These two ways of defining </span><code>read-resource</code><span> are entirely equivalent. However, the second one might be easier understand because we can </span>approach it from top to bottom, a direction we’re used to. The <code>-&gt;</code> also lets us omit parentheses, which means there’s less visual noise to contend with. This is a <em>syntactic abstraction</em> because it lets you write code in a syntax that’s different from Clojure’s built-in syntax but is preferable for human consumption. Better than lead into gold!!!</p>
+      <h2 id="Summary">Summary</h2>
+      <p class="BodyFirst">In this chapter, you learned about Clojure’s evaluation process. First, the reader transforms text into Clojure data structures. Next, the macro expander transforms those data structures with macros, converting your custom syntax into syntactically valid data structures. Finally, those data structures get sent to the evaluator. The evaluator processes data structures based on their type: symbols are resolved to their referents; lists result in function, macro, or special form calls; and everything else evaluates to itself.</p>
+      <p class="Body">The coolest thing about this process is that it allows you to use Clojure to expand its own syntax. This process is made easier because Clojure is homoiconic: its text represents data structures, and those data structures represent abstract syntax trees, allowing you to more easily reason about how to construct syntax-expanding macros.</p>
+      <p class="Body">With all these new concepts in your brainacles, you’re now ready to blow stuff up on purpose, just like I promised. The next chapter will teach you everything you need to know about writing macros. Hold on to your socks or they’re liable to get knocked off!</p>
+      <h2 id="Exercises">Exercises</h2>
+      <p class="BodyFirst">These exercises focus on reading and evaluation. Chapter 8 has exercises for writing macros.</p>
+      <ol class="List-1">
+	<li class="NumListA">Use the <code>list</code> function, quoting, and <code>read-string</code> to create a list that, when evaluated, prints your first name and your favorite sci-fi movie.</li>
+	<li class="NumListB">Create an infix function that takes a list like <code>(1 + 3 * 4 - 5)</code> and transforms it into the lists that Clojure needs in order to correctly evaluate the expression using operator precedence rules.</li>
+      </ol>
+    
+  
+
+
+        <div class="chapter-nav">
+
+
+
+<div class="prev"><a href="../organization/">← Organizing Your Project: A Librarian’s Tale</a></div>
+
+
+
+<div class="next"><a href="../writing-macros/">Writing Macros →</a></div>
+
+
+</div>
+
+      </div>
+      <div class="secondary">
+        <div class="wrapper">
+          <div class="junk clearfix">
+            <a href="http://amzn.to/1H7MqmT" target="_blank">
+              <img src="/assets/images/home/book-cover.jpg">
+              The print book longs for you to own it
+            </a>
+          </div>
+          <div class="junk clearfix">
+            <a href="/quests/deploy">
+              <img src="/quests/deploy/images/deploy-cover-1.png">
+              OMG what!? Another book!?<br>Learn to deploy your app!
+            </a>
+          </div>
+          <div class="junk clearfix">
+            <a href="/quests/reducers/intro">
+              <img src="/quests/reducers/images/parallel-cover-1.png">
+              Great mama of the bahamas! Learn about reducers!
+            </a>
+          </div>
+          <div class="ads">
+            <a class="twitter-follow-button" href="https://twitter.com/nonrecursive">Follow @nonrecursive</a>
+            <form action="//flyingmachinestudios.us1.list-manage.com/subscribe/post?u=60763b0c4890c24bd055f32e6&amp;amp;amp;id=0b40ffd1e1" class="validate" id="mc-embedded-subscribe-form" method="post" name="mc-embedded-subscribe-form" novalidate="" target="_blank">
+              <input class="email" id="mce-EMAIL" name="EMAIL" placeholder="email address" required="" type="email" value="">
+              <input class="button" id="mc-embedded-subscribe" name="subscribe" type="submit" value="get email updates">
+            </form>
+            <ol>
+              <li><a target="_blank" href="https://jobs.braveclojure.com">Find Clojure jobs</a></li>
+              <li><a target="_blank" href="http://open-source.braveclojure.com">Contribute to beginner-friendly open source projects</a></li>
+            </ol>
+          </div>
+<div class="chapter-sections">Chapter Sections</div>
+<ol class="toc">
+<li><a href="/read-and-eval/#An_Overview_of_Clojure_s_Evaluation_Model">An Overview of Clojure’s Evaluation Model</a></li>
+<li>
+<a href="/read-and-eval/#The_Reader">The Reader</a><ol>
+<li><a href="/read-and-eval/#Reading">Reading</a></li>
+<li><a href="/read-and-eval/#Reader_Macros">Reader Macros</a></li>
+</ol>
+</li>
+<li>
+<a href="/read-and-eval/#The_Evaluator">The Evaluator</a><ol>
+<li><a href="/read-and-eval/#These_Things_Evaluate_to_Themselves">These Things Evaluate to Themselves</a></li>
+<li><a href="/read-and-eval/#Symbols">Symbols</a></li>
+<li><a href="/read-and-eval/#Lists">Lists</a></li>
+<li><a href="/read-and-eval/#Macros">Macros</a></li>
+<li><a href="/read-and-eval/#Syntactic_Abstraction_and_the____Macro">Syntactic Abstraction and the -&gt; Macro</a></li>
+</ol>
+</li>
+<li><a href="/read-and-eval/#Summary">Summary</a></li>
+<li><a href="/read-and-eval/#Exercises">Exercises</a></li>
+</ol>
+        </div>
+      </div>
+    </div>
+    <div class="footer">
+      <div class="container">
+        <div class="buy">
+          buy print and ebooks from 
+          <a href="http://amzn.to/1H7MqmT" target="_blank">Amazon</a> or
+          <a href="https://www.nostarch.com/clojure" target="_blank">No Starch</a> :)
+        </div>
+        <div>
+          <a href="https://groups.google.com/forum/#!forum/braveclojure">Ask questions and report errata at the Google Group</a>
+        </div>
+        <div>
+          © 2017 Daniel Higginbotham
+        </div>
+      </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+    <script src="/assets/scripts/jquery.sticky.js"></script>
+    <script src="/assets/scripts/sticky.js"></script>
+    <script>
+              !function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs')
+            </script>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-43463851-1', 'auto');
+      ga('send', 'pageview');
+
+    </script>
+  </body>
+</html>

@@ -1,0 +1,980 @@
+<!DOCTYPE HTML>
+<html lang="en">
+  <head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta charset="utf-8">
+  <meta path="/core-functions-in-depth/">
+  
+  <title>Core Functions in Depth | Clojure for the Brave and True</title>
+  
+  <link rel="stylesheet" href="/assets/stylesheets/main.css">
+  <link rel="stylesheet" href="/assets/stylesheets/pygments.css">
+  <link href="//fonts.googleapis.com/css?family=Roboto+Condensed:400,700italic,700,400italic,300italic,300%7CSource+Sans+Pro:400,200,200italic,300,300italic,400italic,600italic,600,700,700italic,900italic,900%7CSource+Code+Pro:400,700%7CGentium+Book+Basic:400,400italic,700,700italic%7CCourgette" rel="stylesheet" type="text/css">
+
+  <!-- you don't need to keep this, but it's cool for stats! -->
+  <meta name="generator" content="nanoc 3.7.4">
+</head>
+
+  <body class="cftbat-book">
+    <div class="nav">
+  <div class="container">
+    <div>
+      <ul>
+        <li><a href="/">Brave Clojure</a></li>
+        <li><a href="https://jobs.braveclojure.com">Jobs</a></li>
+        <li><a href="http://open-source.braveclojure.com">Open Source Projects</a></li>
+        <li><a href="/quests/deploy">Deployment Book</a></li>
+        <li><a href="/quests/reducers/intro">Reducers Book</a></li>
+        <li><a href="/training">On-Site Training</a></li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+    <div class="header">
+      <div class="logoy">
+        <div class="container">
+          <div class="title">
+            <a href="/clojure-for-the-brave-and-true">
+              <strong>Clojure </strong><span>for the</span><strong> Brave </strong><span>and </span><strong>True</strong>
+            </a>
+          </div>
+          <div class="subtitle">
+            learn the ultimate language and become a better programmer
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="callout">
+      <div class="container">
+        <p>
+          Be a pal and buy print and ebooks from
+          <a href="http://nostarch.com" target="_blank">No Starch</a>
+          or <a href="http://amzn.to/1H7MqmT" target="_blank">Amazon</a>
+        </p>
+        <form action="//flyingmachinestudios.us1.list-manage.com/subscribe/post?u=60763b0c4890c24bd055f32e6&amp;amp;id=0b40ffd1e1" class="validate" id="mc-embedded-subscribe-form" method="post" name="mc-embedded-subscribe-form" novalidate="" target="_blank">
+          <p>
+            Follow
+            <a href="https://twitter.com/nonrecursive">@nonrecursive</a>
+            to hear about new content
+            or subscribe:
+            <input class="email" id="mce-EMAIL" name="EMAIL" placeholder="email address" required="" type="email" value="">
+            <input class="button" id="mc-embedded-subscribe" name="subscribe" type="submit" value="get updates!">
+          </p>
+        </form>
+      </div>
+    </div>
+    <div id="top-nav"></div>
+    <div class="container wrap">
+      <div class="main">
+        <div class="chapter-nav">
+
+
+
+<div class="prev"><a href="../do-things/">← Do Things: A Clojure Crash Course</a></div>
+
+
+
+<div class="next"><a href="../functional-programming/">Functional Programming →</a></div>
+
+
+</div>
+
+        
+  
+  
+    
+      <div class="chapter-number">Chapter 4</div>
+      <h1>Core Functions in Depth</h1>
+      <p class="x1st-Para"><span>If you’re a huge fan of the angsty, </span><span>teenager</span><span>-</span><span>centric, quasi–soap opera </span><em>The Vampire Diaries</em><span> like I am, you’ll remember the episode where the lead protagonist, Elena, starts to question her pale, mysterious crush’s behavior: “Why did he instantly vanish without a trace when I scraped my knee?” and “How come his face turned into a grotesque mask of death when I nicked my </span><span>finger</span><span>?” and so on.</span></p>
+      <p class="Body">You might be asking yourself similar questions if you’ve started playing with Clojure’s core functions. “Why did <code>map</code> return a list when I gave it a vector?” and “How come <code>reduce</code> treats my map like a list of vectors?” and so on. (With Clojure, though, you’re at least spared from contemplating the profound existential horror of being a 17-year-old for eternity.)</p>
+      <p class="Body">In this chapter, you’ll learn about Clojure’s deep, dark, bloodthirsty, supernatur—*<em>cough</em>* I mean, in this chapter, you’ll learn about Clojure’s underlying concept of <em>programming to abstractions</em> and about the sequence and collection abstractions. You’ll also learn about <em>lazy sequences</em>. This will give you the grounding you need to read the documentation for functions you haven’t used before and to understand what’s happening when you give them a try.</p>
+      <img src="/assets/images/cftbat/core-functions-in-depth/sparkly.png" class="right">
+      <p class="Body">Next, you’ll get more experience with the functions you’ll be reaching for the most. You’ll learn how to work with lists, vectors, maps, and sets with the functions <code>map</code>, <code>reduce</code>, <code>into</code>, <code>conj</code>, <code>concat</code>, <code>some</code>, <code>filter</code>, <code>take</code>, <code>drop</code>, <code>sort</code>, <code>sort-by</code>, and <code>identity</code>. You’ll also learn how to create new functions with <code>apply</code>, <code>partial</code>, and <code>complement</code>. All this information will help you understand how to do things the Clojure way, and it will give you a solid foundation for writing your own code as well as for reading and learning from others’ projects.</p>
+      <p class="Body">Finally, you’ll learn how to parse and query a CSV of vampire data to determine what nosferatu lurk in your hometown.</p>
+      <h2 id="Programming_to_Abstractions">Programming to Abstractions</h2>
+      <p class="BodyFirst"><span>To understand programming to abstractions, let’s compare Clojure to a language that wasn’t built with that principle in mind: Emacs Lisp (elisp). In elisp, you can use the </span><code>mapcar</code><span> function to derive a new list, which is similar to how you use </span><code>map</code><span> in Clojure. However, if you want to map over a hash map </span>(similar to Clojure’s map data structure) in elisp, you’ll need to use the <code>maphash</code><span> function, whereas in Clojure you can still just use </span><code>map</code><span>. In other words, elisp uses two different, data structure–specific functions to implement the </span><em>map</em><span> operation, but Clojure uses only one. You can also call </span><code>reduce</code><span> on a map in Clojure, whereas elisp doesn’t provide a function for reducing a hash map. </span></p>
+      <p class="Body">The reason is that Clojure defines <code>map</code> and <code>reduce</code> functions in terms of the <em>sequence abstraction</em>, not in terms of specific data structures. As long as a data structure responds to the core sequence operations (the functions <code>first</code>, <code>rest</code>, and <code>cons</code>, which we’ll look at more closely in a moment), it will work with <code>map</code>, <code>reduce</code>, and oodles of other sequence functions for free. This is what Clojurists mean by programming to abstractions, and it’s a central tenet of Clojure philosophy.</p>
+      <p class="Body">I think of abstractions as named collections of operations. If you can perform all of an abstraction’s operations on an object, then that object is <span>an instance of the abstraction. I think this way even outside of program</span><span>ming. For example, the </span><em>battery</em><span> abstraction includes the operation “connect a </span>conducting medium to its anode and cathode,” and the operation’s output is <em>electrical current</em>. It doesn’t matter if the battery is made out of lithium or out of potatoes. It’s a battery as long as it responds to the set of operations that define <em>battery</em>.</p>
+      <p class="Body">Similarly, <code>map</code> doesn’t care about how lists, vectors, sets, and maps are <span>implemented. It only cares about whether it can perform sequence operations on them. Let’s look at how </span><code>map</code><span> is defined in terms of the sequence abstraction so you can understand programming to abstractions in general.</span></p>
+      <h3 id="Treating_Lists__Vectors__Sets__and_Maps_as_Sequences">Treating Lists, Vectors, Sets, and Maps as Sequences</h3>
+      <p class="BodyFirst">If you think about the <code>map</code> operation independently of any programming language, or even of programming altogether, its essential behavior is to derive a new sequence <em>y</em> from an existing sequence <em>x</em> using a function <em>ƒ</em> such that <em>y</em><span class="Subscript">1</span> = <em>ƒ</em>(<em>x</em><span class="Subscript">1</span>), <em>y</em><span class="Subscript">2</span> = <em>ƒ</em>(<em>x</em><span class="Subscript">2</span>), . . . <em>y</em><span class="Subscript-Italic">n</span> = <em>ƒ</em>(<em>x</em><span class="Subscript-Italic">n</span>). Figure 4-1 illustrates how you might visualize a mapping applied to a sequence.</p>
+      <img src="/assets/images/cftbat/core-functions-in-depth/mapping.png" class="figure">
+      
+	<div class="caption">Figure 4-1: Visualizing a mapping</div>
+      
+      <p class="Body">The term <em>sequence</em> here refers to a collection of elements organized in linear order, as opposed to, say, an unordered collection or a graph without a <em>before-and-after</em> relationship between its nodes. Figure 4-2 shows how you might visualize a sequence, in contrast to the other two collections mentioned.</p>
+      <img src="/assets/images/cftbat/core-functions-in-depth/collections.png" class="figure">
+      
+	<div class="caption">Figure 4-2: Sequential and nonsequential collections</div>
+      
+      <p class="Body"><span>Absent from this description of mapping and sequences is any mention </span>of lists, vectors, or other concrete data structures. Clojure is designed to allow us to think and program in such abstract terms as much as possible, and it does this by implementing functions in terms of data structure abstractions. In this case, <code>map</code> is defined in terms of the sequence abstraction. In conversation, you would say <code>map</code>, <code>reduce</code>, and other sequence functions <em>take a sequence</em> or even <em>take a </em><em>seq</em>. In fact, Clojurists usually use <em>seq</em> instead of <em>sequence</em>, using terms like <em>seq functions</em> and <em>the seq library</em> to refer to functions that perform sequential operations. Whether you use <em>sequence</em> or <em>seq</em>, you’re indicating that the data structure in question will be treated as a sequence and that what it actually is in its truest heart of hearts doesn’t matter in this context.</p>
+      <p class="Body">If the core sequence functions <code>first</code>, <code>rest</code>, and <code>cons</code> work on a data structure, you can say the data structure <em>implements</em> the sequence abstraction. Lists, vectors, sets, and maps all implement the sequence abstraction, so they all work with <code>map</code>, as shown here:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-kd">defn </span><span class="tok-nv">titleize</span>
+  <span class="tok-p">[</span><span class="tok-nv">topic</span><span class="tok-p">]</span>
+  <span class="tok-p">(</span><span class="tok-nb">str </span><span class="tok-nv">topic</span> <span class="tok-s">" for the Brave and True"</span><span class="tok-p">))</span>
+
+<span class="tok-p">(</span><span class="tok-nb">map </span><span class="tok-nv">titleize</span> <span class="tok-p">[</span><span class="tok-s">"Hamsters"</span> <span class="tok-s">"Ragnarok"</span><span class="tok-p">])</span>
+<span class="tok-c1">; =&gt; ("Hamsters for the Brave and True" "Ragnarok for the Brave and True")</span>
+
+<span class="tok-p">(</span><span class="tok-nb">map </span><span class="tok-nv">titleize</span> <span class="tok-o">'</span><span class="tok-p">(</span><span class="tok-s">"Empathy"</span> <span class="tok-s">"Decorating"</span><span class="tok-p">))</span>
+<span class="tok-c1">; =&gt; ("Empathy for the Brave and True" "Decorating for the Brave and True")</span>
+
+<span class="tok-p">(</span><span class="tok-nb">map </span><span class="tok-nv">titleize</span> <span class="tok-o">#</span><span class="tok-p">{</span><span class="tok-s">"Elbows"</span> <span class="tok-s">"Soap Carving"</span><span class="tok-p">})</span>
+<span class="tok-c1">; =&gt; ("Elbows for the Brave and True" "Soap Carving for the Brave and True")</span>
+
+<span class="tok-p">(</span><span class="tok-nb">map </span><span class="tok-o">#</span><span class="tok-p">(</span><span class="tok-nf">titleize</span> <span class="tok-p">(</span><span class="tok-nb">second </span><span class="tok-nv">%</span><span class="tok-p">))</span> <span class="tok-p">{</span><span class="tok-ss">:uncomfortable-thing</span> <span class="tok-s">"Winking"</span><span class="tok-p">})</span>
+<span class="tok-c1">; =&gt; ("Winking for the Brave and True")</span>
+</code></pre></div></div>
+
+      <p class="Body"><span>The first two examples show that </span><code>map</code><span> works identically with vectors and lists. The third example shows that </span><code>map</code><span> can work with unsorted sets. In the fourth example, you must call </span><code>second</code><span> on the anonymous function’s argument before title-izing it because the argument is a map. I’ll explain why soon, but first let’s look at the three functions that define the sequence abstraction.</span></p>
+      <h3 id="first__rest__and_cons">first, rest, and cons</h3>
+      <img src="/assets/images/cftbat/core-functions-in-depth/hamster.png" class="right">
+      <p class="BodyFirst">In this section, we’ll take a quick detour into JavaScript to implement a linked list and three core functions: <code>first</code>, <code>rest</code>, and <code>cons</code>. After those three core functions are implemented, I’ll show how you to build <code>map</code> with them.</p>
+      <p class="Body">The point is to appreciate the distinction between the seq abstraction in Clojure and the concrete implementation of a linked list. It doesn’t matter how a particular data structure is implemented: when it comes to using seq functions on a data structure, all Clojure asks is “can I <code>first</code>, <code>rest</code>, and <code>cons</code> it?” If the answer is yes, you can use the seq library with that data structure.</p>
+      <p class="Body">In a linked list, nodes are linked in a linear sequence. Here’s how you might create one in JavaScript. In this snippet, <code>next</code> is null because this is the last node in the list:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-k">var </span><span class="tok-nv">node3</span> <span class="tok-nb">= </span><span class="tok-p">{</span>
+  <span class="tok-nv">value</span><span class="tok-err">:</span> <span class="tok-s">"last"</span>,
+  <span class="tok-nv">next</span><span class="tok-err">:</span> <span class="tok-nv">null</span>
+<span class="tok-p">}</span><span class="tok-c1">;</span>
+</code></pre></div></div>
+
+      <p class="Body">In this snippet, <code>node2</code>’s <code>next</code> points to <code>node3</code>, and <code>node1</code>’s <code>next</code> points to <code>node2</code>; that’s the “link” in “linked list”:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-k">var </span><span class="tok-nv">node2</span> <span class="tok-nb">= </span><span class="tok-p">{</span>
+  <span class="tok-nv">value</span><span class="tok-err">:</span> <span class="tok-s">"middle"</span>,
+  <span class="tok-nv">next</span><span class="tok-err">:</span> <span class="tok-nv">node3</span>
+<span class="tok-p">}</span><span class="tok-c1">;</span>
+
+<span class="tok-k">var </span><span class="tok-nv">node1</span> <span class="tok-nb">= </span><span class="tok-p">{</span>
+  <span class="tok-nv">value</span><span class="tok-err">:</span> <span class="tok-s">"first"</span>,
+  <span class="tok-nv">next</span><span class="tok-err">:</span> <span class="tok-nv">node2</span>
+<span class="tok-p">}</span><span class="tok-c1">;</span>
+</code></pre></div></div>
+
+      <p class="Body">Graphically, you could represent this list as shown in Figure 4-3.</p>
+      <img src="/assets/images/cftbat/core-functions-in-depth/linked-list.png" class="figure">
+      
+	<div class="caption">Figure 4-3: A linked list</div>
+      
+      <p class="Body"><span>You can perform three core functions on a linked list: </span><code>first</code><span>, </span><code>rest</code><span>, and </span><code>cons</code><span>. </span><code>first</code><span> returns the value for the requested node, </span><code>rest</code><span> returns the remaining values after the requested node, and </span><code>cons</code><span> adds a new node with the given </span><span>value to the beginning of the list. After those are implemented, you can </span><span>implement </span><code>map</code><span>, </span><code>reduce</code><span>, </span><code>filter</code><span>, and other seq functions on top of them. </span></p>
+      <p class="Body">The following code shows how we would implement and use <code>first</code>, <code>rest</code>, <span>and </span><code>cons</code><span> with our JavaScript node example, as well as how to use them to </span><span>return specific nodes and derive a new list. Note that the parameter of </span><code>first</code><span> </span><span>and </span><code>rest</code><span> is named </span><em>node</em><span>. This might be confusing because you might say, </span><span>“Ain’t I getting the first element of a </span><em>list</em><span>?” Well, you operate on the elements </span>of a list one node at a time!</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-k">var </span><span class="tok-nb">first = </span><span class="tok-nv">function</span><span class="tok-p">(</span><span class="tok-nf">node</span><span class="tok-p">)</span> <span class="tok-p">{</span>
+  <span class="tok-nv">return</span> <span class="tok-nv">node.value</span><span class="tok-c1">;</span>
+<span class="tok-p">}</span><span class="tok-c1">;</span>
+
+<span class="tok-k">var </span><span class="tok-nb">rest = </span><span class="tok-nv">function</span><span class="tok-p">(</span><span class="tok-nf">node</span><span class="tok-p">)</span> <span class="tok-p">{</span>
+  <span class="tok-nv">return</span> <span class="tok-nv">node.next</span><span class="tok-c1">;</span>
+<span class="tok-p">}</span><span class="tok-c1">;</span>
+
+<span class="tok-k">var </span><span class="tok-nb">cons = </span><span class="tok-nv">function</span><span class="tok-p">(</span><span class="tok-nf">newValue</span>, <span class="tok-nv">node</span><span class="tok-p">)</span> <span class="tok-p">{</span>
+  <span class="tok-nv">return</span> <span class="tok-p">{</span>
+    <span class="tok-nv">value</span><span class="tok-err">:</span> <span class="tok-nv">newValue</span>,
+    <span class="tok-nv">next</span><span class="tok-err">:</span> <span class="tok-nv">node</span>
+  <span class="tok-p">}</span><span class="tok-c1">;</span>
+<span class="tok-p">}</span><span class="tok-c1">;</span>
+
+<span class="tok-nv">first</span><span class="tok-p">(</span><span class="tok-nf">node1</span><span class="tok-p">)</span><span class="tok-c1">;</span>
+<span class="tok-nv">//</span> <span class="tok-nv">=&gt;</span> <span class="tok-s">"first"</span>
+
+<span class="tok-nv">first</span><span class="tok-p">(</span><span class="tok-nf">rest</span><span class="tok-p">(</span><span class="tok-nf">node1</span><span class="tok-p">))</span><span class="tok-c1">;</span>
+<span class="tok-nv">//</span> <span class="tok-nv">=&gt;</span> <span class="tok-s">"middle"</span>
+
+<span class="tok-nv">first</span><span class="tok-p">(</span><span class="tok-nf">rest</span><span class="tok-p">(</span><span class="tok-nf">rest</span><span class="tok-p">(</span><span class="tok-nf">node1</span><span class="tok-p">)))</span><span class="tok-c1">;</span>
+<span class="tok-nv">//</span> <span class="tok-nv">=&gt;</span> <span class="tok-s">"last"</span>
+
+<span class="tok-k">var </span><span class="tok-nv">node0</span> <span class="tok-nb">= </span><span class="tok-nv">cons</span><span class="tok-p">(</span><span class="tok-s">"new first"</span>, <span class="tok-nv">node1</span><span class="tok-p">)</span><span class="tok-c1">;</span>
+<span class="tok-nv">first</span><span class="tok-p">(</span><span class="tok-nf">node0</span><span class="tok-p">)</span><span class="tok-c1">;</span>
+<span class="tok-nv">//</span> <span class="tok-nv">=&gt;</span> <span class="tok-s">"new first"</span>
+
+<span class="tok-nv">first</span><span class="tok-p">(</span><span class="tok-nf">rest</span><span class="tok-p">(</span><span class="tok-nf">node0</span><span class="tok-p">))</span><span class="tok-c1">;</span>
+<span class="tok-nv">//</span> <span class="tok-nv">=&gt;</span> <span class="tok-s">"first"</span>
+</code></pre></div></div>
+
+      <p class="Body">As noted previously, you can implement <code>map</code> in terms of <code>first</code>, <code>rest</code>, and <code>cons</code>:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-k">var </span><span class="tok-nb">map = </span><span class="tok-nv">function</span> <span class="tok-p">(</span><span class="tok-nf">list</span>, <span class="tok-nv">transform</span><span class="tok-p">)</span> <span class="tok-p">{</span>
+  <span class="tok-k">if </span><span class="tok-p">(</span><span class="tok-nb">list </span><span class="tok-nv">===</span> <span class="tok-nv">null</span><span class="tok-p">)</span> <span class="tok-p">{</span>
+    <span class="tok-nv">return</span> <span class="tok-nv">null</span><span class="tok-c1">;</span>
+  <span class="tok-p">}</span> <span class="tok-nv">else</span> <span class="tok-p">{</span>
+    <span class="tok-nv">return</span> <span class="tok-nv">cons</span><span class="tok-p">(</span><span class="tok-nf">transform</span><span class="tok-p">(</span><span class="tok-nf">first</span><span class="tok-p">(</span><span class="tok-nf">list</span><span class="tok-p">))</span>, <span class="tok-nv">map</span><span class="tok-p">(</span><span class="tok-nf">rest</span><span class="tok-p">(</span><span class="tok-nf">list</span><span class="tok-p">)</span>, <span class="tok-nv">transform</span><span class="tok-p">))</span><span class="tok-c1">;</span>
+  <span class="tok-p">}</span>
+<span class="tok-p">}</span>
+</code></pre></div></div>
+
+      <p class="Body"><span>This function transforms the first element of the list and then calls </span>itself again on the rest of the list until it reaches the end (a null). Let’s see it in action! In this example, you’re mapping the list that begins with <code>node1</code>, returning a new list where the string <code>" mapped!"</code> is appended to each node’s value. Then you’re using <code>first</code> to return the first node’s value:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-nv">first</span><span class="tok-p">(</span>
+  <span class="tok-nv">map</span><span class="tok-p">(</span><span class="tok-nf">node1</span>, <span class="tok-nv">function</span> <span class="tok-p">(</span><span class="tok-nf">val</span><span class="tok-p">)</span> <span class="tok-p">{</span> <span class="tok-nv">return</span> <span class="tok-nb">val + </span><span class="tok-s">" mapped!"</span><span class="tok-p">})</span>
+<span class="tok-p">)</span><span class="tok-c1">;</span>
+
+<span class="tok-nv">//</span> <span class="tok-nv">=&gt;</span> <span class="tok-s">"first mapped!"</span>
+</code></pre></div></div>
+
+      <p class="Body"><span>So here’s the cool thing: because </span><code>map</code><span> is implemented completely in terms of </span><code>cons</code><span>, </span><code>first</code><span>, and </span><code>rest</code><span>, you could actually pass it any data structure a</span>nd it would work as long as <code>cons</code>, <code>first</code>, and <code>rest</code> work on that data structure. </p>
+      <p class="Body">Here’s how they might work for an array:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-k">var </span><span class="tok-nb">first = </span><span class="tok-nv">function</span> <span class="tok-p">(</span><span class="tok-nf">array</span><span class="tok-p">)</span> <span class="tok-p">{</span>
+  <span class="tok-nv">return</span> <span class="tok-nv">array</span><span class="tok-p">[</span><span class="tok-mi">0</span><span class="tok-p">]</span><span class="tok-c1">;</span>
+<span class="tok-p">}</span>
+
+<span class="tok-k">var </span><span class="tok-nb">rest = </span><span class="tok-nv">function</span> <span class="tok-p">(</span><span class="tok-nf">array</span><span class="tok-p">)</span> <span class="tok-p">{</span>
+  <span class="tok-k">var </span><span class="tok-nv">sliced</span> <span class="tok-nb">= </span><span class="tok-nv">array.slice</span><span class="tok-p">(</span><span class="tok-mi">1</span>, <span class="tok-nv">array.length</span><span class="tok-p">)</span><span class="tok-c1">;</span>
+  <span class="tok-k">if </span><span class="tok-p">(</span><span class="tok-nf">sliced.length</span> <span class="tok-nb">== </span><span class="tok-mi">0</span><span class="tok-p">)</span> <span class="tok-p">{</span>
+    <span class="tok-nv">return</span> <span class="tok-nv">null</span><span class="tok-c1">;</span>
+  <span class="tok-p">}</span> <span class="tok-nv">else</span> <span class="tok-p">{</span>
+    <span class="tok-nv">return</span> <span class="tok-nv">sliced</span><span class="tok-c1">;</span>
+  <span class="tok-p">}</span>
+<span class="tok-p">}</span>
+
+<span class="tok-k">var </span><span class="tok-nb">cons = </span><span class="tok-nv">function</span> <span class="tok-p">(</span><span class="tok-nf">newValue</span>, <span class="tok-nv">array</span><span class="tok-p">)</span> <span class="tok-p">{</span>
+  <span class="tok-nv">return</span> <span class="tok-p">[</span><span class="tok-nv">newValue</span><span class="tok-p">]</span><span class="tok-nv">.concat</span><span class="tok-p">(</span><span class="tok-nf">array</span><span class="tok-p">)</span><span class="tok-c1">;</span>
+<span class="tok-p">}</span>
+
+
+<span class="tok-k">var </span><span class="tok-nb">list = </span><span class="tok-p">[</span><span class="tok-s">"Transylvania"</span>, <span class="tok-s">"Forks, WA"</span><span class="tok-p">]</span><span class="tok-c1">;</span>
+<span class="tok-nv">map</span><span class="tok-p">(</span><span class="tok-nf">list</span>, <span class="tok-nv">function</span> <span class="tok-p">(</span><span class="tok-nf">val</span><span class="tok-p">)</span> <span class="tok-p">{</span> <span class="tok-nv">return</span> <span class="tok-nb">val + </span><span class="tok-s">" mapped!"</span><span class="tok-p">})</span>
+<span class="tok-nv">//</span> <span class="tok-nv">=&gt;</span> <span class="tok-p">[</span><span class="tok-s">"Transylvania mapped!"</span>, <span class="tok-s">"Forks, WA mapped!"</span><span class="tok-p">]</span>
+</code></pre></div></div>
+
+      <p class="Body">This code snippet defines <code>first</code>, <code>rest</code>, and <code>cons</code> in terms of JavaScript’s array functions. Meanwhile, <code>map</code> continues referencing functions named <code>first</code>, <code>rest</code>, and <code>cons</code>, so now it works on <code>array</code>. So, if you can just implement <code>first</code>, <code>rest</code>, and <code>cons</code>, you get <code>map</code> for free along with the aforementioned oodles of other functions.</p>
+      <h3 id="Abstraction_Through_Indirection">Abstraction Through Indirection</h3>
+      <p class="BodyFirst">At this point, you might object that I’m just kicking the can down the road because we’re still left with the problem of how a function like <code>first</code> is able to work with different data structures. Clojure does this using two forms of <span>indirection. In programming, </span><em>indirection</em><span> is a generic term for the mechanisms </span>a language employs so that one name can have multiple, related meanings. In this case, the name <code>first</code> has multiple, data structure–<span>specific</span> meanings. Indirection is what makes abstraction possible.</p>
+      <p class="Body"><em>Polymorphism</em> is one way that Clojure provides indirection. I don’t want to get lost in the details, but basically, polymorphic functions dispatch to different function bodies based on the type of the argument supplied. (It’s <span>not so different from how multiple-arity functions dispatch to different </span>function bodies based on the number of arguments you provide.)</p>
+      <p class="Note"><span class="Note-Head">Note</span>	Clojure has two constructs for defining polymorphic dispatch: the host platform’s <span class="EmphasisNote">interface</span> construct and platform-independent <span class="EmphasisNote">protocols</span>. But it’s not necessary to understand how these work when you’re just getting started. I’ll cover protocols in Chapter 13.</p>
+      <p class="Body">When it comes to sequences, Clojure also creates indirection by doing a kind of lightweight type conversion, producing a data structure that works with an abstraction’s functions. Whenever Clojure expects a sequence—for <span>example, when you call </span><code>map</code><span>, </span><code>first</code><span>, </span><code>rest</code><span>, or </span><code>cons</code><span>—it calls the </span><code>seq</code><span> function </span>on the data structure in question to obtain a data structure that allows for <code>first</code>, <code>rest</code>, and <code>cons</code>:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-nb">seq </span><span class="tok-o">'</span><span class="tok-p">(</span><span class="tok-mi">1</span> <span class="tok-mi">2</span> <span class="tok-mi">3</span><span class="tok-p">))</span>
+<span class="tok-c1">; =&gt; (1 2 3)</span>
+
+<span class="tok-p">(</span><span class="tok-nb">seq </span><span class="tok-p">[</span><span class="tok-mi">1</span> <span class="tok-mi">2</span> <span class="tok-mi">3</span><span class="tok-p">])</span>
+<span class="tok-c1">; =&gt; (1 2 3)</span>
+
+<span class="tok-p">(</span><span class="tok-nb">seq </span><span class="tok-o">#</span><span class="tok-p">{</span><span class="tok-mi">1</span> <span class="tok-mi">2</span> <span class="tok-mi">3</span><span class="tok-p">})</span>
+<span class="tok-c1">; =&gt; (1 2 3)</span>
+
+<span class="tok-p">(</span><span class="tok-nb">seq </span><span class="tok-p">{</span><span class="tok-ss">:name</span> <span class="tok-s">"Bill Compton"</span> <span class="tok-ss">:occupation</span> <span class="tok-s">"Dead mopey guy"</span><span class="tok-p">})</span>
+<span class="tok-c1">; =&gt; ([:name "Bill Compton"] [:occupation "Dead mopey guy"])</span>
+</code></pre></div></div>
+
+      <p class="Body"><span>There are two notable details here. First, </span><code>seq</code><span> always returns a value that looks and behaves like a list; you’d call this value a </span><em>sequence</em><span> or </span><em>seq</em><span>. </span>Second, the seq of a map consists of two-element key-value vectors. That’s why <code>map</code> treats your maps like lists of vectors! You can see this in the <code>"Bill Compton"</code> example. I wanted to point out this example in particular because<span> it might be surprising and confusing. It was for me when I first started </span>using Clojure. Knowing these underlying mechanisms will spare you from <span>the kind of frustration and general mopiness often exhibited by male vampires trying to retain their humanity.</span></p>
+      <p class="Body">You can convert the seq back into a map by using <code>into</code> to stick the result into an empty map (you’ll look at <code>into</code> closely later):</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-nb">into </span><span class="tok-p">{}</span> <span class="tok-p">(</span><span class="tok-nb">seq </span><span class="tok-p">{</span><span class="tok-ss">:a</span> <span class="tok-mi">1</span> <span class="tok-ss">:b</span> <span class="tok-mi">2</span> <span class="tok-ss">:c</span> <span class="tok-mi">3</span><span class="tok-p">}))</span>
+<span class="tok-c1">; =&gt; {:a 1, :c 3, :b 2}</span>
+</code></pre></div></div>
+
+      <p class="Body"><span>So, Clojure’s sequence functions use </span><code>seq</code><span> on their arguments. The sequence functions are defined in terms of the sequence abstraction, using </span><code>first</code><span>, </span><code>rest</code><span>, and </span><code>cons</code><span>. As long as a data structure implements the sequence abstraction, it can use the extensive seq library, which includes such superstar functions as </span><code>reduce</code><span>, </span><code>filter</code><span>, </span><code>distinct</code><span>, </span><code>group-by</code><span>, and dozens more. </span></p>
+      <p class="Body"><span>The takeaway here is that it’s powerful to focus on what we can </span><em>do</em><span> with </span><span>a data structure and to ignore, as much as possible, its implementation. </span><span>Implementations rarely matter in and of themselves. They’re just a means to </span>an end. In general, programming to abstractions gives you power by letting you use libraries of functions on different data structure regardless of how those data structures are implemented.</p>
+      <h2 id="Seq_Function_Examples">Seq Function Examples</h2>
+      <p class="BodyFirst">Clojure’s seq library is full of useful functions that you’ll use all the time. <span>Now that you have a deeper understanding of Clojure’s sequence abstraction,</span> let’s look at these functions in detail. If you’re new to Lisp and functional programming, these examples will be surprising and delightful.</p>
+      <h3 id="map">map</h3>
+      <p class="BodyFirst">You’ve seen many examples of <code>map</code> by now, but this section shows <code>map</code> doing two new tasks: taking multiple collections as arguments and taking a collection of functions as an argument. It also highlights a common <code>map</code> pattern: using keywords as the mapping function.</p>
+      <p class="Body">So far, you’ve only seen examples of <code>map</code> operating on one collection. In the following code, the collection is the vector <code>[1 2 3]</code>:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-nb">map inc </span><span class="tok-p">[</span><span class="tok-mi">1</span> <span class="tok-mi">2</span> <span class="tok-mi">3</span><span class="tok-p">])</span>
+<span class="tok-c1">; =&gt; (2 3 4)</span>
+</code></pre></div></div>
+
+      <p class="Body">However, you can also give <code>map</code> multiple collections. Here’s a simple example to show how this works:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-nb">map str </span><span class="tok-p">[</span><span class="tok-s">"a"</span> <span class="tok-s">"b"</span> <span class="tok-s">"c"</span><span class="tok-p">]</span> <span class="tok-p">[</span><span class="tok-s">"A"</span> <span class="tok-s">"B"</span> <span class="tok-s">"C"</span><span class="tok-p">])</span>
+<span class="tok-c1">; =&gt; ("aA" "bB" "cC")</span>
+</code></pre></div></div>
+
+      <p class="Body">It’s as if <code>map</code> does the following:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-nb">list </span><span class="tok-p">(</span><span class="tok-nb">str </span><span class="tok-s">"a"</span> <span class="tok-s">"A"</span><span class="tok-p">)</span> <span class="tok-p">(</span><span class="tok-nb">str </span><span class="tok-s">"b"</span> <span class="tok-s">"B"</span><span class="tok-p">)</span> <span class="tok-p">(</span><span class="tok-nb">str </span><span class="tok-s">"c"</span> <span class="tok-s">"C"</span><span class="tok-p">))</span>
+</code></pre></div></div>
+
+      <img src="/assets/images/cftbat/core-functions-in-depth/vampire-diary.png" class="right">
+      <p class="Body">When you pass <code>map</code> multiple collections, the elements of the first collection (<code>["a" "b" "c"]</code>) will be passed as the first argument of the mapping function (<code>str</code>), the elements of the second collection (<code>["A" "B" "C"]</code>) will be passed as the second argument, and so on. Just be sure that your mapping function can take a number of arguments equal to the number of collections you’re passing to <code>map</code>.</p>
+      <p class="Body">The following example shows how you could use this capability if you were a vampire trying to curb your human consumption. You have two vec<span>tors, one representing human intake in liters and another representing </span><span>critter</span><span> intake for the past four days. The </span><code>unify-diet-data</code><span> function takes a single day’s data for both human and critter feeding and unifies the two </span>into a single map:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-k">def </span><span class="tok-nv">human-consumption</span>   <span class="tok-p">[</span><span class="tok-mf">8.1</span> <span class="tok-mf">7.3</span> <span class="tok-mf">6.6</span> <span class="tok-mf">5.0</span><span class="tok-p">])</span>
+<span class="tok-p">(</span><span class="tok-k">def </span><span class="tok-nv">critter-consumption</span> <span class="tok-p">[</span><span class="tok-mf">0.0</span> <span class="tok-mf">0.2</span> <span class="tok-mf">0.3</span> <span class="tok-mf">1.1</span><span class="tok-p">])</span>
+<span class="tok-p">(</span><span class="tok-kd">defn </span><span class="tok-nv">unify-diet-data</span>
+  <span class="tok-p">[</span><span class="tok-nv">human</span> <span class="tok-nv">critter</span><span class="tok-p">]</span>
+  <span class="tok-p">{</span><span class="tok-ss">:human</span> <span class="tok-nv">human</span>
+   <span class="tok-ss">:critter</span> <span class="tok-nv">critter</span><span class="tok-p">})</span>
+
+<span class="tok-p">(</span><span class="tok-nb">map </span><span class="tok-nv">unify-diet-data</span> <span class="tok-nv">human-consumption</span> <span class="tok-nv">critter-consumption</span><span class="tok-p">)</span>
+<span class="tok-c1">; =&gt; ({:human 8.1, :critter 0.0}</span>
+      <span class="tok-p">{</span><span class="tok-ss">:human</span> <span class="tok-mf">7.3</span>, <span class="tok-ss">:critter</span> <span class="tok-mf">0.2</span><span class="tok-p">}</span>
+      <span class="tok-p">{</span><span class="tok-ss">:human</span> <span class="tok-mf">6.6</span>, <span class="tok-ss">:critter</span> <span class="tok-mf">0.3</span><span class="tok-p">}</span>
+      <span class="tok-p">{</span><span class="tok-ss">:human</span> <span class="tok-mf">5.0</span>, <span class="tok-ss">:critter</span> <span class="tok-mf">1.1</span><span class="tok-p">})</span>
+</code></pre></div></div>
+
+      <p class="Body">Good job laying off the human!</p>
+      <p class="Body">Another fun thing you can do with <code>map</code> is pass it a collection of functions. You could use this if you wanted to perform a set of calculations on different collections of numbers, like so:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-k">def </span><span class="tok-nv">sum</span> <span class="tok-o">#</span><span class="tok-p">(</span><span class="tok-nb">reduce + </span><span class="tok-nv">%</span><span class="tok-p">))</span>
+<span class="tok-p">(</span><span class="tok-k">def </span><span class="tok-nv">avg</span> <span class="tok-o">#</span><span class="tok-p">(</span><span class="tok-nb">/ </span><span class="tok-p">(</span><span class="tok-nf">sum</span> <span class="tok-nv">%</span><span class="tok-p">)</span> <span class="tok-p">(</span><span class="tok-nb">count </span><span class="tok-nv">%</span><span class="tok-p">)))</span>
+<span class="tok-p">(</span><span class="tok-kd">defn </span><span class="tok-nv">stats</span>
+  <span class="tok-p">[</span><span class="tok-nv">numbers</span><span class="tok-p">]</span>
+  <span class="tok-p">(</span><span class="tok-nb">map </span><span class="tok-o">#</span><span class="tok-p">(</span><span class="tok-nf">%</span> <span class="tok-nv">numbers</span><span class="tok-p">)</span> <span class="tok-p">[</span><span class="tok-nv">sum</span> <span class="tok-nb">count </span><span class="tok-nv">avg</span><span class="tok-p">]))</span>
+
+<span class="tok-p">(</span><span class="tok-nf">stats</span> <span class="tok-p">[</span><span class="tok-mi">3</span> <span class="tok-mi">4</span> <span class="tok-mi">10</span><span class="tok-p">])</span>
+<span class="tok-c1">; =&gt; (17 3 17/3)</span>
+
+<span class="tok-p">(</span><span class="tok-nf">stats</span> <span class="tok-p">[</span><span class="tok-mi">80</span> <span class="tok-mi">1</span> <span class="tok-mi">44</span> <span class="tok-mi">13</span> <span class="tok-mi">6</span><span class="tok-p">])</span>
+<span class="tok-c1">; =&gt; (144 5 144/5)</span>
+</code></pre></div></div>
+
+      <p class="Body">In this example, the <code>stats</code> function iterates over a vector of functions, applying each function to <code>numbers</code>.</p>
+      <p class="Body">Additionally, Clojurists often use <code>map</code> to retrieve the value associated with a keyword from a collection of map data structures. Because keywords can be used as functions, you can do this succinctly. Here’s an example:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-k">def </span><span class="tok-nv">identities</span>
+  <span class="tok-p">[{</span><span class="tok-ss">:alias</span> <span class="tok-s">"Batman"</span> <span class="tok-ss">:real</span> <span class="tok-s">"Bruce Wayne"</span><span class="tok-p">}</span>
+   <span class="tok-p">{</span><span class="tok-ss">:alias</span> <span class="tok-s">"Spider-Man"</span> <span class="tok-ss">:real</span> <span class="tok-s">"Peter Parker"</span><span class="tok-p">}</span>
+   <span class="tok-p">{</span><span class="tok-ss">:alias</span> <span class="tok-s">"Santa"</span> <span class="tok-ss">:real</span> <span class="tok-s">"Your mom"</span><span class="tok-p">}</span>
+   <span class="tok-p">{</span><span class="tok-ss">:alias</span> <span class="tok-s">"Easter Bunny"</span> <span class="tok-ss">:real</span> <span class="tok-s">"Your dad"</span><span class="tok-p">}])</span>
+
+<span class="tok-p">(</span><span class="tok-nb">map </span><span class="tok-ss">:real</span> <span class="tok-nv">identities</span><span class="tok-p">)</span>
+<span class="tok-c1">; =&gt; ("Bruce Wayne" "Peter Parker" "Your mom" "Your dad")</span>
+</code></pre></div></div>
+
+      <p class="Body">(If you are five, then I apologize profusely.)</p>
+      <h3 id="reduce">
+<a id="Anchor"></a>reduce</h3>
+      <p class="BodyFirst">Chapter 3 showed how <code>reduce</code> processes each element in a sequence to build a result. This section shows a couple of other ways to use it that might not be obvious.</p>
+      <p class="Body">The first use is to transform a map’s values, producing a new map with the same keys but with updated values:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-nb">reduce </span><span class="tok-p">(</span><span class="tok-k">fn </span><span class="tok-p">[</span><span class="tok-nv">new-map</span> <span class="tok-p">[</span><span class="tok-nb">key </span><span class="tok-nv">val</span><span class="tok-p">]]</span>
+          <span class="tok-p">(</span><span class="tok-nb">assoc </span><span class="tok-nv">new-map</span> <span class="tok-nb">key </span><span class="tok-p">(</span><span class="tok-nb">inc </span><span class="tok-nv">val</span><span class="tok-p">)))</span>
+        <span class="tok-p">{}</span>
+        <span class="tok-p">{</span><span class="tok-ss">:max</span> <span class="tok-mi">30</span> <span class="tok-ss">:min</span> <span class="tok-mi">10</span><span class="tok-p">})</span>
+<span class="tok-c1">; =&gt; {:max 31, :min 11}</span>
+</code></pre></div></div>
+
+      <p class="Body"><span>In this example, </span><code>reduce</code><span> treats the argument </span><code>{:max 30 :min 10}</code><span> as a </span><span>sequence of vectors, like </span><code>([:max 30] [:min 10])</code><span>. Then, it starts with an empty </span>map (the second argument) and builds<em> </em>it<em> </em>up using the first argument, an anonymous function. It’s as if <code>reduce</code> does this:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-nb">assoc </span><span class="tok-p">(</span><span class="tok-nb">assoc </span><span class="tok-p">{}</span> <span class="tok-ss">:max</span> <span class="tok-p">(</span><span class="tok-nb">inc </span><span class="tok-mi">30</span><span class="tok-p">))</span>
+       <span class="tok-ss">:min</span> <span class="tok-p">(</span><span class="tok-nb">inc </span><span class="tok-mi">10</span><span class="tok-p">))</span>
+</code></pre></div></div>
+
+      <p class="Body">The function <code>assoc</code> takes three arguments: a map, a key, and a value. It derives a new map from the map you give it by <em>associating</em> the given key with the given value. For example, <code>(assoc {:a 1} :b 2)</code> would return <code>{:a 1 :b 2}</code></p>
+
+      <p class="Body"><span>Another use for </span><code>reduce</code><span> is to filter out keys from a map based on their value. In the following example, the anonymous function checks whether the value of a key-value pair is greather than 4. If it isn’t, then the key-value pair is filtered out. In the map </span><code>{:human 4.1 :critter 3.9}</code><span>, 3.9 is less than 4, so the </span><code>:critter</code><span> key and its 3.9 value are filtered out.</span></p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-nb">reduce </span><span class="tok-p">(</span><span class="tok-k">fn </span><span class="tok-p">[</span><span class="tok-nv">new-map</span> <span class="tok-p">[</span><span class="tok-nb">key </span><span class="tok-nv">val</span><span class="tok-p">]]</span>
+          <span class="tok-p">(</span><span class="tok-k">if </span><span class="tok-p">(</span><span class="tok-nb">&gt; val </span><span class="tok-mi">4</span><span class="tok-p">)</span>
+            <span class="tok-p">(</span><span class="tok-nb">assoc </span><span class="tok-nv">new-map</span> <span class="tok-nb">key </span><span class="tok-nv">val</span><span class="tok-p">)</span>
+            <span class="tok-nv">new-map</span><span class="tok-p">))</span>
+        <span class="tok-p">{}</span>
+        <span class="tok-p">{</span><span class="tok-ss">:human</span> <span class="tok-mf">4.1</span>
+         <span class="tok-ss">:critter</span> <span class="tok-mf">3.9</span><span class="tok-p">})</span>
+<span class="tok-c1">; =&gt; {:human 4.1}</span>
+</code></pre></div></div>
+
+      <p class="Body"><span>The takeaway here is that </span><code>reduce</code><span> is a more flexible function than it first </span><span>appears. Whenever you want to derive a new value from a seqable data structure, </span><code>reduce</code><span> will usually be able to do what you need. If you want an exercise that will really blow your hair back, try implementing </span><code>map</code><span> using </span><code>reduce</code>, and then do the same for <code>filter</code> and <code>some</code> after you read about them later in this chapter.</p>
+      <h3 id="take__drop__take_while__and_drop_while">take, drop, take-while, and drop-while</h3>
+      <p class="BodyFirst"><code>take</code><span> and </span><code>drop</code><span> both take two arguments: a number and a sequence. </span><code>take</code><span> returns the first </span><span class="LiteralItal">n</span><span> elements of the sequence, whereas </span><code>drop</code><span> returns the </span>sequence with the first <span class="LiteralItal">n</span> elements removed:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-nb">take </span><span class="tok-mi">3</span> <span class="tok-p">[</span><span class="tok-mi">1</span> <span class="tok-mi">2</span> <span class="tok-mi">3</span> <span class="tok-mi">4</span> <span class="tok-mi">5</span> <span class="tok-mi">6</span> <span class="tok-mi">7</span> <span class="tok-mi">8</span> <span class="tok-mi">9</span> <span class="tok-mi">10</span><span class="tok-p">])</span>
+<span class="tok-c1">; =&gt; (1 2 3)</span>
+
+<span class="tok-p">(</span><span class="tok-nb">drop </span><span class="tok-mi">3</span> <span class="tok-p">[</span><span class="tok-mi">1</span> <span class="tok-mi">2</span> <span class="tok-mi">3</span> <span class="tok-mi">4</span> <span class="tok-mi">5</span> <span class="tok-mi">6</span> <span class="tok-mi">7</span> <span class="tok-mi">8</span> <span class="tok-mi">9</span> <span class="tok-mi">10</span><span class="tok-p">])</span>
+<span class="tok-c1">; =&gt; (4 5 6 7 8 9 10)</span>
+</code></pre></div></div>
+
+      <p class="Body"><span>Their cousins </span><code>take-while</code><span> and </span><code>drop-while</code><span> are a bit more interesting. </span>Each takes a <em>predicate function</em> (a function whose return value is evaluated for truth or falsity) to determine when it should stop taking or dropping. Suppose, for example, that you had a vector representing entries in your<em> </em>“food” journal. Each entry has the month and day, along with what you ate. To preserve space, we’ll only include a few entries:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-k">def </span><span class="tok-nv">food-journal</span>
+  <span class="tok-p">[{</span><span class="tok-ss">:month</span> <span class="tok-mi">1</span> <span class="tok-ss">:day</span> <span class="tok-mi">1</span> <span class="tok-ss">:human</span> <span class="tok-mf">5.3</span> <span class="tok-ss">:critter</span> <span class="tok-mf">2.3</span><span class="tok-p">}</span>
+   <span class="tok-p">{</span><span class="tok-ss">:month</span> <span class="tok-mi">1</span> <span class="tok-ss">:day</span> <span class="tok-mi">2</span> <span class="tok-ss">:human</span> <span class="tok-mf">5.1</span> <span class="tok-ss">:critter</span> <span class="tok-mf">2.0</span><span class="tok-p">}</span>
+   <span class="tok-p">{</span><span class="tok-ss">:month</span> <span class="tok-mi">2</span> <span class="tok-ss">:day</span> <span class="tok-mi">1</span> <span class="tok-ss">:human</span> <span class="tok-mf">4.9</span> <span class="tok-ss">:critter</span> <span class="tok-mf">2.1</span><span class="tok-p">}</span>
+   <span class="tok-p">{</span><span class="tok-ss">:month</span> <span class="tok-mi">2</span> <span class="tok-ss">:day</span> <span class="tok-mi">2</span> <span class="tok-ss">:human</span> <span class="tok-mf">5.0</span> <span class="tok-ss">:critter</span> <span class="tok-mf">2.5</span><span class="tok-p">}</span>
+   <span class="tok-p">{</span><span class="tok-ss">:month</span> <span class="tok-mi">3</span> <span class="tok-ss">:day</span> <span class="tok-mi">1</span> <span class="tok-ss">:human</span> <span class="tok-mf">4.2</span> <span class="tok-ss">:critter</span> <span class="tok-mf">3.3</span><span class="tok-p">}</span>
+   <span class="tok-p">{</span><span class="tok-ss">:month</span> <span class="tok-mi">3</span> <span class="tok-ss">:day</span> <span class="tok-mi">2</span> <span class="tok-ss">:human</span> <span class="tok-mf">4.0</span> <span class="tok-ss">:critter</span> <span class="tok-mf">3.8</span><span class="tok-p">}</span>
+   <span class="tok-p">{</span><span class="tok-ss">:month</span> <span class="tok-mi">4</span> <span class="tok-ss">:day</span> <span class="tok-mi">1</span> <span class="tok-ss">:human</span> <span class="tok-mf">3.7</span> <span class="tok-ss">:critter</span> <span class="tok-mf">3.9</span><span class="tok-p">}</span>
+   <span class="tok-p">{</span><span class="tok-ss">:month</span> <span class="tok-mi">4</span> <span class="tok-ss">:day</span> <span class="tok-mi">2</span> <span class="tok-ss">:human</span> <span class="tok-mf">3.7</span> <span class="tok-ss">:critter</span> <span class="tok-mf">3.6</span><span class="tok-p">}])</span>
+</code></pre></div></div>
+
+      <p class="Body"><span>With </span><code>take-while</code><span>, you can retrieve just January’s and February’s data. </span><code>take-while</code> traverses the given sequence (in this case, <code>food-journal</code>), applying the predicate function to each element.</p>
+      <p class="Body">This example uses the anonymous function <code>#(&lt; (:month %) 3)</code> to test whether the journal entry’s month is out of range:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-nb">take-while </span><span class="tok-o">#</span><span class="tok-p">(</span><span class="tok-nb">&lt; </span><span class="tok-p">(</span><span class="tok-ss">:month</span> <span class="tok-nv">%</span><span class="tok-p">)</span> <span class="tok-mi">3</span><span class="tok-p">)</span> <span class="tok-nv">food-journal</span><span class="tok-p">)</span>
+<span class="tok-c1">; =&gt; ({:month 1 :day 1 :human 5.3 :critter 2.3}</span>
+      <span class="tok-p">{</span><span class="tok-ss">:month</span> <span class="tok-mi">1</span> <span class="tok-ss">:day</span> <span class="tok-mi">2</span> <span class="tok-ss">:human</span> <span class="tok-mf">5.1</span> <span class="tok-ss">:critter</span> <span class="tok-mf">2.0</span><span class="tok-p">}</span>
+      <span class="tok-p">{</span><span class="tok-ss">:month</span> <span class="tok-mi">2</span> <span class="tok-ss">:day</span> <span class="tok-mi">1</span> <span class="tok-ss">:human</span> <span class="tok-mf">4.9</span> <span class="tok-ss">:critter</span> <span class="tok-mf">2.1</span><span class="tok-p">}</span>
+      <span class="tok-p">{</span><span class="tok-ss">:month</span> <span class="tok-mi">2</span> <span class="tok-ss">:day</span> <span class="tok-mi">2</span> <span class="tok-ss">:human</span> <span class="tok-mf">5.0</span> <span class="tok-ss">:critter</span> <span class="tok-mf">2.5</span><span class="tok-p">})</span>
+</code></pre></div></div>
+
+      <p class="Body">When <code>take-while</code> reaches the first March entry, the anonymous function returns <code>false</code>, and <code>take-while</code> returns a sequence of every element it tested until that point.</p>
+      <p class="Body">The same idea applies with <code>drop-while</code> except that it keeps dropping elements until one tests true:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-nb">drop-while </span><span class="tok-o">#</span><span class="tok-p">(</span><span class="tok-nb">&lt; </span><span class="tok-p">(</span><span class="tok-ss">:month</span> <span class="tok-nv">%</span><span class="tok-p">)</span> <span class="tok-mi">3</span><span class="tok-p">)</span> <span class="tok-nv">food-journal</span><span class="tok-p">)</span>
+<span class="tok-c1">; =&gt; ({:month 3 :day 1 :human 4.2 :critter 3.3}</span>
+      <span class="tok-p">{</span><span class="tok-ss">:month</span> <span class="tok-mi">3</span> <span class="tok-ss">:day</span> <span class="tok-mi">2</span> <span class="tok-ss">:human</span> <span class="tok-mf">4.0</span> <span class="tok-ss">:critter</span> <span class="tok-mf">3.8</span><span class="tok-p">}</span>
+      <span class="tok-p">{</span><span class="tok-ss">:month</span> <span class="tok-mi">4</span> <span class="tok-ss">:day</span> <span class="tok-mi">1</span> <span class="tok-ss">:human</span> <span class="tok-mf">3.7</span> <span class="tok-ss">:critter</span> <span class="tok-mf">3.9</span><span class="tok-p">}</span>
+      <span class="tok-p">{</span><span class="tok-ss">:month</span> <span class="tok-mi">4</span> <span class="tok-ss">:day</span> <span class="tok-mi">2</span> <span class="tok-ss">:human</span> <span class="tok-mf">3.7</span> <span class="tok-ss">:critter</span> <span class="tok-mf">3.6</span><span class="tok-p">})</span>
+</code></pre></div></div>
+
+      <p class="Body">By using <code>take-while</code> and <code>drop-while</code> together, you can get data for just February and March:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-nb">take-while </span><span class="tok-o">#</span><span class="tok-p">(</span><span class="tok-nb">&lt; </span><span class="tok-p">(</span><span class="tok-ss">:month</span> <span class="tok-nv">%</span><span class="tok-p">)</span> <span class="tok-mi">4</span><span class="tok-p">)</span>
+            <span class="tok-p">(</span><span class="tok-nb">drop-while </span><span class="tok-o">#</span><span class="tok-p">(</span><span class="tok-nb">&lt; </span><span class="tok-p">(</span><span class="tok-ss">:month</span> <span class="tok-nv">%</span><span class="tok-p">)</span> <span class="tok-mi">2</span><span class="tok-p">)</span> <span class="tok-nv">food-journal</span><span class="tok-p">))</span>
+<span class="tok-c1">; =&gt; ({:month 2 :day 1 :human 4.9 :critter 2.1}</span>
+      <span class="tok-p">{</span><span class="tok-ss">:month</span> <span class="tok-mi">2</span> <span class="tok-ss">:day</span> <span class="tok-mi">2</span> <span class="tok-ss">:human</span> <span class="tok-mf">5.0</span> <span class="tok-ss">:critter</span> <span class="tok-mf">2.5</span><span class="tok-p">}</span>
+      <span class="tok-p">{</span><span class="tok-ss">:month</span> <span class="tok-mi">3</span> <span class="tok-ss">:day</span> <span class="tok-mi">1</span> <span class="tok-ss">:human</span> <span class="tok-mf">4.2</span> <span class="tok-ss">:critter</span> <span class="tok-mf">3.3</span><span class="tok-p">}</span>
+      <span class="tok-p">{</span><span class="tok-ss">:month</span> <span class="tok-mi">3</span> <span class="tok-ss">:day</span> <span class="tok-mi">2</span> <span class="tok-ss">:human</span> <span class="tok-mf">4.0</span> <span class="tok-ss">:critter</span> <span class="tok-mf">3.8</span><span class="tok-p">})</span>
+</code></pre></div></div>
+
+      <p class="Body">This example uses <code>drop-while</code> to get rid of the January entries, and then it uses <code>take-while</code> on the result to keep taking entries until it reaches the first April entry.</p>
+      <h3 id="filter_and_some">filter and some</h3>
+      <p class="BodyFirst">Use <code>filter</code> to return all elements of a sequence that test true for a predicate function. Here are the journal entries where human consumption is less than five liters:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-nb">filter </span><span class="tok-o">#</span><span class="tok-p">(</span><span class="tok-nb">&lt; </span><span class="tok-p">(</span><span class="tok-ss">:human</span> <span class="tok-nv">%</span><span class="tok-p">)</span> <span class="tok-mi">5</span><span class="tok-p">)</span> <span class="tok-nv">food-journal</span><span class="tok-p">)</span>
+<span class="tok-c1">; =&gt; ({:month 2 :day 1 :human 4.9 :critter 2.1}</span>
+      <span class="tok-p">{</span><span class="tok-ss">:month</span> <span class="tok-mi">3</span> <span class="tok-ss">:day</span> <span class="tok-mi">1</span> <span class="tok-ss">:human</span> <span class="tok-mf">4.2</span> <span class="tok-ss">:critter</span> <span class="tok-mf">3.3</span><span class="tok-p">}</span>
+      <span class="tok-p">{</span><span class="tok-ss">:month</span> <span class="tok-mi">3</span> <span class="tok-ss">:day</span> <span class="tok-mi">2</span> <span class="tok-ss">:human</span> <span class="tok-mf">4.0</span> <span class="tok-ss">:critter</span> <span class="tok-mf">3.8</span><span class="tok-p">}</span>
+      <span class="tok-p">{</span><span class="tok-ss">:month</span> <span class="tok-mi">4</span> <span class="tok-ss">:day</span> <span class="tok-mi">1</span> <span class="tok-ss">:human</span> <span class="tok-mf">3.7</span> <span class="tok-ss">:critter</span> <span class="tok-mf">3.9</span><span class="tok-p">}</span>
+      <span class="tok-p">{</span><span class="tok-ss">:month</span> <span class="tok-mi">4</span> <span class="tok-ss">:day</span> <span class="tok-mi">2</span> <span class="tok-ss">:human</span> <span class="tok-mf">3.7</span> <span class="tok-ss">:critter</span> <span class="tok-mf">3.6</span><span class="tok-p">})</span>
+</code></pre></div></div>
+
+      <p class="Body">You might be wondering why we didn’t just use <code>filter</code> in the <code>take-while</code> and <code>drop-while</code> examples earlier. Indeed, <code>filter</code> would work for that too. Here we’re grabbing the January and February data, just like in the <code>take-while</code> example:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-nb">filter </span><span class="tok-o">#</span><span class="tok-p">(</span><span class="tok-nb">&lt; </span><span class="tok-p">(</span><span class="tok-ss">:month</span> <span class="tok-nv">%</span><span class="tok-p">)</span> <span class="tok-mi">3</span><span class="tok-p">)</span> <span class="tok-nv">food-journal</span><span class="tok-p">)</span>
+<span class="tok-c1">; =&gt; ({:month 1 :day 1 :human 5.3 :critter 2.3}</span>
+      <span class="tok-p">{</span><span class="tok-ss">:month</span> <span class="tok-mi">1</span> <span class="tok-ss">:day</span> <span class="tok-mi">2</span> <span class="tok-ss">:human</span> <span class="tok-mf">5.1</span> <span class="tok-ss">:critter</span> <span class="tok-mf">2.0</span><span class="tok-p">}</span>
+      <span class="tok-p">{</span><span class="tok-ss">:month</span> <span class="tok-mi">2</span> <span class="tok-ss">:day</span> <span class="tok-mi">1</span> <span class="tok-ss">:human</span> <span class="tok-mf">4.9</span> <span class="tok-ss">:critter</span> <span class="tok-mf">2.1</span><span class="tok-p">}</span>
+      <span class="tok-p">{</span><span class="tok-ss">:month</span> <span class="tok-mi">2</span> <span class="tok-ss">:day</span> <span class="tok-mi">2</span> <span class="tok-ss">:human</span> <span class="tok-mf">5.0</span> <span class="tok-ss">:critter</span> <span class="tok-mf">2.5</span><span class="tok-p">})</span>
+</code></pre></div></div>
+
+      <p class="Body">This use is perfectly fine, but <code>filter</code> can end up processing all of your <span>data, which isn’t always necessary. Because the food journal is already </span><span>sorted by date, we know that </span><code>take-while</code><span> will return the data we want without having to examine any of the data we won’t need. Therefore, </span><code>take-while</code><span> can </span>be more efficient.</p>
+      <p class="Body">Often, you want to know whether a collection contains any values that test true for a predicate function. The <code>some</code> function does that, returning the first truthy value (any value that’s not <code>false</code> or <code>nil</code>) returned by a predicate function:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-nb">some </span><span class="tok-o">#</span><span class="tok-p">(</span><span class="tok-nb">&gt; </span><span class="tok-p">(</span><span class="tok-ss">:critter</span> <span class="tok-nv">%</span><span class="tok-p">)</span> <span class="tok-mi">5</span><span class="tok-p">)</span> <span class="tok-nv">food-journal</span><span class="tok-p">)</span>
+<span class="tok-c1">; =&gt; nil</span>
+
+<span class="tok-p">(</span><span class="tok-nb">some </span><span class="tok-o">#</span><span class="tok-p">(</span><span class="tok-nb">&gt; </span><span class="tok-p">(</span><span class="tok-ss">:critter</span> <span class="tok-nv">%</span><span class="tok-p">)</span> <span class="tok-mi">3</span><span class="tok-p">)</span> <span class="tok-nv">food-journal</span><span class="tok-p">)</span>
+<span class="tok-c1">; =&gt; true</span>
+</code></pre></div></div>
+
+      <p class="Body">You don’t have any food journal entries where you consumed more than five liters from critter sources, but you do have at least one where you consumed more than three liters. Notice that the return value in the second example is <code>true</code> and not the actual entry that produced the true value. The reason is that the anonymous function <code>#(&gt; (:critter %) 3)</code> returns <code>true</code> or <code>false</code>. Here’s how you could return the entry:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-nb">some </span><span class="tok-o">#</span><span class="tok-p">(</span><span class="tok-nb">and </span><span class="tok-p">(</span><span class="tok-nb">&gt; </span><span class="tok-p">(</span><span class="tok-ss">:critter</span> <span class="tok-nv">%</span><span class="tok-p">)</span> <span class="tok-mi">3</span><span class="tok-p">)</span> <span class="tok-nv">%</span><span class="tok-p">)</span> <span class="tok-nv">food-journal</span><span class="tok-p">)</span>
+<span class="tok-c1">; =&gt; {:month 3 :day 1 :human 4.2 :critter 3.3}</span>
+</code></pre></div></div>
+
+      <p class="Body">Here, a slightly different anonymous function uses <code>and</code> to first check whether the condition <code>(&gt; (:critter %) 3)</code> is true, and then returns the entry when the condition is indeed true.</p>
+      <h3 id="sort_and_sort_by">sort and sort-by</h3>
+      <p class="BodyFirst">You can sort elements in ascending order with <code>sort</code>:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-nb">sort </span><span class="tok-p">[</span><span class="tok-mi">3</span> <span class="tok-mi">1</span> <span class="tok-mi">2</span><span class="tok-p">])</span>
+<span class="tok-c1">; =&gt; (1 2 3)</span>
+</code></pre></div></div>
+
+      <p class="Body"><span>If your sorting needs are more complicated, you can use </span><code>sort-by</code><span>, which </span>allows you to apply a function (sometimes called a <em>key function</em>) to the ele<span>ments of a sequence and use the values it returns to determine the sort </span>order. In the following example, which is taken from <em><a href="http://clojuredocs.org/">http://clojuredocs.org/</a></em>, <code>count</code> is the key function:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-nb">sort-by count </span><span class="tok-p">[</span><span class="tok-s">"aaa"</span> <span class="tok-s">"c"</span> <span class="tok-s">"bb"</span><span class="tok-p">])</span>
+<span class="tok-c1">; =&gt; ("c" "bb" "aaa")</span>
+</code></pre></div></div>
+
+      <p class="Body"><span>If you were sorting using </span><code>sort</code><span>, the elements would be sorted in alphabetical order, returning </span><code>("aaa" "bb" "c")</code><span>. Instead, the result is </span><code>("c" "bb" "aaa")</code><span> because you’re sorting by </span><code>count</code><span> and the count of </span><code>"c"</code><span> is 1, </span><code>"bb"</code><span> is 2, and </span><code>"aaa"</code><span> is 3.</span></p>
+      <h3 id="concat">concat</h3>
+      <p class="BodyFirst">Finally, <code>concat</code> simply appends the members of one sequence to the end of another:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-nb">concat </span><span class="tok-p">[</span><span class="tok-mi">1</span> <span class="tok-mi">2</span><span class="tok-p">]</span> <span class="tok-p">[</span><span class="tok-mi">3</span> <span class="tok-mi">4</span><span class="tok-p">])</span>
+<span class="tok-c1">; =&gt; (1 2 3 4)</span>
+</code></pre></div></div>
+
+      <h2 id="Lazy_Seqs">Lazy Seqs</h2>
+      <p class="BodyFirst">As you saw earlier, <code>map</code> first calls <code>seq</code> on the collection you pass to it. But that’s not the whole story. Many functions, including <code>map</code> and <code>filter</code>, return <span>a </span><em>lazy seq</em><span>. A lazy seq is a seq whose members aren’t computed until you </span>try to access them. Computing a seq’s members is called <em>realizing</em> the seq. Deferring the computation until the moment it’s needed makes your programs more efficient, and it has the surprising benefit of allowing you to construct infinite sequences.</p>
+      <h3 id="Demonstrating_Lazy_Seq_Efficiency">Demonstrating Lazy Seq Efficiency</h3>
+      <p class="BodyFirst">To see lazy seqs in action, pretend that you’re part of a modern-day task force whose purpose is to identify vampires. Your intelligence agents tell you that there is only one active vampire in your city, and they’ve helpfully narrowed down the list of suspects to a million people. Your boss gives you a list of one million Social Security numbers and shouts, “Get it done, McFishwich!”</p>
+      <p class="Body"><span>Thankfully, you are in possession of a Vampmatic 3000 computifier, the </span>state-of-the-art device for vampire identification. Because the source code for this <span>vampire-hunting technology is proprietary, I’ve stubbed it out to simulate the time it would take to perform this task. Here is</span> a subset of a vampire database: </p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-k">def </span><span class="tok-nv">vampire-database</span>
+  <span class="tok-p">{</span><span class="tok-mi">0</span> <span class="tok-p">{</span><span class="tok-ss">:makes-blood-puns?</span> <span class="tok-nv">false</span>, <span class="tok-ss">:has-pulse?</span> <span class="tok-nv">true</span>  <span class="tok-ss">:name</span> <span class="tok-s">"McFishwich"</span><span class="tok-p">}</span>
+   <span class="tok-mi">1</span> <span class="tok-p">{</span><span class="tok-ss">:makes-blood-puns?</span> <span class="tok-nv">false</span>, <span class="tok-ss">:has-pulse?</span> <span class="tok-nv">true</span>  <span class="tok-ss">:name</span> <span class="tok-s">"McMackson"</span><span class="tok-p">}</span>
+   <span class="tok-mi">2</span> <span class="tok-p">{</span><span class="tok-ss">:makes-blood-puns?</span> <span class="tok-nv">true</span>,  <span class="tok-ss">:has-pulse?</span> <span class="tok-nv">false</span> <span class="tok-ss">:name</span> <span class="tok-s">"Damon Salvatore"</span><span class="tok-p">}</span>
+   <span class="tok-mi">3</span> <span class="tok-p">{</span><span class="tok-ss">:makes-blood-puns?</span> <span class="tok-nv">true</span>,  <span class="tok-ss">:has-pulse?</span> <span class="tok-nv">true</span>  <span class="tok-ss">:name</span> <span class="tok-s">"Mickey Mouse"</span><span class="tok-p">}})</span>
+
+<span class="tok-p">(</span><span class="tok-kd">defn </span><span class="tok-nv">vampire-related-details</span>
+  <span class="tok-p">[</span><span class="tok-nv">social-security-number</span><span class="tok-p">]</span>
+  <span class="tok-p">(</span><span class="tok-nf">Thread/sleep</span> <span class="tok-mi">1000</span><span class="tok-p">)</span>
+  <span class="tok-p">(</span><span class="tok-nb">get </span><span class="tok-nv">vampire-database</span> <span class="tok-nv">social-security-number</span><span class="tok-p">))</span>
+
+<span class="tok-p">(</span><span class="tok-kd">defn </span><span class="tok-nv">vampire?</span>
+  <span class="tok-p">[</span><span class="tok-nv">record</span><span class="tok-p">]</span>
+  <span class="tok-p">(</span><span class="tok-nb">and </span><span class="tok-p">(</span><span class="tok-ss">:makes-blood-puns?</span> <span class="tok-nv">record</span><span class="tok-p">)</span>
+       <span class="tok-p">(</span><span class="tok-nb">not </span><span class="tok-p">(</span><span class="tok-ss">:has-pulse?</span> <span class="tok-nv">record</span><span class="tok-p">))</span>
+       <span class="tok-nv">record</span><span class="tok-p">))</span>
+
+<span class="tok-p">(</span><span class="tok-kd">defn </span><span class="tok-nv">identify-vampire</span>
+  <span class="tok-p">[</span><span class="tok-nv">social-security-numbers</span><span class="tok-p">]</span>
+  <span class="tok-p">(</span><span class="tok-nb">first </span><span class="tok-p">(</span><span class="tok-nb">filter </span><span class="tok-nv">vampire?</span>
+                 <span class="tok-p">(</span><span class="tok-nb">map </span><span class="tok-nv">vampire-related-details</span> <span class="tok-nv">social-security-numbers</span><span class="tok-p">))))</span>
+</code></pre></div></div>
+
+      <p class="Body">You have a function, <code>vampire-related-details</code>, which takes one second to look up an entry from the database. Next, you have a function, <code>vampire?</code>, which returns a record if it passes the vampire test; otherwise, it returns <code>false</code>. Finally, <code>identify-vampire</code> maps Social Security numbers to database records and then returns the first record that indicates vampirism. </p>
+      <p class="Body">To show how much time it takes to run these functions, you can use the <code>time</code> operation. When you use <code>time</code>, your code behaves exactly as it would if you didn’t use <code>time</code>, but with one exception: a report of the elapsed time is printed. Here’s an example:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-nb">time </span><span class="tok-p">(</span><span class="tok-nf">vampire-related-details</span> <span class="tok-mi">0</span><span class="tok-p">))</span>
+<span class="tok-c1">; =&gt; "Elapsed time: 1001.042 msecs"</span>
+<span class="tok-c1">; =&gt; {:name "McFishwich", :makes-blood-puns? false, :has-pulse? true}</span>
+</code></pre></div></div>
+
+      <p class="Body">The first printed line reports the time taken by the given operation—in this case, 1,001.042 milliseconds. The second is the return value, which is your database record in this case. The return value is exactly the same as it would have been if you hadn’t used <code>time</code>.</p>
+      <p class="Body"><span>A nonlazy implementation of </span><code>map</code><span> would first have to apply </span><code>vampire-</code><code>related-details</code> to every member of <code>social-security-numbers</code> before passing the result to <code>filter</code>. Because you have one million suspects, this would take one million seconds, or 12 days, and half your city would be dead by then! Of course, if it turns out that the only vampire is the last suspect in the record, it will still take that much time with the lazy version, but at least there’s a good chance that it won’t.</p>
+      <p class="Body">Because <code>map</code> is lazy, it doesn’t actually apply <code>vampire-related-details</code> to Social Security numbers until you try to access the mapped element. In fact, <code>map</code> returns a value almost instantly:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-nb">time </span><span class="tok-p">(</span><span class="tok-k">def </span><span class="tok-nv">mapped-details</span> <span class="tok-p">(</span><span class="tok-nb">map </span><span class="tok-nv">vampire-related-details</span> <span class="tok-p">(</span><span class="tok-nb">range </span><span class="tok-mi">0</span> <span class="tok-mi">1000000</span><span class="tok-p">))))</span>
+<span class="tok-c1">; =&gt; "Elapsed time: 0.049 msecs"</span>
+<span class="tok-c1">; =&gt; #'user/mapped-details</span>
+</code></pre></div></div>
+
+      <p class="Body"><span>In this example, </span><code>range</code><span> returns a lazy sequence consisting of the integers </span><span>from 0 to 999,999. Then, </span><code>map</code><span> returns a lazy sequence that is associated with the </span><span>name </span><code>mapped-details</code><span>. Because </span><code>map</code><span> didn’t actually apply </span><code>vampire-related-details</code><span> to </span>any of the elements returned by <code>range</code>, the entire operation took barely any time—certainly less than 12 days.</p>
+      <p class="Body">You can think of a lazy seq as consisting of two parts: a recipe for how <span>to realize the elements of a sequence and the elements that have been realized so far. When you use </span><code>map</code><span>, the lazy seq it returns doesn’t include </span>any realized elements yet, but it does have the recipe for generating its elements. Every time you try to access an unrealized element, the lazy seq will use its recipe to generate the requested element.</p>
+      <p class="Body">In the previous example, <code>mapped-details</code> is unrealized. Once you try to <span>access a member of </span><code>mapped-details</code><span>, it will use its recipe to generate the element y</span><span>ou’ve requested, and you’ll incur the one-second-per-database-lookup cost:</span></p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-nb">time </span><span class="tok-p">(</span><span class="tok-nb">first </span><span class="tok-nv">mapped-details</span><span class="tok-p">))</span>
+<span class="tok-c1">; =&gt; "Elapsed time: 32030.767 msecs"</span>
+<span class="tok-c1">; =&gt; {:name "McFishwich", :makes-blood-puns? false, :has-pulse? true}</span>
+</code></pre></div></div>
+
+      <p class="Body">This operation took about 32 seconds. That’s much better than one million seconds, but it’s still 31 seconds more than we would have expected. After all, you’re only trying to access the very first element, so it should have taken only one second.</p>
+      <p class="Body">The reason it took 32 seconds is that Clojure <em>chunks</em> its lazy sequences, which just means that whenever Clojure has to realize an element, it preemptively realizes some of the next elements as well. In this example, you wanted only the very first element of <code>mapped-details</code>, but Clojure went ahead and prepared the next 31 as well. Clojure does this because it almost always results in better performance.</p>
+      <p class="Body">Thankfully, lazy seq elements need to be realized only once. Accessing the first element of <code>mapped-details</code> again takes almost no time:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-nb">time </span><span class="tok-p">(</span><span class="tok-nb">first </span><span class="tok-nv">mapped-details</span><span class="tok-p">))</span>
+<span class="tok-c1">; =&gt; "Elapsed time: 0.022 msecs"</span>
+<span class="tok-c1">; =&gt; {:name "McFishwich", :makes-blood-puns? false, :has-pulse? true}</span>
+</code></pre></div></div>
+
+      <p class="Body">With all this newfound knowledge, you can efficiently mine the vampire database to find the fanged culprit:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-nb">time </span><span class="tok-p">(</span><span class="tok-nf">identify-vampire</span> <span class="tok-p">(</span><span class="tok-nb">range </span><span class="tok-mi">0</span> <span class="tok-mi">1000000</span><span class="tok-p">)))</span>
+<span class="tok-s">"Elapsed time: 32019.912 msecs"</span>
+<span class="tok-c1">; =&gt; {:name "Damon Salvatore", :makes-blood-puns? true, :has-pulse? false}</span>
+</code></pre></div></div>
+
+      <p class="Body">Ooh! That’s why Damon makes those creepy puns!</p>
+      <h3 id="Infinite_Sequences_">Infinite Sequences </h3>
+      <p class="BodyFirst">One cool, useful capability that lazy seqs give you is the ability to construct infinite sequences. So far, you’ve only worked with lazy sequences generated from vectors or lists that terminated. However, Clojure comes with a few functions to create infinite sequences. One easy way to create an infinite sequence is with <code>repeat</code>, which creates a sequence whose every member is the argument you pass:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-nb">concat </span><span class="tok-p">(</span><span class="tok-nb">take </span><span class="tok-mi">8</span> <span class="tok-p">(</span><span class="tok-nb">repeat </span><span class="tok-s">"na"</span><span class="tok-p">))</span> <span class="tok-p">[</span><span class="tok-s">"Batman!"</span><span class="tok-p">])</span>
+<span class="tok-c1">; =&gt; ("na" "na" "na" "na" "na" "na" "na" "na" "Batman!")</span>
+</code></pre></div></div>
+
+      <p class="Body">In this case, you create an infinite sequence whose every element is the string <code>"na"</code>, then use that to construct a sequence that may or not provoke nostalgia.</p>
+      <p class="Body">You can also use <code>repeatedly</code>, which will call the provided function to generate each element in the sequence:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-nb">take </span><span class="tok-mi">3</span> <span class="tok-p">(</span><span class="tok-nf">repeatedly</span> <span class="tok-p">(</span><span class="tok-k">fn </span><span class="tok-p">[]</span> <span class="tok-p">(</span><span class="tok-nb">rand-int </span><span class="tok-mi">10</span><span class="tok-p">))))</span>
+<span class="tok-c1">; =&gt; (1 4 0)</span>
+</code></pre></div></div>
+
+      <p class="Body">Here, the lazy sequence returned by <code>repeatedly</code> generates every new element by calling the anonymous function <code>(fn [] (rand-int 10))</code>, which returns a random integer between 0 and 9. If you run this in your REPL, your result will most likely be different from this one.</p>
+      <p class="Body">A lazy seq’s recipe doesn’t have to specify an endpoint. Functions like <code>first</code> and <code>take</code>, which realize the lazy seq, have no way of knowing what will come next in a seq, and if the seq keeps providing elements, well, they’ll just keep taking them. You can see this if you construct your own infinite sequence:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-kd">defn </span><span class="tok-nv">even-numbers</span>
+  <span class="tok-p">([]</span> <span class="tok-p">(</span><span class="tok-nf">even-numbers</span> <span class="tok-mi">0</span><span class="tok-p">))</span>
+  <span class="tok-p">([</span><span class="tok-nv">n</span><span class="tok-p">]</span> <span class="tok-p">(</span><span class="tok-nb">cons </span><span class="tok-nv">n</span> <span class="tok-p">(</span><span class="tok-nf">lazy-seq</span> <span class="tok-p">(</span><span class="tok-nf">even-numbers</span> <span class="tok-p">(</span><span class="tok-nb">+ </span><span class="tok-nv">n</span> <span class="tok-mi">2</span><span class="tok-p">))))))</span>
+
+<span class="tok-p">(</span><span class="tok-nb">take </span><span class="tok-mi">10</span> <span class="tok-p">(</span><span class="tok-nf">even-numbers</span><span class="tok-p">))</span>
+<span class="tok-c1">; =&gt; (0 2 4 6 8 10 12 14 16 18)</span>
+</code></pre></div></div>
+
+      <p class="Body">This example is a bit mind-bending because of its use of recursion. It helps to remember that <code>cons</code> returns a new list with an element appended to the given list:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-nb">cons </span><span class="tok-mi">0</span> <span class="tok-o">'</span><span class="tok-p">(</span><span class="tok-mi">2</span> <span class="tok-mi">4</span> <span class="tok-mi">6</span><span class="tok-p">))</span>
+<span class="tok-c1">; =&gt; (0 2 4 6)</span>
+</code></pre></div></div>
+
+      <p class="Body"><span>(Incidentally, Lisp programmers call it </span><em>consing</em><span> when they use the </span><code>cons</code><span> function.)</span></p>
+      <p class="Body">In <code>even-numbers</code>, you’re consing to a lazy list, which includes a recipe (a <span>function) for the next element (as opposed to consing to a fully realized list).</span></p>
+      <p class="Body"><span>And that covers lazy seqs! Now you know everything there is to know about the sequence abstraction, and we can turn to the collection abstraction!</span></p>
+      <h2 id="The_Collection_Abstraction">The Collection Abstraction</h2>
+      <p class="BodyFirst">The collection abstraction is closely related to the sequence abstraction. All of Clojure’s core data structures—vectors, maps, lists, and sets—take part in both abstractions.</p>
+      <p class="Body">The sequence abstraction is about operating on members individually, whereas the collection abstraction is about the data structure as a whole. For example, the collection functions <code>count</code>, <code>empty?</code>, and <code>every?</code> aren’t about any individual element; they’re about the whole:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-nf">empty?</span> <span class="tok-p">[])</span>
+<span class="tok-c1">; =&gt; true</span>
+
+<span class="tok-p">(</span><span class="tok-nf">empty?</span> <span class="tok-p">[</span><span class="tok-s">"no!"</span><span class="tok-p">])</span>
+<span class="tok-c1">; =&gt; false</span>
+</code></pre></div></div>
+
+      <p class="Body">Practically speaking, you’ll rarely consciously say, “Okay, self! You’re working with the collection as a whole now. Think in terms of the collection abstraction!” Nevertheless, it’s useful to know these concepts that underlie the functions and data structures you’re using.</p>
+      <p class="Body">Now we’ll examine two common collection functions—<code>into</code> and <code>conj</code>—whose similarities can be a bit confusing.</p>
+      <h3 id="into">into</h3>
+      <p class="BodyFirst">One of the most important collection functions is <code>into</code>. As you now know, many seq functions return a seq rather than the original data structure. <span>You’ll probably want to convert the return value back into the original </span>value, and <code>into</code> lets you do that:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-nb">map identity </span><span class="tok-p">{</span><span class="tok-ss">:sunlight-reaction</span> <span class="tok-s">"Glitter!"</span><span class="tok-p">})</span>
+<span class="tok-c1">; =&gt; ([:sunlight-reaction "Glitter!"])</span>
+
+<span class="tok-p">(</span><span class="tok-nb">into </span><span class="tok-p">{}</span> <span class="tok-p">(</span><span class="tok-nb">map identity </span><span class="tok-p">{</span><span class="tok-ss">:sunlight-reaction</span> <span class="tok-s">"Glitter!"</span><span class="tok-p">}))</span>
+<span class="tok-c1">; =&gt; {:sunlight-reaction "Glitter!"}</span>
+</code></pre></div></div>
+
+      <p class="Body">Here, the <code>map</code> function returns a sequential data structure after being given a map data structure, and into converts the seq back into a map.</p>
+      <p class="Body">This will work with other data structures as well:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-nb">map identity </span><span class="tok-p">[</span><span class="tok-ss">:garlic</span> <span class="tok-ss">:sesame-oil</span> <span class="tok-ss">:fried-eggs</span><span class="tok-p">])</span>
+<span class="tok-c1">; =&gt; (:garlic :sesame-oil :fried-eggs)</span>
+
+<span class="tok-p">(</span><span class="tok-nb">into </span><span class="tok-p">[]</span> <span class="tok-p">(</span><span class="tok-nb">map identity </span><span class="tok-p">[</span><span class="tok-ss">:garlic</span> <span class="tok-ss">:sesame-oil</span> <span class="tok-ss">:fried-eggs</span><span class="tok-p">]))</span>
+<span class="tok-c1">; =&gt; [:garlic :sesame-oil :fried-eggs]</span>
+</code></pre></div></div>
+
+      <p class="Body">Here, in the first line, <code>map</code> returns a seq, and we use <code>into</code> in the second line to convert the result back to a vector.</p>
+      <p class="Body"><span>In the following example, we start with a vector with two identical </span>entries, <code>map</code> converts it to a list, and then we use <code>into</code> to stick the values into a set.</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-nb">map identity </span><span class="tok-p">[</span><span class="tok-ss">:garlic-clove</span> <span class="tok-ss">:garlic-clove</span><span class="tok-p">])</span>
+<span class="tok-c1">; =&gt; (:garlic-clove :garlic-clove)</span>
+
+<span class="tok-p">(</span><span class="tok-nb">into </span><span class="tok-o">#</span><span class="tok-p">{}</span> <span class="tok-p">(</span><span class="tok-nb">map identity </span><span class="tok-p">[</span><span class="tok-ss">:garlic-clove</span> <span class="tok-ss">:garlic-clove</span><span class="tok-p">]))</span>
+<span class="tok-c1">; =&gt; #{:garlic-clove}</span>
+</code></pre></div></div>
+
+      <p class="Body">Because sets only contain unique values, the set ends up with just one value in it.</p>
+      <p class="Body"><span>The first argument of </span><code>into</code><span> doesn’t have to be empty. Here, the first example shows how you can use </span><code>into</code><span> to add elements to a map, and the second shows how you can add elements to a vector.</span></p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-nb">into </span><span class="tok-p">{</span><span class="tok-ss">:favorite-emotion</span> <span class="tok-s">"gloomy"</span><span class="tok-p">}</span> <span class="tok-p">[[</span><span class="tok-ss">:sunlight-reaction</span> <span class="tok-s">"Glitter!"</span><span class="tok-p">]])</span>
+<span class="tok-c1">; =&gt; {:favorite-emotion "gloomy" :sunlight-reaction "Glitter!"}</span>
+
+<span class="tok-p">(</span><span class="tok-nb">into </span><span class="tok-p">[</span><span class="tok-s">"cherry"</span><span class="tok-p">]</span> <span class="tok-o">'</span><span class="tok-p">(</span><span class="tok-s">"pine"</span> <span class="tok-s">"spruce"</span><span class="tok-p">))</span>
+<span class="tok-c1">; =&gt; ["cherry" "pine" "spruce"]</span>
+</code></pre></div></div>
+
+      <p class="Body">And, of course, both arguments can be the same type. In this next example, both arguments are maps, whereas all the previous examples had arguments of different types. It works as you’d expect, returning a new map with the elements of the second map added to the first:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-nb">into </span><span class="tok-p">{</span><span class="tok-ss">:favorite-animal</span> <span class="tok-s">"kitty"</span><span class="tok-p">}</span> <span class="tok-p">{</span><span class="tok-ss">:least-favorite-smell</span> <span class="tok-s">"dog"</span>
+                                  <span class="tok-ss">:relationship-with-teenager</span> <span class="tok-s">"creepy"</span><span class="tok-p">})</span>
+<span class="tok-c1">; =&gt; {:favorite-animal "kitty"</span>
+      <span class="tok-ss">:relationship-with-teenager</span> <span class="tok-s">"creepy"</span>
+      <span class="tok-ss">:least-favorite-smell</span> <span class="tok-s">"dog"</span><span class="tok-p">}</span>
+</code></pre></div></div>
+
+      <p class="Body">If <code>into</code> were asked to describe its strengths at a job interview, it would say, “I’m great at taking two collections and adding all the elements from the second to the first.”</p>
+      <h3 id="conj">conj</h3>
+      <p class="BodyFirst"><code>conj</code><span> also adds elements to a collection, but it does it in a slightly different way:</span></p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-nb">conj </span><span class="tok-p">[</span><span class="tok-mi">0</span><span class="tok-p">]</span> <span class="tok-p">[</span><span class="tok-mi">1</span><span class="tok-p">])</span>
+<span class="tok-c1">; =&gt; [0 [1]]</span>
+</code></pre></div></div>
+
+      <p class="Body">Whoopsie! Looks like it added the entire vector <code>[1]</code> to <code>[0]</code>. Compare this with <code>into</code>:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-nb">into </span><span class="tok-p">[</span><span class="tok-mi">0</span><span class="tok-p">]</span> <span class="tok-p">[</span><span class="tok-mi">1</span><span class="tok-p">])</span>
+<span class="tok-c1">; =&gt; [0 1]</span>
+</code></pre></div></div>
+
+      <p class="Body">Here’s how we’d do the same with <code>conj</code>:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-nb">conj </span><span class="tok-p">[</span><span class="tok-mi">0</span><span class="tok-p">]</span> <span class="tok-mi">1</span><span class="tok-p">)</span>
+<span class="tok-c1">; =&gt; [0 1]</span>
+</code></pre></div></div>
+
+      <p class="Body">Notice that the number 1 is passed as a scalar (singular, non-collection) value, whereas <code>into</code>’s second argument must be a collection.</p>
+      <p class="Body">You can supply as many elements to add with <code>conj</code> as you want, and you can also add to other collections like maps:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-nb">conj </span><span class="tok-p">[</span><span class="tok-mi">0</span><span class="tok-p">]</span> <span class="tok-mi">1</span> <span class="tok-mi">2</span> <span class="tok-mi">3</span> <span class="tok-mi">4</span><span class="tok-p">)</span>
+<span class="tok-c1">; =&gt; [0 1 2 3 4]</span>
+
+<span class="tok-p">(</span><span class="tok-nb">conj </span><span class="tok-p">{</span><span class="tok-ss">:time</span> <span class="tok-s">"midnight"</span><span class="tok-p">}</span> <span class="tok-p">[</span><span class="tok-ss">:place</span> <span class="tok-s">"ye olde cemetarium"</span><span class="tok-p">])</span>
+<span class="tok-c1">; =&gt; {:place "ye olde cemetarium" :time "midnight"}</span>
+</code></pre></div></div>
+
+      <p class="Body"><code>conj</code><span> and </span><code>into</code><span> are so similar that you could even define </span><code>conj</code><span> in terms of </span><code>into</code>:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-kd">defn </span><span class="tok-nv">my-conj</span>
+  <span class="tok-p">[</span><span class="tok-nv">target</span> <span class="tok-o">&amp;</span> <span class="tok-nv">additions</span><span class="tok-p">]</span>
+  <span class="tok-p">(</span><span class="tok-nb">into </span><span class="tok-nv">target</span> <span class="tok-nv">additions</span><span class="tok-p">))</span>
+
+<span class="tok-p">(</span><span class="tok-nf">my-conj</span> <span class="tok-p">[</span><span class="tok-mi">0</span><span class="tok-p">]</span> <span class="tok-mi">1</span> <span class="tok-mi">2</span> <span class="tok-mi">3</span><span class="tok-p">)</span>
+<span class="tok-c1">; =&gt; [0 1 2 3]</span>
+</code></pre></div></div>
+
+      <p class="Body">This kind of pattern isn’t that uncommon. You’ll often see two functions that do the same thing, except one takes a rest parameter (<code>conj</code>) and one takes a seqable data structure (<code>into</code>).</p>
+      <h2 id="Function_Functions">Function Functions</h2>
+      <p class="BodyFirst">Learning to take advantage of Clojure’s ability to accept functions as argu<span>ments and return functions as values is really fun, even if it takes some get</span>ting used to.</p>
+      <p class="Body">Two of Clojure’s functions, <code>apply</code> and <code>partial</code>, might seem especially weird because they both accept <em>and</em> return functions. Let’s unweird them.</p>
+      <h3 id="apply">apply</h3>
+      <p class="BodyFirst"><code>apply</code> <em>explodes</em> a seqable data structure so it can be passed to a function that expects a rest parameter. For example, <code>max</code> takes any number of arguments and returns the greatest of all the arguments. Here’s how you’d find the greatest number:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-nb">max </span><span class="tok-mi">0</span> <span class="tok-mi">1</span> <span class="tok-mi">2</span><span class="tok-p">)</span>
+<span class="tok-c1">; =&gt; 2</span>
+</code></pre></div></div>
+
+      <p class="Body">But what if you want to find the greatest element of a vector? You can’t just pass the vector to <code>max</code>:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-nb">max </span><span class="tok-p">[</span><span class="tok-mi">0</span> <span class="tok-mi">1</span> <span class="tok-mi">2</span><span class="tok-p">])</span>
+<span class="tok-c1">; =&gt; [0 1 2]</span>
+</code></pre></div></div>
+
+      <p class="Body"><span>This doesn’t return the greatest element in the vector because </span><code>max</code><span> returns </span><span>the greatest of all the arguments passed to it, and in this case you’re only passing it a vector containing all the numbers you want to compare, rather </span>than passing in the numbers as separate arguments. <code>apply</code> is perfect for this situation:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-nb">apply max </span><span class="tok-p">[</span><span class="tok-mi">0</span> <span class="tok-mi">1</span> <span class="tok-mi">2</span><span class="tok-p">])</span>
+<span class="tok-c1">; =&gt; 2</span>
+</code></pre></div></div>
+
+      <p class="Body">By using <code>apply</code>, it’s as if you called <code>(max 0 1 2)</code>. You’ll often use <code>apply</code> like this, exploding the elements of a collection so that they get passed to a function as separate arguments.</p>
+      <p class="Body">Remember how we defined <code>conj</code> in terms of <code>into</code> earlier? Well, we can also define <code>into</code> in terms of <code>conj</code> by using <code>apply</code>:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-kd">defn </span><span class="tok-nv">my-into</span>
+  <span class="tok-p">[</span><span class="tok-nv">target</span> <span class="tok-nv">additions</span><span class="tok-p">]</span>
+  <span class="tok-p">(</span><span class="tok-nb">apply conj </span><span class="tok-nv">target</span> <span class="tok-nv">additions</span><span class="tok-p">))</span>
+
+<span class="tok-p">(</span><span class="tok-nf">my-into</span> <span class="tok-p">[</span><span class="tok-mi">0</span><span class="tok-p">]</span> <span class="tok-p">[</span><span class="tok-mi">1</span> <span class="tok-mi">2</span> <span class="tok-mi">3</span><span class="tok-p">])</span>
+<span class="tok-c1">; =&gt; [0 1 2 3]</span>
+</code></pre></div></div>
+
+      <p class="Body">This call to <code>my-into</code> is equivalent to calling <code>(conj [0] 1 2 3)</code>.</p>
+      <h3 id="partial">partial</h3>
+      <p class="BodyFirst"><code>partial</code> takes a function and any number of arguments. It then returns a new function. When you call the returned function, it calls the original function with the original arguments you supplied it along with the new arguments. </p>
+      <p class="Body">Here’s an example:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-k">def </span><span class="tok-nv">add10</span> <span class="tok-p">(</span><span class="tok-nb">partial + </span><span class="tok-mi">10</span><span class="tok-p">))</span>
+<span class="tok-p">(</span><span class="tok-nf">add10</span> <span class="tok-mi">3</span><span class="tok-p">)</span> 
+<span class="tok-c1">; =&gt; 13</span>
+<span class="tok-p">(</span><span class="tok-nf">add10</span> <span class="tok-mi">5</span><span class="tok-p">)</span> 
+<span class="tok-c1">; =&gt; 15</span>
+
+<span class="tok-p">(</span><span class="tok-k">def </span><span class="tok-nv">add-missing-elements</span>
+  <span class="tok-p">(</span><span class="tok-nb">partial conj </span><span class="tok-p">[</span><span class="tok-s">"water"</span> <span class="tok-s">"earth"</span> <span class="tok-s">"air"</span><span class="tok-p">]))</span>
+
+<span class="tok-p">(</span><span class="tok-nf">add-missing-elements</span> <span class="tok-s">"unobtainium"</span> <span class="tok-s">"adamantium"</span><span class="tok-p">)</span>
+<span class="tok-c1">; =&gt; ["water" "earth" "air" "unobtainium" "adamantium"]</span>
+</code></pre></div></div>
+
+      <p class="Body"><span>So when you call </span><code>add10</code><span>, it calls the original function and arguments (</span><code>+ 10</code><span>) </span>and tacks on whichever arguments you call <code>add10</code> with. To help clarify how <code>partial</code> works, here’s how you might define it:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-kd">defn </span><span class="tok-nv">my-partial</span>
+  <span class="tok-p">[</span><span class="tok-nv">partialized-fn</span> <span class="tok-o">&amp;</span> <span class="tok-nv">args</span><span class="tok-p">]</span>
+  <span class="tok-p">(</span><span class="tok-k">fn </span><span class="tok-p">[</span><span class="tok-o">&amp;</span> <span class="tok-nv">more-args</span><span class="tok-p">]</span>
+    <span class="tok-p">(</span><span class="tok-nb">apply </span><span class="tok-nv">partialized-fn</span> <span class="tok-p">(</span><span class="tok-nb">into </span><span class="tok-nv">args</span> <span class="tok-nv">more-args</span><span class="tok-p">))))</span>
+
+<span class="tok-p">(</span><span class="tok-k">def </span><span class="tok-nv">add20</span> <span class="tok-p">(</span><span class="tok-nf">my-partial</span> <span class="tok-nb">+ </span><span class="tok-mi">20</span><span class="tok-p">))</span>
+<span class="tok-p">(</span><span class="tok-nf">add20</span> <span class="tok-mi">3</span><span class="tok-p">)</span> 
+<span class="tok-c1">; =&gt; 23</span>
+</code></pre></div></div>
+
+      <p class="Body">In this example, the value of <code>add20</code> is the anonymous function returned by <code>my-partial</code>. The anonymous function is defined like this:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-k">fn </span><span class="tok-p">[</span><span class="tok-o">&amp;</span> <span class="tok-nv">more-args</span><span class="tok-p">]</span>
+  <span class="tok-p">(</span><span class="tok-nb">apply + </span><span class="tok-p">(</span><span class="tok-nb">into </span><span class="tok-p">[</span><span class="tok-mi">20</span><span class="tok-p">]</span> <span class="tok-nv">more-args</span><span class="tok-p">)))</span>
+</code></pre></div></div>
+
+      <p class="Body">In general, you want to use partials when you find you’re repeating the same combination of function and arguments in many different contexts. This toy example <span>shows how you could use </span><code>partial</code><span> to specialize a logger, creating a </span><code>warn</code><span> </span>function:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-kd">defn </span><span class="tok-nv">lousy-logger</span>
+  <span class="tok-p">[</span><span class="tok-nv">log-level</span> <span class="tok-nv">message</span><span class="tok-p">]</span>
+  <span class="tok-p">(</span><span class="tok-nf">condp</span> <span class="tok-nb">= </span><span class="tok-nv">log-level</span>
+    <span class="tok-ss">:warn</span> <span class="tok-p">(</span><span class="tok-nf">clojure.string/lower-case</span> <span class="tok-nv">message</span><span class="tok-p">)</span>
+    <span class="tok-ss">:emergency</span> <span class="tok-p">(</span><span class="tok-nf">clojure.string/upper-case</span> <span class="tok-nv">message</span><span class="tok-p">)))</span>
+
+<span class="tok-p">(</span><span class="tok-k">def </span><span class="tok-nv">warn</span> <span class="tok-p">(</span><span class="tok-nb">partial </span><span class="tok-nv">lousy-logger</span> <span class="tok-ss">:warn</span><span class="tok-p">))</span>
+
+<span class="tok-p">(</span><span class="tok-nf">warn</span> <span class="tok-s">"Red light ahead"</span><span class="tok-p">)</span>
+<span class="tok-c1">; =&gt; "red light ahead"</span>
+</code></pre></div></div>
+
+      <p class="Body">Calling <code>(warn "Red light ahead")</code> here is identical to calling <code>(lousy-logger :warn "Red light ahead")</code>.</p>
+      <h3 id="complement">complement</h3>
+      <p class="BodyFirst">Earlier you created the <code>identify-vampire</code> function to find one vampire amid a million people. What if you wanted to create a function to find all humans? Perhaps you want to send them thank-you cards for not being an undead predator. Here’s how you could do it:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-kd">defn </span><span class="tok-nv">identify-humans</span>
+  <span class="tok-p">[</span><span class="tok-nv">social-security-numbers</span><span class="tok-p">]</span>
+  <span class="tok-p">(</span><span class="tok-nb">filter </span><span class="tok-o">#</span><span class="tok-p">(</span><span class="tok-nb">not </span><span class="tok-p">(</span><span class="tok-nf">vampire?</span> <span class="tok-nv">%</span><span class="tok-p">))</span>
+          <span class="tok-p">(</span><span class="tok-nb">map </span><span class="tok-nv">vampire-related-details</span> <span class="tok-nv">social-security-numbers</span><span class="tok-p">)))</span>
+</code></pre></div></div>
+
+      <p class="Body">Look at the first argument to <code>filter</code>, <code>#(not (vampire? %))</code>. It’s so common to want the <em>complement</em> (the negation) of a Boolean function that there’s a function, <code>complement</code>, for that:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-k">def </span><span class="tok-nv">not-vampire?</span> <span class="tok-p">(</span><span class="tok-nb">complement </span><span class="tok-nv">vampire?</span><span class="tok-p">))</span>
+<span class="tok-p">(</span><span class="tok-kd">defn </span><span class="tok-nv">identify-humans</span>
+  <span class="tok-p">[</span><span class="tok-nv">social-security-numbers</span><span class="tok-p">]</span>
+  <span class="tok-p">(</span><span class="tok-nb">filter </span><span class="tok-nv">not-vampire?</span>
+          <span class="tok-p">(</span><span class="tok-nb">map </span><span class="tok-nv">vampire-related-details</span> <span class="tok-nv">social-security-numbers</span><span class="tok-p">)))</span>
+</code></pre></div></div>
+
+      <p class="Body">Here’s how you might implement <code>complement</code>:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-kd">defn </span><span class="tok-nv">my-complement</span>
+  <span class="tok-p">[</span><span class="tok-nv">fun</span><span class="tok-p">]</span>
+  <span class="tok-p">(</span><span class="tok-k">fn </span><span class="tok-p">[</span><span class="tok-o">&amp;</span> <span class="tok-nv">args</span><span class="tok-p">]</span>
+    <span class="tok-p">(</span><span class="tok-nb">not </span><span class="tok-p">(</span><span class="tok-nb">apply </span><span class="tok-nv">fun</span> <span class="tok-nv">args</span><span class="tok-p">))))</span>
+
+<span class="tok-p">(</span><span class="tok-k">def </span><span class="tok-nv">my-pos?</span> <span class="tok-p">(</span><span class="tok-nb">complement </span><span class="tok-nv">neg?</span><span class="tok-p">))</span>
+<span class="tok-p">(</span><span class="tok-nf">my-pos?</span> <span class="tok-mi">1</span><span class="tok-p">)</span>  
+<span class="tok-c1">; =&gt; true</span>
+
+<span class="tok-p">(</span><span class="tok-nf">my-pos?</span> <span class="tok-mi">-1</span><span class="tok-p">)</span> 
+<span class="tok-c1">; =&gt; false</span>
+</code></pre></div></div>
+
+      <p class="Body"><span>As you can see, </span><code>complement</code><span> is a humble function. It does one little thing and does it well. </span><code>complement</code><span> made it trivial to create a </span><code>not-vampire?</code><span> function, and anyone reading the code could understand the code’s intention. </span></p>
+      <p class="Body">This won’t MapReduce terabytes of data for you or anything like that, <span>but it does demonstrate the power of higher-order functions. They allow you to build up libraries of utility functions in a way that is impossible in some languages. In aggregate, these utility functions make your life a lot easier.</span></p>
+      <h2 id="A_Vampire_Data_Analysis_Program_for_the_FWPD">A Vampire Data Analysis Program for the FWPD</h2>
+      <p class="BodyFirst">To pull everything together, let’s write the beginnings of a sophisticated <span>vampire data analysis program for the Forks, Washington Police Department (FWPD).</span></p>
+      <p class="Body">The FWPD has a fancy new database technology called <em>CSV</em> <em>(comma-</em><em>separated</em><em> values)</em>. Your job is to parse this state-of-the-art CSV and analyze it for potential vampires. We’ll do that by filtering on each suspect’s<em> glitter index</em>, a 0–10 prediction of the suspect’s vampireness developed by some teenage girl. Go ahead and create a new Leiningen project for your tool:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-nv">lein</span> <span class="tok-k">new </span><span class="tok-nv">app</span> <span class="tok-nv">fwpd</span>
+</code></pre></div></div>
+
+      <p class="Body">Under the new <em>fwpd</em> directory, create a file named <em>suspects.csv</em> and enter contents like the following:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-nv">Edward</span> <span class="tok-nv">Cullen</span>,<span class="tok-mi">10</span>
+<span class="tok-nv">Bella</span> <span class="tok-nv">Swan</span>,<span class="tok-mi">0</span>
+<span class="tok-nv">Charlie</span> <span class="tok-nv">Swan</span>,<span class="tok-mi">0</span>
+<span class="tok-nv">Jacob</span> <span class="tok-nv">Black</span>,<span class="tok-mi">3</span>
+<span class="tok-nv">Carlisle</span> <span class="tok-nv">Cullen</span>,<span class="tok-mi">6</span>
+</code></pre></div></div>
+
+      <p class="Body">Now it’s time to get your hands dirty by building up the <em>fwpd/src/fwpd/core.clj</em> file. I recommend that you start a new REPL session so you can try <span>things out as you go along. In Emacs you can do this by opening </span><em>fwpd/</em><em>src/fwpd/core.clj</em> and running <strong>M-x</strong> <span class="LiteralBold">cider-restart</span>. Once the REPL is started, delete the contents of <em>core.clj</em>, and then add this:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-kd">ns </span><span class="tok-nv">fwpd.core</span><span class="tok-p">)</span>
+<span class="tok-p">(</span><span class="tok-k">def </span><span class="tok-nv">filename</span> <span class="tok-s">"suspects.csv"</span><span class="tok-p">)</span>
+</code></pre></div></div>
+
+      <p class="Body">The first line establishes the namespace, and the second just makes <span>it a tiny bit easier to refer to the CSV you created. You can do a quick </span><span>sanity</span> check in your REPL by compiling your file (<strong>C-c C-k</strong> in Emacs) and running this:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-nb">slurp </span><span class="tok-nv">filename</span><span class="tok-p">)</span>
+<span class="tok-c1">; =&gt; "Edward Cullen,10\nBella Swan,0\nCharlie Swan,0\nJacob Black,3\nCarlisle Cullen,6"</span>
+</code></pre></div></div>
+
+      <p class="Body">If the <code>slurp</code> function doesn’t return the preceding string, try restarting your REPL session with <em>core.clj</em> open.</p>
+      <p class="Body">Next, add this to <em>core.clj</em>:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-err">➊</span> <span class="tok-p">(</span><span class="tok-k">def </span><span class="tok-nv">vamp-keys</span> <span class="tok-p">[</span><span class="tok-ss">:name</span> <span class="tok-ss">:glitter-index</span><span class="tok-p">])</span>
+
+<span class="tok-err">➋</span> <span class="tok-p">(</span><span class="tok-kd">defn </span><span class="tok-nv">str-&gt;int</span>
+  <span class="tok-p">[</span><span class="tok-nv">str</span><span class="tok-p">]</span>
+  <span class="tok-p">(</span><span class="tok-nf">Integer.</span> <span class="tok-nv">str</span><span class="tok-p">))</span>
+
+<span class="tok-err">➌</span> <span class="tok-p">(</span><span class="tok-k">def </span><span class="tok-nv">conversions</span> <span class="tok-p">{</span><span class="tok-ss">:name</span> <span class="tok-nv">identity</span>
+                  <span class="tok-ss">:glitter-index</span> <span class="tok-nv">str-&gt;int</span><span class="tok-p">})</span>
+
+<span class="tok-err">➍</span> <span class="tok-p">(</span><span class="tok-kd">defn </span><span class="tok-nv">convert</span>
+  <span class="tok-p">[</span><span class="tok-nv">vamp-key</span> <span class="tok-nv">value</span><span class="tok-p">]</span>
+  <span class="tok-p">((</span><span class="tok-nb">get </span><span class="tok-nv">conversions</span> <span class="tok-nv">vamp-key</span><span class="tok-p">)</span> <span class="tok-nv">value</span><span class="tok-p">))</span>
+</code></pre></div></div>
+
+      <p class="Body"><span>Ultimately, you’ll end up with a sequence of maps that look like </span><code>{:name "Edward Cullen" :glitter-index 10}</code><span>, and the preceding definitions help </span>you get there. First, <code>vamp-keys</code> ➊ is a vector of the keys that you’ll soon use to create vampire maps. Next, the function <code>str-&gt;int</code> ➋ converts a string to an integer. The map <code>conversions</code> ➌ associates a conversion function with each of the vamp keys. You don’t need to transform the name at all, so its conversion function is <code>identity</code>, which just returns the argument passed to it. The glitter index is converted to an integer, so its conversion function is <code>str-&gt;int</code>. Finally, the <code>convert</code> function ➍ takes a vamp key and a value, and returns the converted value. Here’s an example:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-nf">convert</span> <span class="tok-ss">:glitter-index</span> <span class="tok-s">"3"</span><span class="tok-p">)</span>
+<span class="tok-c1">; =&gt; 3</span>
+</code></pre></div></div>
+
+      <p class="Body">Now add this to your file:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-kd">defn </span><span class="tok-nv">parse</span>
+  <span class="tok-s">"Convert a CSV into rows of columns"</span>
+  <span class="tok-p">[</span><span class="tok-nv">string</span><span class="tok-p">]</span>
+  <span class="tok-p">(</span><span class="tok-nb">map </span><span class="tok-o">#</span><span class="tok-p">(</span><span class="tok-nf">clojure.string/split</span> <span class="tok-nv">%</span> <span class="tok-o">#</span><span class="tok-s">","</span><span class="tok-p">)</span>
+       <span class="tok-p">(</span><span class="tok-nf">clojure.string/split</span> <span class="tok-nv">string</span> <span class="tok-o">#</span><span class="tok-s">"\n"</span><span class="tok-p">)))</span>
+</code></pre></div></div>
+
+      <p class="Body">The <code>parse</code> function takes a string and first splits it on the newline character to create a seq of strings. Next, it maps over the seq of strings, splitting each one on the comma character. Try running <code>parse</code> on your CSV:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-nb">parse </span><span class="tok-p">(</span><span class="tok-nb">slurp </span><span class="tok-nv">filename</span><span class="tok-p">))</span>
+<span class="tok-c1">; =&gt; (["Edward Cullen" "10"] ["Bella Swan" "0"] ["Charlie Swan" "0"]</span>
+      <span class="tok-p">[</span><span class="tok-s">"Jacob Black"</span> <span class="tok-s">"3"</span><span class="tok-p">]</span> <span class="tok-p">[</span><span class="tok-s">"Carlisle Cullen"</span> <span class="tok-s">"6"</span><span class="tok-p">])</span>
+</code></pre></div></div>
+
+      <p class="Body">The next bit of code takes the seq of vectors and combines it with your vamp keys to create maps:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-kd">defn </span><span class="tok-nv">mapify</span>
+  <span class="tok-s">"Return a seq of maps like {:name \"Edward Cullen\" :glitter-index 10}"</span>
+  <span class="tok-p">[</span><span class="tok-nv">rows</span><span class="tok-p">]</span>
+  <span class="tok-p">(</span><span class="tok-nb">map </span><span class="tok-p">(</span><span class="tok-k">fn </span><span class="tok-p">[</span><span class="tok-nv">unmapped-row</span><span class="tok-p">]</span>
+         <span class="tok-p">(</span><span class="tok-nb">reduce </span><span class="tok-p">(</span><span class="tok-k">fn </span><span class="tok-p">[</span><span class="tok-nv">row-map</span> <span class="tok-p">[</span><span class="tok-nv">vamp-key</span> <span class="tok-nv">value</span><span class="tok-p">]]</span>
+                   <span class="tok-p">(</span><span class="tok-nb">assoc </span><span class="tok-nv">row-map</span> <span class="tok-nv">vamp-key</span> <span class="tok-p">(</span><span class="tok-nf">convert</span> <span class="tok-nv">vamp-key</span> <span class="tok-nv">value</span><span class="tok-p">)))</span>
+                 <span class="tok-p">{}</span>
+                 <span class="tok-p">(</span><span class="tok-nb">map vector </span><span class="tok-nv">vamp-keys</span> <span class="tok-nv">unmapped-row</span><span class="tok-p">)))</span>
+       <span class="tok-nv">rows</span><span class="tok-p">))</span>
+</code></pre></div></div>
+
+      <p class="Body"><span>In this function, </span><code>map</code><span> transforms each row—vectors like </span><code>["Bella Swan" 0]</code><span>—</span>into a map by using <code>reduce</code> in a manner similar to the first example in “<code><a href="#2_2__reduce">reduce</a></code>” above. First, <code>map</code> creates a seq of key-value pairs like <code>([:name "Bella Swan"] [:glitter-index 0])</code>. Then, <code>reduce</code><em> </em>builds up a map by associating a vamp key with a converted vamp value into <code>row-map</code>. Here’s the first row mapified:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-nb">first </span><span class="tok-p">(</span><span class="tok-nf">mapify</span> <span class="tok-p">(</span><span class="tok-nb">parse </span><span class="tok-p">(</span><span class="tok-nb">slurp </span><span class="tok-nv">filename</span><span class="tok-p">))))</span>
+<span class="tok-c1">; =&gt; {:glitter-index 10, :name "Edward Cullen"}</span>
+</code></pre></div></div>
+
+      <p class="Body">Finally, add this <code>glitter-filter</code> function:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-kd">defn </span><span class="tok-nv">glitter-filter</span>
+  <span class="tok-p">[</span><span class="tok-nv">minimum-glitter</span> <span class="tok-nv">records</span><span class="tok-p">]</span>
+  <span class="tok-p">(</span><span class="tok-nb">filter </span><span class="tok-o">#</span><span class="tok-p">(</span><span class="tok-nb">&gt;= </span><span class="tok-p">(</span><span class="tok-ss">:glitter-index</span> <span class="tok-nv">%</span><span class="tok-p">)</span> <span class="tok-nv">minimum-glitter</span><span class="tok-p">)</span> <span class="tok-nv">records</span><span class="tok-p">))</span>
+</code></pre></div></div>
+
+      <p class="Body">This takes fully mapified vampire records and filters out those with a <code>:glitter-index</code> less than the provided <code>minimum-glitter</code>:</p>
+      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-nf">glitter-filter</span> <span class="tok-mi">3</span> <span class="tok-p">(</span><span class="tok-nf">mapify</span> <span class="tok-p">(</span><span class="tok-nb">parse </span><span class="tok-p">(</span><span class="tok-nb">slurp </span><span class="tok-nv">filename</span><span class="tok-p">))))</span>
+<span class="tok-p">({</span><span class="tok-ss">:name</span> <span class="tok-s">"Edward Cullen"</span>, <span class="tok-ss">:glitter-index</span> <span class="tok-mi">10</span><span class="tok-p">}</span>
+ <span class="tok-p">{</span><span class="tok-ss">:name</span> <span class="tok-s">"Jacob Black"</span>, <span class="tok-ss">:glitter-index</span> <span class="tok-mi">3</span><span class="tok-p">}</span>
+ <span class="tok-p">{</span><span class="tok-ss">:name</span> <span class="tok-s">"Carlisle Cullen"</span>, <span class="tok-ss">:glitter-index</span> <span class="tok-mi">6</span><span class="tok-p">})</span>
+</code></pre></div></div>
+
+      <p class="Body">Et voil<span>à</span>! You are now one step closer to fulfilling your dream of being a supernatural-creature-hunting vigilante. You better go round up those sketchy characters!</p>
+      <h2 id="Summary">Summary</h2>
+      <p class="BodyFirst"><span>In this chapter, you learned that Clojure emphasizes programming to </span>abstractions. The sequence abstraction deals with operating on the individual elements of a sequence, and seq functions often convert their arguments to a seq and return a lazy seq. Lazy evaluation improves performance by delaying computations until they’re needed. The other abstraction you learned about, the collection abstraction, deals with data structures as a whole. Finally, the most important thing you learned is that you should never trust someone who sparkles in sunlight.</p>
+      <h2 id="Exercises">Exercises</h2>
+      <p class="BodyFirst">The vampire analysis program you now have is already decades ahead of anything else on the market. But how could you make it better? I suggest trying the following:</p>
+      <ol class="List-1">
+	<li class="NumListA">Turn the result of your glitter filter into a list of names.</li>
+	<li class="NumListB">Write a function, <code>append</code>, which will append a new suspect to your list of suspects.</li>
+	<li class="NumListB">
+<span>Write a function, </span><code>validate</code><span>, which will check that </span><code>:name</code><span> and </span><code>:glitter-index</code><span> </span><span>are present when you </span><code>append</code><span>. The </span><code>validate</code><span> function should accept </span>two arguments: a map of keywords to validating functions, similar to <code>conversions</code>, and the record to be validated.</li>
+	<li class="NumListC">Write a function that will take your list of maps and convert it back to a CSV string. You’ll need to use the <code>clojure.string/join</code> function.</li>
+      </ol>
+      <p class="Body">Good luck, McFishwich!</p>
+    
+  
+
+
+        <div class="chapter-nav">
+
+
+
+<div class="prev"><a href="../do-things/">← Do Things: A Clojure Crash Course</a></div>
+
+
+
+<div class="next"><a href="../functional-programming/">Functional Programming →</a></div>
+
+
+</div>
+
+      </div>
+      <div class="secondary">
+        <div class="wrapper">
+          <div class="junk clearfix">
+            <a href="http://amzn.to/1H7MqmT" target="_blank">
+              <img src="/assets/images/home/book-cover.jpg">
+              The print book longs for you to own it
+            </a>
+          </div>
+          <div class="junk clearfix">
+            <a href="/quests/deploy">
+              <img src="/quests/deploy/images/deploy-cover-1.png">
+              OMG what!? Another book!?<br>Learn to deploy your app!
+            </a>
+          </div>
+          <div class="junk clearfix">
+            <a href="/quests/reducers/intro">
+              <img src="/quests/reducers/images/parallel-cover-1.png">
+              Great mama of the bahamas! Learn about reducers!
+            </a>
+          </div>
+          <div class="ads">
+            <a class="twitter-follow-button" href="https://twitter.com/nonrecursive">Follow @nonrecursive</a>
+            <form action="//flyingmachinestudios.us1.list-manage.com/subscribe/post?u=60763b0c4890c24bd055f32e6&amp;amp;amp;id=0b40ffd1e1" class="validate" id="mc-embedded-subscribe-form" method="post" name="mc-embedded-subscribe-form" novalidate="" target="_blank">
+              <input class="email" id="mce-EMAIL" name="EMAIL" placeholder="email address" required="" type="email" value="">
+              <input class="button" id="mc-embedded-subscribe" name="subscribe" type="submit" value="get email updates">
+            </form>
+            <ol>
+              <li><a target="_blank" href="https://jobs.braveclojure.com">Find Clojure jobs</a></li>
+              <li><a target="_blank" href="http://open-source.braveclojure.com">Contribute to beginner-friendly open source projects</a></li>
+            </ol>
+          </div>
+<div class="chapter-sections">Chapter Sections</div>
+<ol class="toc">
+<li>
+<a href="/core-functions-in-depth/#Programming_to_Abstractions">Programming to Abstractions</a><ol>
+<li><a href="/core-functions-in-depth/#Treating_Lists__Vectors__Sets__and_Maps_as_Sequences">Treating Lists, Vectors, Sets, and Maps as Sequences</a></li>
+<li><a href="/core-functions-in-depth/#first__rest__and_cons">first, rest, and cons</a></li>
+<li><a href="/core-functions-in-depth/#Abstraction_Through_Indirection">Abstraction Through Indirection</a></li>
+</ol>
+</li>
+<li>
+<a href="/core-functions-in-depth/#Seq_Function_Examples">Seq Function Examples</a><ol>
+<li><a href="/core-functions-in-depth/#map">map</a></li>
+<li><a href="/core-functions-in-depth/#reduce">reduce</a></li>
+<li><a href="/core-functions-in-depth/#take__drop__take_while__and_drop_while">take, drop, take-while, and drop-while</a></li>
+<li><a href="/core-functions-in-depth/#filter_and_some">filter and some</a></li>
+<li><a href="/core-functions-in-depth/#sort_and_sort_by">sort and sort-by</a></li>
+<li><a href="/core-functions-in-depth/#concat">concat</a></li>
+</ol>
+</li>
+<li>
+<a href="/core-functions-in-depth/#Lazy_Seqs">Lazy Seqs</a><ol>
+<li><a href="/core-functions-in-depth/#Demonstrating_Lazy_Seq_Efficiency">Demonstrating Lazy Seq Efficiency</a></li>
+<li><a href="/core-functions-in-depth/#Infinite_Sequences_">Infinite Sequences </a></li>
+</ol>
+</li>
+<li>
+<a href="/core-functions-in-depth/#The_Collection_Abstraction">The Collection Abstraction</a><ol>
+<li><a href="/core-functions-in-depth/#into">into</a></li>
+<li><a href="/core-functions-in-depth/#conj">conj</a></li>
+</ol>
+</li>
+<li>
+<a href="/core-functions-in-depth/#Function_Functions">Function Functions</a><ol>
+<li><a href="/core-functions-in-depth/#apply">apply</a></li>
+<li><a href="/core-functions-in-depth/#partial">partial</a></li>
+<li><a href="/core-functions-in-depth/#complement">complement</a></li>
+</ol>
+</li>
+<li><a href="/core-functions-in-depth/#A_Vampire_Data_Analysis_Program_for_the_FWPD">A Vampire Data Analysis Program for the FWPD</a></li>
+<li><a href="/core-functions-in-depth/#Summary">Summary</a></li>
+<li><a href="/core-functions-in-depth/#Exercises">Exercises</a></li>
+</ol>
+        </div>
+      </div>
+    </div>
+    <div class="footer">
+      <div class="container">
+        <div class="buy">
+          buy print and ebooks from 
+          <a href="http://amzn.to/1H7MqmT" target="_blank">Amazon</a> or
+          <a href="https://www.nostarch.com/clojure" target="_blank">No Starch</a> :)
+        </div>
+        <div>
+          <a href="https://groups.google.com/forum/#!forum/braveclojure">Ask questions and report errata at the Google Group</a>
+        </div>
+        <div>
+          © 2017 Daniel Higginbotham
+        </div>
+      </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+    <script src="/assets/scripts/jquery.sticky.js"></script>
+    <script src="/assets/scripts/sticky.js"></script>
+    <script>
+              !function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs')
+            </script>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-43463851-1', 'auto');
+      ga('send', 'pageview');
+
+    </script>
+  </body>
+</html>
