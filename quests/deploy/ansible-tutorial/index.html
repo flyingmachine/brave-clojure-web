@@ -1,0 +1,896 @@
+<!DOCTYPE HTML>
+<html lang="en">
+  <head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta charset="utf-8">
+  <meta path="/quests/deploy/ansible-tutorial/">
+  
+  <title>An Ansible Tutorial | Parallel Programming in Clojure with Reducers</title>
+  
+  <link rel="stylesheet" href="/assets/stylesheets/main.css">
+  <link rel="stylesheet" href="/assets/stylesheets/pygments.css">
+  <link href="//fonts.googleapis.com/css?family=Roboto+Condensed:400,700italic,700,400italic,300italic,300%7CSource+Sans+Pro:400,200,200italic,300,300italic,400italic,600italic,600,700,700italic,900italic,900%7CSource+Code+Pro:400,700%7CGentium+Book+Basic:400,400italic,700,700italic%7CCourgette" rel="stylesheet" type="text/css">
+</head>
+
+  <body class="deploy-book">
+    <div class="nav">
+  <div class="container">
+    <div>
+      <ul>
+        <li><a href="/">Brave Clojure</a></li>
+        <li><a href="https://jobs.braveclojure.com">Jobs</a></li>
+        <li><a href="http://open-source.braveclojure.com">Open Source Projects</a></li>
+        <li><a href="/quests/deploy">Deployment Book</a></li>
+        <li><a href="/quests/reducers/intro">Reducers Book</a></li>
+        <li><a href="/training">On-Site Training</a></li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+    <div class="header">
+      <div class="logoy">
+        <div class="container">
+          <div class="title">
+            <a href="/quests/deploy">
+              <strong>Deploying Your First Clojure App</strong>
+            </a>
+          </div>
+          <div class="subtitle">
+            ...From the Shadows
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="callout">
+      <div class="container">
+        <form action="//flyingmachinestudios.us1.list-manage.com/subscribe/post?u=60763b0c4890c24bd055f32e6&amp;amp;id=0b40ffd1e1" class="validate" id="mc-embedded-subscribe-form" method="post" name="mc-embedded-subscribe-form" novalidate="" target="_blank">
+          <p>
+            Follow
+            <a href="https://twitter.com/nonrecursive">@nonrecursive</a>
+            to hear about new content
+            or subscribe:
+            <input class="email" id="mce-EMAIL" name="EMAIL" placeholder="email address" required="" type="email" value="">
+            <input class="button" id="mc-embedded-subscribe" name="subscribe" type="submit" value="get updates!">
+          </p>
+        </form>
+      </div>
+    </div>
+    <div class="container wrap">
+      <div class="main">
+        <div class="chapter-nav">
+
+
+
+<div class="prev"><a href="../set-up-a-server-and-deploy-a-clojure-app-to-it/">← Set Up a Server and Deploy a Clojure App to it</a></div>
+
+
+
+<div class="next"><a href="../sweet-tooth-deep-dive/">Sweet Tooth Deep Dive →</a></div>
+
+
+</div>
+
+        <h1>An Ansible Tutorial</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>So far, you’ve treated the deployment tools as a black box. In this
+section, you’ll learn everything you need to open the black box and
+understand what’s going on inside. The majority of the server setup
+and deployment work is done by <em>Ansible</em>, so most of this chapter is
+designed to quickly dump some Ansible knowledge into your brain.</p>
+</div>
+<div class="paragraph">
+<p>Before looking at code, though, let’s talk a little about the broader
+context of server management, and about the philosophy and tools that
+have grown up around that dark art recently.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="DevOps">DevOps</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>In putting together the tools you used, I’ve tried to follow the best
+practices promoted by the DevOps movement.</p>
+</div>
+<div class="paragraph">
+<p>The DevOps movement encourages collaboration between developers
+(responsible for building server-based applications) and operations
+teams (responsible for creating and setting up servers) with the goal
+of producing more reliable web-based software. The DevOps concept of
+<em>infrastructure as code</em> (IaC) is particularly helpful. In the same
+way that we write scripts and programs to automate manual tasks, we
+treat infrastructure as code to automate the process of <em>provisioning</em>
+and <em>configuring</em> a server. Automation decreases the amount of time a
+task takes, it makes a task easily repeatable in different contexts,
+and it reduces the potential for human error.</p>
+</div>
+<div class="paragraph">
+<p>You saw these benefits in the last section: once you had everything
+installed, all you had to do was run a couple commands from the
+command line. This took way less time than having to learn how to set
+everything up, and then having to monitor the server while you
+downloaded the necessary packages like nginx and java, and having to
+manually write Upstart nginx config files. The process is repeatable
+in that you can easily use the same scripts to deploy other
+applications, and it reduces the potential for human error in that
+almost every step of the deployment process is handled by tested tools
+which follow the same steps every time.</p>
+</div>
+<div class="paragraph">
+<p>Another benefit of IaC is that you can version control and share the
+scripts you use for setting up servers; the scripts you used can be
+found in <a href="https://github.com/sweet-tooth-clojure">the Sweet Tooth github
+organization</a>. The relevant repos have <em>ansible-role-</em> in their name.</p>
+</div>
+<div class="paragraph">
+<p>I’ve been a developer for about 13 years, and in that time I’ve
+manually set up countless servers, so I can tell you from experience
+that using IaC tools and practices makes you way more productive. IaC
+makes your life easier in the same way that scripting your workflow
+and using version control makes your life easier. If you’re interested
+in learning more, the book <a href="http://amzn.to/2kCQcOJ">Infrastructure as
+Code: Managing Servers in the Cloud</a> was helpful to me.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+<div class="title">More about DevOps</div>
+<div class="paragraph">
+<p>A lot of DevOps literature is focused on changing the culture of large
+organizations to adopt DevOps practices, and a lot of DevOps practices
+target enterprise environments where you’re responsible for hundreds
+of servers. Those topics aren’t relevant if you’re just one person
+deploying a single server, but it’s good to know that there’s a ton of
+great literature and advice out there if you need to grow your
+site. You can check out the
+<a href="http://www.communitypicks.com/r/devops">DevOps Community Picks</a> for
+some good resources.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="Ansible_Tutorial">Ansible Tutorial</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><a href="https://www.ansible.com/">Ansible</a> is a mature, powerful IaC tool that
+you can use to accomplish many different kinds of DevOps tasks. We’re
+using it for <em>configuration management</em> and <em>application deployment</em>.</p>
+</div>
+<div class="paragraph">
+<p><em>Configuration management</em> is the term for setting up a server by
+installing packages (like nginx), configuring applications (for
+example, by uploading nginx config files), creating directories,
+setting permissions, and doing whatever other preparations are
+necessary for your site to run. <em>Application deployment</em> is the
+process of uploading code or artifacts (like an uberjar) and ensuring
+that the updated site is being served to visitors.</p>
+</div>
+<div class="paragraph">
+<p>To fully understand how the Sweet Tooth scripts configure your server
+and deploy your application, you’ll need to become familiar with many
+Ansible concepts, including <em>playbooks</em>, <em>tasks</em>, <em>roles</em>,
+<em>variables</em>, and <em>inventories</em>. In this section, I’ll explain these
+concepts by walking you through increasingly complex scripts.</p>
+</div>
+<div class="paragraph">
+<p>As you learn more about Ansible, it’s useful to keep in mind that
+ultimately, the tool is just running commands on your server. All this
+extra machinery of <em>playbooks</em>, <em>tasks</em>, etc., is just there to make
+the process more modular and understandable. It’s kind of like using a
+higher level programming language: sure, you could write everything in
+assembly, but using something like Clojure makes it easier to express
+intent and reuse code. Ansible’s system is like a higher-level
+language that compiles down to shell commands.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+<div class="title">On Mastering Tools</div>
+<div class="paragraph">
+<p>Whenever you’re learning to use a new tool, its useful to focus
+separately on its <em>purpose</em>, <em>external model</em> and <em>internal model</em>.</p>
+</div>
+<div class="paragraph">
+<p>When you understand a tool’s purpose, your brain gets loaded with
+helpful contextual details that make it easier for you to assimilate
+new knowledge. It’s like working on a puzzle: when you’re able to look
+at a picture of the completed puzzle, it’s a lot easier to fit the
+pieces together.</p>
+</div>
+<div class="paragraph">
+<p>A tool’s <em>external model</em> is the interface it presents and the way it
+wants you to think about problem solving. Clojure’s external model is
+a Lisp that wants you to think about programming as mostly
+data-centric, immutable transformations. You’ll soon see that Ansible
+wants you to think of server provisioning in terms of defining the end
+state, rather than defining the steps you should take to get to that
+state.</p>
+</div>
+<div class="paragraph">
+<p>A tool’s <em>internal model</em> is how it transforms the inputs to its
+interface into some lower-level abstraction. Clojure transforms Lisp
+into JVM bytecode. Ansible transforms task definitions into shell
+commands. In an ideal world, you wouldn’t have to understand the
+internal model, but in reality it’s almost always helpful to
+understand a tool’s internal model because it gives you a unified
+perspective on what might seem like confusing or contradictory
+parts. When the double-helix model of DNA was discovered, for example,
+it helped scientists make sense of higher-level pheonema. My point, of
+course, is that this book is one of the greatest scientific
+achievements of all time.</p>
+</div>
+<div class="paragraph">
+<p>Mini rant: Tutorials often mix up a tool’s external model and internal
+model in a way that’s confusing for learners, and I try not to do that
+here. If I f’d up, then I apologize! But I hope that you’ll find this
+distinction between purpose, external model, and internal model will
+serve you well as you continue along your human journey of learning.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="sect2">
+<h3 id="Ansible_Basics">Ansible Basics</h3>
+<div class="paragraph">
+<p>In this tutorial, you’ll use Vagrant to create a virtual machine that
+will host a server, and you’ll use Ansible to modify the server in
+increasingly complex ways. To follow along, get the tutorial repo and
+<code>cd</code> to it, and start the Vagrant server:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="bash">git clone https://github.com/braveclojure/ansible-tutorial.git
+<span class="tok-nb">cd </span>ansible-tutorial
+vagrant up</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>(If you haven’t installed Vagrant, see Chapter 1 for instructions.)</p>
+</div>
+<div class="paragraph">
+<p>Ansible reads <em>declarative configuration</em> files called <em>playbooks</em> and
+applies them to <em>inventories</em>. (I’ll explain what I mean by
+<em>declarative</em> soon.) Let’s apply our first playbook to an invetory. To
+apply a playbook, you use the <code>ansible-playbook</code> command, and you
+specify an inventory with the <code>-i</code> flag. Try this:</p>
+</div>
+<div class="listingblock">
+<div class="title">Applying a playbook to an inventory</div>
+<div class="content">
+<pre class="pygments highlight"><code data-lang="bash">ansible-playbook -i inventory-vagrant-server playbooks/01.yml</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This means <em>apply the playbook specified by the file</em>
+playbooks/01.yml <em>to the inventory specified by the file</em>
+inventory-vagrant-server. Let’s unpack what Ansible’s doing by looking
+first at <em>inventory-vagrant-server</em>, then <em>playbooks/01.yml</em>.</p>
+</div>
+<div class="paragraph">
+<p>The purpose of an inventory file is to tell Ansible which servers to
+run which commands on. The inventory file lets you specify how to
+connect to servers, and it lets you organize servers into
+groups. Here’s <em>inventory-vagrant-server</em>:</p>
+</div>
+<div class="listingblock">
+<div class="title">inventory-vagrant-server</div>
+<div class="content">
+<pre class="pygments highlight"><code data-lang="ini"><span class="tok-na">default ansible_ssh_host</span><span class="tok-o">=</span><span class="tok-s">127.0.0.1 ansible_ssh_port=2222 ansible_ssh_user='vagrant' ansible_ssh_private_key_file='.vagrant/machines/default/virtualbox/private_key'</span>
+
+<span class="tok-k">[webservers]</span>
+<span class="tok-err">default</span>
+
+<span class="tok-k">[database]</span>
+<span class="tok-err">default</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The first line, which starts with <code>default</code>, defines a server
+alias. The alias’s name is <em>default</em>, and it refers to a collection of
+variables that specify how to connect to a server. In this case, it’s
+saying <em>connect to the IP address 127.0.0.1 using port 2222 for SSH,
+and connect as the user "vagrant" with the private key file
+at .vagrant/machines/default/virtualbox/private_key</em>. (If you’re not
+familiar with SSH keys, Digital Ocean has a
+<a href="https://www.digitalocean.com/community/tutorials/how-to-set-up-ssh-keys%E2%80%94%E2%80%8B2">good
+tutorial</a>.</p>
+</div>
+<div class="paragraph">
+<p>The next bit of text, <em>[webservers]</em>, defines a <em>group</em>. Groups allow
+you to organize servers by their function or role so that you can
+easily apply different playbooks to them. For example, you may be
+running a server cluster with ten application servers and two database
+servers. You’ll want to set up the application servers differently
+from the database servers; for example, you’d install nginx on the app
+servers, and postgres on the db servers. In just a minute you’ll see
+how playbooks can target groups.</p>
+</div>
+<div class="paragraph">
+<p>The next line under <em>[webservers]</em> is <em>default</em>. That tells Ansible
+that the server <em>default</em> belongs to the <em>webservers</em>
+group. Similarly, the next couple lines define a <em>database</em> group and
+specify that the server <em>default</em> belongs to it.</p>
+</div>
+<div class="paragraph">
+<p>So, this inventory file defines one server, the Vagrant virtual
+machine. It specifies how to connect to it, and it defines two groups:
+<em>webservers</em> and <em>database</em>. It specifies that the server belongs to
+both groups.</p>
+</div>
+<div class="paragraph">
+<p>Now let’s look at the playbook file, <em>playbooks/01.yml</em>:</p>
+</div>
+<div class="listingblock">
+<div class="title"><em>playbooks/01.yml</em></div>
+<div class="content">
+<pre class="pygments highlight"><code data-lang="yaml"><span class="tok-nn">---</span>
+<span class="tok-p-Indicator">-</span> <span class="tok-l-Scalar-Plain">hosts</span><span class="tok-p-Indicator">:</span> <span class="tok-l-Scalar-Plain">webservers</span>
+  <span class="tok-l-Scalar-Plain">become</span><span class="tok-p-Indicator">:</span> <span class="tok-l-Scalar-Plain">true</span>
+  <span class="tok-l-Scalar-Plain">become_method</span><span class="tok-p-Indicator">:</span> <span class="tok-l-Scalar-Plain">sudo</span>
+
+  <span class="tok-l-Scalar-Plain">tasks</span><span class="tok-p-Indicator">:</span>
+  <span class="tok-p-Indicator">-</span> <span class="tok-l-Scalar-Plain">name</span><span class="tok-p-Indicator">:</span> <span class="tok-l-Scalar-Plain">Create an empty file</span>
+    <span class="tok-l-Scalar-Plain">file</span><span class="tok-p-Indicator">:</span> <span class="tok-l-Scalar-Plain">path=/etc/foo.conf state=touch mode=0644</span>
+  <span class="tok-p-Indicator">-</span> <span class="tok-l-Scalar-Plain">name</span><span class="tok-p-Indicator">:</span> <span class="tok-l-Scalar-Plain">Install nginx</span>
+    <span class="tok-l-Scalar-Plain">apt</span><span class="tok-p-Indicator">:</span>
+      <span class="tok-l-Scalar-Plain">pkg</span><span class="tok-p-Indicator">:</span> <span class="tok-l-Scalar-Plain">nginx</span>
+      <span class="tok-l-Scalar-Plain">state</span><span class="tok-p-Indicator">:</span> <span class="tok-l-Scalar-Plain">installed</span>
+      <span class="tok-l-Scalar-Plain">update-cache</span><span class="tok-p-Indicator">:</span> <span class="tok-l-Scalar-Plain">yes</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The file uses the <a href="https://learn.getgrav.org/advanced/yaml">YAML</a> file
+format. If you’re not familiar with YAML, it basically lets you
+compactly define <em>mappings</em> (also known as key/value pairs or
+dictionaries) and <em>sequences</em> (arrays or lists).</p>
+</div>
+<div class="paragraph">
+<p>The first line, <em>hosts: webservers</em>, is a key/value pair that
+specifies which server groups to run commands on. It means, <em>apply
+this playbook to the hosts in the webservers group</em>. The next two
+lines, <em>become: true</em> and <em>become_method: sudo</em>, tell Ansible to
+execute commands as root.</p>
+</div>
+<div class="paragraph">
+<p>The next bit specifies how the server should get modified. First,
+there’s the key <em>tasks</em>. Whereas the value of the previous keys were
+<em>scalars</em> (i.e. the value for the key <em>hosts</em> is <em>webservers</em>), the
+value for <em>tasks</em> is a sequence of mappings. Each mapping has a dash
+character preceding it, and each specifies a task that Ansible
+runs. The task specification gets translated into a command that’s run
+on all the servers specified by <em>hosts</em>.</p>
+</div>
+<div class="paragraph">
+<p>The first mapping has the keys <em>name</em> and <em>file</em>. It’s good practice
+to give each task a <em>name</em> key, even though it’s not required. The
+task’s name does not affect the command that is run in any way;
+rather, it serves as documentation.</p>
+</div>
+<div class="paragraph">
+<p>The line <em>file: path=/etc/foo.conf state=touch mode=0644</em> needs more
+explaining. Every task must define one and only one <em>module</em> to use,
+and the module’s arguments. Modules are what get executed on servers,
+and it’s useful to think of them as just shell scripts. In this case,
+by including the <em>file</em> key, we’re telling Ansible to use the <em>file</em>
+module. We’re giving it the arguments <em>path=/etc/foo.conf</em>,
+<em>state=touch</em>, and <em>mode=0644</em>. When Ansible executes this task, it
+will use the <em>file</em> module to create a file at <em>/etc/foo.conf</em> and
+give it permissions <em>0644</em>.</p>
+</div>
+<div class="paragraph">
+<p>The next task ensures that nginx is installed. It uses the <em>apt</em>
+module (apt is Ubuntu’s package manager) with the argumengs <em>pkg:
+nginx</em>, <em>state: installed</em>, <em>update-cache: yes</em>. Notice that the
+arguments are written as a YAML mapping rather than a single line of
+<em>foo=bar</em> pairs. This is just two different way of encoding the same
+information. These arguments are telling the <em>apt</em> module <em>make sure
+the nginx package is installed, and make sure the apt cache is up to
+date</em>.</p>
+</div>
+<div class="paragraph">
+<p>This readability is one of the reasons I like Ansible. It’s pretty
+easy to tell what’s going on. I do want to call attention to a couple
+things, though.</p>
+</div>
+<div class="paragraph">
+<p>Earlier, I mentioned that Ansible reads <em>declarative</em> files. This
+means that you specify the <em>end state</em> of your server, not how to
+achieve that state. In this small example file we’ve told Ansible that
+we want an end state such that <em>/etc/foo.conf</em> file exists and <em>nginx</em>
+is installed, but we haven’t told Ansible exactly what steps it should
+take to reach that state. We didn’t tell Ansible <em>run <code>touch
+/etc/foo.conf</code> and `sudo apt-get install nginx`</em>.</p>
+</div>
+<div class="paragraph">
+<p>You can check that Ansible did in fact create <em>/etc/foo.conf</em> by
+running <code>vagrant ssh</code> from the command line. This will log you in to
+the Vagrant server, where you can check the file’s existence with ls
+/etc/foo.conf. You can also check that nginx is installed by running
+<code>nginx -v</code>.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="Ansible_Variables">Ansible Variables</h3>
+<div class="paragraph">
+<p>Ansible playbooks can be made more flexible and modular by using
+<em>variables</em>. Our next playbook, <em>playbooks/02.yml</em>, paramaterizes our
+two tasks with the <code>file_path</code> and <code>package</code> variables:</p>
+</div>
+<div class="listingblock">
+<div class="title"><em>playbooks/02.yml</em></div>
+<div class="content">
+<pre class="pygments highlight"><code data-lang="yaml"><span class="tok-nn">---</span>
+<span class="tok-p-Indicator">-</span> <span class="tok-l-Scalar-Plain">hosts</span><span class="tok-p-Indicator">:</span> <span class="tok-l-Scalar-Plain">webservers</span>
+  <span class="tok-l-Scalar-Plain">become</span><span class="tok-p-Indicator">:</span> <span class="tok-l-Scalar-Plain">true</span>
+  <span class="tok-l-Scalar-Plain">become_method</span><span class="tok-p-Indicator">:</span> <span class="tok-l-Scalar-Plain">sudo</span>
+  <span class="tok-l-Scalar-Plain">vars</span><span class="tok-p-Indicator">:</span>
+    <span class="tok-l-Scalar-Plain">file_path</span><span class="tok-p-Indicator">:</span> <span class="tok-l-Scalar-Plain">/etc/bar.conf</span>
+    <span class="tok-l-Scalar-Plain">package</span><span class="tok-p-Indicator">:</span> <span class="tok-l-Scalar-Plain">wget</span>
+
+  <span class="tok-l-Scalar-Plain">tasks</span><span class="tok-p-Indicator">:</span>
+  <span class="tok-p-Indicator">-</span> <span class="tok-l-Scalar-Plain">name</span><span class="tok-p-Indicator">:</span> <span class="tok-l-Scalar-Plain">Create an empty file</span>
+    <span class="tok-l-Scalar-Plain">file</span><span class="tok-p-Indicator">:</span> <span class="tok-l-Scalar-Plain">path={{ file_path }} state=touch mode=0644</span>
+  <span class="tok-p-Indicator">-</span> <span class="tok-l-Scalar-Plain">name</span><span class="tok-p-Indicator">:</span> <span class="tok-l-Scalar-Plain">Install a package</span>
+    <span class="tok-l-Scalar-Plain">apt</span><span class="tok-p-Indicator">:</span>
+      <span class="tok-l-Scalar-Plain">pkg</span><span class="tok-p-Indicator">:</span> <span class="tok-s">"{{</span><span class="tok-nv"> </span><span class="tok-s">package</span><span class="tok-nv"> </span><span class="tok-s">}}"</span>
+      <span class="tok-l-Scalar-Plain">state</span><span class="tok-p-Indicator">:</span> <span class="tok-l-Scalar-Plain">installed</span>
+      <span class="tok-l-Scalar-Plain">update-cache</span><span class="tok-p-Indicator">:</span> <span class="tok-l-Scalar-Plain">yes</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>When you apply this playbook with <code>ansible-playbook -i
+inventory-vagrant-server playbooks/02.yml</code>, Ansible will create the
+file <em>/etc/bar.conf</em> and install the <em>wget</em> package. The double
+braces, as in <code><em>{{ file_path }}</em></code>, are how you interpolate variable
+values into your YAML files.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+<div class="title">Ansible Templating</div>
+<div class="paragraph">
+<p>Ansible actually relies on the
+<a href="http://jinja.pocoo.org/docs/2.9/templates/">Jinja2</a> template engine to
+perform interpolation, and as a result you can do all kinds of crazy
+pseudo-programming tricks within those two braces. For example, you
+can <em>filter</em> a value, for example by
+<a href="http://docs.ansible.com/ansible/playbooks_filters.html#defaulting-undefined-variables">providing
+a default value</a>. I’m not going to cover everything that’s possible
+with Jinja2, but I wanted to let you know about it in case you wanted
+to do something more sophisticated than variable substitution.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>You can also specify variable values on the command line:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="bash">ansible-playbook -i inventory-vagrant-server playbooks/02.yml --extra-vars <span class="tok-s2">"file_path=/etc/baz.conf"</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This will create the file <em>/etc/baz.conf</em>.</p>
+</div>
+<div class="paragraph">
+<p>When we go through the Sweet Tooth Ansible tasks, you’ll find that
+nearly every task relies on variables. Variables make the code more
+flexible and reusable, just like in real programs.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="Inventory_Directories">Inventory Directories</h3>
+<div class="paragraph">
+<p>Most applications' server configurations include at least a staging
+environment where you can do testing and sanity checking, and a
+production environment that real users use. You’ll likely want to set
+some of your playbooks' variables to different values for each
+environment.</p>
+</div>
+<div class="paragraph">
+<p>For example, with <a href="http://www.communitypicks.com/">Community Picks</a> I
+have a staging environment and a production environment. The staging
+environment logs files to <em>/var/log/staging-community-picks</em> and the
+production environment logs files to
+<em>/var/log/www-community-picks</em>. The log file location is stored in an
+Ansible variable.</p>
+</div>
+<div class="paragraph">
+<p>One way to set the different variable values for different
+environments is by both a) creating an inventory for each environment,
+and b) defining the inventory using a different structure than the one
+we covered.</p>
+</div>
+<div class="paragraph">
+<p>In the <em>Ansible Basics</em> section you learned that you can define an
+inventory with a single file, like the file
+<em>inventory-vagrant-server</em>. You can also define an inventory using a
+set of files in a directory, and you can see this in the <em>inventories</em>
+directory, which contains two sub-directories, <em>staging</em> and
+<em>prod</em>. If you look in <em>staging</em>, you’ll see a file named <em>hosts</em> and
+a directory named <em>group_vars</em>. In the <em>group_vars</em> directory you’ll
+see a file named <em>webservers</em>. The <em>prod</em> directory has the exact same
+structure.</p>
+</div>
+<div class="paragraph">
+<p>The files in the <em>group_vars</em> directory are what allow you to set
+Ansible variables. In the file
+<em>inventories/staging/group_vars/webservers</em> there’s a single line:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="yaml"><span class="tok-l-Scalar-Plain">file_path</span><span class="tok-p-Indicator">:</span> <span class="tok-l-Scalar-Plain">/var/log/staging</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This means that when you apply a playbook to the inventory defined by
+<em>inventories/staging</em>, the variable <em>file_path</em> will be set to
+<em>/var/log/staging</em> for all the tasks that Ansible runs on the servers
+in the <em>webservers</em> group.</p>
+</div>
+<div class="paragraph">
+<p>For example, if you run <code>ansible-playbook -i inventories/staging
+playbooks/03.yml</code>, you’re saying <em>apply the playbook</em> playbooks/03.yml
+<em>to the inventory</em> inventories/staging. In <em>inventories/staging/host</em>,
+you’ll see that the Vagrant server belongs to the <em>webservers</em>
+group. Therefore, when Ansible runs the tasks in <em>playbooks/03.yml</em> on
+that server, it will set the <em>file_path</em> variable to
+<em>/var/log/staging</em>, and the result will be that it will create the
+file <em>/var/log/staging</em>. The inventory <em>inventories/prod</em> is identical
+except that <em>file_path</em> gets set to <em>/var/log/prod</em>.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="Ansible_Roles">Ansible Roles</h3>
+<div class="paragraph">
+<p>If you stopped reading the tutorial now and proceeded to develop your
+own playbooks using only tasks and variables, you could actually
+accomplish quite a bit. In fact, when I first started using Ansible, I
+would just copy a playbook from one project to another and make a
+bunch of tweaks. This process yielded some of the advantages of
+treating infrastructure as code — for example, I could easily test
+out a server configuration on a VM and have confidence that a remote
+host would get ste up in exactly the same way — but it was still too
+cumbersome and error-prone. It was like copying and pasting some
+functions from one project to another over and over and slightly
+modifying them, instead of taking the time to properly refactor them
+into a library.</p>
+</div>
+<div class="paragraph">
+<p>Roles are like libraries. Just like clojure jars and ruby gems,
+they’re a way of organizing code and packaging it for reuse. They
+package together tasks and default values for variables, and they can
+also package files and templates. The Sweet Tooth roles, for example,
+include tasks for
+<a href="https://github.com/sweet-tooth-clojure/ansible-role-clojure-uberjar-webapp-nginx/blob/master/tasks/main.yml#L1">installing
+nginx</a> along with
+<a href="https://github.com/sweet-tooth-clojure/ansible-role-clojure-uberjar-webapp-nginx/blob/master/templates/app-nginx-no-ssl.conf.j2">an
+nginx config file template</a>.</p>
+</div>
+<div class="paragraph">
+<p>If you want to create an Ansible role, you have to organize your files
+using a predefined structure. By default, Ansible looks for role
+definitions in the <em>./roles</em> directory relative to the playbook you’re
+applying. Our next tutorial playbook, <em>03.yml</em>, includes two roles,
+<em>create-file</em> and <em>install-package</em>:</p>
+</div>
+<div class="listingblock">
+<div class="title"><em>playbooks/03.yml</em></div>
+<div class="content">
+<pre class="pygments highlight"><code data-lang="yaml"><span class="tok-nn">---</span>
+<span class="tok-p-Indicator">-</span> <span class="tok-l-Scalar-Plain">hosts</span><span class="tok-p-Indicator">:</span> <span class="tok-l-Scalar-Plain">webservers</span>
+  <span class="tok-l-Scalar-Plain">become</span><span class="tok-p-Indicator">:</span> <span class="tok-l-Scalar-Plain">true</span>
+  <span class="tok-l-Scalar-Plain">become_method</span><span class="tok-p-Indicator">:</span> <span class="tok-l-Scalar-Plain">sudo</span>
+  <span class="tok-l-Scalar-Plain">vars</span><span class="tok-p-Indicator">:</span>
+    <span class="tok-l-Scalar-Plain">file_path</span><span class="tok-p-Indicator">:</span> <span class="tok-l-Scalar-Plain">/etc/qux.conf</span>
+  <span class="tok-l-Scalar-Plain">roles</span><span class="tok-p-Indicator">:</span>
+    <span class="tok-p-Indicator">-</span> <span class="tok-l-Scalar-Plain">create-file</span>
+    <span class="tok-p-Indicator">-</span> <span class="tok-l-Scalar-Plain">install-package</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>There’s a <em>roles</em> directory in the <em>playbooks</em> directory, and the
+<em>roles</em> directory contains a directory named <em>create-file</em> and a
+directory named <em>install-package</em>; defining a role starts with
+creating a directory bearing the role’s name within the <em>roles</em>
+directory.</p>
+</div>
+<div class="paragraph">
+<p>The role’s directory can include the directories <em>tasks</em>, <em>defaults</em>,
+<em>files</em> <em>templates</em> and a few others that aren’t relevant for us. You
+define a role’s tasks in <em>tasks/main.yml</em> and the default values for a
+role in <em>defaults/main.yml</em>. (You’ll see examples <em>files</em> and
+<em>templates</em> getting used when we go through the Sweet Tooth code.) Our
+<em>create-file</em> role defines tasks under
+<em>playbooks/roles/create-file/tasks/main.yml</em>. Open it and you’ll see a
+familiar site:</p>
+</div>
+<div class="listingblock">
+<div class="title">playbooks/roles/create-file/tasks/main.yml</div>
+<div class="content">
+<pre class="pygments highlight"><code data-lang="yaml"><span class="tok-nn">---</span>
+<span class="tok-p-Indicator">-</span> <span class="tok-l-Scalar-Plain">name</span><span class="tok-p-Indicator">:</span> <span class="tok-l-Scalar-Plain">Create an empty file</span>
+  <span class="tok-l-Scalar-Plain">file</span><span class="tok-p-Indicator">:</span> <span class="tok-l-Scalar-Plain">path={{ file_path }} state=touch mode=0644</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This is the task from <em>02.yml</em>, copied and pasted and unindented one
+level. It still contains the variable <em>file_path</em>, which we set in
+<em>03.yml</em>.</p>
+</div>
+<div class="paragraph">
+<p>The <em>install-package</em> role similarly lifts the task from <em>02.yml</em> and
+places it in <em>playbooks/roles/install-package/tasks/main.yml</em>:</p>
+</div>
+<div class="listingblock">
+<div class="title">playbooks/roles/install-package/tasks/main.yml</div>
+<div class="content">
+<pre class="pygments highlight"><code data-lang="yaml"><span class="tok-p-Indicator">-</span> <span class="tok-l-Scalar-Plain">name</span><span class="tok-p-Indicator">:</span> <span class="tok-l-Scalar-Plain">Install a package</span>
+  <span class="tok-l-Scalar-Plain">apt</span><span class="tok-p-Indicator">:</span>
+    <span class="tok-l-Scalar-Plain">pkg</span><span class="tok-p-Indicator">:</span> <span class="tok-s">"{{</span><span class="tok-nv"> </span><span class="tok-s">package</span><span class="tok-nv"> </span><span class="tok-s">}}"</span>
+    <span class="tok-l-Scalar-Plain">state</span><span class="tok-p-Indicator">:</span> <span class="tok-l-Scalar-Plain">installed</span>
+    <span class="tok-l-Scalar-Plain">update-cache</span><span class="tok-p-Indicator">:</span> <span class="tok-l-Scalar-Plain">yes</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>However, <em>03.yml</em> does not define a value for the <em>package</em>
+variable. Instead, it’s defined in
+<em>playbooks/roles/install-package/defaults/main.yml</em>. You can override
+this default value in <em>03.yml</em>.</p>
+</div>
+<div class="paragraph">
+<p>When you list roles in a playbook, as we’ve done in <em>03.yml</em>, the
+roles' tasks are executed in the order that the roles are included, so
+in this case if we apply the <em>03.yml</em> playbook Ansible will create the file
+<em>/etc/qux.conf</em>, and after that it will install git.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="Relating_It_Back_to_Clojure_Deployment">Relating It Back to Clojure Deployment</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Now that you’ve learned some Ansible basics, let’s return to our
+<em>character-sheet-example</em> directory and look at how the scripts are
+implemented.</p>
+</div>
+<div class="paragraph">
+<p>When you run <code>cd</code> to <em>character-sheet-example/infrastructure</em> and run
+<code>./deploy dev</code> or <code>./provision prod</code>, those shell scripts are using
+ansible to apply a playbook to an inventory, and those playbooks
+include a bunch of roles. Here’s the contents of the <em>deploy</em> script:</p>
+</div>
+<div class="listingblock">
+<div class="title">Contents of deploy script</div>
+<div class="content">
+<pre class="pygments highlight"><code data-lang="bash"><span class="tok-c">#!/bin/bash</span>
+cp ../target/build/app.jar ansible/files/app.jar
+<span class="tok-nb">cd </span>ansible
+ansible-playbook -i inventories/<span class="tok-nv">$1</span> sweet-tooth.yml --skip-tags<span class="tok-o">=</span>install</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The last line calls <em>ansible-playbook</em>, just as you’ve been doing
+throughout the chapter. <code>$1</code> is the bash variable for the first
+command line argument; when you call <code>./deploy dev</code> the script
+translates that to <code>ansible-playbook -i inventories/dev
+sweet-tooth.yml --skip-tags=install</code> We haven’t covered tags yet, so
+ignore <code>--skip-tags=install</code> for now.</p>
+</div>
+<div class="paragraph">
+<p>So, when you call <code>./deploy dev</code> it applies the playbook
+<em>sweet-tooth.yml</em> to the inventory under <em>inventories/dev</em>. If you
+look at <em>inventories/dev</em>, you’ll see that the inventory is defined
+with a directory structure rather than a single file. The <em>hosts</em> file
+points to the project’s vagrant server, and <em>group_vars/webservers</em>
+defines a couple variables that I’ll cover in the next chapter.</p>
+</div>
+<div class="paragraph">
+<p>The playbook <em>sweet-tooth.yml</em> looks like this:</p>
+</div>
+<div class="listingblock">
+<div class="title">Contents of sweet-tooth.yml</div>
+<div class="content">
+<pre class="pygments highlight"><code data-lang="yaml"><span class="tok-nn">---</span>
+<span class="tok-p-Indicator">-</span> <span class="tok-l-Scalar-Plain">hosts</span><span class="tok-p-Indicator">:</span> <span class="tok-l-Scalar-Plain">webservers</span>
+  <span class="tok-l-Scalar-Plain">become</span><span class="tok-p-Indicator">:</span> <span class="tok-l-Scalar-Plain">true</span>
+  <span class="tok-l-Scalar-Plain">become_method</span><span class="tok-p-Indicator">:</span> <span class="tok-l-Scalar-Plain">sudo</span>
+  <span class="tok-l-Scalar-Plain">roles</span><span class="tok-p-Indicator">:</span>
+    <span class="tok-p-Indicator">-</span> <span class="tok-s">"sweet-tooth-clojure.clojure-uberjar-webapp-common"</span>
+    <span class="tok-p-Indicator">-</span> <span class="tok-s">"sweet-tooth-clojure.clojure-uberjar-webapp-nginx"</span>
+    <span class="tok-p-Indicator">-</span> <span class="tok-s">"sweet-tooth-clojure.clojure-uberjar-webapp-datomic-free"</span>
+    <span class="tok-p-Indicator">-</span> <span class="tok-s">"sweet-tooth-clojure.clojure-uberjar-webapp-app"</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>All it’s doing is listing what roles to apply; roles are very powerful
+and useful! In the next chapter, we’ll go through each of these roles
+so that you can learn exactly what they do.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="Recap">Recap</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>This chapter introduced you to DevOps and the benefits of treating
+<em>infrastructure as code</em>. You learned some basics of how to use an IaC
+tool, Ansible. You learned that Ansible applies a <em>playbook</em>, which is
+a set of <em>tasks</em>, to an <em>inventory</em>, which is an organized collection
+of servers. You saw how Ansible uses <em>variables</em> to make playbooks
+more modular, and you got a quick look at how to use <em>roles</em> to
+organize and package your Ansible tasks and variables.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+<div class="title">Tales of Chaos and Madness <em>…​From the Shadows</em>
+</div>
+<div class="paragraph">
+<p>Once, when I was eighteen, my friends and I dined and dashed (left
+without paying for our food). I drove the getaway vehicle. The thrill
+of our transgression filled me with such a powerful euphoria that it
+propelled me all the way out of the parking lot before I turned back
+around and went inside and paid.</p>
+</div>
+<div class="paragraph">
+<p><em>So dark!</em></p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+        <div class="chapter-nav">
+
+
+
+<div class="prev"><a href="../set-up-a-server-and-deploy-a-clojure-app-to-it/">← Set Up a Server and Deploy a Clojure App to it</a></div>
+
+
+
+<div class="next"><a href="../sweet-tooth-deep-dive/">Sweet Tooth Deep Dive →</a></div>
+
+
+</div>
+
+        <div id="disqus_thread"></div>
+        <script>
+
+          /**
+          *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+          *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
+          /*
+          var disqus_config = function () {
+          this.page.url = PAGE_URL;  // Replace PAGE_URL with your page's canonical URL variable
+          this.page.identifier = PAGE_IDENTIFIER; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+          };
+          */
+          (function() { // DON'T EDIT BELOW THIS LINE
+          var d = document, s = d.createElement('script');
+          s.src = 'https://clojureforthebraveandtrue.disqus.com/embed.js';
+          s.setAttribute('data-timestamp', +new Date());
+          (d.head || d.body).appendChild(s);
+          })();
+        </script>
+        <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+</noscript>
+      </div>
+      <div class="secondary">
+        <div class="wrapper">
+          <div class="junk">
+            <script src="https://gumroad.com/js/gumroad.js"></script>
+<a class="gumroad-button" href="https://gum.co/gHcWk" target="_blank">Buy the ebook!?</a>
+          </div>
+          <div class="ads">
+            <a class="twitter-follow-button" href="https://twitter.com/nonrecursive">Follow @nonrecursive</a>
+            <form action="//flyingmachinestudios.us1.list-manage.com/subscribe/post?u=60763b0c4890c24bd055f32e6&amp;amp;amp;id=0b40ffd1e1" class="validate" id="mc-embedded-subscribe-form" method="post" name="mc-embedded-subscribe-form" novalidate="" target="_blank">
+              <input class="email" id="mce-EMAIL" name="EMAIL" placeholder="email address" required="" type="email" value="">
+              <input class="button" id="mc-embedded-subscribe" name="subscribe" type="submit" value="get email updates">
+            </form>
+            <ol>
+              <li><a target="_blank" href="https://jobs.braveclojure.com">Find Clojure jobs</a></li>
+              <li><a target="_blank" href="http://open-source.braveclojure.com">Contribute to beginner-friendly open source projects</a></li>
+            </ol>
+          </div>
+<div class="chapter-sections">Chapter Sections</div>
+<ol class="toc">
+<li><a href="/quests/deploy/ansible-tutorial/#DevOps">DevOps</a></li>
+<li>
+<a href="/quests/deploy/ansible-tutorial/#Ansible_Tutorial">Ansible Tutorial</a><ol>
+<li><a href="/quests/deploy/ansible-tutorial/#Ansible_Basics">Ansible Basics</a></li>
+<li><a href="/quests/deploy/ansible-tutorial/#Ansible_Variables">Ansible Variables</a></li>
+<li><a href="/quests/deploy/ansible-tutorial/#Inventory_Directories">Inventory Directories</a></li>
+<li><a href="/quests/deploy/ansible-tutorial/#Ansible_Roles">Ansible Roles</a></li>
+</ol>
+</li>
+<li><a href="/quests/deploy/ansible-tutorial/#Relating_It_Back_to_Clojure_Deployment">Relating It Back to Clojure Deployment</a></li>
+<li><a href="/quests/deploy/ansible-tutorial/#Recap">Recap</a></li>
+</ol>
+          <div class="chapters">
+            <div class="subtitle">Chapters</div>
+            <ol class="toc">
+              <li>
+                <a href="/quests/deploy/preface/">
+                  Preface
+                </a>
+              </li>
+              <li>
+                <a href="/quests/deploy/intro/">
+                  Intro
+                </a>
+              </li>
+              <li>
+                <a href="/quests/deploy/set-up-a-server-and-deploy-a-clojure-app-to-it/">
+                  Chapter 1: Set Up a Server and Deploy a Clojure App To It
+                </a>
+              </li>
+              <li>
+                <a href="/quests/deploy/ansible-tutorial/">
+                  Chapter 2: An Ansible Tutorial
+                </a>
+              </li>
+              <li>
+                <a href="/quests/deploy/sweet-tooth-deep-dive/">
+                  Chapter 3: Sweet Tooth Deep Dive
+                </a>
+              </li>
+            </ol>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="footer">
+      <div class="container">
+        <div>
+          © 2017 Daniel Higginbotham
+        </div>
+      </div>
+    </div>
+    <script id="dsq-count-scr" src="//clojureforthebraveandtrue.disqus.com/count.js" async></script>
+    <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+    <script src="/assets/scripts/jquery.sticky.js"></script>
+    <script src="/assets/scripts/sticky.js"></script>
+    <script>
+              !function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs')
+            </script>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-43463851-1', 'auto');
+      ga('send', 'pageview');
+
+    </script>
+  </body>
+</html>

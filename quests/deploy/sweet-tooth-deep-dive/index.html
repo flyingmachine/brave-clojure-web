@@ -1,0 +1,1363 @@
+<!DOCTYPE HTML>
+<html lang="en">
+  <head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta charset="utf-8">
+  <meta path="/quests/deploy/sweet-tooth-deep-dive/">
+  
+  <title>Sweet Tooth Deep Dive | Parallel Programming in Clojure with Reducers</title>
+  
+  <link rel="stylesheet" href="/assets/stylesheets/main.css">
+  <link rel="stylesheet" href="/assets/stylesheets/pygments.css">
+  <link href="//fonts.googleapis.com/css?family=Roboto+Condensed:400,700italic,700,400italic,300italic,300%7CSource+Sans+Pro:400,200,200italic,300,300italic,400italic,600italic,600,700,700italic,900italic,900%7CSource+Code+Pro:400,700%7CGentium+Book+Basic:400,400italic,700,700italic%7CCourgette" rel="stylesheet" type="text/css">
+</head>
+
+  <body class="deploy-book">
+    <div class="nav">
+  <div class="container">
+    <div>
+      <ul>
+        <li><a href="/">Brave Clojure</a></li>
+        <li><a href="https://jobs.braveclojure.com">Jobs</a></li>
+        <li><a href="http://open-source.braveclojure.com">Open Source Projects</a></li>
+        <li><a href="/quests/deploy">Deployment Book</a></li>
+        <li><a href="/quests/reducers/intro">Reducers Book</a></li>
+        <li><a href="/training">On-Site Training</a></li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+    <div class="header">
+      <div class="logoy">
+        <div class="container">
+          <div class="title">
+            <a href="/quests/deploy">
+              <strong>Deploying Your First Clojure App</strong>
+            </a>
+          </div>
+          <div class="subtitle">
+            ...From the Shadows
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="callout">
+      <div class="container">
+        <form action="//flyingmachinestudios.us1.list-manage.com/subscribe/post?u=60763b0c4890c24bd055f32e6&amp;amp;id=0b40ffd1e1" class="validate" id="mc-embedded-subscribe-form" method="post" name="mc-embedded-subscribe-form" novalidate="" target="_blank">
+          <p>
+            Follow
+            <a href="https://twitter.com/nonrecursive">@nonrecursive</a>
+            to hear about new content
+            or subscribe:
+            <input class="email" id="mce-EMAIL" name="EMAIL" placeholder="email address" required="" type="email" value="">
+            <input class="button" id="mc-embedded-subscribe" name="subscribe" type="submit" value="get updates!">
+          </p>
+        </form>
+      </div>
+    </div>
+    <div class="container wrap">
+      <div class="main">
+        <div class="chapter-nav">
+
+
+
+<div class="prev"><a href="../ansible-tutorial/">← An Ansible Tutorial</a></div>
+
+
+
+
+</div>
+
+        <h1>Sweet Tooth Deep Dive</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>At the end of the last section, you saw that the Sweet Tooth Ansible
+roles do all the work of deploying your Clojure application. In this
+section, you’ll learn everything there is to know about those roles so
+that you can customize, modify, and extend them.</p>
+</div>
+<div class="paragraph">
+<p>I’ll start by giving you a short refresher on your server setup,
+'cause that will help you understand the role of each individual
+Ansible task in bringing about the end state. Next, I’ll share share
+some of my design goals so that the decisions I made in writing the
+Sweet Tooth roles will make sense. After that, we’ll download the
+roles' git repos and look at every line of code. You’ll learn about a
+few more Ansible features along the way, including <em>tags</em> and
+<em>templates</em>. You’ll also learn about <em>Ansible Galaxy</em>, Ansible’s
+service for sharing roles.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="Your_Beautiful_Little_Server_Redux">Your Beautiful Little Server Redux</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Sweet Tooth installs nginx on a machine, and it configures nginx to
+forward HTTP requests to your Clojure application. Your Clojure
+application is packaged as an uberjar. Datomic is involved.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="Design_Goals">Design Goals</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>I had the IaC philosophy in mind when I developed the Ansible roles. I
+also had two other design goals in mind: the scripts should be easy
+enough to use that someone with no DevOps experience and little
+Clojure experience can use them, and developers with more experience
+should be able to easily customize them to fit their needs.</p>
+</div>
+<div class="paragraph">
+<p>To make the scripts easy to use, I’ve tried to minimize the number of
+steps you need to take to get the outcome you want. To deploy locally
+for the first time, you only have to run three commands: <code>./build.sh</code>,
+<code>vagrant up</code>, and <code>./deploy dev</code>. To deploy to a VPS for the first
+time, you only have to change one line of the file
+<em>character-sheet-example/infrastructure/ansible/inventories/prod/group_vars/webservers</em>
+and one line of
+<em>character-sheet-example/infrastructure/ansible/inventories/prod/host</em>,
+and then run two commands, <code>./provision prod</code> and <code>./deploy
+prod</code>. After that, if you want to update the app you only have to run
+<code>./build.sh</code> and <code>./deploy prod</code>.</p>
+</div>
+<div class="paragraph">
+<p>I’ve made the scripts customizable in two ways. First, I’ve used
+Ansible variables everywhere possible, and given those variables
+reasonable defaults. For example, most filesystem paths are derived
+from the <code>clojure_uberjar_webapp_domain</code> variable. In the last
+section, you set this to an IP address, something like
+<code>138.197.66.144</code>, and the app’s log file location is
+<em>/var/log/138-197-66-144/138-197-66-144.log</em>, but you can change the
+log file’s location by setting the
+<code>clojure_uberjar_webapp_app_log_dir</code> variable. You’ll see this pattern
+repeated everywhere as we go through the Ansible scripts.</p>
+</div>
+<div class="paragraph">
+<p>Second, I’ve tried to make scripts customizable by allowing you to
+swap out the default configuration files and scripts that get uploaded
+to your server with your own files. For example, one step of the
+deploy process is run a script uploaded to
+<em>/var/www/app-name/check.sh</em>, where app-name is derived from
+<code>clojure_uberjar_webapp_domain</code>. The purpose of the script is to do a
+quick sanity check on your app’s uberjar. You can write your script
+and then set the <code>clojure_uberjar_webapp_app_check_local_path</code>
+variable to point to it, running your own custom checks.</p>
+</div>
+<div class="paragraph">
+<p>Now that you have all the background info you need, let’s look at the
+code!</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="Our_Playbooks">Our Playbooks</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>In the character sheet example, you provision a server with the
+<em>infrastructure/provision</em> shell script, and you deploy a server with
+the <em>infrastructure/deploy</em> shell script. These shell scripts just run
+the <em>infrastructure/ansible/sweet-tooth.yml</em> playbook:</p>
+</div>
+<div class="listingblock">
+<div class="title">Contents of sweet-tooth.yml</div>
+<div class="content">
+<pre class="pygments highlight"><code data-lang="yaml"><span class="tok-nn">---</span>
+<span class="tok-p-Indicator">-</span> <span class="tok-l-Scalar-Plain">hosts</span><span class="tok-p-Indicator">:</span> <span class="tok-l-Scalar-Plain">webservers</span>
+  <span class="tok-l-Scalar-Plain">become</span><span class="tok-p-Indicator">:</span> <span class="tok-l-Scalar-Plain">true</span>
+  <span class="tok-l-Scalar-Plain">become_method</span><span class="tok-p-Indicator">:</span> <span class="tok-l-Scalar-Plain">sudo</span>
+  <span class="tok-l-Scalar-Plain">roles</span><span class="tok-p-Indicator">:</span>
+    <span class="tok-p-Indicator">-</span> <span class="tok-s">"sweet-tooth-clojure.clojure-uberjar-webapp-common"</span>
+    <span class="tok-p-Indicator">-</span> <span class="tok-s">"sweet-tooth-clojure.clojure-uberjar-webapp-nginx"</span>
+    <span class="tok-p-Indicator">-</span> <span class="tok-s">"sweet-tooth-clojure.clojure-uberjar-webapp-datomic-free"</span>
+    <span class="tok-p-Indicator">-</span> <span class="tok-s">"sweet-tooth-clojure.clojure-uberjar-webapp-app"</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The <code>webservers</code> declaration is responsible for setting up and
+configuring the services for serving your app: it creates the
+directory structure for you app, and it intalls and configures
+nginx. It also downloads and installs datomic. Eventually, you might
+host your app server and database server on different machines, but
+this is a good place to start.</p>
+</div>
+<div class="paragraph">
+<p>The <em>provision</em> and <em>deploy</em> shell scripts control control which of
+the roles' <em>tasks</em> get applied using <em>tags</em>.</p>
+</div>
+<div class="paragraph">
+<p>To understand how these playbooks work, we’re going to go through each
+line of code for the <em>-common</em>, <em>-app</em>, and <em>-nginx</em> roles (after all
+that you should know everything you need to understand the Datomic
+role). As we go through the roles, you’ll see where the tags are
+defined, and that will make the relationship between <em>tags</em>, <em>tasks</em>,
+and <em>roles</em> even clearer.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="clojure_uberjar_webapp_common">clojure-uberjar-webapp-common</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Let’s look at the first role,
+<em>sweet-tooth-clojure.clojure-uberjar-webapp-common</em>. You can get it
+from GitHub with <code>git clone
+<a href="https://github.com/sweet-tooth-clojure/ansible-role-clojure-uberjar-webapp-common.git" class="bare">https://github.com/sweet-tooth-clojure/ansible-role-clojure-uberjar-webapp-common.git</a></code>
+or you can just follow along by
+<a href="https://github.com/sweet-tooth-clojure/ansible-role-clojure-uberjar-webapp-common">browing
+the files online</a>.</p>
+</div>
+<div class="paragraph">
+<p>The purpose of this role is only to define a couple variables that are
+used by the other roles and to do some basic filesystem setup. You can
+see the variable definitions under <em>defaults/main.yml</em>:</p>
+</div>
+<div class="listingblock">
+<div class="title">defaults/main.yml</div>
+<div class="content">
+<pre class="pygments highlight"><code data-lang="yaml"><span class="tok-nn">---</span>
+<span class="tok-c1"># User must define clojure_uberjar_webapp_domain</span>
+<span class="tok-l-Scalar-Plain">clojure_uberjar_webapp_app_name</span><span class="tok-p-Indicator">:</span> <span class="tok-s">"{{</span><span class="tok-nv"> </span><span class="tok-s">clojure_uberjar_webapp_domain</span><span class="tok-nv"> </span><span class="tok-s">|</span><span class="tok-nv"> </span><span class="tok-s">replace('.',</span><span class="tok-nv"> </span><span class="tok-s">'-')</span><span class="tok-nv"> </span><span class="tok-s">}}"</span>
+<span class="tok-l-Scalar-Plain">clojure_uberjar_webapp_app_user</span><span class="tok-p-Indicator">:</span> <span class="tok-s">"{{</span><span class="tok-nv"> </span><span class="tok-s">clojure_uberjar_webapp_app_name</span><span class="tok-nv"> </span><span class="tok-s">}}"</span>
+<span class="tok-l-Scalar-Plain">clojure_uberjar_webapp_app_underscored</span><span class="tok-p-Indicator">:</span> <span class="tok-s">"{{</span><span class="tok-nv"> </span><span class="tok-s">clojure_uberjar_webapp_domain</span><span class="tok-nv"> </span><span class="tok-s">|</span><span class="tok-nv"> </span><span class="tok-s">replace('.',</span><span class="tok-nv"> </span><span class="tok-s">'_')</span><span class="tok-nv"> </span><span class="tok-s">}}"</span>
+<span class="tok-l-Scalar-Plain">clojure_uberjar_webapp_app_root</span><span class="tok-p-Indicator">:</span> <span class="tok-s">"/var/www/{{</span><span class="tok-nv"> </span><span class="tok-s">clojure_uberjar_webapp_app_name</span><span class="tok-nv"> </span><span class="tok-s">}}"</span>
+<span class="tok-l-Scalar-Plain">clojure_uberjar_webapp_app_config_dir</span><span class="tok-p-Indicator">:</span> <span class="tok-s">"{{</span><span class="tok-nv"> </span><span class="tok-s">clojure_uberjar_webapp_app_root</span><span class="tok-nv"> </span><span class="tok-s">}}/config"</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This file takes a user-defined variable,
+<code>clojure_uberjar_webapp_domain</code>, and derives two other variables from
+it: <code>clojure_uberjar_webapp_app_name</code> and
+<code>clojure_uberjar_webapp_app_underscored</code>. I’ve found that this
+consistency makes it much easier to find the resources related to an
+app: log files are under <em>/var/log/app-name</em>, the nginx config file is
+under <em>/etc/nginx/sites-available/app-name.conf</em>, and so on.</p>
+</div>
+<div class="paragraph">
+<p>It ialso defines the app user (<code>clojure_uberjar_webapp_app_user</code>) and
+some paths that get referenced by the other roles
+(<code>clojure_uberjar_webapp_app_root</code> and
+<code>clojure_uberjar_webapp_app_config_dir</code>).</p>
+</div>
+<div class="paragraph">
+<p>In the character sheet example, the <code>clojure_uberjar_webapp_domain</code>
+variable is set in
+<em>infrastructure/ansible/inventories/{dev,prod}/group_vars/webservers</em>.</p>
+</div>
+<div class="paragraph">
+<p>Let’s take a look at the tasks, which you can find in _tasks/main.yml.</p>
+</div>
+<div class="sect2">
+<h3 id="Create_user">Create user</h3>
+<div class="paragraph">
+<p>The fist task creates a user. It uses the variable
+<em>clojure_uberjar_webapp_app_user</em>, which is defined in
+<em>defaults/main.yml</em>. It sticks with the "name things consistently"
+approach and defaults to <em>clojure_uberjar_webapp_app_name</em>. This user
+will become the owner of many of the files uploaded by
+<em>sweet-tooth-clojure.clojure-uberjar-webapp-app</em>. The intention is to
+add a little extra bit of security above making <em>root</em> the owner of
+everything, though I’m honestly not sure if I did a great job of that.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="Create_project_directory_and_Create_config_directory">Create project directory and Create config directory</h3>
+<div class="paragraph">
+<p>The next task, <em>Create project directory</em>, create’s the directory that
+will hold the application jar file. It also holds the directory
+created by the next task, <em>Create config directory</em>; this directory
+holds files used to configure the application, as opposed to
+e.g. configuring nginx. It’ll store files that set the environment
+variables for:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>The HTTP port</p>
+</li>
+<li>
+<p>The database URI</p>
+</li>
+<li>
+<p>Whatever other custom environment variables you want to set</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Now let’s look at the <em>sweet-tooth-clojure.clojure-uberjar-webapp-app</em>
+role.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="clojure_uberjar_webapp_app">clojure-uberjar-webapp-app</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The role <em>sweet-tooth-clojure.clojure-uberjar-webapp-app</em> configures
+a server to run a standalone java program as a web server. It:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Installs packages needed to run a java program (openjdk-8-jre)</p>
+</li>
+<li>
+<p>Installs an upstart script to run the program as a service</p>
+</li>
+<li>
+<p>Relies on environment variables to configure your program</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Let’s go through the code to see how it does this. You can clone the
+repo with <code>git clone
+<a href="https://github.com/sweet-tooth-clojure/ansible-role-clojure-uberjar-webapp-app.git" class="bare">https://github.com/sweet-tooth-clojure/ansible-role-clojure-uberjar-webapp-app.git</a></code>,
+or just can just
+<a href="https://github.com/sweet-tooth-clojure/ansible-role-clojure-uberjar-webapp-app">browse
+the code online</a>. Let’s look at the tasks in <em>tasks/main.yml</em> and
+refer to the variables in <em>defaults/main.yml</em> when we need to.</p>
+</div>
+<div class="paragraph">
+<p>The first task is <em>Add java 8 repo</em>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="yaml"><span class="tok-p-Indicator">-</span> <span class="tok-l-Scalar-Plain">name</span><span class="tok-p-Indicator">:</span> <span class="tok-l-Scalar-Plain">Add java 8 repo</span>
+  <span class="tok-l-Scalar-Plain">apt_repository</span><span class="tok-p-Indicator">:</span> <span class="tok-l-Scalar-Plain">repo='ppa:openjdk-r/ppa'</span>
+  <span class="tok-l-Scalar-Plain">tags</span><span class="tok-p-Indicator">:</span>
+    <span class="tok-p-Indicator">-</span> <span class="tok-l-Scalar-Plain">install</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Ubuntu uses the <em>Advanced Packaging Tool</em> (apt) system for managing
+packages. Packages are stored in <em>repositories</em>, and by default Ubuntu
+isn’t aware of the repository that has the OpenJDK package. (The
+OpenJDK package has tools we need to run java programs, so we probably
+need it.) This task adds the OpenJDK repo to apt’s list of repos.</p>
+</div>
+<div class="paragraph">
+<p>You’ll notice that this task has a <code>tags</code> key, which we haven’t
+covered yet. Tags are labels that you can use to filter tasks when
+you’re applying playbooks, similar to the way tags are used everywhere
+else in the computer world. The Sweet Tooth roles use tags to avoid
+unnecessary work. For example, in the character sheet example, the
+file <em>infrastructure/deploy</em> has the line</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="shell">ansible-playbook -i inventories/$1 deploy.yml --skip-tags=install</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The flag <code>--skip-tags=install</code> does what you’d expect: it tells
+Ansible not to run any tasks that have the <em>install</em> tag. It makes
+sense that when you’re deploying an application you don’t need to try
+to install all of the software packages that should have been
+installed already when you set up the server.</p>
+</div>
+<div class="sect2">
+<h3 id="Install_required_system_packages">Install required system packages</h3>
+<div class="paragraph">
+<p>For the next task, we actually install openjdk-8 and a few other
+packages:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="yaml"><span class="tok-p-Indicator">-</span> <span class="tok-l-Scalar-Plain">name</span><span class="tok-p-Indicator">:</span> <span class="tok-l-Scalar-Plain">Install required system packages</span>
+  <span class="tok-l-Scalar-Plain">apt</span><span class="tok-p-Indicator">:</span> <span class="tok-l-Scalar-Plain">pkg="{{ item }}" state=installed update-cache=yes</span>
+  <span class="tok-l-Scalar-Plain">with_items</span><span class="tok-p-Indicator">:</span>
+  <span class="tok-p-Indicator">-</span> <span class="tok-l-Scalar-Plain">openjdk-8-jre</span>
+  <span class="tok-p-Indicator">-</span> <span class="tok-l-Scalar-Plain">wget</span>
+  <span class="tok-p-Indicator">-</span> <span class="tok-l-Scalar-Plain">vim</span>
+  <span class="tok-p-Indicator">-</span> <span class="tok-l-Scalar-Plain">curl</span>
+  <span class="tok-l-Scalar-Plain">tags</span><span class="tok-p-Indicator">:</span>
+    <span class="tok-p-Indicator">-</span> <span class="tok-l-Scalar-Plain">install</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This introduces another new key, <code>with_items</code>. When a task has the
+<code>with_items</code> key, it means <em>run this task’s module for every element
+in the <code>with_items</code> sequence, assigning the element to the <code>item</code>
+variable</em>; it’s a weird yaml-based looping construct. In this case,
+the module is <em>apt</em> and we’re using it to install each of the listed
+packages. <em>openjdk-8-jre</em> is the only tool that we absolutely need;
+the rest are useful for debugging. <em>wget</em> lets use easily download
+URLs, <em>vim</em> is a lightweight text editor, and <em>curl</em> is great for
+interacting with HTTP resources.</p>
+</div>
+<div class="paragraph">
+<p>Notice that one of the arguments to the apt module is
+<code>state=installed</code>. You’re declaring the end state that you want the
+server to be in, as opposed to writing imperative code to take the
+actions which will result in the end state.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="Check_existence_of_local_env_file">Check existence of local env file</h3>
+<div class="paragraph">
+<p><em>Check existence of local env file</em> has a few new keys:
+<code>local_action</code>, <code>register</code>, <code>ignore_errors</code>, and <code>become</code>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="yaml"><span class="tok-p-Indicator">-</span> <span class="tok-l-Scalar-Plain">name</span><span class="tok-p-Indicator">:</span> <span class="tok-l-Scalar-Plain">Check existence of local env file</span>
+  <span class="tok-l-Scalar-Plain">local_action</span><span class="tok-p-Indicator">:</span> <span class="tok-l-Scalar-Plain">stat path="{{ clojure_uberjar_webapp_app_env_local_path }}"</span>
+  <span class="tok-l-Scalar-Plain">register</span><span class="tok-p-Indicator">:</span> <span class="tok-l-Scalar-Plain">app_env_local_file</span>
+  <span class="tok-l-Scalar-Plain">ignore_errors</span><span class="tok-p-Indicator">:</span> <span class="tok-l-Scalar-Plain">True</span>
+  <span class="tok-l-Scalar-Plain">become</span><span class="tok-p-Indicator">:</span> <span class="tok-l-Scalar-Plain">False</span>
+  <span class="tok-l-Scalar-Plain">tags</span><span class="tok-p-Indicator">:</span>
+    <span class="tok-p-Indicator">-</span> <span class="tok-l-Scalar-Plain">configure</span>
+<span class="tok-p-Indicator">[</span><span class="tok-nv">source</span><span class="tok-p-Indicator">,</span> <span class="tok-nv">yaml</span><span class="tok-p-Indicator">]</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>To understand this task, it helps to know that its purpose is to check
+whether there is a file on your local filesystem (the <em>app env file</em>)
+which should be used to set environment variables that will be read as
+configuration by your application. This task stores the result of its
+check in a variable, and the very next task, <em>Copy app env file</em>,
+checks that variable before executing.</p>
+</div>
+<div class="paragraph">
+<p>Now let’s look at each of the arguments to the <em>Check existence of
+local env file</em> task. <em>local_action</em> is the module we’re using, and
+it’s unsurprisingly used to run commands on your local machine. Its
+arguments are <code>stat</code> and <code>path="{{
+clojure_uberjar_webapp_app_env_local_path }}"</code>, and the result is that
+the task checks the status of the file at
+<code>clojure_uberjar_webapp_app_env_local_path</code>.</p>
+</div>
+<div class="paragraph">
+<p>The <code>register</code> key tells the task where to store the result: the
+variable <code>app_env_local_file</code>. This is one way that Ansible lets you
+communicate among tasks: the result of one task is <em>registered</em> in a
+global variable that can then be read by other tasks. You’ll see in a
+second that <code>app_env_local_file</code> is read by <em>Copy app env file</em>.</p>
+</div>
+<div class="paragraph">
+<p>Next, we have to set the <code>ignore_errors</code> key to <code>True</code> because
+Ansible’s default behavior is to throw an exception and stop applying
+the playbook if the <code>path</code> given to <code>stat</code> doesn’t exist. <code>become</code> is
+set to <code>False</code> because we’re running this task locally, and we don’t
+want to escalate privileges.</p>
+</div>
+<div class="paragraph">
+<p>Finally, this task has the <code>configure</code> tag. I haven’t had occassion to
+use this tag explicitly, but hey, it doesn’t hurt, and it kind of
+serves as documentation.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="Copy_app_env_file">Copy app env file</h3>
+<div class="paragraph">
+<p>Once the task <em>Check existence of local env file</em> has finished,
+Ansible executes the task <em>Copy app env file</em>. This task obviously
+copies a file from your local machine to the remote machine, and its
+larger purpose in deploying and running a Clojure application is to
+give you a way to set environment variables for each environment (dev,
+staging, prod, etc). For example, you could set different Google
+Analytics tracking ids for dev, staging, and prod. Let’s look at from
+two perspectives: how the task is defined, and the role the task
+plays in setting up a functioning server.</p>
+</div>
+<div class="paragraph">
+<p>The task has a couple new keys, <code>when</code> and <code>template</code>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="yaml"><span class="tok-p-Indicator">-</span> <span class="tok-l-Scalar-Plain">name</span><span class="tok-p-Indicator">:</span> <span class="tok-l-Scalar-Plain">Copy app env file</span>
+  <span class="tok-l-Scalar-Plain">file</span><span class="tok-p-Indicator">:</span> <span class="tok-l-Scalar-Plain">src="{{ clojure_uberjar_webapp_app_env_local_path }}" dest="{{ clojure_uberjar_webapp_app_env_path }}"</span>
+  <span class="tok-l-Scalar-Plain">tags</span><span class="tok-p-Indicator">:</span>
+    <span class="tok-p-Indicator">-</span> <span class="tok-l-Scalar-Plain">configure</span>
+  <span class="tok-l-Scalar-Plain">when</span><span class="tok-p-Indicator">:</span> <span class="tok-l-Scalar-Plain">app_env_local_file.stat.exists</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><code>when</code> defines the conditions for when the current task should run, in
+this case when <code>app_env_local_file.stat.exists</code> is truthy. The value
+<code>app_env_local_file.stat.exists</code> was set by the previous task.</p>
+</div>
+<div class="paragraph">
+<p>We’re giving <code>file</code> two arguments, <code>src</code> and <code>dest</code>. It copies the
+file located at <code>src</code> on your local machine to <code>dest</code> on the remote
+machines. Easy peasy!</p>
+</div>
+<div class="paragraph">
+<p>Now let’s look at the task from the perspective of the role it plays
+in running a Clojure application. To fully understand this, we’ll need
+to jump back and forth between the
+<em>sweet-tooth-clojure.clojure-uberjar-webapp-app</em> files and the
+character sheet example files.</p>
+</div>
+<div class="paragraph">
+<p>In the task’s defintion, shown in the snippet above, the value of
+<code>src</code> is <code>clojure_uberjar_webapp_app_env_local_path</code>. By default, that
+value is <code>files/env</code>, but in our character sheet example we override
+it so that we can use a different file for each environment. Let’s
+walk through the whole process to see how that happens.</p>
+</div>
+<div class="paragraph">
+<p>Let’s say that you run a playbook by executing the commands</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="shell">cd character-sheet-example/infrastructure
+./deploy dev</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>You’re trying to deploy your application to your dev environment, and
+you want to use your dev environment variables. When you call
+<code>./deploy dev</code>, the shell script runs this command:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="shell">ansible-playbook -i inventories/dev sweet-tooth.yml --skip-tags=install</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This says, <em>apply the sweet-tooth.yml playbook with the inventory at
+inventories/dev</em>. <em>inventories/dev</em> defines the <em>dev</em> inventory with
+files structured in a way that Ansible understands. (If you need a
+refresher on this, read Chapter 2).</p>
+</div>
+<div class="paragraph">
+<p>If you look at
+<em>character-sheet-example/infrastructure/ansible/inventories/dev/group_vars/webservers</em>,
+you’ll see this:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="yaml"><span class="tok-c1"># -*- mode: yaml -*-</span>
+<span class="tok-nn">---</span>
+<span class="tok-l-Scalar-Plain">clojure_uberjar_webapp_domain</span><span class="tok-p-Indicator">:</span> <span class="tok-l-Scalar-Plain">localhost</span>
+<span class="tok-l-Scalar-Plain">clojure_uberjar_webapp_app_env_local_path</span><span class="tok-p-Indicator">:</span> <span class="tok-l-Scalar-Plain">files/env/dev.sh</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>So that’s how we override the default value of
+<em>clojure_uberjar_webapp_app_env_local_path</em> to point to the dev
+file. Here’s a look at <em>files/env/dev.sh</em> (located in
+<em>character-sheet-example/infrastructure/ansible</em>):</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="shell">export GA_ID="dev google analytics id"</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>All the file does is export environment variables; in this case, we’re
+setting a Google Analytics id for the dev environment.</p>
+</div>
+<div class="paragraph">
+<p>This file gets uploaded to <em>clojure_uberjar_webapp_app_env_path</em>,
+which defaults to <em>/var/www/localhost/config/.app</em> for the dev
+inventory. Later on we’ll look at your remote machine handles the file
+<em>/var/www/localhost/config/.app</em> so that your application can read its
+environment variables.</p>
+</div>
+<div class="paragraph">
+<p>One final note: in my own projects, I set git to ignore these
+environment files. My environment files contain slightly more
+sensitive information like API keys which shouldn’t get stored in
+version control. There are more secure ways to achieve the same result
+(I’ve heard that Ansible Vault is a good solution) but for small hobby
+sites it works OK. Please yell at me if this is a terrible idea!</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="Upload_http_env_var_file">Upload http env var file</h3>
+<div class="paragraph">
+<p>The next task uploads a one-line file that exports the
+<code>HTTP_SERVER_PORT</code> environment variable:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="yaaml">- name: Upload http env var file
+  template: src="templates/http-env.j2" dest="{{ clojure_uberjar_webapp_app_http_env_path }}"
+  tags:
+    - configure</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This introduces a new key, <code>template</code>, which tells ansible to use the
+template the module. The template module works similarly to the file
+module: it copies the file from <code>src</code> on the local machine to <code>dest</code>
+on the destination machine. It differs from the file module in that
+the file getting copied is processed by the Jinja2 template
+system. Let’s look at the file’s contents to see why we might want to
+do this:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="shell">export HTTP_SERVER_PORT={{ clojure_uberjar_webapp_app_http_port }}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>(You can find this file under <em>templates/http-env.j2</em> in the
+<em>clojure-uberjar-webapp-app</em> repo.)</p>
+</div>
+<div class="paragraph">
+<p>This file contains the familiar double-braces that we’ve been using in
+our tasks to interpolate variables. We want to do this so that we can
+run multiple Clojure applications on the same machine. For example, we
+could run a staging server on port 9000, and a production server on
+port 9010.</p>
+</div>
+<div class="paragraph">
+<p>Later on, you’ll see how this file gets read so that its environment
+variable is available to your Clojure application.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="Upload_web_app_upstart_config_file">Upload web app upstart config file</h3>
+<div class="paragraph">
+<p>We use Ubuntu’s <a href="http://upstart.ubuntu.com/">upstart</a> service to start
+and stop our Clojure application. From the upstart home page: <em>upstart
+handles starting of tasks and services during boot, stopping them
+during shutdown and supervising them while the system is running</em>.</p>
+</div>
+<div class="paragraph">
+<p>To use upstart, we need to upload a file that tells upstart how to
+start the Clojure application server, and that file’s template is
+located at <em>templates/app-upstart.conf.j2</em>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="conf">start<span class="tok-w"> </span><span class="tok-no">on</span><span class="tok-w"> </span>runlevel<span class="tok-w"> </span>[2345]<span class="tok-w"></span>
+
+start<span class="tok-w"> </span><span class="tok-no">on</span><span class="tok-w"> </span>(started<span class="tok-w"> </span>network-interface<span class="tok-w"></span>
+or<span class="tok-w"> </span>started<span class="tok-w"> </span>network-manager<span class="tok-w"></span>
+or<span class="tok-w"> </span>started<span class="tok-w"> </span>networking)<span class="tok-w"></span>
+
+stop<span class="tok-w"> </span><span class="tok-no">on</span><span class="tok-w"> </span>(stopping<span class="tok-w"> </span>network-interface<span class="tok-w"></span>
+or<span class="tok-w"> </span>stopping<span class="tok-w"> </span>network-manager<span class="tok-w"></span>
+or<span class="tok-w"> </span>stopping<span class="tok-w"> </span>networking)<span class="tok-w"></span>
+
+respawn<span class="tok-w"></span>
+
+script<span class="tok-w"></span>
+<span class="tok-w">  </span>set<span class="tok-w"> </span>-a<span class="tok-w"></span>
+<span class="tok-w">  </span>.<span class="tok-w"> </span>{{<span class="tok-w"> </span>clojure_uberjar_webapp_app_combined_config_path<span class="tok-w"> </span>}}<span class="tok-w"></span>
+
+<span class="tok-w">  </span>{{<span class="tok-w"> </span>clojure_uberjar_webapp_app_command<span class="tok-w"> </span>}}<span class="tok-w"></span>
+end<span class="tok-w"> </span>script<span class="tok-w"></span>
+
+stop<span class="tok-w"> </span><span class="tok-no">on</span><span class="tok-w"> </span>runlevel<span class="tok-w"> </span>[016]<span class="tok-w"></span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The <code>start on</code> and <code>stop on</code> bits are out of scope for this guide, so
+let’s skip those.</p>
+</div>
+<div class="paragraph">
+<p>The line <em>respawn</em> means <em>restart this application if it dies for some
+reason</em>. Very important if you write code as buggy as I do!</p>
+</div>
+<div class="paragraph">
+<p>The <code>script…​ end script</code> block tells upstart how to start your
+application. Within that block, we set environment variables with</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="bash">  <span class="tok-nb">set</span> -a
+  . <span class="tok-o">{{</span> clojure_uberjar_webapp_app_combined_config_path <span class="tok-o">}}</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><code>set -a</code>, is what ensures that your app can read the vars. You can
+read a little more about what <code>set -`</code> does
+<a href="http://askubuntu.com/questions/711946/how-to-load-environment-variable-from-a-file-for-an-upstart-job">in
+this StackExchange thread</a>. The next line sources environment
+variables from a file that combines every configuration file that
+you’ve uploaded. (If you’re wondering what that period does at the
+beginning of the line,
+<a href="http://unix.stackexchange.com/questions/114300/whats-the-meaning-of-a-dot-before-a-command-in-shell">here’s
+a good explanation</a>.) The configuration file’s contents will look
+something like this:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="bash"><span class="tok-nb">export </span><span class="tok-nv">GA_ID</span><span class="tok-o">=</span><span class="tok-s2">"dev google analytics id"</span>
+<span class="tok-nb">export </span><span class="tok-nv">DB_URI</span><span class="tok-o">=</span>datomic:free://localhost:4334/localhost
+<span class="tok-nb">export </span><span class="tok-nv">HTTP_SERVER_PORT</span><span class="tok-o">=</span>3000</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>After we set environment variables, there’s this line: <code>{{
+clojure_uberjar_webapp_app_command }}</code>, which will actually kick off the
+java process that runs your application. By default, that variable
+expands to something like:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="bash">/usr/bin/java -Xms300m -Xmx300m <span class="tok-se">\</span>
+-Ddatomic.objectCacheMax<span class="tok-o">=</span>64m <span class="tok-se">\</span>
+-Ddatomic.memoryIndexMax<span class="tok-o">=</span>64m <span class="tok-se">\</span>
+-jar /var/www/localhost/localhost.jar server <span class="tok-se">\</span>
+&gt;&gt; /var/log/localhost/localhost.log 2&gt;<span class="tok-p">&amp;</span>1</code></pre>
+</div>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>This command starts a JVM that executes the jar file at
+_/var/www/localhost/localhost.jar_. The flags `-Xms300m` and
+`-Xmx300m` set the minimum and maximum memory usage. The other flags
+are Datomic-specific.</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>We pass the Clojure application one argument, <code>server</code> because I coded
+that application so that it will start an HTTP server if the first
+argument is <code>server</code>. You can see this in character sheet example’s
+source code, in the file
+<a href="https://github.com/sweet-tooth-clojure/character-sheet-example/blob/master/src/backend/character_sheet/core.clj">src/backend/character_sheet/core.clj</a>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="clojure"><span class="tok-p">(</span><span class="tok-kd">ns </span><span class="tok-nv">character-sheet.core</span>
+  <span class="tok-p">(</span><span class="tok-ss">:gen-class</span><span class="tok-p">)</span>
+  <span class="tok-p">(</span><span class="tok-ss">:require</span> <span class="tok-p">[</span><span class="tok-nv">datomic.api</span> <span class="tok-ss">:as</span> <span class="tok-nv">d</span><span class="tok-p">]</span>
+            <span class="tok-p">[</span><span class="tok-nv">com.stuartsierra.component</span> <span class="tok-ss">:as</span> <span class="tok-nv">component</span><span class="tok-p">]</span>
+            <span class="tok-p">[</span><span class="tok-nv">com.flyingmachine.datomic-booties.core</span> <span class="tok-ss">:as</span> <span class="tok-nv">datb</span><span class="tok-p">]</span>
+            <span class="tok-p">[</span><span class="tok-nv">character-sheet.system</span> <span class="tok-ss">:as</span> <span class="tok-nv">system</span><span class="tok-p">]</span>
+            <span class="tok-p">[</span><span class="tok-nv">character-sheet.config</span> <span class="tok-ss">:as</span> <span class="tok-nv">config</span><span class="tok-p">]))</span>
+
+<span class="tok-p">(</span><span class="tok-kd">defmacro </span><span class="tok-nv">final</span>
+  <span class="tok-p">[</span><span class="tok-o">&amp;</span> <span class="tok-nv">body</span><span class="tok-p">]</span>
+  <span class="tok-o">`</span><span class="tok-p">(</span><span class="tok-k">do </span><span class="tok-p">(</span><span class="tok-nf">try</span> <span class="tok-p">(</span><span class="tok-k">do </span><span class="tok-o">~@</span><span class="tok-nv">body</span><span class="tok-p">)</span>
+            <span class="tok-p">(</span><span class="tok-nf">catch</span> <span class="tok-nv">Exception</span> <span class="tok-nv">exc#</span>
+              <span class="tok-p">(</span><span class="tok-k">do </span><span class="tok-p">(</span><span class="tok-nb">println </span><span class="tok-s">"ERROR: "</span> <span class="tok-p">(</span><span class="tok-nf">.getMessage</span> <span class="tok-nv">exc#</span><span class="tok-p">))</span>
+                  <span class="tok-p">(</span><span class="tok-nf">clojure.stacktrace/print-stack-trace</span> <span class="tok-nv">exc#</span><span class="tok-p">)</span>
+                  <span class="tok-p">(</span><span class="tok-nf">System/exit</span> <span class="tok-mi">1</span><span class="tok-p">))))</span>
+       <span class="tok-p">(</span><span class="tok-nf">System/exit</span> <span class="tok-mi">0</span><span class="tok-p">)))</span>
+
+<span class="tok-p">(</span><span class="tok-kd">defn </span><span class="tok-nv">system</span>
+  <span class="tok-p">[]</span>
+  <span class="tok-p">(</span><span class="tok-nf">system/new-system</span> <span class="tok-p">(</span><span class="tok-nf">config/full</span><span class="tok-p">)))</span>
+
+<span class="tok-p">(</span><span class="tok-kd">defn </span><span class="tok-nv">-main</span>
+  <span class="tok-p">[</span><span class="tok-nv">cmd</span> <span class="tok-o">&amp;</span> <span class="tok-nv">args</span><span class="tok-p">]</span>
+  <span class="tok-p">(</span><span class="tok-nf">case</span> <span class="tok-nv">cmd</span>
+    <span class="tok-s">"server"</span>
+    <span class="tok-p">(</span><span class="tok-nf">component/start-system</span> <span class="tok-p">(</span><span class="tok-nf">system</span><span class="tok-p">))</span>
+
+    <span class="tok-s">"db/install-schemas"</span>
+    <span class="tok-p">(</span><span class="tok-nf">final</span>
+      <span class="tok-p">(</span><span class="tok-k">let </span><span class="tok-p">[{</span><span class="tok-ss">:keys</span> <span class="tok-p">[</span><span class="tok-nv">db</span> <span class="tok-nv">schema</span> <span class="tok-nv">data</span><span class="tok-p">]}</span> <span class="tok-p">(</span><span class="tok-nf">config/db</span><span class="tok-p">)]</span>
+        <span class="tok-p">(</span><span class="tok-nf">d/create-database</span> <span class="tok-nv">db</span><span class="tok-p">)</span>
+        <span class="tok-p">(</span><span class="tok-nf">datb/conform</span> <span class="tok-p">(</span><span class="tok-nf">d/connect</span> <span class="tok-nv">db</span><span class="tok-p">)</span>
+                      <span class="tok-nv">schema</span>
+                      <span class="tok-nv">data</span>
+                      <span class="tok-nv">config/seed-post-inflate</span><span class="tok-p">)))</span>
+
+    <span class="tok-s">"deploy/check"</span>
+    <span class="tok-c1">;; ensure that all config vars are set</span>
+    <span class="tok-p">(</span><span class="tok-nf">final</span> <span class="tok-p">(</span><span class="tok-nf">config/full</span><span class="tok-p">))))</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Ignore <code>final</code>; it just does some error handling. The <strong>main</strong> (ah ha
+ha!) thing to note is that the <code>-main</code> function’s first argument,
+<code>cmd</code>, corresponds to the first command line argument. The <code>-main</code>
+function switches on <code>cmd</code> and evaluates the appropriate
+expression. If the argument is <code>"server"</code>, it executes a function that
+starts a server.</p>
+</div>
+<div class="paragraph">
+<p>The last bit of the config file specifies that the Clojure application
+should send standard out and standard error to
+<em>/var/log/localhost/localhost.log</em>.</p>
+</div>
+<div class="paragraph">
+<p>This upstart file gets copied to <em>/etc/init/{{
+clojure_uberjar_webapp_app_service_name }}.conf</em> on the remote machine
+because that’s where upstart expects to find its config files.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="Make_app_log_directory">Make app log directory</h3>
+<div class="paragraph">
+<p>This task creates a directory to store the application’s log file and
+ensures that the application has permission to write to the file.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="Copy_uberjar">Copy uberjar</h3>
+<div class="paragraph">
+<p>This task copies the uberjar from your local machine to the remote
+machine. By defaul, it looks for the file at <em>files/app.jar</em> on your
+local.</p>
+</div>
+<div class="paragraph">
+<p>This is the first task that’s tagged <code>deploy</code>. You might remember that
+we first <em>provision</em> our machines before deploying to them; tasks
+tagged <code>deploy</code> don’t get run when we <em>provision</em> our machines,
+because it’s possible that the programs that deploy tasks depend on
+haven’t been installed. For example, if we ran all the deploy tasks
+while provisioning, then Ansible would try to install the Clojure
+app’s Datomic schemas, but Datomic wouldn’t have been installed yet.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="combine_configs">combine configs</h3>
+<div class="paragraph">
+<p>This task uses the <code>assemble</code> module to concatenate all the files in
+the config directory into one file. The combined file gets sourced by
+the upstart script, as described in the <em>Upload web app upstart config
+file</em> section.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="Copy_check_script_and_Run_check">Copy check script and Run check</h3>
+<div class="paragraph">
+<p>This task copies a shell script that you can use to do a quick sanity
+test on your app. Here’s the shell script’s template:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="shell">for f in {{ clojure_uberjar_webapp_app_config_dir }}/.[a-z]*; do
+  source "$f";
+done
+
+java -Xms200m -Xmx400m  -jar {{ clojure_uberjar_webapp_app_jar_name }} deploy/check</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The  here’s how it renders for the dev deployment of the character
+sheet app (it gets saved to <em>/var/www/localhost/check.sh</em>):</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="shell">for f in /var/www/localhost/config/.[a-z]*; do
+  source "$f";
+done
+
+java -Xms200m -Xmx400m  -jar localhost.jar deploy/check</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The script gets called in the next task, <em>Run check.</em> The script
+sources files that set environment variables, and then runs your
+uberjar with one argument: <code>deploy/check</code>. You need to set up your
+application to respond to that argument. If you look at
+<em>character-sheet-example/src/backend/character_sheet/core.clj</em>, you’ll
+see what gets run:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="clojure"><span class="tok-p">(</span><span class="tok-kd">ns </span><span class="tok-nv">character-sheet.core</span>
+  <span class="tok-p">(</span><span class="tok-ss">:gen-class</span><span class="tok-p">)</span>
+  <span class="tok-p">(</span><span class="tok-ss">:require</span> <span class="tok-p">[</span><span class="tok-nv">datomic.api</span> <span class="tok-ss">:as</span> <span class="tok-nv">d</span><span class="tok-p">]</span>
+            <span class="tok-p">[</span><span class="tok-nv">com.stuartsierra.component</span> <span class="tok-ss">:as</span> <span class="tok-nv">component</span><span class="tok-p">]</span>
+            <span class="tok-p">[</span><span class="tok-nv">com.flyingmachine.datomic-booties.core</span> <span class="tok-ss">:as</span> <span class="tok-nv">datb</span><span class="tok-p">]</span>
+            <span class="tok-p">[</span><span class="tok-nv">character-sheet.system</span> <span class="tok-ss">:as</span> <span class="tok-nv">system</span><span class="tok-p">]</span>
+            <span class="tok-p">[</span><span class="tok-nv">character-sheet.config</span> <span class="tok-ss">:as</span> <span class="tok-nv">config</span><span class="tok-p">]))</span>
+
+<span class="tok-p">(</span><span class="tok-kd">defmacro </span><span class="tok-nv">final</span>
+  <span class="tok-p">[</span><span class="tok-o">&amp;</span> <span class="tok-nv">body</span><span class="tok-p">]</span>
+  <span class="tok-o">`</span><span class="tok-p">(</span><span class="tok-k">do </span><span class="tok-p">(</span><span class="tok-nf">try</span> <span class="tok-p">(</span><span class="tok-k">do </span><span class="tok-o">~@</span><span class="tok-nv">body</span><span class="tok-p">)</span>
+            <span class="tok-p">(</span><span class="tok-nf">catch</span> <span class="tok-nv">Exception</span> <span class="tok-nv">exc#</span>
+              <span class="tok-p">(</span><span class="tok-k">do </span><span class="tok-p">(</span><span class="tok-nb">println </span><span class="tok-s">"ERROR: "</span> <span class="tok-p">(</span><span class="tok-nf">.getMessage</span> <span class="tok-nv">exc#</span><span class="tok-p">))</span>
+                  <span class="tok-p">(</span><span class="tok-nf">clojure.stacktrace/print-stack-trace</span> <span class="tok-nv">exc#</span><span class="tok-p">)</span>
+                  <span class="tok-p">(</span><span class="tok-nf">System/exit</span> <span class="tok-mi">1</span><span class="tok-p">))))</span>
+       <span class="tok-p">(</span><span class="tok-nf">System/exit</span> <span class="tok-mi">0</span><span class="tok-p">)))</span>
+
+<span class="tok-p">(</span><span class="tok-kd">defn </span><span class="tok-nv">system</span>
+  <span class="tok-p">[]</span>
+  <span class="tok-p">(</span><span class="tok-nf">system/new-system</span> <span class="tok-p">(</span><span class="tok-nf">config/full</span><span class="tok-p">)))</span>
+
+<span class="tok-p">(</span><span class="tok-kd">defn </span><span class="tok-nv">-main</span>
+  <span class="tok-p">[</span><span class="tok-nv">cmd</span> <span class="tok-o">&amp;</span> <span class="tok-nv">args</span><span class="tok-p">]</span>
+  <span class="tok-p">(</span><span class="tok-nf">case</span> <span class="tok-nv">cmd</span>
+    <span class="tok-s">"server"</span>
+    <span class="tok-p">(</span><span class="tok-nf">component/start-system</span> <span class="tok-p">(</span><span class="tok-nf">system</span><span class="tok-p">))</span>
+
+    <span class="tok-s">"db/install-schemas"</span>
+    <span class="tok-p">(</span><span class="tok-nf">final</span>
+      <span class="tok-p">(</span><span class="tok-k">let </span><span class="tok-p">[{</span><span class="tok-ss">:keys</span> <span class="tok-p">[</span><span class="tok-nv">db</span> <span class="tok-nv">schema</span> <span class="tok-nv">data</span><span class="tok-p">]}</span> <span class="tok-p">(</span><span class="tok-nf">config/db</span><span class="tok-p">)]</span>
+        <span class="tok-p">(</span><span class="tok-nf">d/create-database</span> <span class="tok-nv">db</span><span class="tok-p">)</span>
+        <span class="tok-p">(</span><span class="tok-nf">datb/conform</span> <span class="tok-p">(</span><span class="tok-nf">d/connect</span> <span class="tok-nv">db</span><span class="tok-p">)</span>
+                      <span class="tok-nv">schema</span>
+                      <span class="tok-nv">data</span>
+                      <span class="tok-nv">config/seed-post-inflate</span><span class="tok-p">)))</span>
+
+    <span class="tok-s">"deploy/check"</span>
+    <span class="tok-c1">;; ensure that all config vars are set</span>
+    <span class="tok-p">(</span><span class="tok-nf">final</span> <span class="tok-p">(</span><span class="tok-nf">config/full</span><span class="tok-p">))))</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>If youlook at the <code>-main</code> function, you’ll see that it takes one
+argument, <code>cmd</code>, and a list optional arguments, <code>args</code>. <code>cmd</code> is the
+first argument sent to the program on the command line, so with our
+<em>check.sh</em> script the argument is <code>deploy/check</code> and the value of
+<code>cmd</code> is <code>"deploy/check"</code>. The <code>-main</code> function checks the value of
+<code>cmd</code>, and you can see in the final line of the snippet that it
+executes <code>(final (config/full))</code>. The <code>config/full</code> function validates
+that all required environment variables are set, and throws an
+exception if any are missing.</p>
+</div>
+<div class="paragraph">
+<p>Thus, the <em>check.sh</em> script ensures that all environment variables
+are set. If the script fails, then Ansible stops applying tasks, which
+is good! If it didn’t stop, it would try to restart your application
+server with a bad build, and your site would be unavailable or you’d
+get weird errors.</p>
+</div>
+<div class="paragraph">
+<p>The last thing to note about the <code>Run check</code> task is that it sends
+three <em>notifications</em>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="yaml"><span class="tok-p-Indicator">-</span> <span class="tok-l-Scalar-Plain">name</span><span class="tok-p-Indicator">:</span> <span class="tok-l-Scalar-Plain">Run check</span>
+  <span class="tok-l-Scalar-Plain">command</span><span class="tok-p-Indicator">:</span> <span class="tok-l-Scalar-Plain">chdir={{ clojure_uberjar_webapp_app_root }}/ bash ./check.sh</span>
+  <span class="tok-l-Scalar-Plain">tags</span><span class="tok-p-Indicator">:</span>
+    <span class="tok-p-Indicator">-</span> <span class="tok-l-Scalar-Plain">deploy</span>
+    <span class="tok-p-Indicator">-</span> <span class="tok-l-Scalar-Plain">check</span>
+  <span class="tok-l-Scalar-Plain">notify</span><span class="tok-p-Indicator">:</span>
+    <span class="tok-p-Indicator">-</span> <span class="tok-l-Scalar-Plain">install schemas</span>
+    <span class="tok-p-Indicator">-</span> <span class="tok-l-Scalar-Plain">restart web app</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Notifications deserve their own section, so imma type out three equals
+signs because that what asciidoc uses to designate a new section heading:</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="Notifications">Notifications</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Notifications are a mechanism for signaling that some task should be
+run once and only once after all other tasks have finished. Tasks that
+respond to notifications are called <em>handlers</em>, and when defined as
+part of a role they live in the file <em>handlers/main.yml</em>. These tasks
+are defined in the same way as other tasks.</p>
+</div>
+<div class="paragraph">
+<p>I often use notifications to signal that some service should be
+restarted. For example, there might be multiple tasks that should
+trigger an nginx restart: upgrading the program and uploading a new
+config file, for example. If neither trigger happens, you don’t want
+to restart nginx, and if one of them happens, you do. If both triggers
+happen, nginx will only be restarted once because handlers only run
+once no matter how many notifications they receive.</p>
+</div>
+<div class="paragraph">
+<p>In the <code>Run check</code> task above, the notifications are:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="yaml">  <span class="tok-l-Scalar-Plain">notify</span><span class="tok-p-Indicator">:</span>
+    <span class="tok-p-Indicator">-</span> <span class="tok-l-Scalar-Plain">install schemas</span>
+    <span class="tok-p-Indicator">-</span> <span class="tok-l-Scalar-Plain">restart web app</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This will notify handlers with the names <code>install schemas</code>, <code>combine
+configs</code>, and <code>restart web app</code>.</p>
+</div>
+<div class="paragraph">
+<p>I’ve defined <code>install schemas</code> as a handler so that it’s more
+modular. For example, the datomic role that we’ve been using defines an
+<code>install schemas</code> handler, but for your own app you might want to use
+postgresql. If your postgresql role defines an <code>install schemas</code>
+handler, then everything will be just peachy.</p>
+</div>
+<div class="sect2">
+<h3 id="install_schemas">install schemas</h3>
+<div class="paragraph">
+<p>You can find this defined in the clojure-uberjar-webapp-datomic-free
+repo in the file <em>handlers/main.yml</em>.</p>
+</div>
+<div class="paragraph">
+<p>The <em>Install schemas</em> task runs your application, passing it one
+argument: <code>db/install-schemas</code>. It’s up to your application to handle
+it correctly. You can check out
+<em>character-sheet-example/src/backend/character_sheet/core.clj</em> again
+to see what it does. I won’t go into the details here; basically, it
+ensures that all the schemas you’ve defined exist in the Datomic
+database.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="restart_web_app">restart web app</h3>
+<div class="paragraph">
+<p>This task runs at the end of your deployment. It tells upstart to
+restart your application. Sadly, there’s usually some downtime when
+you restart, but it’s still good enough for me! If you come up with a
+clover way to do zero-downtime deployments that don’t eat up all your
+machine’s memory, please let me know!</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="clojure_uberjar_webapp_nginx">clojure-uberjar-webapp-nginx</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>nginx is super best very good web server, and now you are using it,
+making you super best very good devopser.</p>
+</div>
+<div class="paragraph">
+<p>You can clone the repo of nginx tasks with <code>git clone
+<a href="https://github.com/sweet-tooth-clojure/ansible-role-clojure-uberjar-webapp-nginx.git" class="bare">https://github.com/sweet-tooth-clojure/ansible-role-clojure-uberjar-webapp-nginx.git</a></code>,
+or just can just
+<a href="https://github.com/sweet-tooth-clojure/ansible-role-clojure-uberjar-webapp-nginx">browse
+the code online</a>. Let’s look at the tasks in _tasks/main.yml.</p>
+</div>
+<div class="sect2">
+<h3 id="Install_required_system_packages">Install required system packages</h3>
+<div class="paragraph">
+<p>Not much new here: this just installs nginx and openssl. openssl is
+needed if you want to serve sites using ssl. Crazy how that works out.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="Disable_default_site">Disable default site</h3>
+<div class="paragraph">
+<p>nginx’s default site configuration doesn’t provide anything useful,
+and it sometimes makes it harder to debug issues. Kill it!</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="nginx_base_config">nginx base config</h3>
+<div class="paragraph">
+<p>We replace nginx’s default base config with one that I like
+better. Explaining what each of the config settings does it out of
+scope.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="nginx_app_config">nginx app config</h3>
+<div class="paragraph">
+<p>This task is kind of insane. Let’s look at the code:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="yaml"><span class="tok-p-Indicator">-</span> <span class="tok-l-Scalar-Plain">name</span><span class="tok-p-Indicator">:</span> <span class="tok-l-Scalar-Plain">nginx app config</span>
+  <span class="tok-l-Scalar-Plain">template</span><span class="tok-p-Indicator">:</span>
+    <span class="tok-c1"># "no-ssl.conf.j2" if clojure_uberjar_webapp_nginx_use_ssl isn't defined or is false</span>
+    <span class="tok-l-Scalar-Plain">src</span><span class="tok-p-Indicator">:</span> <span class="tok-s">"templates/app-nginx-{{</span><span class="tok-nv"> </span><span class="tok-s">'no-'</span><span class="tok-nv"> </span><span class="tok-s">if</span><span class="tok-nv"> </span><span class="tok-s">not</span><span class="tok-nv"> </span><span class="tok-s">(clojure_uberjar_webapp_nginx_use_ssl|d(False))</span><span class="tok-nv"> </span><span class="tok-s">else</span><span class="tok-nv"> </span><span class="tok-s">''</span><span class="tok-nv"> </span><span class="tok-s">}}ssl.conf.j2"</span>
+    <span class="tok-l-Scalar-Plain">dest</span><span class="tok-p-Indicator">:</span> <span class="tok-s">"{{</span><span class="tok-nv"> </span><span class="tok-s">clojure_uberjar_webapp_nginx_sites_available</span><span class="tok-nv"> </span><span class="tok-s">}}"</span>
+  <span class="tok-l-Scalar-Plain">tags</span><span class="tok-p-Indicator">:</span>
+    <span class="tok-p-Indicator">-</span> <span class="tok-l-Scalar-Plain">configure</span>
+  <span class="tok-l-Scalar-Plain">notify</span><span class="tok-p-Indicator">:</span>
+    <span class="tok-p-Indicator">-</span> <span class="tok-s">"nginx</span><span class="tok-nv"> </span><span class="tok-s">config</span><span class="tok-nv"> </span><span class="tok-s">changed"</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>That <code>src</code> key look cuh-ray-zay. The idea is that it’s deciding
+whether to use the <em>app-nginx-no-ssl.conf.j2</em> template, or the
+<em>app-nginx-ssl.conf.j2</em> template. It uses Jinja’s weirdo fake
+programming language to check whether the variable
+<code>clojure_uberjar_webapp_nginx_use_ssl</code> has been set to a truthy value,
+and uses that to pick which config template to use.</p>
+</div>
+<div class="paragraph">
+<p>Let’s look at the no-ssl config file that’s been rendered and saved on
+the vagrant VM at <em>/etc/nginx/sites-available/localhost.conf</em>. If
+you’ve never looked at an nginx config file, it might be daunting;
+just stick with me and it’ll make sense.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="conf">upstream<span class="tok-w"> </span>localhost_upstream<span class="tok-w"> </span>{<span class="tok-w"> </span><b class="conum">(1)</b>
+<span class="tok-w">    </span>server<span class="tok-w"> </span><span class="tok-mf">127.0.0.1</span>:3000;<span class="tok-w"></span>
+<span class="tok-w">    </span><span class="tok-c"># put more servers here for load balancing</span><span class="tok-w"></span>
+<span class="tok-w">    </span><span class="tok-c"># keepalive(reuse TCP connection) improves performance</span><span class="tok-w"></span>
+<span class="tok-w">    </span>keepalive<span class="tok-w"> </span><span class="tok-m">32</span>;<span class="tok-w"></span>
+}<span class="tok-w"></span>
+
+server<span class="tok-w"> </span>{<span class="tok-w"></span>
+<span class="tok-w">    </span>server_name<span class="tok-w"> </span>localhost;<span class="tok-w"> </span><b class="conum">(2)</b>
+
+<span class="tok-w">    </span>location<span class="tok-w"> </span>/static/<span class="tok-w"> </span>{<span class="tok-w">  </span><span class="tok-c"># static content</span><span class="tok-w"></span>
+<span class="tok-w">        </span>alias<span class="tok-w"> </span>/var/www/localhost/public/;<span class="tok-w"></span>
+<span class="tok-w">    </span>}<span class="tok-w"></span>
+
+<span class="tok-w">    </span>location<span class="tok-w"> </span>/<span class="tok-w"> </span>{<span class="tok-w"></span>
+<span class="tok-w">        </span>proxy_pass<span class="tok-w">  </span>http://localhost_upstream;<span class="tok-w"> </span><b class="conum">(3)</b>
+
+<span class="tok-w">        </span><span class="tok-c"># tell http-kit to keep the connection</span><span class="tok-w"></span>
+<span class="tok-w">        </span>proxy_http_version<span class="tok-w"> </span><span class="tok-m">1</span>.1;<span class="tok-w"></span>
+<span class="tok-w">        </span>proxy_set_header<span class="tok-w"> </span>Connection<span class="tok-w"> </span>"";<span class="tok-w"></span>
+
+<span class="tok-w">        </span>proxy_set_header<span class="tok-w"> </span>X-Forwarded-For<span class="tok-w"> </span>$proxy_add_x_forwarded_for;<span class="tok-w"></span>
+<span class="tok-w">        </span>proxy_set_header<span class="tok-w"> </span>Host<span class="tok-w"> </span>$host;<span class="tok-w"></span>
+
+<span class="tok-w">        </span>proxy_set_header<span class="tok-w"> </span>x-forwarded-host<span class="tok-w">  </span>$host;<span class="tok-w"></span>
+<span class="tok-w">        </span>proxy_set_header<span class="tok-w"> </span>x-forwarded-proto<span class="tok-w"> </span>$scheme;<span class="tok-w"></span>
+<span class="tok-w">        </span>proxy_set_header<span class="tok-w"> </span>x-forwarded-port<span class="tok-w">  </span>$server_port;<span class="tok-w"></span>
+
+
+<span class="tok-w">        </span><span class="tok-k">access_log</span><span class="tok-w">  </span>/var/log/nginx/localhost.access.log;<span class="tok-w"></span>
+<span class="tok-w">        </span>error_log<span class="tok-w">   </span>/var/log/nginx/localhost.error.log;<span class="tok-w"></span>
+<span class="tok-w">    </span>}<span class="tok-w"></span>
+}<span class="tok-w"></span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>To make sense of this file, it helps to take a step back and consider
+nginx’s role in handling HTTP requests. nginx’s job is to return some
+response for an HTTP request. Config files tell nginx how to handle
+HTTP requests.</p>
+</div>
+<div class="paragraph">
+<p>For example, you might have a single nginx server for two domains,
+<em>ilovehats.com</em> and <em>iloveheads.com</em>. Your nginx configuration files
+might tell nginx to serve content from <em>/var/www/ilovehats.com</em> for
+one domain, and to server content from <em>/var/www/iloveheads.com</em> for
+the other.</p>
+</div>
+<div class="paragraph">
+<p>In our case, we need to tell nginx to forward requests to our
+application server, or the <em>upstream</em> server. You define the upstream
+at ➊, giving it the name <em>localhost_upstream</em>. The next line, <em>server
+127.0.0.1:3000</em> tells nginx what address and port to use when it
+forwards requests. The Clojure application is running on the same
+machine and listening to port 3000, hence <em>server 127.0.0.1:3000</em>.</p>
+</div>
+<div class="paragraph">
+<p><em>server_name localhost</em> , at ➋, tells nginx to use this server
+configuration when the HTTP host is <em>localhost</em>. For my Community
+Picks site, this reads <em>server_name www.communitypicks.com</em>.</p>
+</div>
+<div class="paragraph">
+<p><em>proxy_pass <a href="http://localhost_upstream" class="bare">http://localhost_upstream</a></em>, at ➌, tells nginx to handle
+requests by forwarding them to the server named <em>localhost_upstream</em>
+- the server that’s defined at ➊.</p>
+</div>
+<div class="paragraph">
+<p>If you’re browsing the vagrant example, overall flow is:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Your browser sends an HTTP requests with a host header whose value
+is <em>localhost</em>.</p>
+</li>
+<li>
+<p>The vagrant VM receives the request and sends it to nginx</p>
+</li>
+<li>
+<p>nginx examines the HTTP host to determine which server
+configuration to use</p>
+</li>
+<li>
+<p>It sees that the host is <em>localhost</em> and uses the configuration
+shown above</p>
+</li>
+<li>
+<p>The configuration directs nginx to forward the request to
+<em>localhost_upstream</em>. nginx forwards the request to the Clojure app</p>
+</li>
+<li>
+<p>The Clojure app handles the request and sends a response to nginx</p>
+</li>
+<li>
+<p>nginx forwards the response to your browser</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>The rest of the file sets some useful headers and sets log file
+locations.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="nginx_link_app_config">nginx link app config</h3>
+<div class="paragraph">
+<p>The last task for this role simple creates a symlink at
+<em>/etc/nginx/sites-enabled/localhost.conf</em> pointing to
+<em>/etc/nginx/sites-available/localhost.conf</em>. This follows an nginx
+convention; the intention is to make it easy for you to disable a site
+by deleting its symlink in <em>/etc/nginx/sites-enabled</em> and the
+re-enable it just by re-symlinking.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="It_s_Up_to_You_Now">It’s Up to You Now</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>And that’s it for our exhaustive explanation of the Ansible roles. I
+hope I’ve given you everything you need to get your own app online!
+Not only that, I hope you’ll feel comfortable customizing these roles
+and even writing your own.</p>
+</div>
+<div class="paragraph">
+<p>If you do end up writing your own, remember that Vagrant is your
+friend. Treat it like a REPL: log into the VM and fool around until
+you get things working the way you want, then go back and record what
+you did in an Ansible playbook or a role. After that, recreate the VM
+and run your playbooks against it to make sure everything’s working
+the way it should. And have fun!</p>
+</div>
+<div class="paragraph">
+<p>When you’re done, you’ll be better equipped to share your beautiful
+dark Clojure babies with the world. I can’t wait to see them! Good
+luck!</p>
+</div>
+</div>
+</div>
+        <div class="chapter-nav">
+
+
+
+<div class="prev"><a href="../ansible-tutorial/">← An Ansible Tutorial</a></div>
+
+
+
+
+</div>
+
+        <div id="disqus_thread"></div>
+        <script>
+
+          /**
+          *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+          *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
+          /*
+          var disqus_config = function () {
+          this.page.url = PAGE_URL;  // Replace PAGE_URL with your page's canonical URL variable
+          this.page.identifier = PAGE_IDENTIFIER; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+          };
+          */
+          (function() { // DON'T EDIT BELOW THIS LINE
+          var d = document, s = d.createElement('script');
+          s.src = 'https://clojureforthebraveandtrue.disqus.com/embed.js';
+          s.setAttribute('data-timestamp', +new Date());
+          (d.head || d.body).appendChild(s);
+          })();
+        </script>
+        <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+</noscript>
+      </div>
+      <div class="secondary">
+        <div class="wrapper">
+          <div class="junk">
+            <script src="https://gumroad.com/js/gumroad.js"></script>
+<a class="gumroad-button" href="https://gum.co/gHcWk" target="_blank">Buy the ebook!?</a>
+          </div>
+          <div class="ads">
+            <a class="twitter-follow-button" href="https://twitter.com/nonrecursive">Follow @nonrecursive</a>
+            <form action="//flyingmachinestudios.us1.list-manage.com/subscribe/post?u=60763b0c4890c24bd055f32e6&amp;amp;amp;id=0b40ffd1e1" class="validate" id="mc-embedded-subscribe-form" method="post" name="mc-embedded-subscribe-form" novalidate="" target="_blank">
+              <input class="email" id="mce-EMAIL" name="EMAIL" placeholder="email address" required="" type="email" value="">
+              <input class="button" id="mc-embedded-subscribe" name="subscribe" type="submit" value="get email updates">
+            </form>
+            <ol>
+              <li><a target="_blank" href="https://jobs.braveclojure.com">Find Clojure jobs</a></li>
+              <li><a target="_blank" href="http://open-source.braveclojure.com">Contribute to beginner-friendly open source projects</a></li>
+            </ol>
+          </div>
+<div class="chapter-sections">Chapter Sections</div>
+<ol class="toc">
+<li><a href="/quests/deploy/sweet-tooth-deep-dive/#Your_Beautiful_Little_Server_Redux">Your Beautiful Little Server Redux</a></li>
+<li><a href="/quests/deploy/sweet-tooth-deep-dive/#Design_Goals">Design Goals</a></li>
+<li><a href="/quests/deploy/sweet-tooth-deep-dive/#Our_Playbooks">Our Playbooks</a></li>
+<li>
+<a href="/quests/deploy/sweet-tooth-deep-dive/#clojure_uberjar_webapp_common">clojure-uberjar-webapp-common</a><ol>
+<li><a href="/quests/deploy/sweet-tooth-deep-dive/#Create_user">Create user</a></li>
+<li><a href="/quests/deploy/sweet-tooth-deep-dive/#Create_project_directory_and_Create_config_directory">Create project directory and Create config directory</a></li>
+</ol>
+</li>
+<li>
+<a href="/quests/deploy/sweet-tooth-deep-dive/#clojure_uberjar_webapp_app">clojure-uberjar-webapp-app</a><ol>
+<li><a href="/quests/deploy/sweet-tooth-deep-dive/#Install_required_system_packages">Install required system packages</a></li>
+<li><a href="/quests/deploy/sweet-tooth-deep-dive/#Check_existence_of_local_env_file">Check existence of local env file</a></li>
+<li><a href="/quests/deploy/sweet-tooth-deep-dive/#Copy_app_env_file">Copy app env file</a></li>
+<li><a href="/quests/deploy/sweet-tooth-deep-dive/#Upload_http_env_var_file">Upload http env var file</a></li>
+<li><a href="/quests/deploy/sweet-tooth-deep-dive/#Upload_web_app_upstart_config_file">Upload web app upstart config file</a></li>
+<li><a href="/quests/deploy/sweet-tooth-deep-dive/#Make_app_log_directory">Make app log directory</a></li>
+<li><a href="/quests/deploy/sweet-tooth-deep-dive/#Copy_uberjar">Copy uberjar</a></li>
+<li><a href="/quests/deploy/sweet-tooth-deep-dive/#combine_configs">combine configs</a></li>
+<li><a href="/quests/deploy/sweet-tooth-deep-dive/#Copy_check_script_and_Run_check">Copy check script and Run check</a></li>
+</ol>
+</li>
+<li>
+<a href="/quests/deploy/sweet-tooth-deep-dive/#Notifications">Notifications</a><ol>
+<li><a href="/quests/deploy/sweet-tooth-deep-dive/#install_schemas">install schemas</a></li>
+<li><a href="/quests/deploy/sweet-tooth-deep-dive/#restart_web_app">restart web app</a></li>
+</ol>
+</li>
+<li>
+<a href="/quests/deploy/sweet-tooth-deep-dive/#clojure_uberjar_webapp_nginx">clojure-uberjar-webapp-nginx</a><ol>
+<li><a href="/quests/deploy/sweet-tooth-deep-dive/#Install_required_system_packages">Install required system packages</a></li>
+<li><a href="/quests/deploy/sweet-tooth-deep-dive/#Disable_default_site">Disable default site</a></li>
+<li><a href="/quests/deploy/sweet-tooth-deep-dive/#nginx_base_config">nginx base config</a></li>
+<li><a href="/quests/deploy/sweet-tooth-deep-dive/#nginx_app_config">nginx app config</a></li>
+<li><a href="/quests/deploy/sweet-tooth-deep-dive/#nginx_link_app_config">nginx link app config</a></li>
+</ol>
+</li>
+<li><a href="/quests/deploy/sweet-tooth-deep-dive/#It_s_Up_to_You_Now">It’s Up to You Now</a></li>
+</ol>
+          <div class="chapters">
+            <div class="subtitle">Chapters</div>
+            <ol class="toc">
+              <li>
+                <a href="/quests/deploy/preface/">
+                  Preface
+                </a>
+              </li>
+              <li>
+                <a href="/quests/deploy/intro/">
+                  Intro
+                </a>
+              </li>
+              <li>
+                <a href="/quests/deploy/set-up-a-server-and-deploy-a-clojure-app-to-it/">
+                  Chapter 1: Set Up a Server and Deploy a Clojure App To It
+                </a>
+              </li>
+              <li>
+                <a href="/quests/deploy/ansible-tutorial/">
+                  Chapter 2: An Ansible Tutorial
+                </a>
+              </li>
+              <li>
+                <a href="/quests/deploy/sweet-tooth-deep-dive/">
+                  Chapter 3: Sweet Tooth Deep Dive
+                </a>
+              </li>
+            </ol>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="footer">
+      <div class="container">
+        <div>
+          © 2017 Daniel Higginbotham
+        </div>
+      </div>
+    </div>
+    <script id="dsq-count-scr" src="//clojureforthebraveandtrue.disqus.com/count.js" async></script>
+    <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+    <script src="/assets/scripts/jquery.sticky.js"></script>
+    <script src="/assets/scripts/sticky.js"></script>
+    <script>
+              !function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs')
+            </script>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-43463851-1', 'auto');
+      ga('send', 'pageview');
+
+    </script>
+  </body>
+</html>

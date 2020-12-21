@@ -1,0 +1,392 @@
+<!DOCTYPE HTML>
+<html lang="en">
+  <head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta charset="utf-8">
+  <meta path="/quests/reducers/intro/">
+  
+  <title>Intro | Parallel Programming in Clojure with Reducers</title>
+  
+  <link rel="stylesheet" href="/assets/stylesheets/main.css">
+  <link rel="stylesheet" href="/assets/stylesheets/pygments.css">
+  <link href="//fonts.googleapis.com/css?family=Roboto+Condensed:400,700italic,700,400italic,300italic,300%7CSource+Sans+Pro:400,200,200italic,300,300italic,400italic,600italic,600,700,700italic,900italic,900%7CSource+Code+Pro:400,700%7CGentium+Book+Basic:400,400italic,700,700italic%7CCourgette" rel="stylesheet" type="text/css">
+</head>
+
+  <body class="reducers-book">
+    <div class="nav">
+  <div class="container">
+    <div>
+      <ul>
+        <li><a href="/">Brave Clojure</a></li>
+        <li><a href="https://jobs.braveclojure.com">Jobs</a></li>
+        <li><a href="http://open-source.braveclojure.com">Open Source Projects</a></li>
+        <li><a href="/quests/deploy">Deployment Book</a></li>
+        <li><a href="/quests/reducers/intro">Reducers Book</a></li>
+        <li><a href="/training">On-Site Training</a></li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+    <div class="header">
+      <div class="logoy">
+        <div class="container">
+          <div class="subtitle">
+            the palmco employee guide to
+          </div>
+          <div class="title">
+            <a href="/quests/reducers/intro">
+              <strong>Parallel Programming</strong> in <strong>Clojure</strong> with <strong>Reducers</strong>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="callout">
+      <div class="container">
+        <form action="//flyingmachinestudios.us1.list-manage.com/subscribe/post?u=60763b0c4890c24bd055f32e6&amp;amp;id=0b40ffd1e1" class="validate" id="mc-embedded-subscribe-form" method="post" name="mc-embedded-subscribe-form" novalidate="" target="_blank">
+          <p>
+            Follow
+            <a href="https://twitter.com/nonrecursive">@nonrecursive</a>
+            to hear about new content
+            or subscribe:
+            <input class="email" id="mce-EMAIL" name="EMAIL" placeholder="email address" required="" type="email" value="">
+            <input class="button" id="mc-embedded-subscribe" name="subscribe" type="submit" value="get updates!">
+          </p>
+        </form>
+      </div>
+    </div>
+    <div class="buy">
+      <div class="container">
+      <div class="hero">
+        <h1>Buy the (beta) ebook!?</h1>
+        <div class="hype">
+          <p>
+            Hello, brave and true reader!
+          </p>
+          <p>
+            Someone recently informed me that it's not completely
+            crazypants to charge a sustainable amount for high quality
+            programming content. This was news to me, but I
+            thought, <em>hey, why not give it a shot?</em>
+          </p>
+          <h3>The First Part's Free</h3>
+          <p>
+            For this book on parallel programming, I'm releasing the
+            <a href="/quests/reducers/intro">Introduction</a> and
+            <a href="/quests/reducers/know-your-reducers">Part 1</a>
+            for free (I guess I haven't really absorbed the
+            lesson?). Part 1 is a practical tutorial that will teach
+            you how to use reducers; I want every Clojurist to be able
+            to use this useful tool. If you want Parts 2 and 3, you'll
+            need to buy the (beta) ebook.
+          </p>
+          <h3>The ebook is where the awesome is</h3>
+          <p>
+            One of the reasons you love Clojure is that it makes
+            advanced (but relevant) programming concepts and
+            techniques accessible. It is <em>mentally stimulating</em>
+            and <em>fun</em> and <em>actually useful</em>. In Parts 2 and
+            3, you will explore exciting new programming
+            vistas. Recall how you felt learning about Clojure's state
+            model, or learning about programming with pure
+            functions. You'll get that sense of <em>wow!</em>
+            and <em>holy schnitzel, that's amazing!</em> in the paid
+            parts of the book.
+          </p>
+          <p>
+            Parallel programming has become more and more relevant
+            because of the inexorable lurch toward multi-core
+            processors. You'll learn about parallel programming
+            concepts and techniques in Part 2, adding
+            an <strong>invaluable tool</strong> to your mental
+            toolkit. These ideas are universal; you can apply them
+            outside Clojure.
+          </p>
+          <p>
+            In Part 3 (unreleased; still in progress), you'll look at
+            how the reducers library is implemented, and in the
+            process explore some <strong>grade-A functional
+            programming voodoo</strong>. You'll also see
+            how <em>protocols</em> and <em>reification</em> in Clojure
+            can be put to heart-breakingly elegant use. Once I release
+            Part 3, I'll send you an email and you'll be able to
+            download an update. I plan on finishing the book by
+            October 2017. The book is currently about 68 pages, and I
+            plan on adding 50-70 more.
+          </p>
+          <p>
+            Writing this stuff is a ton of work, and if you like what
+            you read, want to learn more, and want to help me finish
+            this book, then please purchase an ebook. When Gumroad
+            sends me the email notifying me of your purchase, I'll
+            show my thanks by printing out your email address and
+            drawing a heart around it. Thank you for your support!
+          </p>
+          <p>
+            <em>— Daniel Higginbotham, programmer, author, and heart drawer</em>
+          </p>
+        </div>
+        <div class="cover">
+          <a href="https://gum.co/reducers">
+            <img src="/quests/reducers/images/parallel-cover-1.png">
+          </a>
+        </div>
+        <div class="buy">
+          <a href="https://gum.co/reducers">buy the pdf, mobi, and epub for $28</a>
+        </div>
+      </div>
+    </div>
+    </div>
+    <div class="container wrap">
+      <div class="main">
+        <div class="chapter-nav">
+
+
+
+
+
+<div class="next"><a href="../know-your-reducers/">Know Your Reducers →</a></div>
+
+
+</div>
+
+        <h1>Intro</h1>
+<div class="paragraph">
+<p>Welcome, new employee, to most innovative startup on the planet! I’m
+so glad to have bestowed upon you the greatest achievement of your
+life: being chosen to work here.</p>
+</div>
+<div class="paragraph">
+<p>Now that you’re an official team/family member, you get to enter our
+<em>Startup Stealth Tent</em> and learn what you’ll actually work on. Our
+plan is to <em>disrupt</em> the ancient field of palm reading with a
+mobile app. This engineering marvel will let a user position their
+phone so that the camera <em>faces</em> their <em>palm</em> and takes a picture,
+then predicts the future. I call it: <em>iFacePalm</em>.</p>
+</div>
+<div class="paragraph">
+<p>The real value of our paradigm-annihilating app will lie as much in its
+accuracy as its ease of use, so we’ll need to develop an accurate
+palm-based human life prediction model. And to do that, we’re going to
+need to process a poop-ton of data, comparing people’s palm stats with
+their entire life history to reveal the connections that without a
+doubt exist.</p>
+</div>
+<div class="paragraph">
+<p>Processing poop-tons of data is exactly what <em>parallel programming</em> is
+good for, and to get you onboarded I’ve written this ebook to
+explain it. In truth, though, it’s not just important for our app;
+parallel programming has become an essential tool for modern hackers
+thanks to fundamental changes in computer hardware. (Not that
+you’ll ever need to work on anything else once the money deluge
+sweeps us away.)</p>
+</div>
+<div class="paragraph">
+<p>In <em>Clojure for the Brave and True</em> I wrote a bit about
+<a href="http://bravecljure.com/concurrency">concurrent and parallel
+programming</a>, or “the sacred art of structuring your application to
+safely manage multiple, simultaneously executing tasks.” That book
+focused on state-management hassles and how Clojure can help you deal
+with them, and it took only brief forays into the world of
+parallelism.</p>
+</div>
+<div class="paragraph">
+<p>This book focuses on performance and parallelization, and it will show
+you how to structure your application so that it will get better
+performance by automatically dividing work among all CPU cores. In the
+pages (screens? not-yet-scrolled-to portion?) ahead, you’ll learn
+about Clojure’s core.reducers library, a great option for doing
+parallel computation. Whereas clojure.core provides only pmap to
+parallelize mapping, I’ll show you how to use reducers to parallelize
+take, filter, and more.</p>
+</div>
+<div class="paragraph">
+<p>My larger goal is for you to understand the reducers library
+<em>completely</em>; if I only show you how to use reducers, I’ll have failed
+you as an author and as an iconoclastic visionary. The world of
+parallel programming is fascinating, and this article will take you on
+a thorough tour of it so you’ll understand how the reducers library
+fits into the broader computing landscape. To that end, this book is
+divided into three parts: Practice, Theory, and Implementation.</p>
+</div>
+<div class="paragraph">
+<p>In part one, Practice, I’ll start you off with a tutorial that will
+give you a good understanding of how to use the library. You’ll learn
+about what the functions do, when to use them, and unexpected behavior
+to watch out for. I’ll also compare reducer performance to serial
+counterparts.</p>
+</div>
+<div class="paragraph">
+<p>This will give you enough to hang your hat on; it will give you a good
+concrete reference point to make sense of the more abstract discussion
+that will follow. Plus, it will inspire the kind of pulse-pounding
+edge-of-your-seat suspense that you haven’t felt since <em>Lost</em> went off
+the air as your brain scrambles to answer the question <em>But how do
+reducers</em> do <em>that?</em> (Probably.) And if you somehow manage to stop
+reading after the tutorial, you’ll still have learned enough to
+improve your code.</p>
+</div>
+<div class="paragraph">
+<p>In part two, Theory, you’ll jump into the more conceptual portion by
+learning all about parallel performance. You’ll learn more about why
+it matters, and some general performance strategies that can be
+applied to any language, not just Clojure. You’ll dig deep into <em>data
+parallism</em>, where you’ll learn about the <em>work-span model</em>, one of the
+theoretical models used to reason about parallel performance. It’s not
+all theory, though; you’ll also learn about the practical approaches
+to writing parallel programs. I’ll discuss how you can achieve the
+balance between <em>minimizing overhead</em> and <em>load balancing</em> using
+<em>thread management</em>, <em>granularity</em>, <em>parallel slack</em>, <em>tiling</em>, and
+<em>fusion</em>. You’ll learn about the <em>executors</em> in Java’s
+java.util.concurrent package, which Clojure uses extensively.</p>
+</div>
+<div class="paragraph">
+<p>All of this fun prep work will have you primed to understand the
+<em>fork/join</em> framework. You’ll learn how fork/join implements many of
+the techniques mentioned above and adds a couple more to the mix,
+including <em>recursive decomposition</em> and <em>work stealing</em>.</p>
+</div>
+<div class="paragraph">
+<p>In Part three, Implementation, I’ll reach out my hand to you like
+Aladdin from Disney’s <em>Aladdin</em> and ask, “Do you trust me?”, then
+take you on a magic carpet ride through the surprisingly succinct
+reducers codebase. It’s always worthwhile to read Clojure’s source,
+and the reducers library is particularly delightful because it uses
+functional programming and Clojure’s protocols in ways that,
+personally, I find exhilirating. (Actually, the first time I worked my
+way through the code it my head hurt, but that’s pretty much the same
+as exhilirating, right? Hopefully, with me as your guide you’ll get
+all of the joy and none of the headache.)</p>
+</div>
+<div class="paragraph">
+<p>As a foretaste: the reducers library relies on functions that return
+functions that return functions. It’s like Leonardo DiCaprio’s
+character in <em>Inception</em> had a baby with that Yo Dawg meme guy, and it
+was raised by John McCarthy using a parenting manual written by
+Alonzo Church. In short, I give you my word as your new boss and as a
+purveyor of fine ideas that part three will help you understand how to
+use Clojure and functional programming to write elegant code.</p>
+</div>
+<div class="paragraph">
+<p>After going through the implementation code, your brain, which is a
+parallel processing machine, will fully understand Clojure’s parallel
+processing library. You will then enjoy a moment of smug assurance
+that your brain is able to appreciate this fact, while Clojure’s
+reducers library cannot. And then you will experience the onset of
+existential angst as, unbidden by quote-unqoute “you”, your brain
+spontaneously excretes the thought, <em>But for how long?</em></p>
+</div>
+<div class="paragraph">
+<p>Luckily, you’ll have the tools to start building our fortune-telling
+app, so you’ll actually be able to know how much time you’ll have to
+enjoy the bajillionteen bucks we’ll make selling this Nobel-worthy
+consumer application before our silicon successors take the helm of
+starship Earth and we go the way of Australopithecus.</p>
+</div>
+<div class="paragraph">
+<p>Sounds super fun! Let’s get started!</p>
+</div>
+        <div class="chapter-nav">
+
+
+
+
+
+<div class="next"><a href="../know-your-reducers/">Know Your Reducers →</a></div>
+
+
+</div>
+
+        <div id="disqus_thread"></div>
+<script>
+
+  /**
+  *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+  *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
+  /*
+  var disqus_config = function () {
+  this.page.url = PAGE_URL;  // Replace PAGE_URL with your page's canonical URL variable
+  this.page.identifier = PAGE_IDENTIFIER; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+  };
+  */
+  (function() { // DON'T EDIT BELOW THIS LINE
+  var d = document, s = d.createElement('script');
+  s.src = 'https://clojureforthebraveandtrue.disqus.com/embed.js';
+  s.setAttribute('data-timestamp', +new Date());
+  (d.head || d.body).appendChild(s);
+  })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+</noscript>
+
+      </div>
+      <div class="secondary">
+        <div class="wrapper">
+          <div class="junk">
+            <script src="https://gumroad.com/js/gumroad.js"></script>
+            <a href="https://gum.co/reducers">
+              <img src="/quests/reducers/images/parallel-cover-1.png">
+              Read the full book!
+            </a>
+          </div>
+          <div class="ads">
+            <a class="twitter-follow-button" href="https://twitter.com/nonrecursive">Follow @nonrecursive</a>
+            <form action="//flyingmachinestudios.us1.list-manage.com/subscribe/post?u=60763b0c4890c24bd055f32e6&amp;amp;amp;id=0b40ffd1e1" class="validate" id="mc-embedded-subscribe-form" method="post" name="mc-embedded-subscribe-form" novalidate="" target="_blank">
+              <input class="email" id="mce-EMAIL" name="EMAIL" placeholder="email address" required="" type="email" value="">
+              <input class="button" id="mc-embedded-subscribe" name="subscribe" type="submit" value="get email updates">
+            </form>
+            <ol>
+              <li><a target="_blank" href="https://jobs.braveclojure.com">Find Clojure jobs</a></li>
+            </ol>
+          </div>
+          <div class="chapters">
+            <div class="subtitle">Chapters</div>
+            <ol class="toc">
+              <li>
+                <a href="/quests/reducers/intro/">
+                  Intro
+                </a>
+              </li>
+              <li>
+                <a href="/quests/reducers/know-your-reducers/">
+                  Chapter 1: Know Your Reducers
+                </a>
+              </li>
+              <li>
+                Chapter 2: Performance and Parallelism (ebook-only)
+              </li>
+              <li>
+                Chapter 3: Fork/Join and Implementation (in progess; ebook-only)
+              </li>
+            </ol>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="footer">
+      <div class="container">
+        <div>
+          © 2017 Daniel Higginbotham
+        </div>
+      </div>
+    </div>
+    <script id="dsq-count-scr" src="//clojureforthebraveandtrue.disqus.com/count.js" async></script>
+    <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+    <script src="/assets/scripts/jquery.sticky.js"></script>
+    <script src="/assets/scripts/sticky.js"></script>
+    <script>
+              !function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs')
+            </script>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-43463851-1', 'auto');
+      ga('send', 'pageview');
+
+    </script>
+  </body>
+</html>

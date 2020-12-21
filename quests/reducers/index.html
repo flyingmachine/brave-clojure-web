@@ -1,0 +1,1859 @@
+<!DOCTYPE HTML>
+<html lang="en">
+  <head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta charset="utf-8">
+  <meta path="/quests/reducers/">
+  
+  <title>Reducers | Parallel Programming in Clojure with Reducers</title>
+  
+  <link rel="stylesheet" href="/assets/stylesheets/main.css">
+  <link rel="stylesheet" href="/assets/stylesheets/pygments.css">
+  <link href="//fonts.googleapis.com/css?family=Roboto+Condensed:400,700italic,700,400italic,300italic,300%7CSource+Sans+Pro:400,200,200italic,300,300italic,400italic,600italic,600,700,700italic,900italic,900%7CSource+Code+Pro:400,700%7CGentium+Book+Basic:400,400italic,700,700italic%7CCourgette" rel="stylesheet" type="text/css">
+</head>
+
+  <body class="reducers-book">
+    <div class="nav">
+  <div class="container">
+    <div>
+      <ul>
+        <li><a href="/">Brave Clojure</a></li>
+        <li><a href="https://jobs.braveclojure.com">Jobs</a></li>
+        <li><a href="http://open-source.braveclojure.com">Open Source Projects</a></li>
+        <li><a href="/quests/deploy">Deployment Book</a></li>
+        <li><a href="/quests/reducers/intro">Reducers Book</a></li>
+        <li><a href="/training">On-Site Training</a></li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+    <div class="header">
+      <div class="logoy">
+        <div class="container">
+          <div class="subtitle">
+            the palmco employee guide to
+          </div>
+          <div class="title">
+            <a href="/quests/reducers/intro">
+              <strong>Parallel Programming</strong> in <strong>Clojure</strong> with <strong>Reducers</strong>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="callout">
+      <div class="container">
+        <form action="//flyingmachinestudios.us1.list-manage.com/subscribe/post?u=60763b0c4890c24bd055f32e6&amp;amp;id=0b40ffd1e1" class="validate" id="mc-embedded-subscribe-form" method="post" name="mc-embedded-subscribe-form" novalidate="" target="_blank">
+          <p>
+            Follow
+            <a href="https://twitter.com/nonrecursive">@nonrecursive</a>
+            to hear about new content
+            or subscribe:
+            <input class="email" id="mce-EMAIL" name="EMAIL" placeholder="email address" required="" type="email" value="">
+            <input class="button" id="mc-embedded-subscribe" name="subscribe" type="submit" value="get updates!">
+          </p>
+        </form>
+      </div>
+    </div>
+    <div class="buy">
+      <div class="container">
+      <div class="hero">
+        <h1>Buy the (beta) ebook!?</h1>
+        <div class="hype">
+          <p>
+            Hello, brave and true reader!
+          </p>
+          <p>
+            Someone recently informed me that it's not completely
+            crazypants to charge a sustainable amount for high quality
+            programming content. This was news to me, but I
+            thought, <em>hey, why not give it a shot?</em>
+          </p>
+          <h3>The First Part's Free</h3>
+          <p>
+            For this book on parallel programming, I'm releasing the
+            <a href="/quests/reducers/intro">Introduction</a> and
+            <a href="/quests/reducers/know-your-reducers">Part 1</a>
+            for free (I guess I haven't really absorbed the
+            lesson?). Part 1 is a practical tutorial that will teach
+            you how to use reducers; I want every Clojurist to be able
+            to use this useful tool. If you want Parts 2 and 3, you'll
+            need to buy the (beta) ebook.
+          </p>
+          <h3>The ebook is where the awesome is</h3>
+          <p>
+            One of the reasons you love Clojure is that it makes
+            advanced (but relevant) programming concepts and
+            techniques accessible. It is <em>mentally stimulating</em>
+            and <em>fun</em> and <em>actually useful</em>. In Parts 2 and
+            3, you will explore exciting new programming
+            vistas. Recall how you felt learning about Clojure's state
+            model, or learning about programming with pure
+            functions. You'll get that sense of <em>wow!</em>
+            and <em>holy schnitzel, that's amazing!</em> in the paid
+            parts of the book.
+          </p>
+          <p>
+            Parallel programming has become more and more relevant
+            because of the inexorable lurch toward multi-core
+            processors. You'll learn about parallel programming
+            concepts and techniques in Part 2, adding
+            an <strong>invaluable tool</strong> to your mental
+            toolkit. These ideas are universal; you can apply them
+            outside Clojure.
+          </p>
+          <p>
+            In Part 3 (unreleased; still in progress), you'll look at
+            how the reducers library is implemented, and in the
+            process explore some <strong>grade-A functional
+            programming voodoo</strong>. You'll also see
+            how <em>protocols</em> and <em>reification</em> in Clojure
+            can be put to heart-breakingly elegant use. Once I release
+            Part 3, I'll send you an email and you'll be able to
+            download an update. I plan on finishing the book by
+            October 2017. The book is currently about 68 pages, and I
+            plan on adding 50-70 more.
+          </p>
+          <p>
+            Writing this stuff is a ton of work, and if you like what
+            you read, want to learn more, and want to help me finish
+            this book, then please purchase an ebook. When Gumroad
+            sends me the email notifying me of your purchase, I'll
+            show my thanks by printing out your email address and
+            drawing a heart around it. Thank you for your support!
+          </p>
+          <p>
+            <em>— Daniel Higginbotham, programmer, author, and heart drawer</em>
+          </p>
+        </div>
+        <div class="cover">
+          <a href="https://gum.co/reducers">
+            <img src="/quests/reducers/images/parallel-cover-1.png">
+          </a>
+        </div>
+        <div class="buy">
+          <a href="https://gum.co/reducers">buy the pdf, mobi, and epub for $28</a>
+        </div>
+      </div>
+    </div>
+    </div>
+    <div class="container wrap">
+      <div class="main">
+        <div class="chapter-nav">
+
+
+
+
+
+
+</div>
+
+        <h1>(This Article is Barely About) Reducers</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>Have you ever done multiple things at the same time? Don’t be silly,
+of course you have. You’ve made a sandwich while guiltily watching
+<em>The Real Housewives of Orange County</em> or texted while driving or
+fantasized about which yacht to buy with your vast book proceeds while
+vacuuming. (I don’t know where I got these examples. They just came to
+my mind for no reason whatsoever.)</p>
+</div>
+<div class="paragraph">
+<p>Point is, life is full of doing multiple things at once. Until
+recently, though, we programmers haven’t had to deal with this
+unpleasant fact while programming. Alas, the halcyon days of purely
+serial (non-concurrent, single-threaded) code are over. It’s time to
+adapt to the new reality, a reality where you have to know how to
+write code for multiple processors if you want your programs to have
+acceptable performance.</p>
+</div>
+<div class="paragraph">
+<p>In <em>Clojure for the Brave and True</em> I wrote about the
+<a href="http://bravecljure.com/concurrency">state-management difficulties</a> that
+you can run into when doing concurrent programming, and
+<a href="http://bravecljure.com/concurrenc/zombie-metaphysics/">how Clojure can
+help you deal with them</a>. But that’s only half the story. If you
+really want to master the art of doing multiple things at once, you
+need to understand parallelism.</p>
+</div>
+<div class="paragraph">
+<p>And hey, guess what! It just so happens that this article is about
+parallelism! In the pages (screens?  not-yet-scrolled-to portion?)
+ahead, you’ll learn about Clojure’s core.reducers library, a great
+option for doing parallel computation. Whereas clojure.core provides
+only pmap to parallelize mapping, I’ll show you how to use reducers
+to parallelize take, filter, and more.</p>
+</div>
+<div class="paragraph">
+<p>My goal, though, is for you to understand the reducers library
+<em>completely</em>; if I only show you how to use reducers, I’ll have failed
+you as an author and a gentleman. The world of parallel programming is
+fascinating, and this article will take you on a thorough tour of it
+so you’ll understand how the reducers library fits into the broader
+computing landscape. You’ll understand not just <em>what</em> the reducers
+library does, but <em>why</em> and <em>how</em>.</p>
+</div>
+<div class="paragraph">
+<p>To get there, I’ll start you off with a tutorial that will give you a
+good practical understanding of the library. You’ll learn about what
+the functions do, when to use them, and unexpected behavior to watch
+out for. I’ll also compare reducer performance to the serial
+counterparts.</p>
+</div>
+<div class="paragraph">
+<p>This will give you enough to hang your hat on; it will give you a good
+concrete reference point to make sense of the more abstract discussion
+that will follow. Plus, it will inspire the kind of pulse-pounding
+edge-of-your-seat suspense that you haven’t felt since <em>Lost</em> went off
+the air as your brain scrambles to answer the quest <em>But how do
+reducers</em> do <em>that?</em> (Probably.) And if you somehow manage to stop
+reading after the tutorial, you’ll still have learned enough to
+improve your code.</p>
+</div>
+<div class="paragraph">
+<p>After the tutorial you’ll jump into the more conceptual portion by
+learning all about parallel performance. You’ll learn more about why
+it matters, and some general performance strategies. Next, you’ll dig
+deep into <em>data parallism</em>, where you’ll learn about the <em>work-span
+model</em>, one of the theoretical models used to reason about parallel
+performance. It’s not all theory, though; you’ll also learn about the
+practical approaches to writing parallel programs. I’ll discuss how
+you can achieve the balance between <em>minimizing overhead</em> and <em>load
+balancing</em> using <em>thread management</em>, <em>granularity</em>, <em>parallel slack</em>,
+<em>tiling</em>, and <em>fusion</em>.  You’ll learn about the <em>executors</em> in Java’s
+java.util.concurrent package, which Clojure uses extensively.</p>
+</div>
+<div class="paragraph">
+<p>All of this fun prep work will have you primed to understand the
+<em>fork/join</em> framework. You’ll learn how fork/join implements many of
+the techniques mentioned above and adds a couple more to the mix,
+including <em>recursive decomposition</em> and <em>work stealing</em>.</p>
+</div>
+<div class="paragraph">
+<p>And then we’ll be ready to circle back to the reducers library. We’ll
+revisit the reducers examples and add a few more, and we’ll peek at
+the Clojure implementation. After going through the implementation
+code, your brain, which is a parallel processing machine, will fully
+understand Clojure’s parallel processing library. You will enjoy a
+moment of smug assurance that your brain’s capabilities vastly exceed
+the computer’s, until a nagging doubt worms its way into your
+consciousness: <em>But for how long?</em></p>
+</div>
+<div class="paragraph">
+<p>Sounds super fun! Let’s get started!</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="Know_Your_Reducers">Know Your Reducers</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>In one episode of <em>Man vs. Wild</em> where Will Ferrell, Hollywood actor
+and comedian, accompanies Bear Grylls, professional survivalist, deep
+inside the Arctic circle. The very first thing Grylls makes Ferrell do
+is rappel from a helicopter hovering 150 feet above the ground. As
+Ferrell makes his descent, he has only one word for the camera:
+"<em>Mommy!</em>"</p>
+</div>
+<div class="paragraph">
+<p>That’s about how I felt when I was first tried to learn about
+reducers: plunked down far from home in a completely foreign and
+uncomfortable landscape. Let’s avoid creating that feeling in you by
+starting with something familiar: seq functions.</p>
+</div>
+<div class="sect2">
+<h3 id="Reducers_vs__Seq_Functions">Reducers vs. Seq Functions</h3>
+<div class="paragraph">
+<p>The reducers library (in the clojure.core.reducers namespace) has
+alternative implementations of map, filter, and other seq
+functions. These alternative functions are called <em>reducers</em>, and you
+can apply almost everything you know about seq functions to
+reducers. Just like seq functions, the purpose of reducers is to
+transform collections. For example, if you wanted to increment every
+number in a vector, filter out the even ones, and sum the numbers, the
+seq and reducer versions look virtually identical:</p>
+</div>
+<div class="paragraph">
+<p>[[seq functions and reducers are identical in many ways]]</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="clojure"><span class="tok-nv">---</span>
+<span class="tok-c1">;; seq version</span>
+<span class="tok-p">(</span><span class="tok-nf">-&gt;&gt;</span> <span class="tok-p">(</span><span class="tok-nb">range </span><span class="tok-mi">10</span><span class="tok-p">)</span>
+     <span class="tok-p">(</span><span class="tok-nb">map </span><span class="tok-nv">inc</span><span class="tok-p">)</span>
+     <span class="tok-p">(</span><span class="tok-nb">filter </span><span class="tok-nv">even?</span><span class="tok-p">)</span>
+     <span class="tok-p">(</span><span class="tok-nb">reduce </span><span class="tok-nv">+</span><span class="tok-p">))</span>
+<span class="tok-c1">;=&gt; 30</span></code></pre>
+</div>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"></dt>
+<dd>
+<p>reducer version
+(require '[clojure.core.reducers :as r])
+(→&gt; (range 10)
+     (r/map inc)
+     (r/filter even?)
+     (r/reduce +))
+;⇒ 30
+---</p>
+</dd>
+</dl>
+</div>
+<div class="paragraph">
+<p>In both examples, (range 10) returns a seq of the numbers 0
+through 9. In the first example, map is a seq function. In the
+second, r/map is a reducer. In both examples, map has the same
+purpsose: transforming an input collection to an output by applying a
+function to each element of the input. Reducers are just another means
+of transforming collections, and for the most part they’re used just
+like the seq functions you already know and love.</p>
+</div>
+<div class="sidebarblock">
+<div class="content">
+<div class="title">One Difference between Reducers and Seq Functions</div>
+<div class="paragraph">
+<p>One way that reducers are <em>not</em> like seq functions is that you can’t
+call many seq functions like first on their return values: something
+like (first (r/map inc [1 2])) won’t work. You’ll learn why soon.</p>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>So why bother with them? Reducers are designed to perform better
+(often dramatically better) than seq functions under some
+circumstances by <em>performing eager computation</em>, <em>eliminating
+intermediate collections</em> and <em>allowing parallelism</em>.</p>
+</div>
+<div class="paragraph">
+<p>In fact, as far as I can tell, parallelization is the main reason Rich
+Hickey, Lambda Whisperer added reducers to the language. The goal of
+executing collection transformations in parallel completely determined
+how reducers are designed, and even explains why we use the term
+<em>reducers</em>: reduce operations can be trivially parallellized (you’ll
+learn how by the end), and every collection transformation can be
+expressed in terms of reduce (there’s a
+<a href="http://www.cs.nott.ac.uk/~pszgmh/fold.pdf">big juicy math paper on
+that</a>).</p>
+</div>
+<div class="paragraph">
+<p>Thus, the reducers library is built around using reduce to transform
+collections, and it’s designed this way to make parallelization
+possible. Both eager computation and the elimination of intermediate
+collections are secondary - but useful - consequences of this
+design. (By the way: "elimination of intermediate collections" is a
+freaking mouthful, so I’m going to start using <em>EIC</em>).</p>
+</div>
+<div class="paragraph">
+<p>Let’s look at these three strategies more closely. After that, I’ll
+out the rules for how to ensure that your code makes use of each of
+them, without going into much detail about why they work as
+they do. Last, I’ll also give some examples of reducers at work,
+showing how their performance compares to alternatives.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="The_Strategies">The Strategies</h3>
+<div class="paragraph">
+<p>Understanding the reduce library’s three performance strategies -
+<em>eager computation</em>, <em>EIC</em>, and <em>parallelism</em> - will give you the
+rationale behind reducers, and that will help you understand their
+implementation later on. Plus, these ideas are pretty groovy in their
+own right. I know you’re <em>eager</em> to learn about <em>eager computation</em>,
+so let’s go!</p>
+</div>
+<div class="sect3">
+<h4 id="Eager_Computation">Eager Computation</h4>
+<div class="paragraph">
+<p><em>Eager computation</em> stands in contrast to Clojure’s core sequence
+functions, which produce and consume <em>lazy sequences</em>. You may
+remember that lazy seqs don’t compute their members until you try to
+access them. (For a refresher on lazy sequences, check out
+<a href="http://www.braveclojure.com/core-functions-in-depth/#Lazy_Seqs">the
+lazy seqs section in CFTBAT</a>.) This is often a good performance
+strategy because it saves your program from doing unnecessary
+computations, but in cases where you know you have to <em>realize</em>
+(compute the elements of) the entire seq, laziness actually introduces
+some unnecessary overhead.  Reducers perform eager computation: they
+always compute every member of a collection, and that can improve
+performance slightly.</p>
+</div>
+<div class="paragraph">
+<p>Because reducers are eager, you shouldn’t use them with infinite
+sequences unless you want something useless to happen. The reducer
+would try to realize the entire sequence, which isn’t possible, and
+consume all available memory in the process.</p>
+</div>
+<div class="paragraph">
+<p>This isn’t to say that reducers can’t work on lazy seqs. They totally
+can! They just fail if the lazy seq is infinite.</p>
+</div>
+<div class="paragraph">
+<p>(Story time! When my brother and I were teenagers, we honed our
+technique in using "The Lazy", which was like the opposite of The
+Force from Star Wars. In the same way that The Force had a vaguely
+Eastern grounding in chi or whatever, The Lazy had a vaguely Eastern
+grounding in the tao or whatever; it was the art of doing by not
+doing.  For example, I was ostensibly supposed to do my own laundry,
+but I found that if I left it by the washing machine long enough then
+my mom would get disgusted and just do it.</p>
+</div>
+<div class="paragraph">
+<p>It didn’t always work. Once, I had been writing in bed. I don’t
+remember what (probably terrible poetry or some other teenagery
+dreck), but I had been balling up my paper and throwing it at my waste
+basket, and missing. My brother came into my room and I innocently
+asked him, "Hey, could you pick up that piece of paper?" and
+he did. Then, "Could you put it in that trash can?" And he
+<em>almost</em> did. He leaned over to drop it, then realized what he was
+being Lazied and threw it at my face instead.)</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="Eliminating_Intermediate_Collections">Eliminating Intermediate Collections</h4>
+<div class="paragraph">
+<p>Reducers <em>don’t produce intermediate collections</em>. An intermediate
+collection is a collection produced by one sequence transforming
+function and passed as an argument to another sequence transforming
+function. Let’s look at a kind of stupid example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="clojure"><span class="tok-nv">---</span>
+<span class="tok-p">(</span><span class="tok-nf">-&gt;&gt;</span> <span class="tok-p">(</span><span class="tok-nb">list </span><span class="tok-s">"Shake"</span> <span class="tok-s">"Bake"</span><span class="tok-p">)</span>         <span class="tok-c1">; </span><b class="conum">(1)</b>
+     <span class="tok-p">(</span><span class="tok-nb">map </span><span class="tok-o">#</span><span class="tok-p">(</span><span class="tok-nb">str </span><span class="tok-nv">%</span> <span class="tok-s">" it off"</span><span class="tok-p">))</span>        <span class="tok-c1">; </span><b class="conum">(2)</b>
+     <span class="tok-p">(</span><span class="tok-nb">map </span><span class="tok-nv">clojure.string/lower-case</span><span class="tok-p">)</span> <span class="tok-c1">; </span><b class="conum">(3)</b>
+     <span class="tok-p">(</span><span class="tok-nb">into </span><span class="tok-p">[]))</span>                      <span class="tok-c1">; </span><b class="conum">(4)</b>
+<span class="tok-nv">---</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This code just takes a list of words &lt;1&gt; and performs two map
+operations. First, it appends " it off" to each string &lt;2&gt;, then it
+lower cases each &lt;3&gt;. Finally, it puts the result in a vector
+&lt;4&gt;.</p>
+</div>
+<div class="paragraph">
+<p>Silly code that would never really exist. What we care about here is
+that the map at &lt;2&gt; constructs a new collection (a lazy seq, as it
+happens), and so does the map at &lt;3&gt;. Each of these intermediate
+collections takes resources to construct and traverse. How
+inefficient! Haters are going to hate on this inefficiency, but
+luckily you can shake it off with reducers. (Note to self: is there
+some way to make this attempt at a pun even more forced and
+cringeworthy? Another note to self: What am I doing quoting Taylor
+Swift yet again? Is this some desperate bid to stave off an
+unconscious fear of growing older? For god’s sake, man! You’re only
+30! Get a hold of yourself!)</p>
+</div>
+<div class="paragraph">
+<p>Looking at this code you can deduce that it would be more efficient to
+just combine the two string functions into one:</p>
+</div>
+<div class="paragraph">
+<p>[[fusing two elemental functions]]</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="clojure"><span class="tok-nv">---</span>
+<span class="tok-p">(</span><span class="tok-nf">-&gt;&gt;</span> <span class="tok-p">(</span><span class="tok-nb">list </span><span class="tok-s">"Shake"</span> <span class="tok-s">"Bake"</span><span class="tok-p">)</span>
+     <span class="tok-p">(</span><span class="tok-nb">map </span><span class="tok-p">(</span><span class="tok-nb">comp </span><span class="tok-nv">clojure.string/lower-case</span> <span class="tok-o">#</span><span class="tok-p">(</span><span class="tok-nb">str </span><span class="tok-nv">%</span> <span class="tok-s">" it off"</span><span class="tok-p">)))</span>
+     <span class="tok-p">(</span><span class="tok-nb">into </span><span class="tok-p">[]))</span>
+<span class="tok-nv">---</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This eliminates one of your intermediate collections, and makes your
+code faster. In parallel programming terminology, you’d say that you
+<em>fused</em> two <em>elemental functions</em> into one. An <em>elemental function</em> is
+just a normal function, like lower-case, but we give it the
+qualifier <em>elemental</em> to communicate that we’re talking about it in
+the context of collection transformation; it’s applied to each element
+of the collection. <em>Fusion</em> is the composition of elemental functions
+to avoid producing intermediate collections.</p>
+</div>
+<div class="paragraph">
+<p>It would be cumbersome to have to rewrite your code to achieve this
+kind of fusion, though. Ideally, you want your collection
+transformations to compose into one fused function without any manual
+intervention on your part. You want to be able to write idiomatic
+Clojure code (like the following) and have it "just work":</p>
+</div>
+<div class="paragraph">
+<p>[[you dream of a paradise where this composes through fusion]]</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="clojure"><span class="tok-nv">---</span>
+<span class="tok-p">(</span><span class="tok-nf">-&gt;&gt;</span> <span class="tok-p">(</span><span class="tok-nb">range </span><span class="tok-mi">1000</span><span class="tok-p">)</span>
+     <span class="tok-p">(</span><span class="tok-nf">r/filter</span> <span class="tok-nv">even?</span><span class="tok-p">)</span>
+     <span class="tok-p">(</span><span class="tok-nf">r/map</span> <span class="tok-nv">inc</span><span class="tok-p">)</span>
+     <span class="tok-p">(</span><span class="tok-nb">into </span><span class="tok-p">[]))</span>
+<span class="tok-nv">---</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>And hey, guess what! Reducers just work! They’re actually designed to
+compose into a single fused elemental function when you chain them
+like in the example above, without any extra work on your part. In the
+above example, it’s as if you’re telling Clojure, "Take a seq of the
+numbers 0 through 999. For every element of that function, apply a
+function that does three things: filters the element if it’s even,
+then increments the result (assuming the element wasn’t filtered), and
+then places the result in a vector."</p>
+</div>
+<div class="paragraph">
+<p>In a few minutes, you’ll see just how much this can improve
+performance. But first, let’s look at the final performance strategy
+that reducers enable: parallelism.</p>
+</div>
+<div class="paragraph">
+<p><strong>TODO add note about transducers, include this:</strong>
+---
+(into [] (comp (filter even?)
+               (map inc))
+      (range 1000000))
+---</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="Parallelism">Parallelism</h4>
+<div class="paragraph">
+<p>Parallelism is the simultaneous execution of <em>tasks</em> on two or more
+processors.</p>
+</div>
+<div class="paragraph">
+<p><em>Task</em> is a nebulous word, so let’s define it. I use <em>task</em> to refer
+to function calls, but from the perspective of the processor instead
+of the programmer; execution instead of semantics. That’s still
+nebulous, so let’s look at a concrete example.</p>
+</div>
+<div class="paragraph">
+<p>Let’s say we’re creating a new industry-disrupting app, <em>iFacePalm</em>. To
+use it, you position your phone so that its camera <em>faces</em> your <em>palm</em>
+and takes a picture. Then it predicts your future. Fortune telling
+industry: <em>disrupted!!!</em></p>
+</div>
+<div class="paragraph">
+<p>Now, you may not know this, but the fortune telling industry has no
+quality control standards. There is no Six Sigma of fortune telling. I
+mean gosh, sometimes it seems like these people are just <em>making
+things up</em>! We can do better. We can develop an accurate palm-based
+human life prediction model. But to do that, we’re going to need to
+process a shit-ton of data, comparing people’s palm stats with their
+entire life history to reveal the connections that without a doubt
+exist.</p>
+</div>
+<div class="paragraph">
+<p>Here’s some Clojure code we could write that would get us started:</p>
+</div>
+<div class="paragraph">
+<p>[[A bright beginning to a game-changing app]]</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="clojure"><span class="tok-nv">---</span>
+<span class="tok-p">(</span><span class="tok-kd">defn </span><span class="tok-nv">lifeline-and-years-lived</span>
+  <span class="tok-s">"Given a human subject, return vector of lifeline ratio and years</span>
+<span class="tok-s">  person lived"</span>
+  <span class="tok-p">[{</span><span class="tok-ss">:keys</span> <span class="tok-p">[</span><span class="tok-nv">palm-stats</span> <span class="tok-nv">life-history</span><span class="tok-p">]</span> <span class="tok-ss">:as</span> <span class="tok-nv">subject</span><span class="tok-p">}]</span>
+  <span class="tok-p">[(</span><span class="tok-ss">:lifeline-ratio</span> <span class="tok-nv">palm-stats</span><span class="tok-p">)</span> <span class="tok-p">(</span><span class="tok-ss">:years-lived</span> <span class="tok-nv">life-history</span><span class="tok-p">)])</span>
+<span class="tok-nv">---</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This function extracts a person’s lifeline ratio (length of lifeline
+compared to hand size) and age at death, and putting the two in a
+vector. Here’s how you’d use it:</p>
+</div>
+<div class="paragraph">
+<p>[[A bright beginning to a game-changing app]]</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="clojure"><span class="tok-nv">---</span>
+<span class="tok-p">(</span><span class="tok-nf">lifeline-and-years-lived</span> <span class="tok-p">{</span><span class="tok-ss">:palm-stats</span>   <span class="tok-p">{</span><span class="tok-ss">:lifeline-ratio</span> <span class="tok-mf">0.5</span><span class="tok-p">}</span>
+                           <span class="tok-ss">:life-history</span> <span class="tok-p">{</span><span class="tok-ss">:years-lived</span> <span class="tok-mi">75</span><span class="tok-p">}})</span>
+<span class="tok-nv">---</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>From the programmer’s perspective, we’d call this a function call. We
+care about the return value and how to relate that to other functions
+according to business needs. We care about the meaning of the function
+call.</p>
+</div>
+<div class="paragraph">
+<p>From the execution perspective, we’d call it a task. It’s just some
+work that needs to get done, and we don’t care about its meaning or
+how it relates to business needs.</p>
+</div>
+<div class="paragraph">
+<p>So, if I said to you, "Let’s speed this program up by putting this
+task on another thread," you’d know that I’m not talking about
+changing the meaning of the program. I’m just talking about some work
+that needs to get done, and how to shuffle the work around for better
+performance.</p>
+</div>
+<div class="paragraph">
+<p>Now let’s say we wrote something like this:</p>
+</div>
+<div class="paragraph">
+<p>[[Task is used at any level of granularity]]</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="clojure"><span class="tok-nv">---</span>
+<span class="tok-p">(</span><span class="tok-nb">map </span><span class="tok-nv">lifeline-and-years-lived</span> <span class="tok-nv">subjects</span><span class="tok-p">)</span>
+<span class="tok-nv">---</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>In the same way that this is one function call, map, which results
+in many applications of lifeline-and-years-lived, it’s one task that
+results in the execution of many sub-tasks. You can treat the larger
+task as single, black box task, just as you can treat the function as
+a black box.</p>
+</div>
+<div class="sidebarblock">
+<div class="content">
+<div class="title">Learn more about Concurrency and Parallelism</div>
+<div class="paragraph">
+<p>For a more detailed explanation of concurrency and parallelism, check
+out the first two sections Clojure for the Brave and True’s chapter
+<a href="http://www.braveclojure.com/concurrency/"><em>The Sacred Art of Concurrent
+and Parallel Programming</em></a>. The chapter uses the classic Lady Gaga
+Telephone example to explain the concepts, and describes how they’re
+implemented on the JVM.</p>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>So, parallelism is all about executing tasks simultaneously on
+multiple processors. Given the right conditions (explained in the next
+section), reducers will transparently subdivide their "transform a
+collection" task into subtasks of "transform this partitioned portion
+of a collection". These subtasks will execute in parallel, and the
+results are recombined, also transparently. So, for example, if you
+have this code:</p>
+</div>
+<div class="paragraph">
+<p>[[parallelism example]]</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="clojure"><span class="tok-nv">---</span>
+<span class="tok-p">(</span><span class="tok-nf">r/fold</span> <span class="tok-nb">+ </span><span class="tok-p">(</span><span class="tok-nf">vec</span> <span class="tok-p">(</span><span class="tok-nb">range </span><span class="tok-mi">10000000</span><span class="tok-p">)))</span>
+<span class="tok-nv">---</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Then Clojure will divide your vector of ten million numbers into sub
+vectors of 512 elements, run (reduce \ subvector)+ on those
+subvectors in parallel, and combine the results.</p>
+</div>
+<div class="paragraph">
+<p>This divide/parallelize/re-combine process relies on the <em>fork/join
+framework</em>, and much of the rest of this article builds up to
+explaining how it works.</p>
+</div>
+<div class="paragraph">
+<p>First, though, let’s look at how to actually use the reducers library
+and get a real sense of the performance bounty it yields.</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="How_to_Use_Reducers">How to Use Reducers</h3>
+<div class="paragraph">
+<p>You’ve seen how, for the most part, you can use reducers just like seq
+functions. For example, this produces the same result as the seq
+counterpart:</p>
+</div>
+<div class="paragraph">
+<p>[[quick reducer example]]</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="clojure"><span class="tok-nv">---</span>
+<span class="tok-p">(</span><span class="tok-nf">require</span> <span class="tok-o">'</span><span class="tok-p">[</span><span class="tok-nv">clojure.core.reducers</span> <span class="tok-ss">:as</span> <span class="tok-nv">r</span><span class="tok-p">])</span>
+<span class="tok-p">(</span><span class="tok-nf">-&gt;&gt;</span> <span class="tok-p">[</span><span class="tok-mi">1</span> <span class="tok-mi">2</span> <span class="tok-mi">3</span> <span class="tok-mi">4</span><span class="tok-p">]</span>
+     <span class="tok-p">(</span><span class="tok-nf">r/filter</span> <span class="tok-nv">even?</span><span class="tok-p">)</span>
+     <span class="tok-p">(</span><span class="tok-nf">r/map</span> <span class="tok-nv">inc</span><span class="tok-p">)</span>
+     <span class="tok-p">(</span><span class="tok-nf">r/reduce</span> <span class="tok-nv">+</span><span class="tok-p">)</span>
+<span class="tok-c1">; =&gt; 8</span>
+<span class="tok-nv">---</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>There are a couple rules to keep in mind, though. First, if you want
+to make use of parallelism, you have to use the r/fold function with a
+<em>foldable</em> collection. r/fold is a parrallel implementation of reduce.</p>
+</div>
+<div class="paragraph">
+<p>I need to explain parallelism a bit more before explaining what
+<em>foldable</em> means, but for now the relevant fact is that vectors and
+maps are the only foldable collections. So if you wrote code like
+this, you might expect it to run in parallel, but it wouldn’t:</p>
+</div>
+<div class="paragraph">
+<p>[[only foldable collections can be parallelized]]</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="clojure"><span class="tok-nv">---</span>
+<span class="tok-p">(</span><span class="tok-nf">require</span> <span class="tok-o">'</span><span class="tok-p">[</span><span class="tok-nv">clojure.core.reducers</span> <span class="tok-ss">:as</span> <span class="tok-nv">r</span><span class="tok-p">])</span>
+<span class="tok-p">(</span><span class="tok-nf">-&gt;&gt;</span> <span class="tok-o">'</span><span class="tok-p">(</span><span class="tok-mi">1</span> <span class="tok-mi">2</span> <span class="tok-mi">3</span> <span class="tok-mi">4</span><span class="tok-p">)</span>
+     <span class="tok-p">(</span><span class="tok-nf">r/filter</span> <span class="tok-nv">even?</span><span class="tok-p">)</span>
+     <span class="tok-p">(</span><span class="tok-nf">r/map</span> <span class="tok-nv">inc</span><span class="tok-p">)</span>
+     <span class="tok-p">(</span><span class="tok-nf">r/fold</span> <span class="tok-nv">+</span><span class="tok-p">)</span>
+<span class="tok-c1">; =&gt; [3 5]</span>
+<span class="tok-nv">---</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Lists aren’t foldable, so reducers can’t operate on them in
+parallel. Instead, the code falls back to serial reduce.</p>
+</div>
+<div class="paragraph">
+<p>The second rule is that reducers actually don’t produce <em>any</em>
+collections. It’s awesome that r/map and r/filter compose without
+creating intermediate collections, but the catch is that they behave a
+little differently from seq functions. Here’s one way you could get
+tripped up:</p>
+</div>
+<div class="paragraph">
+<p>[[sad broken bode]]</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="clojure"><span class="tok-nv">---</span>
+<span class="tok-p">(</span><span class="tok-nb">first </span><span class="tok-p">(</span><span class="tok-nf">r/map</span> <span class="tok-nb">inc </span><span class="tok-p">[</span><span class="tok-mi">1</span> <span class="tok-mi">2</span> <span class="tok-mi">3</span><span class="tok-p">]))</span>
+<span class="tok-c1">; =&gt; java.lang.IllegalArgumentException: Don't know how to create ISeq from: clojure.core.reducers$folder$reify__17186</span>
+<span class="tok-nv">---</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This happens because r/map and the other reducers don’t actually
+return a new collection. Instead, they return a <em>reducible</em>.</p>
+</div>
+<div class="paragraph">
+<p>A reducible is like a recipe for how to produce a new collection,
+along with a reference to a source collection. In the above example,
+the recipe is "produce a new collection by incrementing each element
+each element of the source collection", and the source collection is
+the vector [1 2 3].</p>
+</div>
+<div class="paragraph">
+<p>Another way to put it: a reducible is an elemental function, along
+with the collection whose elements you want to apply the function to.</p>
+</div>
+<div class="paragraph">
+<p>And yet another way to put it: It’s as if you were one of Santa’s
+worker elves (or some other mythical creature of labor), and the
+foreman handed you a piece of paper with your instructions for the
+day: "Go to the plastic shed out back, get all the plastic lumps and
+turn them into toy whatevers to feed to the insatiable, gaping maw of
+consumerism."</p>
+</div>
+<div class="paragraph">
+<p>If I then walked up to you and said, "give me the first of that piece
+of paper", you would look at me in confusion, because the request
+wouldn’t make any sense. The piece of paper is not a collection that
+you can take the first of. Similarly, when you tell Clojure (first
+(r/map inc [1 2 3])) it expresses its confusion with an exception
+because the request doesn’t make sense.</p>
+</div>
+<div class="paragraph">
+<p>You might initially think you’re telling Clojure "give me the first
+element of the <em>collection</em> returned by r/map", but you’re actually
+saying "give me the first element of the <em>reducible</em> returned by
+r/map". A reducible is a recipe for how to transform a given
+collection, but it’s not a collection itself, so Clojure can’t fulfill
+your request.</p>
+</div>
+<div class="paragraph">
+<p>This design decision to have functions like r/map return a reducible
+instead of a collection is what allows reducers to seamlessly compose,
+building up a single fused elemental function. I’ll explain exactly
+how this happens later in the article, and for now rely on the power
+of metaphor so that you’ll have a strong intuitive understanding of
+how it works.</p>
+</div>
+<div class="paragraph">
+<p>But you need to get collections <em>somehow</em>.  If you want to use reducer
+functions to produce another collection, you have to explicitly
+realize the result collection by calling r/foldcat or
+clojure.core/into. r/foldcat calls r/fold internally, and into
+calls reduce. Here are two examples:</p>
+</div>
+<div class="paragraph">
+<p>[[successful reducer collection realization]]</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="clojure"><span class="tok-nv">---</span>
+<span class="tok-p">(</span><span class="tok-nf">-&gt;&gt;</span> <span class="tok-p">[</span><span class="tok-mi">1</span> <span class="tok-mi">2</span> <span class="tok-mi">3</span> <span class="tok-mi">4</span><span class="tok-p">]</span>
+     <span class="tok-p">(</span><span class="tok-nf">r/map</span> <span class="tok-nv">inc</span><span class="tok-p">)</span>
+     <span class="tok-p">(</span><span class="tok-nb">into </span><span class="tok-p">[])</span>
+     <span class="tok-p">(</span><span class="tok-nf">first</span><span class="tok-p">))</span>
+<span class="tok-c1">; =&gt; 2</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>(→&gt; [1 2 3 4]
+     (r/map inc)
+     (r/foldcat)
+     (first))
+; ⇒ 2
+---</p>
+</div>
+<div class="paragraph">
+<p>You should use into when you want to explicitly specify the
+collection type. In the example above, you’re realizing the collection
+as a vector. into is serial.</p>
+</div>
+<div class="paragraph">
+<p>r/foldcat executes parallelly (is that a word?) and returns a
+collection that acts pretty much like a vector. The collection is
+foldable, so you can use it with reducers in further parallel
+computations. It’s also seqable, like a vector, so you can call
+functions like first on it.</p>
+</div>
+<div class="paragraph">
+<p>To summarize the rules:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>If you want to parallelize your reduction, use r/fold and a
+foldable collection (a vector or map).</p>
+</li>
+<li>
+<p>If you want your transformations to return a collection, use into
+or r/foldcat. into executes serially and lets you specify the
+collection type, while r/foldcat is parallel and returns a
+vector-like collection.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>Soooo now that you’ve spent all this time learning about reducers'
+performance strategies and how to use them, let’s wrap everything
+together by comparing reducer performance to seq functions. If I’ve
+done my job right, you won’t be surprised by the differences. If I
+haven’t done my job right, then, well…​ sorry?</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="A_Peek_at_Performance">A Peek at Performance</h3>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Whether you’re producing intermediate collections</p>
+</li>
+<li>
+<p>Whether you’re using r/fold with foldable collections</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>To see the performance impact of these variables, we’re going to look
+at similar computations performed using r/fold (for parallelism and
+EIC), r/reduce (for EIC alone), and clojure.core/reduce as a
+baseline. We’ll also perform the computations on foldable
+collections (vectors) and on unfoldable collections (lazy seqs).</p>
+</div>
+<div class="paragraph">
+<p>You can find the code for this section at …​
+After doing the performance measurements for awhile, I wanted to make
+the process a bit less tedious, so I wrote the macro times and its
+helper functions pretty-time and runs-and-pauses to abstract the
+process of running a snippet multiple times, timing each run,
+averaging those time values, and usefully printing the result. This
+lets you do something like this:</p>
+</div>
+<div class="paragraph">
+<p>[[times macro example]]</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="clojure"><span class="tok-nv">---</span>
+<span class="tok-p">(</span><span class="tok-k">let </span><span class="tok-p">[</span><span class="tok-nv">x</span> <span class="tok-p">(</span><span class="tok-nf">vec</span> <span class="tok-p">(</span><span class="tok-nb">doall </span><span class="tok-p">(</span><span class="tok-nb">range </span><span class="tok-mi">1000000</span><span class="tok-p">)))]</span>
+  <span class="tok-p">(</span><span class="tok-nf">times</span> <span class="tok-p">(</span><span class="tok-nf">r/fold</span> <span class="tok-nb">+ </span><span class="tok-nv">x</span><span class="tok-p">)</span>
+         <span class="tok-p">(</span><span class="tok-nf">r/reduce</span> <span class="tok-nb">+ </span><span class="tok-nv">x</span><span class="tok-p">)</span>
+         <span class="tok-p">(</span><span class="tok-nb">reduce + </span><span class="tok-nv">x</span><span class="tok-p">)))</span>
+<span class="tok-s">"    6.62 (r/fold + x)"</span>
+<span class="tok-s">"   20.94 (r/reduce + x)"</span>
+<span class="tok-s">"   16.05 (reduce + x)"</span>
+<span class="tok-nv">---</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The code for times is the first thing to greet you, but I’m going to
+go over it here for fear that you would (justifiably) shake your first
+at me from behind your monitor for veering off topic.</p>
+</div>
+<div class="paragraph">
+<p>Here are our first comparisons:</p>
+</div>
+<div class="paragraph">
+<p>[[Comparing performance for computationally simple ops]]</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="clojure"><span class="tok-nv">---</span>
+<span class="tok-c1">;;----- Simple operations</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>(def snums  (range 10000000)) ; &lt;1&gt;
+(def snumsv (vec snums))</p>
+</div>
+<div class="paragraph">
+<p>(defn t1 [x]
+  (times (r/fold + x)
+         (r/reduce + x)
+         (reduce + x)))</p>
+</div>
+<div class="paragraph">
+<p>(defn t2 [x]
+  (times (→&gt; x (r/map inc) (r/fold +))
+         (→&gt; x (r/map inc) (r/reduce +))
+         (→&gt; x (map inc)   (reduce +))))</p>
+</div>
+<div class="paragraph">
+<p>(defn t3 [x]
+  (times (→&gt; x (r/filter even?) (r/map inc) (r/fold +))
+         (→&gt; x (r/filter even?) (r/map inc) (r/reduce +))
+         (→&gt; x (filter even?)   (map inc)   (reduce +))))
+---</p>
+</div>
+<div class="paragraph">
+<p>First, we define two collections of numbers from 0 to
+99,999,999. snums is an unfoldable seq and snumsv is a foldable
+vector.</p>
+</div>
+<div class="paragraph">
+<p>Next, we define three functions, t1, t2, and t3. Each function
+takes a collection (we’ll use snums and snumsv), transforms it
+using r/fold, r/reduce, and reduce, and prints out how much time
+each transformation takes. Enough with the yik yak, let’s actually use
+them:</p>
+</div>
+<div class="paragraph">
+<p>[[timing a simple reduce]]</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="clojure"><span class="tok-nv">---</span>
+<span class="tok-p">(</span><span class="tok-nf">t1</span> <span class="tok-nv">snums</span><span class="tok-p">)</span>
+<span class="tok-c1">; =&gt; "  127.28 (r/fold + x)"</span>
+<span class="tok-c1">; =&gt; "  131.67 (r/reduce + x)"</span>
+<span class="tok-c1">; =&gt; "  119.67 (reduce + x)"</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>(t1 snumsv)
+; ⇒ "   59.15 (r/fold + x)"
+; ⇒ "  164.32 (r/reduce + x)"
+; ⇒ "  148.15 (reduce + x)"
+---</p>
+</div>
+<div class="paragraph">
+<p>When we call t1 with snums, the three reduction functions have
+roughly the same performance. Put another way: we don’t get any
+performance benefits from EIC or parallelism. This makes sense because
+we’re not doing a map, filter, or some other function that
+semantically returns a new collection. We’re also using the unfoldable
+snums, and in that case r/fold quietly degrades to r/reduce.</p>
+</div>
+<div class="paragraph">
+<p>When we call t2 with snumsv, though, we see a significant speedup
+from r/fold. My computer has four cores, so ideally r/fold would
+take 25% as much time as the serial versions, but it’s rare to meet
+that ideal because parallelization has overhead costs.</p>
+</div>
+<div class="paragraph">
+<p>Let’s see what happens when we have an intermediate transformation (map):</p>
+</div>
+<div class="paragraph">
+<p>[[reduce with an intermediate transformation]]</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="clojure"><span class="tok-nv">---</span>
+<span class="tok-p">(</span><span class="tok-nf">t2</span> <span class="tok-nv">snums</span><span class="tok-p">)</span>
+<span class="tok-c1">; =&gt; "  166.43 (-&gt;&gt; x (r/map inc) (r/fold +))"</span>
+<span class="tok-c1">; =&gt; "  169.32 (-&gt;&gt; x (r/map inc) (r/reduce +))"</span>
+<span class="tok-c1">; =&gt; "  322.66 (-&gt;&gt; x (map inc) (reduce +))"</span>
+<span class="tok-nv">---</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Dayumn! The reducer versions take nearly fifty percent less time!
+There’s no difference between r/fold and r/reduce, though, becuase
+we’re not using a foldable collection. Here’s what happens when you
+change that:</p>
+</div>
+<div class="paragraph">
+<p>[[reduce with an intermediate collection and foldable source]]</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="clojure"><span class="tok-nv">---</span>
+<span class="tok-p">(</span><span class="tok-nf">t2</span> <span class="tok-nv">snumsv</span><span class="tok-p">)</span>
+<span class="tok-s">"   74.45 (-&gt;&gt; x (r/map inc) (r/fold +))"</span>
+<span class="tok-s">"  214.04 (-&gt;&gt; x (r/map inc) (r/reduce +))"</span>
+<span class="tok-s">"  374.91 (-&gt;&gt; x (map inc) (reduce +))"</span>
+<span class="tok-nv">---</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Here, r/fold is <em>five times faster</em> than reduce, thanks to EIC and
+parallelism. (Interestingly, it seems serial reduce takes a bit longer
+with vectors.)</p>
+</div>
+<div class="paragraph">
+<p>What happens if you have two intermediate collections? This happens:</p>
+</div>
+<div class="paragraph">
+<p>[[reduce with two intermediate collections]]</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="clojure"><span class="tok-nv">---</span>
+<span class="tok-p">(</span><span class="tok-nf">t3</span> <span class="tok-nv">snums</span><span class="tok-p">)</span>
+<span class="tok-s">"  184.07 (-&gt;&gt; x (r/map inc) (r/filter even?) (r/fold +))"</span>
+<span class="tok-s">"  181.03 (-&gt;&gt; x (r/map inc) (r/filter even?) (r/reduce +))"</span>
+<span class="tok-s">"  431.53 (-&gt;&gt; x (map inc) (filter even?) (reduce +))"</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>(t3 snumsv)
+"   71.96 (→&gt; x (r/map inc) (r/filter even?) (r/fold +))"
+"  207.47 (→&gt; x (r/map inc) (r/filter even?) (r/reduce +))"
+"  478.25 (→&gt; x (map inc) (filter even?) (reduce +))"
+---</p>
+</div>
+<div class="paragraph">
+<p><strong>TODO fix this paragraph, too wordy</strong></p>
+</div>
+<div class="paragraph">
+<p>When you call r/fold with a vector, it’s almost seven times
+faster. Not only that, reducer performance doesn’t dramatically
+degrade with more intermediate transformations as it does with the seq
+functions; adding the additional r/filter doesn’t seem to affect
+performance at all. I’m sure if we added a computationally intensive
+transformation then performance would naturally suffer, but it would
+be from the transformation and not the construction of an intermediate
+collection.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="Performance___Parallelism">Performance &amp; Parallelism</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>TODO</p>
+</div>
+<div class="sect2">
+<h3 id="The_Three_Performance_Walls">The Three Performance Walls</h3>
+<div class="paragraph">
+<p>The reason we need to care about concurrent and parallel programming
+techniques is that computer hardware manufacturers have run into three
+fundamental limitations, imposed by physics, that won’t be overcome
+any time soon — if ever. Because of these limitations, we can no
+longer …​ The limitations are known as:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>The Power Wall</p>
+</li>
+<li>
+<p>The Memory Wall</p>
+</li>
+<li>
+<p>The Instruction-Level Parallelism Wall</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><em>The Power Wall</em> is a limitation on CPU clock speeds. You’ve probably
+noticed that clock speeds have barely inched forward over the last
+decade, compared to the rapid progress of previous decades where clock
+speeds followed Moore’s law and doubled every eighteen months. The
+reason for this near halt in progress is that chip designs have
+reached a point where increasing clock speed results in exponential
+increases in power consumption and heat, and no one wants to buy a
+computer that costs as much to run as a UNIVAC.</p>
+</div>
+<div class="paragraph">
+<p>Even if clock speeds <em>could</em> be increased, the hardware would still
+have to contend with the <em>Memory Wall</em>, which is the extreme disparity
+between memory access time and CPU performance — CPUs can
+process instructions much faster than they can fetch them from main
+memory. Increasing clock speed would be like <strong>TODO analogy</strong>.</p>
+</div>
+<div class="paragraph">
+<p><strong>TODO mention this is why we need explicit parallel techniques</strong>
+<strong>TODO that the code we write is often serial even though it can
+be considered parallel</strong></p>
+</div>
+<div class="paragraph">
+<p>The final limitation, the <em>Instruction-Level Parallelism (ILP) Wall</em>
+is a limitation on the level of parallelism that can be extracted from
+serial (non-parallel) instructions. Much of the hullabaloo around
+parallelism has focused on the fact that we’re stuffing more cores
+into CPU’s, but in fact, even old-timey single-core machines have
+parallel aspects to their architectures and are capable of running
+serial instructions in parallel, to an extent. In fact, hardware can
+automatically parallelize serial instructions to an extent.</p>
+</div>
+<div class="paragraph">
+<p>In an ideal world, hardware would be smart enough to automatically
+parallelize everything that can be parallelized, but the fact is they
+can’t, and it looks like there won’t be any significant improvements
+any time soon.</p>
+</div>
+<div class="paragraph">
+<p>Because of these three limitations, chip manufacturers have focused on
+developing multi-core process instead of increasing clock speed. In
+order to get the most performance out of these processors, we have to
+structure our applications differently.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="Concurrent_and_Parallel_Programming">Concurrent and Parallel Programming</h3>
+<div class="paragraph">
+<p><strong>TODO explain the "task" abstraction</strong></p>
+</div>
+<div class="paragraph">
+<p>Concurrent and Parallel programming refer to the tools and techniques
+you use to program for multiple processors. <em>Concurrency</em> refers to a
+system’s ability to <em>manage</em> more than one task at a time, while
+<em>parallelism</em> refers to a system’s ability to <em>execute</em> more than one
+task at a time. From this perspective, parallelism is a sub-category
+of concurrency.</p>
+</div>
+<div class="paragraph">
+<p>Programmers usually the term <em>concurrency</em> when referring to multiple,
+independent tasks with access to shared state. For example, <strong>TODO
+example</strong>. <em>Parallelism</em> usually refers to decomposing a collection of
+data into smaller chunks, processing those, and reassembling the
+results. In this situation, there’s no logical need for shared access
+to state. Of course, you have to keep track of all of the different
+computations.</p>
+</div>
+<div class="paragraph">
+<p><strong>TODO talk about threading and scheduling</strong></p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="Performance">Performance</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>So far, I’ve been talking about performance without defining it,
+relying on the shared general sense of performance as the thing we
+want to improve to the point that users don’t say "This is slow and I
+hate it." In this section, I’ll break down performance, defining its
+most relevant aspects. I’ll also describe the high-level strategies we
+use to improve it.</p>
+</div>
+<div class="sect2">
+<h3 id="Performance_Aspects">Performance Aspects</h3>
+<div class="paragraph">
+<p><em>Latency</em> is the amount of time it takes to complete a task, and is
+what we usually care about most because it has the most direct impact
+on user experience. One example is <em>network latency</em>, or the amount of
+time it takes for a packet to reach its destination. If you’re
+measuring the amount of time it takes to open a file or execute a
+function or generate a report, those are all latency.</p>
+</div>
+<div class="paragraph">
+<p>You can measure latency at any level of granularity. For example, if
+you make web sites you’ve probably measured the total time it takes to
+load a web page to decide if it needs optimization. At first, you
+only care about the "load the page" task as a whole. If you discover
+it’s too slow, then you can drill down to individual network requests
+to see what’s causing problems. Drilling down further, you might find
+that your SQL queries are taking a long time because your tables
+aren’t indexed properly, or something like that.</p>
+</div>
+<div class="paragraph">
+<p>Most of this article focuses on how to effectively reduce latency
+with parallel programming.</p>
+</div>
+<div class="paragraph">
+<p><em>Throughput</em> is the number of tasks per second that your system can
+perform. Your web server, for example, might be able to complete 1,000
+requests per second.</p>
+</div>
+<div class="paragraph">
+<p><strong>TODO EXPAND</strong>
+There’s a direct relationship between latency and throughput. Let’s
+say you’re running the world’s lousiest web server, and it can only
+handle one request per second. If a thousand people make a request to
+this server at the same time, then on average it will take 500 seconds
+to respond to a request.</p>
+</div>
+<div class="paragraph">
+<p><em>Utilization</em> is the degree to which a resource is used. It has two
+flavors, <em>capacity-based</em> utilization and <em>time-based</em> utilization. In
+this article we only care about the <em>time-based</em> flavor, which is a
+measure of how busy a resource is over a given unit of
+time. Specifically, we care about CPU utilization, which is the
+percentage of time that your CPU is doing work divided by some unit of
+time.</p>
+</div>
+<div class="paragraph">
+<p>One of the challenges with parallel programming is figuring how to
+make efficient use of resources by ensuring that we reduce unnecesary
+CPU idle time. Later in the article, you’ll learn about techniques
+that help you do this, including the powerful Fork/Join framework.</p>
+</div>
+<div class="paragraph">
+<p><strong>TODO Speedup</strong></p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="General_Performance_Strategies">General Performance Strategies</h3>
+<div class="paragraph">
+<p>There are three concurrent/parallel programming general strategies you
+can use to help improve performance: <em>latency hiding</em>, <em>functional
+decomposition</em>, and <em>data parallelism</em>. Guess what’s coming next!
+That’s right, I’m going to explain those things!</p>
+</div>
+<div class="sect3">
+<h4 id="Latency_Hiding">Latency Hiding</h4>
+<div class="paragraph">
+<p><strong>TODO betterify definition</strong>
+<em>Latency hiding</em> is a fancy term for something you do all the
+time. You’re hiding latency whenever you move a task that’s in a
+waiting state to the background and focus on something else.
+Examples abound, not just in programming but in real life.</p>
+</div>
+<div class="paragraph">
+<p>If you use Clojure’s future function to kick off a task in a
+separate thread so that the main task can continue unimpeded, you’re
+hiding latency. I’ve used future on web servers to send an email
+without increasing the overall response time for a user’s request.</p>
+</div>
+<div class="paragraph">
+<p>Latency hiding is often a cheap and easy way to get quick performance
+gains. On the other hand, forgetting to employ it can lead to some
+dire consequences, as this comic illustrates:</p>
+</div>
+<div class="paragraph">
+<p><strong>TODO image</strong></p>
+</div>
+<div class="paragraph">
+<p>You probably already use latency hiding all the time, even if you
+don’t call it that. Though you may be an old hand at it, I think it’s
+useful to have a name for it and to place it within the larger
+performance context.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="Functional_Decomposition">Functional Decomposition</h4>
+<div class="paragraph">
+<p><em>Functional decomposition</em> is the term for when a multicultural group
+of teenagers combine their powers to summon an avatar of the earth to
+fight pollution:</p>
+</div>
+<div class="paragraph">
+<p><strong>TODO image</strong></p>
+</div>
+<div class="paragraph">
+<p><strong>TODO not just different threads. Different servers. Different
+spaces/processes.</strong></p>
+</div>
+<div class="paragraph">
+<p><strong>TODO already used this trope</strong></p>
+</div>
+<div class="paragraph">
+<p><em>Cough</em> uh, I mean, <em>functional decomposition</em> is the practice of
+running logically independent program modules in parallel on separate
+threads. As it turns out, all Java programs (including Clojure
+programs) already do this: every Java program has a garbage collector
+running on a separate thread.</p>
+</div>
+<div class="paragraph">
+<p>Another common example functional decomposition is putting
+long-running tasks on a queue so that a background thread can process
+them without impeding the main thread. One of my site projects does
+this: the main thread runs a web server, and the background thread
+(launched with future) constantly works through a queue of RSS
+feeds, checking for updates and putting the results in a database.</p>
+</div>
+<div class="paragraph">
+<p>Functional decomposition will only give you a constant factor
+speedup. When you split your code base into two modules and run them
+on separate threads, you don’t get any additional benefits if you
+increase the number of cores on your machine.</p>
+</div>
+<div class="paragraph">
+<p>If you squint a little bit, this strategy looks a lot like something
+you do all the time on a larger scale. You run your web server and
+database on separate machines. On a single machine, you run logically
+independent modules as separate processes, also known as
+programs. Like latency hiding, functional decomposition might be
+something you’re familiar with; it’s just fun to know words for things
+and their place in the greater order of the cosmos.</p>
+</div>
+<div class="paragraph">
+<p>In the next section, I’m going to start venturing into unfamiliar
+territory. Best grab your mosquito repellant and machete.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="Data_Parallelism">Data Parallelism</h4>
+<div class="paragraph">
+<p>With the <em>data parallelism</em> strategy, you divide a task into sub-tasks
+that that don’t have side effects and that can be executed
+simultaneously. A dramatic example of this is seen in the <em>Terminator</em>
+movies, where the task "destroy humankind" is divided into subtasks of
+"destroy the humans you encounter" and executed by hunky killing
+machines with Austrian accents. You can think of it as a kind of
+parallelized reduce operation.</p>
+</div>
+<div class="paragraph">
+<p><strong>TODO terminator image</strong></p>
+</div>
+<div class="paragraph">
+<p>Another oft-used example is the map function. On an abstract level,
+map derives a new collection from an existing one by applying a
+function to every element of the original collection. There’s nothing
+in map's semantics that requires the function applications to happen
+in any particular order, and there’s no shared state, so it’s a
+perfect candidate for parallelization. (In the literature, this kind
+of easily-parallelized operation is called <em>embarrassing parallelism</em>,
+which absolutely tickles me. "Pardon me! It appears that I’ve been
+parallelized yet again, and in public no less!")</p>
+</div>
+<div class="paragraph">
+<p>One hallmark of data parallelism is that it’s <em>scalable</em>. If you
+increase the amount of the work that needs to get done, it’s possible
+to reduce the amount of time needed to do it by throwing more
+hardware at it. In the Terminator example, Skynet can eleminate mankind more
+quickly by producing more terminators. In the map example, you can
+complete the mapping more quickly by adding more cores.</p>
+</div>
+<div class="paragraph">
+<p>Part of the fun in learning about data parallelism is discovering how
+it can be used in cases beyond a simple map. The <em>scan</em> operation, for
+example, has a data dependency not present with map. Let’s look at how
+scan should work, then give it a definition and unpack how it differs
+from map. There’s no scan function in Clojure, but here’s how it
+should behave:</p>
+</div>
+<div class="paragraph">
+<p>[[scan behavior]]</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="clojure"><span class="tok-nv">---</span>
+<span class="tok-p">(</span><span class="tok-nf">scan</span> <span class="tok-p">[</span><span class="tok-mi">1</span> <span class="tok-mi">2</span> <span class="tok-mi">3</span> <span class="tok-mi">4</span><span class="tok-p">])</span>
+<span class="tok-c1">; =&gt; (1 3 6 10)</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>(scan [1 0 0])
+; ⇒ (1 1 1)
+---</p>
+</div>
+<div class="paragraph">
+<p>Scan works by "rolling up" values as it traverses a sequence such
+that each element of the resulting sequence is derived from previous
+elements in the sequence. Let’s call the initial sequence <em>x</em> and the
+result <em>y</em>. In the first example, <em>x<sub>1</sub></em> and <em>y<sub>1</sub></em> are
+identical. <em>y<sub>2</sub></em> is the result of adding <em>x<sub>1</sub></em> and <em>x<sub>2</sub></em>. <em>y<sub>3</sub></em> is
+<em>x<sub>1</sub></em> \+ <em>x<sub>2</sub></em> \+ <em>x<sub>3</sub></em>, and so on. You can see why scan is also
+known as "cumulative sum" - each element of the result is sum of all
+elements from the original sequence, up to that point.</p>
+</div>
+<div class="paragraph">
+<p>The reason why it’s not obvious how to parallelize this is that each
+function application depends on the result of the previous
+application. This becomes obvious when you look at a naive
+implementation:</p>
+</div>
+<div class="paragraph">
+<p>[[naive scan implementation]]</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="clojure"><span class="tok-nv">---</span>
+<span class="tok-p">(</span><span class="tok-kd">defn </span><span class="tok-nv">scan</span>
+  <span class="tok-p">[[</span><span class="tok-nv">x</span> <span class="tok-nv">y</span> <span class="tok-o">&amp;</span> <span class="tok-nv">xs</span><span class="tok-p">]]</span>
+  <span class="tok-p">(</span><span class="tok-k">if </span><span class="tok-nv">y</span>
+    <span class="tok-p">(</span><span class="tok-nb">cons </span><span class="tok-nv">x</span> <span class="tok-p">(</span><span class="tok-nf">scan</span> <span class="tok-p">(</span><span class="tok-nb">cons </span><span class="tok-p">(</span><span class="tok-nb">+ </span><span class="tok-nv">x</span> <span class="tok-nv">y</span><span class="tok-p">)</span> <span class="tok-nv">xs</span><span class="tok-p">)))</span>
+    <span class="tok-p">(</span><span class="tok-nb">list </span><span class="tok-nv">x</span><span class="tok-p">)))</span>
+<span class="tok-nv">---</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This implementation is completely serial, with no hope of running in
+parallel. Don’t worry, though - you’re going to learn how to
+accomplish this parallelization.</p>
+</div>
+<div class="paragraph">
+<p><strong>TODO explain why there’s no hope</strong>.
+<strong>TODO "in a concurrent universe" is a little weak</strong></p>
+</div>
+<div class="paragraph">
+<p>Now that you understand how data parallelism compares to the other
+main strategies for achieving performance in a concurrenct universe,
+let’s really dig into it so that you can understand it completely.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="Data_Parallelism">Data Parallelism</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>At this point you probably have a vague intuition about how you might
+be able to speed up your programs by using data parallelism. In this
+section, you’re going to refine your understanding by learning about
+the <em>work-span model</em>, the premiere theoretical model for
+understanding and predicting performance. You’re also going to learn
+the concrete implementation concerns you’ll encounter when trying to
+write parallel code.</p>
+</div>
+<div class="sect2">
+<h3 id="Work_Span_Model">Work-Span Model</h3>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>TODO kind of a jump, now we’re suddenly talkng about algorithms</strong></p>
+</li>
+<li>
+<p><strong>TODO mention that it assumes an ideal machine with infinite
+processors</strong></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>The work-span model is concerned with two aspects of a parallel
+algorithm: its <em>work</em> and its <em>span</em>. <em>Work</em> is the total number of
+tasks that need to be completed, and <em>span</em> is the length of the
+longest path of work that has to be done serially. Take a look at this
+diagram:</p>
+</div>
+<div class="paragraph">
+<p>In the example on the left, the work is 9 because there are 9 tasks
+that need to be completed, and the span is 5 because there are 5 tasks
+that have to be performed serially.</p>
+</div>
+<div class="paragraph">
+<p>The span describes the upper limit to the amount of speedup you can
+expect; past that, no amount of additional hardware will help your
+algorithm run faster.</p>
+</div>
+<div class="paragraph">
+<p>The work-span model reveals an important difference between serial and
+parallel algorithms. With serial algorithms, performance is determined
+by the total amount of work that needs to be done; you improve
+performance by reducing work. By contrast, the parallel performance is
+determined by the span. In fact, with some algorithms you actually
+improve performance by performing more work. You can see this in the
+diagram for scan:</p>
+</div>
+<div class="paragraph">
+<p>In the serial version of scan, there are 7 tasks. In the parallel
+version, there are 11, but the span is only 3, so the parallel version
+would complete before the serial version.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="Implementation">Implementation</h3>
+<div class="paragraph">
+<p><strong>TODO explain "potential parallelism"</strong>
+The work-span model assumes an ideal machine where there are no costs
+involved in running tasks in parallel. If you tried to write your
+Clojure program as if there were no penalty for creating threads, then
+you’d quickly run into trouble. From <em>Java Concurrency in Practice</em>:</p>
+</div>
+<div class="quoteblock">
+<blockquote>
+<div class="paragraph">
+<p>Thread creation and teardown are not free. The actual overhead varies
+across platforms, but thread creation takes time, introducing latency
+into request processing, and requires some processing activity by the
+JVM and OS. If requests are frequent and lightweight, as in most
+server applications, creating a new thread for each request can
+consume significant computing resources.</p>
+</div>
+</blockquote>
+<div class="attribution">
+— Brian Goetz
+</div>
+</div>
+<div class="paragraph">
+<p><strong>TODO mention that abundant threads leads to slowdown</strong></p>
+</div>
+<div class="paragraph">
+<p><strong>TODO metaphor time, maybe group project in school</strong>
+Because threads are expensive, you might say to yourself, "No problem!
+I’ll just create one thread per thread core and divide the work among
+them." But that can cause load balancing problems. Imagine that you
+have four cores, and a map operation divided among threads A, B, C,
+and D. Now imagine that for some reason thread A is taking a
+signifanct amount of time on one of the map function
+applications. Threads B, C, and D have to just wait idly for A to
+finish.</p>
+</div>
+<div class="paragraph">
+<p>So, in real programs, you’re concerned with balancing the need to
+limit thread creation, scheduling, and synchronization, and the need
+to balance the workload.</p>
+</div>
+<div class="paragraph">
+<p>Some of the approaches available to deal with these concerns are
+thread management, granularity, parallel slack, and fusion. Let’s look
+at those.</p>
+</div>
+<div class="sect3">
+<h4 id="Thread_Management">Thread Management</h4>
+<div class="paragraph">
+<p>One of the best ways to avoid the overhead from creating a thread is -
+prepare to have your mind blown - to <em>never create the thread in the
+first place</em>. What is this, some kind of zen koan? You didn’t sign up
+for this!</p>
+</div>
+<div class="paragraph">
+<p>No, I’m not trying to force your awareness to gain sudden insight into
+the limitations of rational consciousness. I’m talking about using
+thread pools to allow thread reuse.</p>
+</div>
+<div class="paragraph">
+<p>Thread pools are a layer of indirection between tasks and threads.
+Rather than create a thread for a task directly, you submit your task
+to a threadpool, and that threadpool handles it. It might create a new
+thread if there are none available, or it might reuse an existing
+thread.</p>
+</div>
+<div class="paragraph">
+<p>Thread pools can also enforce a thread limit, in which case your task
+can be queued. This is useful in avoiding the problems that arise when
+the scheduler has to switch between too many threads.</p>
+</div>
+<div class="paragraph">
+<p>You can learn more about thread pools by investigating
+java.util.concurrent executors.</p>
+</div>
+<div class="paragraph">
+<p>Thread pools are the most common implementation of executors.</p>
+</div>
+<div class="paragraph">
+<p><strong>TODO give a little introduction to executors</strong></p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="Granularity">Granularity</h4>
+<div class="paragraph">
+<p>Parallel programming involves decomposing a task into subtasks and
+executing those in parallel. We use the term <em>granularity</em> to refer to
+the size of the subtask. If the granularity is too small then you risk
+eliminating any parallelization gains to overhead, and if it’s too
+large than you risk running into load balancing problems.</p>
+</div>
+<div class="paragraph">
+<p>If your grain size is too small, you can combine subtasks into larger
+tasks, a technique called <em>tiling</em>. The subtasks run serially within
+the larger tasks, and the larger tasks are run in parallel. This helps
+you reduce the ratio of time spent on parallel overhead.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="Parallel_Slack">Parallel Slack</h4>
+<div class="paragraph">
+<p>You want to overdecompose your subtasks so that your program can
+continue reaping performance benefits if its run on more cores.</p>
+</div>
+<div class="paragraph">
+<p>You want algorithms or language support for doing this
+automatically. You can probably see that the amount of parallel slack
+is directly related to your grain size.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="Fusion">Fusion</h4>
+<div class="paragraph">
+<p><em>Fusion</em> refers to the process of combining multiple transforming
+functions into one function, allowing you to loop over a collection
+just once instead of having to loop over collections once per
+transformation.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="Fork_Join">Fork/Join</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Now you’re ready to learn about one of the most versatile parallel
+programming strategies, fork/join. It employs tiling, parallel slack,
+and fusion, and the Java version handles thread management. Fork/join
+also adds two new strategies to the mix: recursive decomposition and
+work stealing.</p>
+</div>
+<div class="sect2">
+<h3 id="Basics">Basics</h3>
+<div class="paragraph">
+<p>The fork/join strategy works by recursively breaking down some task
+into subtasks until some base condition is met, and then adding those
+subtasks to a queue. Fork/join also involves combining the results of
+the subtask results. Fork/join refers to this process of splitting and
+combining.</p>
+</div>
+<div class="paragraph">
+<p>You want to include all transformations in the base case, performing
+fusion. Tiling is handled through recursive decomposition.</p>
+</div>
+<div class="paragraph">
+<p>Work stealing is interesting: the fork/join framework employes a
+double-ended queue (deque). The queue is sorted by task
+complexity. Each worker thread pulls from the least-complex end of its
+own queue. If a worker finishes, it "steals" work from the
+most-complex end of another worker.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="Reducers">Reducers</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Reducers use the fork/join framework. Here’s some of the most
+important code to show you what’s happening.</p>
+</div>
+<div class="paragraph">
+<p>Clojure’s reducers library manages the splitting of your tasks.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="Other_options">Other options</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>Claypoole</p>
+</li>
+<li>
+<p>Tesser</p>
+</li>
+<li>
+<p>Manually interacting with fork/join</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="References">References</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>Systems Performance: Enterprise and the Cloud</p>
+</li>
+<li>
+<p>Structured Parallel Programming</p>
+</li>
+<li>
+<p>Ebook on queueing systems</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="TODO">TODO</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>Explain how it differs from laziness</p>
+</li>
+<li>
+<p>No intermediate collections</p>
+</li>
+<li>
+<p>Talk about performance first?</p>
+</li>
+<li>
+<p>TODO lookup where I got my definition of efficiency as how well it
+makes use of computing resources / soak the cores</p>
+</li>
+<li>
+<p>TODO mention that we’re naming things you already do</p>
+</li>
+<li>
+<p>TODO mention that existing software needs to be able to run faster
+on new hardware</p>
+</li>
+<li>
+<p>TODO mention that reader should read the first section of
+concurrency chapter</p>
+</li>
+<li>
+<p>MENTION that ideally, performance improves with hardware
+improvements</p>
+</li>
+<li>
+<p>Get definite answer about what it means for a collection to reduce itself</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+        <div class="chapter-nav">
+
+
+
+
+
+
+</div>
+
+        <div id="disqus_thread"></div>
+<script>
+
+  /**
+  *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+  *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
+  /*
+  var disqus_config = function () {
+  this.page.url = PAGE_URL;  // Replace PAGE_URL with your page's canonical URL variable
+  this.page.identifier = PAGE_IDENTIFIER; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+  };
+  */
+  (function() { // DON'T EDIT BELOW THIS LINE
+  var d = document, s = d.createElement('script');
+  s.src = 'https://clojureforthebraveandtrue.disqus.com/embed.js';
+  s.setAttribute('data-timestamp', +new Date());
+  (d.head || d.body).appendChild(s);
+  })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+</noscript>
+
+      </div>
+      <div class="secondary">
+        <div class="wrapper">
+          <div class="junk">
+            <script src="https://gumroad.com/js/gumroad.js"></script>
+            <a href="https://gum.co/reducers">
+              <img src="/quests/reducers/images/parallel-cover-1.png">
+              Read the full book!
+            </a>
+          </div>
+          <div class="ads">
+            <a class="twitter-follow-button" href="https://twitter.com/nonrecursive">Follow @nonrecursive</a>
+            <form action="//flyingmachinestudios.us1.list-manage.com/subscribe/post?u=60763b0c4890c24bd055f32e6&amp;amp;amp;id=0b40ffd1e1" class="validate" id="mc-embedded-subscribe-form" method="post" name="mc-embedded-subscribe-form" novalidate="" target="_blank">
+              <input class="email" id="mce-EMAIL" name="EMAIL" placeholder="email address" required="" type="email" value="">
+              <input class="button" id="mc-embedded-subscribe" name="subscribe" type="submit" value="get email updates">
+            </form>
+            <ol>
+              <li><a target="_blank" href="https://jobs.braveclojure.com">Find Clojure jobs</a></li>
+            </ol>
+          </div>
+<div class="chapter-sections">Chapter Sections</div>
+<ol class="toc">
+<li>
+<a href="/quests/reducers/#Know_Your_Reducers">Know Your Reducers</a><ol>
+<li><a href="/quests/reducers/#Reducers_vs__Seq_Functions">Reducers vs. Seq Functions</a></li>
+<li><a href="/quests/reducers/#The_Strategies">The Strategies</a></li>
+<li><a href="/quests/reducers/#How_to_Use_Reducers">How to Use Reducers</a></li>
+<li><a href="/quests/reducers/#A_Peek_at_Performance">A Peek at Performance</a></li>
+</ol>
+</li>
+<li>
+<a href="/quests/reducers/#Performance___Parallelism">Performance &amp; Parallelism</a><ol>
+<li><a href="/quests/reducers/#The_Three_Performance_Walls">The Three Performance Walls</a></li>
+<li><a href="/quests/reducers/#Concurrent_and_Parallel_Programming">Concurrent and Parallel Programming</a></li>
+</ol>
+</li>
+<li>
+<a href="/quests/reducers/#Performance">Performance</a><ol>
+<li><a href="/quests/reducers/#Performance_Aspects">Performance Aspects</a></li>
+<li><a href="/quests/reducers/#General_Performance_Strategies">General Performance Strategies</a></li>
+</ol>
+</li>
+<li>
+<a href="/quests/reducers/#Data_Parallelism">Data Parallelism</a><ol>
+<li><a href="/quests/reducers/#Work_Span_Model">Work-Span Model</a></li>
+<li><a href="/quests/reducers/#Implementation">Implementation</a></li>
+</ol>
+</li>
+<li>
+<a href="/quests/reducers/#Fork_Join">Fork/Join</a><ol><li><a href="/quests/reducers/#Basics">Basics</a></li></ol>
+</li>
+<li><a href="/quests/reducers/#Reducers">Reducers</a></li>
+<li><a href="/quests/reducers/#Other_options">Other options</a></li>
+<li><a href="/quests/reducers/#References">References</a></li>
+<li><a href="/quests/reducers/#TODO">TODO</a></li>
+</ol>
+          <div class="chapters">
+            <div class="subtitle">Chapters</div>
+            <ol class="toc">
+              <li>
+                <a href="/quests/reducers/intro/">
+                  Intro
+                </a>
+              </li>
+              <li>
+                <a href="/quests/reducers/know-your-reducers/">
+                  Chapter 1: Know Your Reducers
+                </a>
+              </li>
+              <li>
+                Chapter 2: Performance and Parallelism (ebook-only)
+              </li>
+              <li>
+                Chapter 3: Fork/Join and Implementation (in progess; ebook-only)
+              </li>
+            </ol>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="footer">
+      <div class="container">
+        <div>
+          © 2017 Daniel Higginbotham
+        </div>
+      </div>
+    </div>
+    <script id="dsq-count-scr" src="//clojureforthebraveandtrue.disqus.com/count.js" async></script>
+    <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+    <script src="/assets/scripts/jquery.sticky.js"></script>
+    <script src="/assets/scripts/sticky.js"></script>
+    <script>
+              !function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs')
+            </script>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-43463851-1', 'auto');
+      ga('send', 'pageview');
+
+    </script>
+  </body>
+</html>

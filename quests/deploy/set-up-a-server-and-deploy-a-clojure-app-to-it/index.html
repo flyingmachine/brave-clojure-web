@@ -1,0 +1,1144 @@
+<!DOCTYPE HTML>
+<html lang="en">
+  <head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta charset="utf-8">
+  <meta path="/quests/deploy/set-up-a-server-and-deploy-a-clojure-app-to-it/">
+  
+  <title>Set Up a Server and Deploy a Clojure App to it | Parallel Programming in Clojure with Reducers</title>
+  
+  <link rel="stylesheet" href="/assets/stylesheets/main.css">
+  <link rel="stylesheet" href="/assets/stylesheets/pygments.css">
+  <link href="//fonts.googleapis.com/css?family=Roboto+Condensed:400,700italic,700,400italic,300italic,300%7CSource+Sans+Pro:400,200,200italic,300,300italic,400italic,600italic,600,700,700italic,900italic,900%7CSource+Code+Pro:400,700%7CGentium+Book+Basic:400,400italic,700,700italic%7CCourgette" rel="stylesheet" type="text/css">
+</head>
+
+  <body class="deploy-book">
+    <div class="nav">
+  <div class="container">
+    <div>
+      <ul>
+        <li><a href="/">Brave Clojure</a></li>
+        <li><a href="https://jobs.braveclojure.com">Jobs</a></li>
+        <li><a href="http://open-source.braveclojure.com">Open Source Projects</a></li>
+        <li><a href="/quests/deploy">Deployment Book</a></li>
+        <li><a href="/quests/reducers/intro">Reducers Book</a></li>
+        <li><a href="/training">On-Site Training</a></li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+    <div class="header">
+      <div class="logoy">
+        <div class="container">
+          <div class="title">
+            <a href="/quests/deploy">
+              <strong>Deploying Your First Clojure App</strong>
+            </a>
+          </div>
+          <div class="subtitle">
+            ...From the Shadows
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="callout">
+      <div class="container">
+        <form action="//flyingmachinestudios.us1.list-manage.com/subscribe/post?u=60763b0c4890c24bd055f32e6&amp;amp;id=0b40ffd1e1" class="validate" id="mc-embedded-subscribe-form" method="post" name="mc-embedded-subscribe-form" novalidate="" target="_blank">
+          <p>
+            Follow
+            <a href="https://twitter.com/nonrecursive">@nonrecursive</a>
+            to hear about new content
+            or subscribe:
+            <input class="email" id="mce-EMAIL" name="EMAIL" placeholder="email address" required="" type="email" value="">
+            <input class="button" id="mc-embedded-subscribe" name="subscribe" type="submit" value="get updates!">
+          </p>
+        </form>
+      </div>
+    </div>
+    <div class="container wrap">
+      <div class="main">
+        <div class="chapter-nav">
+
+
+
+<div class="prev"><a href="../intro/">← Intro</a></div>
+
+
+
+<div class="next"><a href="../ansible-tutorial/">An Ansible Tutorial →</a></div>
+
+
+</div>
+
+        <h1>Set Up a Server and Deploy a Clojure App to it</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>The bulk of this chapter describes how to use a suite of <em>dark tools</em>
+(Vagrant, Ansible, and some custom scripts) to set up a remote machine
+to serve a web application written in Clojure. I want this material to
+be accessible to n00blets and experienced people alike: if you’re a
+little unsure about what exactly a server is, the <em>What’s a Server?</em>
+section was written for you so that the rest of the book doesn’t feel
+quite as much like crazy shadow magic. If you’re impatient (how <em>dark</em>
+of you!) and want to just get a server running, you should skip ahead
+to the <em>Your Beautiful Server</em> section, where I spend a couple
+paragraphs describing the server you’ll be setting up.</p>
+</div>
+<div class="paragraph">
+<p>After that, you’ll set up a <em>virtual machine</em> on your local computer
+and deploy an example Clojure application to it. I’m not going to
+spend too much time on the details (that’s what the rest of the book
+is for); rather, like an exhausted parent, I’ll take the “oh my god
+please just do it” approach. When you’re done with that you’ll set up
+and deploy to a real remote machine accessible by anyone with an
+Internet connection.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="What_s_a_Server_">What’s a Server?</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>This section is for all the apprentice server admins out there. If you
+feel hazy about what exactly a server is, then I’ll help you gain
+clarity by walking you through what happens when you visit a URL with
+your browser. You’ll separate servers-as-machines from
+servers-as-programs, and you’ll learn how computers decide which
+program to use to respond to a request. You’ll also learn a bit about
+the <em>process model</em>, a foundational programming concept that has made
+my life way easier and that will make your life easier, too.</p>
+</div>
+<div class="sect2">
+<h3 id="Machines_and_Programs">Machines and Programs</h3>
+<div class="paragraph">
+<p>The term <em>server</em> is ambiguous because we use it to refer to both the
+<em>program</em> that handles a request, and the <em>machine</em> on which that
+program runs. To avoid that confusion, I’ll use <em>machine</em> to refer to
+the combination of hardware and operating system (also known as a
+<em>computer</em>) that runs programs, and I’ll use <em>server</em> to refer to
+programs.</p>
+</div>
+<div class="paragraph">
+<p>So, for example, when you visit <a href="http://www.communitypicks.com" class="bare">http://www.communitypicks.com</a> (which
+you should totally do <strong>JUST SAYIN</strong>), your browser figures out the IP
+address for the <em>communitypicks.com</em> domain and sends an HTTP request
+to that address, and a <em>machine</em> receives that request and routes it
+to a <em>server</em> program that it’s running.</p>
+</div>
+<div class="paragraph">
+<p>How does the machine know which program to route the request to? It
+uses the request’s <em>port number</em>; by convention, HTTP requests use
+port 80. You can think of IP addresses and ports as kind of like the
+the phone and extension numbers that office buildings use. The phone
+number will get you the office’s directory, and the extension will let
+you talk to a specific person. Similarly, the IP address will route
+your request to some machine. And just like an office building has
+many tenants providing different services, a computer can run many
+different programs to provide different services: a web server, an
+email server, an SSH or FTP server — you get the idea. Ports are used
+to specify which service you want.</p>
+</div>
+<div class="paragraph">
+<p>So! Once a machine receives a request from your browser, it routes the
+request to the program that’s listening on port 80. In our case,
+that’s <a href="http://nginx.org/en/docs/beginners_guide.html">nginx</a>. nginx is
+one of the two most popular open-source web servers (the other is
+Apache). I like to use it because it’s simple to use and easy to
+configure.</p>
+</div>
+<div class="paragraph">
+<p>Let’s talk about what it means to be a web server.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="Processes">Processes</h3>
+<div class="paragraph">
+<p>For many years after graduating from static site abominations to
+PHP-driven abominations, I continued to struggle with a vague sense
+that a web server (Apache, then), was somehow <em>~*special*~</em>. I knew
+web servers were programs, but they felt somehow fundamentally
+different from the GUI applications I normally thought of as programs.
+It helped me to learn that, from the operating system’s perspective,
+there’s no such thing as a web server — or a browser, or image
+editing software, or WinAmp. It’s all just <em>processes</em>.</p>
+</div>
+<div class="paragraph">
+<p>The process is the abstraction operating systems use to encapsulate
+and manage a <em>running program</em>, including the instructions the program
+executes and the program’s access to hardware resources like memory
+and network interfaces. From <a href="http://amzn.to/2mTOIht"><em>Computer
+Systems: A Programmer’s Perspective</em></a>:</p>
+</div>
+<div class="quoteblock">
+<blockquote>
+<div class="paragraph">
+<p>When a program…​ runs on a modern system, the operating system
+provides the illusion that the program is the only one running on the
+system. The program appears to have exclusive use of both the
+processor, main memory, and I/O devices. The processor appears to
+execute the instructions in the program, one after the other, without
+interruption. And the code and data of the program appear to be the
+only objects in the system’s memory. These illusions are provided by
+the notion of a process, one of the most important and successful
+ideas in computer science.</p>
+</div>
+<div class="paragraph">
+<p>…​The operating system keeps track of all the state information that
+the process needs in order to run. This state, which is known as the
+_context,  includes information such as the current values of the PC,
+the register file, and the contents of main memory.</p>
+</div>
+</blockquote>
+</div>
+<div class="paragraph">
+<p>I’m sharing these details because they help clarify the perspective
+that web servers aren’t, in fact, special.  From the operating
+system’s perspective, nginx is just another process. Like every other
+process, it reads input and writes output. The operating system
+provides ports as a mechanism for network communication, and any
+process is capable of listening to a port for requests; we just happen
+to configure nginx to listen to port 80 because that’s the convention
+for HTTP requests, and we want nginx to handle HTTP requests. If you
+wanted, you could write your own program that listens to port 80, or
+you could configure nginx to listen to some other port.</p>
+</div>
+<div class="paragraph">
+<p>I think of it like working with LEGOs: from my perspective, I’m
+building a hamster house or a spaceship for dogs or some other <em>dark
+shit</em>, but from another perspective the constructs aren’t
+fundamentally different from each other. It’s just the same resources,
+organized differently. Web servers are like that: the same resources
+(network requests, memory, cpu time, etc), just organized differently
+from browsers and WinAmp and what-have-you.</p>
+</div>
+<div class="paragraph">
+<p>We configure nginx to forward requests to our Clojure application by
+sending the requests to the IP address 127.0.0.1, port 3000. The
+address 127.0.0.1 is used to refer to the current machine, and we use
+it because the Clojure application is listening to port 3000 on the
+same machine as nginx. Like nginx, the Clojure application you’ll be
+building is also just a program, and it can listen to ports 'till the
+cows come home. Sometimes I’ll refer to it as the <em>application
+server</em>. The Clojure application does all the work of interacting with
+Datomic. See Figure 1.1.</p>
+</div>
+<div class="paragraph">
+<p>Now let’s talk about how you’ll set up a machine to serve your Clojure
+application.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+<div class="title">Learn more about processes</div>
+<div class="paragraph">
+<p>If you’re interested in learning more about processes, the book
+<a href="http://amzn.to/2mTOIht">Computer Systems: A Programmer’s Perspective</a>
+is what helped me finally “get it”. I’ve linked to the 2nd edition
+because that’s what I used and it’s less expensive than the 3rd
+edition. As a self-taught programmer, it’s been one of the most useful
+books in my career because it demystified many aspects of software
+development. It helped me understand what a program actually is, for
+example.</p>
+</div>
+<div class="paragraph">
+<p><a href="http://advancedlinuxprogramming.com/alp-folder/">Chapter 3 of <em>Advanced
+Linux Programming</em></a> is also useful; I’ve linked to free PDFs.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="Your_Beautiful_Little_Server">Your Beautiful Little Server</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The server you’re building will run a Clojure application that’s been
+packaged as an uberjar. When you run that uberjar, it will start its
+own HTTP server. (Read
+<a href="http://www.braveclojure.com/getting-started/"><em>Building, Running, and
+the REPL</em></a> from <em>Clojure for the Brave and True</em> if you’re unfamiliar
+with uberjars and running Java programs.)</p>
+</div>
+<div class="paragraph">
+<p>In this case, the Clojure application will be an example that you’ll
+download. The example application will let you create and manage
+role-playing character sheets. It has a front-end browser client
+written in Clojurescript (of course), and a backend HTTP component
+that handles requests to create, read, update, and delete the
+character sheets.</p>
+</div>
+<div class="paragraph">
+<p>As a dev <em>from the shadows</em>, you want to get the most out of your
+hardware by running multiple web apps on one machine. You want to be
+able to host, for example, application servers for <em>dubstepkazoo.com</em>
+and <em>morekazoo.com</em> on the same machine. Therefore, you can’t
+configure your application server to listen to port 80, because that
+would make it impossible for your machine to serve other
+applications.</p>
+</div>
+<div class="paragraph">
+<p>To meet this requirement, you’ll install an nginx web server that
+listens to port 80 and routes incoming HTTP requests to your
+applications. When nginx gets a request, it forwards it to your
+applications' HTTP servers based on the domain name of the
+request. See Figure 1.1.</p>
+</div>
+<div class="paragraph">
+<p>Finally, you’ll also install Datomic Free and set up the configuration
+necessary for your application to talk to Datomic.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="/quests/deploy/images/http-request-path.png" alt="http request path">
+</div>
+<div class="title">Figure 1.1: HTTP request path</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="Setup">Setup</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Before you can build and deploy the example Clojure application,
+you’ll need to download it (of course) and install
+<a href="http://brew.sh/">Homebrew</a> (Macintosh only),
+<a href="https://github.com/boot-clj/boot#install">Boot</a>,
+<a href="http://docs.ansible.com/ansible/intro_installation.html#installing-the-control-machine">Ansible</a>,
+<a href="https://www.virtualbox.org/wiki/Downloads">VirtualBox</a>, and
+<a href="https://www.vagrantup.com/">Vagrant</a>. I’ve included installation
+instructions for Mac and Ubuntu machines below. If you’re using
+another Linux distro, I’m assuming <code>u r l33t hax0r</code> and you’ll be able
+to install these tools without guidance.</p>
+</div>
+<div class="paragraph">
+<p>Some of these tools can take a while to download…​ Hey, maybe check
+out the <a href="http://www.communitypicks.com/r/devops">DevOps Community Picks</a>
+while you wait? (Using the tutorial I’ve spent hours and hours writing
+to market my side project…​ <em>from the shadows.</em>)</p>
+</div>
+<div class="sect2">
+<h3 id="Mac">Mac</h3>
+<div class="paragraph">
+<p>Run the following on the command line:</p>
+</div>
+<div class="listingblock">
+<div class="title">install deployment tools on a Mac</div>
+<div class="content">
+<pre class="pygments highlight"><code data-lang="bash"><span class="tok-c"># install Homebrew</span>
+/usr/bin/ruby -e <span class="tok-s2">"$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"</span>
+
+<span class="tok-c"># install boot</span>
+brew install boot-clj
+
+<span class="tok-c"># install ansible</span>
+brew install ansible
+
+<span class="tok-c"># install VirtualBox</span>
+brew cask install virtualbox
+
+<span class="tok-c"># install vagrant</span>
+brew cask install vagrant</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="Ubuntu">Ubuntu</h3>
+<div class="paragraph">
+<p>Run the following on the command line:</p>
+</div>
+<div class="listingblock">
+<div class="title">install deployment tools on Ubuntu</div>
+<div class="content">
+<pre class="pygments highlight"><code data-lang="bash"><span class="tok-c"># install boot</span>
+<span class="tok-c"># if you have nix:</span>
+nix-env -i boot
+<span class="tok-c"># otherwise:</span>
+sudo bash -c <span class="tok-s2">"cd /usr/local/bin &amp;&amp; curl -fsSLo boot https://github.com/boot-clj/boot-bin/releases/download/latest/boot.sh &amp;&amp; chmod 755 boot"</span>
+
+<span class="tok-c"># install ansible</span>
+sudo apt-get install software-properties-common
+sudo apt-add-repository ppa:ansible/ansible
+sudo apt-get update
+sudo apt-get install ansible
+
+<span class="tok-c"># install VirtualBox</span>
+sudo apt-get install virtualbox
+
+<span class="tok-c"># install vagrant</span>
+sudo apt-get install vagrant</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="Check_Your_Installation">Check Your Installation</h3>
+<div class="paragraph">
+<p>You can run the commands below to check that everything was installed
+correctly. The output you get should be similar to the output listed
+here.</p>
+</div>
+<div class="paragraph">
+<p>For boot:</p>
+</div>
+<div class="listingblock">
+<div class="title">Check boot installation</div>
+<div class="content">
+<pre class="pygments highlight"><code data-lang="bash">boot --version</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>You should see:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="bash"><span class="tok-c">#http://boot-clj.com</span>
+<span class="tok-c">#Thu Feb 02 14:15:12 EST 2017</span>
+<span class="tok-nv">BOOT_CLOJURE_NAME</span><span class="tok-o">=</span>org.clojure/clojure
+<span class="tok-nv">BOOT_CLOJURE_VERSION</span><span class="tok-o">=</span>1.9.0-alpha12
+<span class="tok-nv">BOOT_VERSION</span><span class="tok-o">=</span>2.7.1</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>For ansible:</p>
+</div>
+<div class="listingblock">
+<div class="title">Check ansible installation</div>
+<div class="content">
+<pre class="pygments highlight"><code data-lang="bash">ansible --version</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>You should see:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="bash">ansible 2.2.1.0
+  config <span class="tok-nv">file</span> <span class="tok-o">=</span>
+  configured module search <span class="tok-nv">path</span> <span class="tok-o">=</span> Default w/o overrides</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>For VirtualBox:</p>
+</div>
+<div class="listingblock">
+<div class="title">Check VirtualBox installation</div>
+<div class="content">
+<pre class="pygments highlight"><code data-lang="bash">VirtualBox --help</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>You should see the following, and a bunch of help text:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code>Oracle VM VirtualBox Manager 5.1.10
+(C) 2005-2016 Oracle Corporation
+All rights reserved.</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>For vagrant:</p>
+</div>
+<div class="listingblock">
+<div class="title">Check vagrant installation</div>
+<div class="content">
+<pre class="pygments highlight"><code data-lang="bash">vagrant --help</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="bash">Vagrant 1.8.7</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="Get_the_Example_App">Get the Example App</h3>
+<div class="paragraph">
+<p>Now that you have all the tools installed, you’ll need to download the
+<a href="https://github.com/sweet-tooth-clojure/character-sheet-example">Character
+Sheet Example</a> app and <code>cd</code> to its directory. If you have git
+installed, do this:</p>
+</div>
+<div class="listingblock">
+<div class="title">Get example app with git</div>
+<div class="content">
+<pre class="pygments highlight"><code data-lang="bash">git clone https://github.com/sweet-tooth-clojure/character-sheet-example.git
+<span class="tok-nb">cd </span>character-sheet-example</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>If you’re unfamiliar with git, learning it is one of the best
+investments you can make in your programming career. There’s a
+<a href="https://git-scm.com/book/en/v2/Getting-Started-About-Version-Control">great
+free book online</a> where you can learn it. In the mean time, you can
+run these commands to download the app and move to its directory:</p>
+</div>
+<div class="listingblock">
+<div class="title">Download example app zip file</div>
+<div class="content">
+<pre class="pygments highlight"><code data-lang="bash">curl -LOks https://github.com/sweet-tooth-clojure/character-sheet-example/archive/master.zip
+unzip master.zip
+<span class="tok-nb">cd </span>character-sheet-example/infrastructure</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>It’s worth pointing out that there’s nothing special about the
+<em>infrastructure</em> directory. It’s just my personal preference to put
+all server management code in an <em>infrastructure</em> directory.</p>
+</div>
+<div class="paragraph">
+<p>Lastly, you’ll need to install the Ansible <em>roles</em> that do most of the
+work. You’ll learn all about roles in the next chapter. Run the
+following command to install the roles from <em>Ansible Galaxy</em>,
+Ansible’s service for hosting and discovering roles (kinda like Ruby
+gems or Clojars):</p>
+</div>
+<div class="listingblock">
+<div class="title">Install Ansible roles</div>
+<div class="content">
+<pre class="pygments highlight"><code data-lang="bash">ansible-galaxy install -r ansible/requirements.yml</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>These roles are part of the <em>Sweet Tooth</em> collection of libraries I’ve
+been putting together for Clojure development, and you can find them
+at the <a href="https://github.com/sweet-tooth-clojure/">GitHub sweet tooth
+organization</a>. Look for the repos that are prefixed with
+<em>ansible-role-</em></p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+<div class="title">Not production ready</div>
+<div class="paragraph">
+<p>With the exception of the Ansible roles, the Sweet Tooth libs aren’t
+production ready or even collaboration ready. I won’t be taking pull
+requests or fielding questions about them for some time. #gitgrump</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="Create_a_Virtual_Machine">Create a Virtual Machine</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Now that we have everything installed, let’s create a <em>virtual
+machine</em> (VM) and set it up. Think of VMs as computers that are
+implemented as software. They have an operating system and manage
+processes just like the computer you’re using right now, but instead
+of physical hardware they rely on emulated hardware. The computer you
+use to start a VM is called the <em>host</em>.</p>
+</div>
+<div class="paragraph">
+<p>We’re creating a VM because it lets us try out our server setup and
+deployment process more quickly and cheaply than using an actual
+server from a hosting company; we get a tighter feedback loop.</p>
+</div>
+<div class="paragraph">
+<p>To create the VM, run this command:</p>
+</div>
+<div class="listingblock">
+<div class="title">Start a Virtual Machine</div>
+<div class="content">
+<pre class="pygments highlight"><code data-lang="bash">vagrant up</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><code>vagrant up</code> will take a few minutes to run because it’s doing
+a lot. It’s downloading an Ubuntu image and creating your virtual
+machine, and it’s also running scripts to set up the VM. The scripts
+are downloading packages like nginx and datomic, and uploading files
+to configure those services.</p>
+</div>
+<div class="paragraph">
+<p>When Vagrant’s done, The last line of output it produces should look
+something like:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code>PLAY RECAP *********************************************************************
+default                    : ok=31   changed=27   unreachable=0    failed=0</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>And that’s it! The server should now have nginx and datomic installed,
+and it should be ready for you to deploy the example app. If you want
+to shut down your vagrant server, just run <code>vagrant halt</code>. If you do
+something crazy and want to start from scratch, run <code>vagrant destroy
+-f</code>. This will delete the virtual machine you created; you can
+recreate it with <code>vagrant up</code>. (This ability to quickly recreate VMs
+is part of what makes them so useful.)</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="Build_and_Deploy_to_a_VM">Build and Deploy to a VM</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Run this command from within the
+<em>character-sheet-example/infrastructure</em> directory:</p>
+</div>
+<div class="listingblock">
+<div class="title">build and deploy the app</div>
+<div class="content">
+<pre class="pygments highlight"><code data-lang="bash">./build <span class="tok-o">&amp;&amp;</span> ./deploy dev</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><em>build</em> and <em>deploy</em> are both tiny shell scripts (three lines
+each).<code>./build</code> will take a few minutes to run while it downloads
+dependencies, compiles clojurescript, and packs everything into an
+uberjar. Then <code>./deploy dev</code> copies the uberjar to your VM, runs
+database migrations, runs a basic check that the app is functioning,
+and starts the app as an Ubuntu service. When it’s done, you should be
+able to view the example app by going to <a href="http://localhost:3100/" class="bare">http://localhost:3100/</a> on
+your computer (not the VM). The screen should look something like
+this:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="/quests/deploy/images/character-sheets-screenshot.png" alt="character sheets screenshot">
+</div>
+</div>
+<div class="paragraph">
+<p>Bam! You have deployed a Clojure application to a server running on
+your computer. Whenever you change your Clojure app, you can build and
+deploy it again by running <code>./build &amp;&amp; ./deploy dev</code> from the
+<em>infrastructure</em> directory. The deployment will follow the same steps
+every time, without any manual intervention on your part. What’s even
+better is that you can be confident that this process will work on a
+real server, something we’ll try in the next section.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="Set_Up_and_Deploy_to_a_VPS">Set Up and Deploy to a VPS</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>A virtual private server (VPS) is essentially a virtual machine
+provided by a hosting company. Unlike Geocities of yesteryear or
+Squarespace/Tumblr/Wordpress of todayyear, you’re given root access to
+a machine and it’s up to you to set it up to serve your app.</p>
+</div>
+<div class="paragraph">
+<p>My favorite VPS host is <a href="https://m.do.co/c/7c5112400186">Digital
+Ocean</a>. I’ve used them for more than three years and love them! Their
+customer support is responsive and helpful, they have a huge library
+of well-written documents on working with servers, and their tools
+make it simple and easy to create new servers. If you sign up using
+the above link, you’ll get a $10 credit (and I’ll get a $25 credit,
+yay), enough to run a server with 1gb of RAM and 30gb of SSD disk
+space for a month, or 2gb of RAM and 40gb for 15 days. Just a heads
+up: the signup process will ask you for a credit card.</p>
+</div>
+<div class="paragraph">
+<p>One great thing about Digital Ocean is that it only bills you for the
+amount of time your servers run: you could sign up, create a 2gb
+server to use as you go through this tutorial (what I recommend), and
+then immediately delete the server, and you’ll never get charged. It’s
+a cost-free way to try this stuff out, as long as you’re diligent
+about deleting your server afterward. In this section, I’ll walk you
+through the entire process, showing you both how to create a server
+and delete it.</p>
+</div>
+<div class="paragraph">
+<p>After you sign up, you’ll see a screen asking you create a droplet:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="/quests/deploy/images/do-droplet-prompt.png" alt="do droplet prompt">
+</div>
+</div>
+<div class="paragraph">
+<p><em>Droplet</em> is digital ocean’s trademark branded term for VPS. Click
+“create droplet”, and you’ll be greeted with a screen that looks like
+this:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="/quests/deploy/images/do-droplet-image-u14.png" alt="do droplet image u14">
+</div>
+</div>
+<div class="paragraph">
+<p>Choose an Ubuntu 14.04.5 x64 server.</p>
+</div>
+<div class="paragraph">
+<p>Close to the bottom of the page you’ll be asked to add an SSH
+key. <strong>You’ll need to add an SSH key for the deploy scripts to
+work</strong>. If you’re unfamiliar with the process,
+<a href="https://www.digitalocean.com/community/tutorials/how-to-use-ssh-keys-with-digitalocean-droplets">Digital
+Ocean has a quick, helpful guide</a>.</p>
+</div>
+<div class="paragraph">
+<p>The next section prompts you to give your droplet a name. This is for
+your human use only; it doesn’t impact the server’s functioning. Try
+naming it "deploy-quest".</p>
+</div>
+<div class="paragraph">
+<p>When you’re done, click "create", and in less than a minute your server
+will be ready to use! Digital Ocean shows a nice little progress bar
+while it sets up your server, and when it’s done it should show you
+the IP address of your server. Try visiting it in a browser:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="/quests/deploy/images/404.png" alt="404">
+</div>
+</div>
+<div class="paragraph">
+<p>It doesn’t work because we haven’t set up the server to actually serve
+anything. All it takes is to update the file
+<em>character-sheet-example/infrastructure/ansible/inventories/prod/hosts</em>
+by replacing the text <code>character-sheet-example-prod</code> on the first line
+with your server’s IP address. The demo server I’m using as I write
+this has the IP address <em>138.197.66.144</em>, so my file looks like this:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="config">default ansible_ssh_host=138.197.66.144 ansible_ssh_user=root
+
+[webservers]
+default
+
+[database]
+default</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>(If you have a domain name configured to point to your droplet, you
+can just use the domain name instead of the IP address.)</p>
+</div>
+<div class="paragraph">
+<p>Now, update the file
+<em>character-sheet-example/infrastructure/ansible/inventories/prod/group_vars/webservers</em>
+by using your IP address for <code>clojure_uberjar_webapp_domain</code> (for a
+real site, you would use the real domain name). It should look
+something like this:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="yaml"><span class="tok-c1"># -*- mode: yaml -*-</span>
+<span class="tok-nn">---</span>
+<span class="tok-l-Scalar-Plain">clojure_uberjar_webapp_domain</span><span class="tok-p-Indicator">:</span> <span class="tok-l-Scalar-Plain">138.197.66.144</span>
+<span class="tok-l-Scalar-Plain">clojure_uberjar_webapp_app_env_local_path</span><span class="tok-p-Indicator">:</span> <span class="tok-l-Scalar-Plain">files/env/prod.sh</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Now all you have to do is run these commands on the command line from
+the <em>character-sheet-example/infrastructure</em> directory:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="bash">./provision prod
+./deploy prod</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>If all goes well, you should be able to visit the IP address in your
+browser and see the example app:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="/quests/deploy/images/character-sheets-screenshot.png" alt="character sheets screenshot">
+</div>
+</div>
+<div class="paragraph">
+<p>Not bad! Just a couple configuration tweaks and the app is online,
+ready for the world to see. It takes very little work to set up a
+server and deploy a Clojure app, and I think that’s pretty exciting!</p>
+</div>
+<div class="paragraph">
+<p>Now you know how to deploy a Clojure application that follows the
+conventions I follow in my personal projects. To get this working
+with your own application, you’ll probably have to do a bit of
+customization.</p>
+</div>
+<div class="sect2">
+<h3 id="Using_with_Your_Own_Application">Using with Your Own Application</h3>
+<div class="paragraph">
+<p>So this all works great with the example app, but chances are your
+setup doesn’t match the example app. Here’s what you need to know to
+get this working with your own project.</p>
+</div>
+<div class="paragraph">
+<p>When you run <code>./build</code> and <code>./deploy dev</code> or <code>./deploy prod</code>, the
+scripts make a couple assumptions about where your
+uberjar is. <code>./build</code> uses boot to create an uberjar and save it to
+<em>character-sheet-example/target/build/app.jar</em>. The <em>deploy</em> script
+copies <em>character-sheet-example/target/build/app.jar</em> to
+<em>character-sheet-example/infrastructure/ansible/files/app.jar</em>.</p>
+</div>
+<div class="paragraph">
+<p>The <em>deploy</em> script then invokes an Ansible script that does the heavy
+lifting of copying your uberjar to the server. The Ansible script is
+written in such a way that it expects to find your uberjar (<em>app.jar</em>)
+in the <em>character-sheet-example/infrastructure/ansible/files</em>
+directory. If you’re not familiar with Ansible, don’t worry: most of
+the rest of this book is dedicated to explaining how to use Ansible in
+general and how to use the Clojure-specific scripts in particular.</p>
+</div>
+<div class="paragraph">
+<p>When you use the <em>build</em> and <em>deploy</em> scripts for your own project,
+you’ll probably need to modify either the scripts or your build
+process so that the uberjar eventually ends up at
+<em>character-sheet-example/infrastructure/ansible/files/app.jar</em> (where
+<em>character-sheet-example</em> is the directory of your project, of
+course).</p>
+</div>
+<div class="paragraph">
+<p>For example, if you have a Leiningen project under the directory
+<em>\~/my-bodacious-project</em>, you could copy the
+<em>character-sheet-example/infrastructure</em> directory to it with <code>cp -R
+character-sheet-example/infrastructure ~/my-bodacious-project</code>. Then,
+you’ll need to modify both
+<em>~/my-bodacious-project/infrastructure/build</em> and
+<em>~/my-bodacious-project/infrastructure/deploy</em>. You’ll need to
+replace the text <code>target/build/app.jar</code> with something like
+<code>target/uberjar/my-bodacious-project-0.1.0-SNAPSHOT-standalone.jar</code>.
+In <em>~/my-bodacious-project/infrastructure/build</em> you’ll need to
+replace the line <code>boot build</code> with <code>lein uberjar</code>. After that,
+everything should work.</p>
+</div>
+<div class="paragraph">
+<p>To round out this walkthrough, let’s take a quick look at a couple
+more bits you’ll find useful: how to set environment variables and log
+file locations.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="Environment_Variables_and_Log_Files">Environment Variables and Log Files</h3>
+<div class="paragraph">
+<p>Real applications often use environment variables for
+configuration. For example, <a href="http://www.communitypicks.com/">Community
+Picks</a> uses reddit’s oauth system for authentication. As part of the
+oauth process, the Community Picks server sends a request to reddit’s
+oauth server, and that request must include a client ID and a client
+secret. The client ID and secret are read from environment variables.</p>
+</div>
+<div class="paragraph">
+<p>You can set the variables for your Vagrant VM environment by modifying
+<em>character-sheet-example/infrastructure/ansible/files/env/dev.sh</em>. Here’s
+part of my Community Picks config:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="bash"><span class="tok-nb">export </span><span class="tok-nv">CA_OAUTH_CLIENT_ID</span><span class="tok-o">=</span><span class="tok-s2">"abc123"</span>
+<span class="tok-nb">export </span><span class="tok-nv">CA_OAUTH_CLIENT_SECRET</span><span class="tok-o">=</span><span class="tok-s2">"supersupersecret"</span>
+<span class="tok-nb">export </span><span class="tok-nv">CA_OAUTH_REDIRECT_URI</span><span class="tok-o">=</span><span class="tok-s2">"http://localhost:3000/session/confirm"</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>For your Digital Ocean server, modify the file
+<em>character-sheet-example/infrastructure/ansible/files/env/prod.sh</em>.</p>
+</div>
+<div class="paragraph">
+<p>The last item of interest is the locations of log files. If the IP
+address you used was <em>138.197.66.144</em>, then log files for the Clojure
+application are at <em>/var/log/138-197-66-144/138-197-66-144.log</em>. Nginx
+access and error logs are at
+<em>/var/log/nginx/138-197-66-144.access.log</em> and
+<em>/var/log/nginx/138-197-66-144.error.log</em>.</p>
+</div>
+<div class="paragraph">
+<p>And that’s the quick guide to painlessly deploying a Clojure app!</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="Recap">Recap</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>In this section, you set up your computer to perform quick and
+painless Clojure deployments. You installed Boot, Ansible, Virtualbox,
+and Vagrant, and you used them to deploy an example Clojure
+application to a local VM. You may have even deployed the app to a VPS
+hosted by <a href="https://m.do.co/c/7c5112400186">Digital Ocean</a>. You
+discovered that deploying a Clojure application can be easy, and you
+felt a pleasant warmth as you brain released a tiny bit of dopamine
+into your system.</p>
+</div>
+<div class="paragraph">
+<p>Seriously though - I spent a lot of time working out how to deploy
+sites with minimum hassle, and I hope the result is as exciting to you
+as it is to me. In the next section, I’ll walk you through the code I
+wrote and share what I’ve learned in my years as a DevOps amateur
+working on small-scale deployments. If you’d like to learn exactly
+how the tools you used work together to set up your server, or if
+you’d like to learn a bit about server management, read on!</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="Command_Summary">Command Summary</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Here’s all the command you ran for easy reference:</p>
+</div>
+<div class="sect2">
+<h3 id="Mac_Setup">Mac Setup</h3>
+<div class="listingblock">
+<div class="title">install deployment tools on a Mac</div>
+<div class="content">
+<pre class="pygments highlight"><code data-lang="bash"><span class="tok-c"># install Homebrew</span>
+/usr/bin/ruby -e <span class="tok-s2">"$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"</span>
+
+<span class="tok-c"># install boot</span>
+brew install boot-clj
+
+<span class="tok-c"># install ansible</span>
+brew install ansible
+
+<span class="tok-c"># install VirtualBox</span>
+brew cask install virtualbox
+
+<span class="tok-c"># install vagrant</span>
+brew cask install vagrant</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="Ubuntu_Setup">Ubuntu Setup</h3>
+
+</div>
+<div class="sect2">
+<h3 id="Ubuntu">Ubuntu</h3>
+<div class="paragraph">
+<p>Run the following on the command line:</p>
+</div>
+<div class="listingblock">
+<div class="title">install deployment tools on Ubuntu</div>
+<div class="content">
+<pre class="pygments highlight"><code data-lang="bash"><span class="tok-c"># install boot</span>
+<span class="tok-c"># if you have nix:</span>
+nix-env -i boot
+<span class="tok-c"># otherwise:</span>
+sudo bash -c <span class="tok-s2">"cd /usr/local/bin &amp;&amp; curl -fsSLo boot https://github.com/boot-clj/boot-bin/releases/download/latest/boot.sh &amp;&amp; chmod 755 boot"</span>
+
+<span class="tok-c"># install ansible</span>
+sudo apt-get install software-properties-common
+sudo apt-add-repository ppa:ansible/ansible
+sudo apt-get update
+sudo apt-get install ansible
+
+<span class="tok-c"># install VirtualBox</span>
+sudo apt-get install virtualbox
+
+<span class="tok-c"># install vagrant</span>
+sudo apt-get install vagrant</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="Download_Example_App__Build__Deploy">Download Example App, Build, Deploy</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="bash">git clone https://github.com/sweet-tooth-clojure/character-sheet-example.git
+<span class="tok-nb">cd </span>character-sheet-example/infrastructure
+ansible-galaxy install -r ansible/requirements.yml
+vagrant up
+./build <span class="tok-o">&amp;&amp;</span> ./deploy dev</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="Provision_and_Deploy_to_Prod">Provision and Deploy to Prod</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="bash">./provision prod
+./deploy prod</code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+<div class="title">Tales of Chaos and Madness <em>…​From the Shadows</em>
+</div>
+<div class="paragraph">
+<p>One day when I was in class in high school I got called to the
+office. My mom was there because my pet iguana had gotten out of my
+room and made its way downstairs to the kitchen, where it was happily
+eating tomatoes. She didn’t want to go near it and needed me to put it
+back where it belonged. So, we went home and did that, and afterward
+she took me out to IHOP with her, where I had delicious
+pancakes. After that, I would occassionally leave the my bedroom door
+open on purpose so that I could get out of school and have lunch with
+my mom.</p>
+</div>
+<div class="paragraph">
+<p><em>So dark!</em></p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+        <div class="chapter-nav">
+
+
+
+<div class="prev"><a href="../intro/">← Intro</a></div>
+
+
+
+<div class="next"><a href="../ansible-tutorial/">An Ansible Tutorial →</a></div>
+
+
+</div>
+
+        <div id="disqus_thread"></div>
+        <script>
+
+          /**
+          *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+          *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
+          /*
+          var disqus_config = function () {
+          this.page.url = PAGE_URL;  // Replace PAGE_URL with your page's canonical URL variable
+          this.page.identifier = PAGE_IDENTIFIER; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+          };
+          */
+          (function() { // DON'T EDIT BELOW THIS LINE
+          var d = document, s = d.createElement('script');
+          s.src = 'https://clojureforthebraveandtrue.disqus.com/embed.js';
+          s.setAttribute('data-timestamp', +new Date());
+          (d.head || d.body).appendChild(s);
+          })();
+        </script>
+        <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+</noscript>
+      </div>
+      <div class="secondary">
+        <div class="wrapper">
+          <div class="junk">
+            <script src="https://gumroad.com/js/gumroad.js"></script>
+<a class="gumroad-button" href="https://gum.co/gHcWk" target="_blank">Buy the ebook!?</a>
+          </div>
+          <div class="ads">
+            <a class="twitter-follow-button" href="https://twitter.com/nonrecursive">Follow @nonrecursive</a>
+            <form action="//flyingmachinestudios.us1.list-manage.com/subscribe/post?u=60763b0c4890c24bd055f32e6&amp;amp;amp;id=0b40ffd1e1" class="validate" id="mc-embedded-subscribe-form" method="post" name="mc-embedded-subscribe-form" novalidate="" target="_blank">
+              <input class="email" id="mce-EMAIL" name="EMAIL" placeholder="email address" required="" type="email" value="">
+              <input class="button" id="mc-embedded-subscribe" name="subscribe" type="submit" value="get email updates">
+            </form>
+            <ol>
+              <li><a target="_blank" href="https://jobs.braveclojure.com">Find Clojure jobs</a></li>
+              <li><a target="_blank" href="http://open-source.braveclojure.com">Contribute to beginner-friendly open source projects</a></li>
+            </ol>
+          </div>
+<div class="chapter-sections">Chapter Sections</div>
+<ol class="toc">
+<li>
+<a href="/quests/deploy/set-up-a-server-and-deploy-a-clojure-app-to-it/#What_s_a_Server_">What’s a Server?</a><ol>
+<li><a href="/quests/deploy/set-up-a-server-and-deploy-a-clojure-app-to-it/#Machines_and_Programs">Machines and Programs</a></li>
+<li><a href="/quests/deploy/set-up-a-server-and-deploy-a-clojure-app-to-it/#Processes">Processes</a></li>
+</ol>
+</li>
+<li><a href="/quests/deploy/set-up-a-server-and-deploy-a-clojure-app-to-it/#Your_Beautiful_Little_Server">Your Beautiful Little Server</a></li>
+<li>
+<a href="/quests/deploy/set-up-a-server-and-deploy-a-clojure-app-to-it/#Setup">Setup</a><ol>
+<li><a href="/quests/deploy/set-up-a-server-and-deploy-a-clojure-app-to-it/#Mac">Mac</a></li>
+<li><a href="/quests/deploy/set-up-a-server-and-deploy-a-clojure-app-to-it/#Ubuntu">Ubuntu</a></li>
+<li><a href="/quests/deploy/set-up-a-server-and-deploy-a-clojure-app-to-it/#Check_Your_Installation">Check Your Installation</a></li>
+<li><a href="/quests/deploy/set-up-a-server-and-deploy-a-clojure-app-to-it/#Get_the_Example_App">Get the Example App</a></li>
+</ol>
+</li>
+<li><a href="/quests/deploy/set-up-a-server-and-deploy-a-clojure-app-to-it/#Create_a_Virtual_Machine">Create a Virtual Machine</a></li>
+<li><a href="/quests/deploy/set-up-a-server-and-deploy-a-clojure-app-to-it/#Build_and_Deploy_to_a_VM">Build and Deploy to a VM</a></li>
+<li>
+<a href="/quests/deploy/set-up-a-server-and-deploy-a-clojure-app-to-it/#Set_Up_and_Deploy_to_a_VPS">Set Up and Deploy to a VPS</a><ol>
+<li><a href="/quests/deploy/set-up-a-server-and-deploy-a-clojure-app-to-it/#Using_with_Your_Own_Application">Using with Your Own Application</a></li>
+<li><a href="/quests/deploy/set-up-a-server-and-deploy-a-clojure-app-to-it/#Environment_Variables_and_Log_Files">Environment Variables and Log Files</a></li>
+</ol>
+</li>
+<li><a href="/quests/deploy/set-up-a-server-and-deploy-a-clojure-app-to-it/#Recap">Recap</a></li>
+<li>
+<a href="/quests/deploy/set-up-a-server-and-deploy-a-clojure-app-to-it/#Command_Summary">Command Summary</a><ol>
+<li><a href="/quests/deploy/set-up-a-server-and-deploy-a-clojure-app-to-it/#Mac_Setup">Mac Setup</a></li>
+<li><a href="/quests/deploy/set-up-a-server-and-deploy-a-clojure-app-to-it/#Ubuntu_Setup">Ubuntu Setup</a></li>
+<li><a href="/quests/deploy/set-up-a-server-and-deploy-a-clojure-app-to-it/#Ubuntu">Ubuntu</a></li>
+<li><a href="/quests/deploy/set-up-a-server-and-deploy-a-clojure-app-to-it/#Download_Example_App__Build__Deploy">Download Example App, Build, Deploy</a></li>
+<li><a href="/quests/deploy/set-up-a-server-and-deploy-a-clojure-app-to-it/#Provision_and_Deploy_to_Prod">Provision and Deploy to Prod</a></li>
+</ol>
+</li>
+</ol>
+          <div class="chapters">
+            <div class="subtitle">Chapters</div>
+            <ol class="toc">
+              <li>
+                <a href="/quests/deploy/preface/">
+                  Preface
+                </a>
+              </li>
+              <li>
+                <a href="/quests/deploy/intro/">
+                  Intro
+                </a>
+              </li>
+              <li>
+                <a href="/quests/deploy/set-up-a-server-and-deploy-a-clojure-app-to-it/">
+                  Chapter 1: Set Up a Server and Deploy a Clojure App To It
+                </a>
+              </li>
+              <li>
+                <a href="/quests/deploy/ansible-tutorial/">
+                  Chapter 2: An Ansible Tutorial
+                </a>
+              </li>
+              <li>
+                <a href="/quests/deploy/sweet-tooth-deep-dive/">
+                  Chapter 3: Sweet Tooth Deep Dive
+                </a>
+              </li>
+            </ol>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="footer">
+      <div class="container">
+        <div>
+          © 2017 Daniel Higginbotham
+        </div>
+      </div>
+    </div>
+    <script id="dsq-count-scr" src="//clojureforthebraveandtrue.disqus.com/count.js" async></script>
+    <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+    <script src="/assets/scripts/jquery.sticky.js"></script>
+    <script src="/assets/scripts/sticky.js"></script>
+    <script>
+              !function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs')
+            </script>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-43463851-1', 'auto');
+      ga('send', 'pageview');
+
+    </script>
+  </body>
+</html>
