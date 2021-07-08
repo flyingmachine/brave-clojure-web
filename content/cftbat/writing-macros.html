@@ -589,11 +589,11 @@ book: cftbat
  <span class="tok-o">'</span><span class="tok-p">(</span><span class="tok-nf">if-valid</span> <span class="tok-nv">order-details</span> <span class="tok-nv">order-details-validations</span> <span class="tok-nv">my-error-name</span>
             <span class="tok-p">(</span><span class="tok-nb">println </span><span class="tok-ss">:success</span><span class="tok-p">)</span>
             <span class="tok-p">(</span><span class="tok-nb">println </span><span class="tok-ss">:failure</span> <span class="tok-nv">my-error-name</span><span class="tok-p">)))</span>
-<span class="tok-p">(</span><span class="tok-nf">let*</span>
- <span class="tok-p">[</span><span class="tok-nv">my-error-name</span> <span class="tok-p">(</span><span class="tok-nf">user/validate</span> <span class="tok-nv">order-details</span> <span class="tok-nv">order-details-validations</span><span class="tok-p">)]</span>
- <span class="tok-p">(</span><span class="tok-k">if </span><span class="tok-p">(</span><span class="tok-nf">clojure.core/empty?</span> <span class="tok-nv">my-error-name</span><span class="tok-p">)</span>
-  <span class="tok-p">(</span><span class="tok-nb">println </span><span class="tok-ss">:success</span><span class="tok-p">)</span>
-  <span class="tok-p">(</span><span class="tok-nb">println </span><span class="tok-ss">:failure</span> <span class="tok-nv">my-error-name</span><span class="tok-p">)))</span>
+<span class="tok-c1">; =&gt; (let*</span>
+<span class="tok-c1">; =&gt;  [my-error-name (user/validate order-details order-details-validations)]</span>
+<span class="tok-c1">; =&gt;  (if (clojure.core/empty? my-error-name)
+<span class="tok-c1">; =&gt;   (println :success)</span>
+<span class="tok-c1">; =&gt;   (println :failure my-error-name)))</span>
 </code></pre></div></div>
 
 	<p class="Body"><span>The syntax quote abstracts the general form of the </span><code>let/validate/if </code><span>pattern you saw earlier. Then we use unquote splicing to unpack the </span><code>if</code><span> </span>branches, which were packed into the <code>then-else</code> rest argument.</p>
