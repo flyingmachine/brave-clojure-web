@@ -336,7 +336,7 @@ book: cftbat
               <span class="tok-p">[[</span><span class="tok-s">"Sweet lion of Zion, this is bad code:"</span> <span class="tok-nv">bad</span><span class="tok-p">]</span>
                <span class="tok-p">[</span><span class="tok-s">"Great cow of Moscow, this is good code:"</span> <span class="tok-nv">good</span><span class="tok-p">]])))</span>
 
-<span class="tok-p">(</span><span class="tok-nf">code-critic</span> <span class="tok-p">(</span><span class="tok-mi">1</span> <span class="tok-nb">+ </span><span class="tok-mi">1</span><span class="tok-p">)</span> <span class="tok-p">(</span><span class="tok-nb">+ </span><span class="tok-mi">1</span> <span class="tok-mi">1</span><span class="tok-p">))</span>
+<span class="tok-p">(</span><span class="tok-nf">code-critic</span> <span class="tok-p">{</span><span class="tok-ss">:bad</span> <span class="tok-p">(</span><span class="tok-mi">1</span> <span class="tok-nb">+ </span><span class="tok-mi">1</span><span class="tok-p">),</span> <span class="tok-ss">:good</span> <span class="tok-p">(</span><span class="tok-nb">+ </span><span class="tok-mi">1</span> <span class="tok-mi">1</span><span class="tok-p">)})</span>
 <span class="tok-c1">; =&gt; Sweet lion of Zion, this is bad code: (1 + 1)</span>
 <span class="tok-c1">; =&gt; Great cow of Moscow, this is good code: (+ 1 1)</span>
 </code></pre></div></div>
