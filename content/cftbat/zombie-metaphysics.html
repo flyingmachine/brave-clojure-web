@@ -237,7 +237,7 @@ book: cftbat
 
       <p class="Body">This example watch function didn’t use <code>watched</code> or <code>old-state</code>, but they’re there for you if the need arises. Now let’s cover validators.</p>
       <h3>Validators</h3>
-      <p class="BodyFirst"><em>Validators</em><span> let you specify what states are allowable for a reference. For </span><span>example</span><span>, here’s a validator that you could use to ensure that a zombie’s</span><code> </code><code>:percent-deteriorated</code> is between 0 and 100:</p>
+      <p class="BodyFirst"><em>Validators</em><span> let you specify what states are allowable for a reference. For </span><span>example</span><span>, here’s a validator that you could use to ensure that a zombie’s</span> <code>:percent-deteriorated</code> is between 0 and 100:</p>
       <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-kd">defn </span><span class="tok-nv">percent-deteriorated-validator</span>
   <span class="tok-p">[{</span><span class="tok-ss">:keys</span> <span class="tok-p">[</span><span class="tok-nv">percent-deteriorated</span><span class="tok-p">]}]</span>
   <span class="tok-p">(</span><span class="tok-nb">and </span><span class="tok-p">(</span><span class="tok-nb">&gt;= </span><span class="tok-nv">percent-deteriorated</span> <span class="tok-mi">0</span><span class="tok-p">)</span>
