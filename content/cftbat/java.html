@@ -103,7 +103,7 @@ book: cftbat
 
 <span class="tok-nv">public</span> <span class="tok-nb">class </span><span class="tok-nv">Greetings</span>
 <span class="tok-p">{</span>
-    <span class="tok-nv">public</span> <span class="tok-nv">static</span> <span class="tok-nv">void</span> <span class="tok-nv">hello</span><span class="tok-p">()</span>
+    <span class="tok-nv">public</span> <span class="tok-nv">void</span> <span class="tok-nv">hello</span><span class="tok-p">()</span>
     <span class="tok-p">{</span>
         <span class="tok-nv">System.out.println</span><span class="tok-p">(</span><span class="tok-s">"Shiver me timbers!!!"</span><span class="tok-p">)</span><span class="tok-c1">;</span>
     <span class="tok-p">}</span>
@@ -115,7 +115,7 @@ book: cftbat
 
 <span class="tok-nv">public</span> <span class="tok-nb">class </span><span class="tok-nv">Farewells</span>
 <span class="tok-p">{</span>
-    <span class="tok-nv">public</span> <span class="tok-nv">static</span> <span class="tok-nv">void</span> <span class="tok-nv">goodbye</span><span class="tok-p">()</span>
+    <span class="tok-nv">public</span> <span class="tok-nv">void</span> <span class="tok-nv">goodbye</span><span class="tok-p">()</span>
     <span class="tok-p">{</span>
         <span class="tok-nv">System.out.println</span><span class="tok-p">(</span><span class="tok-s">"A fair turn of the tide ter ye thar, ye magnificent sea friend!!"</span><span class="tok-p">)</span><span class="tok-c1">;</span>
     <span class="tok-p">}</span>
@@ -158,7 +158,7 @@ book: cftbat
 
       <p class="Body">Boom! The Java compiler just told you to hang your head in shame and maybe weep a little.</p>
       <p class="Body">Why? It thinks that the <code>pirate_phrases</code> package doesn’t exist. But that’s stupid, right? You’re in the <em>pirate_phrases</em> directory!</p>
-      <p class="Body">What’s happening here is that the default classpath only includes the current directory, which in this case is <em>pirate_phrases</em>. <code>javac</code> is trying to find the directory <em>phrasebook/pirate_phrases/pirate_phrases</em>, which doesn’t exist. When you run <code>javac ../PirateConversation.java</code> from within the <em>phrasebook</em> directory, <code>javac</code> tries to find the directory <em>phrasebook/pirate_phrases</em>, which does exist. Without changing directories, try running <span class="LiteralBold">javac -classpath ../ ../PirateConversation.java</span>. Shiver me timbers, it works! This works because <span>you manually set the classpath to the parent directory of </span><em>pirate_phrases</em><span>, </span>which is <em>phrasebook</em>. From there, <code>javac</code> can successfully find the <em>pirate_phrases</em> directory.</p>
+      <p class="Body">What’s happening here is that the default classpath only includes the current directory, which in this case is <em>pirate_phrases</em>. <code>javac</code> is trying to find the directory <em>phrasebook/pirate_phrases/pirate_phrases</em>, which doesn’t exist. When you run <code>javac PirateConversation.java</code> from within the <em>phrasebook</em> directory, <code>javac</code> tries to find the directory <em>phrasebook/pirate_phrases</em>, which does exist. Without changing directories, try running <span class="LiteralBold">javac -classpath ../ ../PirateConversation.java</span>. Shiver me timbers, it works! This works because <span>you manually set the classpath to the parent directory of </span><em>pirate_phrases</em><span>, </span>which is <em>phrasebook</em>. From there, <code>javac</code> can successfully find the <em>pirate_phrases</em> directory.</p>
       <p class="Body">In summary, packages organize code and require a matching directory structure. Importing classes allows you to refer to them without having to prepend the entire class’s package name. <code>javac</code> and Java find packages using the classpath.</p>
       <h2>JAR Files</h2>
       <p class="BodyFirst">JAR files allow you to bundle all your <em>.class</em> files into one single file. Navigate to your <em>phrasebook</em> directory and run the following:</p>
