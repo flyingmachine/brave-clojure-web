@@ -274,7 +274,7 @@ book: cftbat
 <span class="tok-c1">; =&gt; 3.141592653589793</span>
 </code></pre></div></div>
 
-      <p class="Body">At ➊ you called the <code>abs</code> static method on the <code>java.lang.Math</code> class, and at ➋ you accessed that class’s <code>PI</code> static field.</p>
+      <p class="Body">At ➊ you called the <code>abs</code> static method of the <code>java.lang.Math</code> class, and at ➋ you accessed that class’s <code>PI</code> static field.</p>
       <p class="Body"><span>All of these examples (except </span><code>java.lang.Math/PI</code><span>) use macros that expand to use the </span><em>dot special form</em><span>. In general, you won’t need to use the </span>dot special form unless you want to write your own macros to interact with Java objects and classes. Nevertheless, here is each example followed by its macroexpansion:</p>
       <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-nb">macroexpand-1 </span><span class="tok-o">'</span><span class="tok-p">(</span><span class="tok-nf">.toUpperCase</span> <span class="tok-s">"By Bluebeard's bananas!"</span><span class="tok-p">))</span>
 <span class="tok-c1">; =&gt; (. "By Bluebeard's bananas!" toUpperCase)</span>
