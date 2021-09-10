@@ -541,7 +541,7 @@ book: cftbat
           <span class="tok-nv">validations</span><span class="tok-p">))</span>
 
 <span class="tok-p">(</span><span class="tok-nf">validate</span> <span class="tok-nv">order-details</span> <span class="tok-nv">order-details-validations</span><span class="tok-p">)</span>
-<span class="tok-c1">; =&gt; {:email ("Your email address doesn't look like an email address")}</span>
+<span class="tok-c1">; =&gt; {:email ["Your email address doesn't look like an email address"]}</span>
 </code></pre></div></div>
 
 	<p class="Body">Success! This works by reducing over <code>order-details-validations</code> and associating the error messages (if there are any) for each key of <code>order-details</code> into a final map of error messages.</p>
