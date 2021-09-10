@@ -557,7 +557,7 @@ book: cftbat
 	<ol class="List-1">
 	  <li class="NumListA">Validate a record and bind the result to <code>errors</code></li>
 	  <li class="NumListB">Check whether there were any errors</li>
-	  <li class="NumListB">If there were, do the success thing, here <code>(println :success)</code></li>
+	  <li class="NumListB">If there were no errors, do the success thing, here <code>(println :success)</code></li>
 	  <li class="NumListC">Otherwise, do the failure thing, here <code>(println :failure errors)</code></li>
 	</ol>
 	<p class="Body">I’ve actually used this validation code in real production websites. At first, I found myself repeating minor variations of the code over and over, a sure sign that I needed to introduce an abstraction that would hide the repetitive parts: applying the <code>validate</code> function, binding the result to some symbol, and checking whether the result is empty. To create this abstraction, you might be tempted to write a function like this:</p>
