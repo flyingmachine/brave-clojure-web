@@ -58,6 +58,9 @@ book: cftbat
 <span class="tok-p">(</span><span class="tok-nf">full-moon-behavior</span> <span class="tok-p">{</span><span class="tok-ss">:were-type</span> <span class="tok-nv">nil</span>
                      <span class="tok-ss">:name</span> <span class="tok-s">"Martin the nurse"</span><span class="tok-p">})</span>
 <span class="tok-c1">; =&gt; "Martin the nurse will stay at home and eat ice cream"</span>
+
+<span class="tok-p">(</span><span class="tok-nf">full-moon-behavior</span> <span class="tok-p">{</span><span class="tok-ss">:name</span> <span class="tok-s">"Martin the nurse"</span><span class="tok-p">})</span>
+<span class="tok-c1">; =&gt; "Martin the nurse will stay at home and eat ice cream"</span>
 </code></pre></div></div>
 
       <p class="Body">When you call <code>full-moon-behavior</code> this time, the argument you give it has <code>nil</code> for its <code>:were-type</code>, so the method corresponding to <code>nil</code> gets evaluated and you’re informed that <code>"Martin the nurse will stay at home and eat ice cream"</code>.</p>
