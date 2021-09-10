@@ -331,7 +331,7 @@ book: cftbat
 	<p class="Body">Unquote splicing unwraps a seqable data structure, placing its contents directly within the enclosing syntax-quoted data structure. It’s like the <code>~@</code> is a sledgehammer and whatever follows it is a piñata, and the result is the most terrifying and awesome party you’ve ever been to.</p>
 	<p class="Body">Anyway, if you use unquote splicing in your code critic, then everything will work great:</p>
 	<div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-kd">defmacro </span><span class="tok-nv">code-critic</span>
-  <span class="tok-p">[{</span><span class="tok-ss">:keys</span> <span class="tok-p">[</span><span class="tok-nv">good</span> <span class="tok-nv">bad</span><span class="tok-p">]}]</span>
+  <span class="tok-p">[</span><span class="tok-nv">good</span> <span class="tok-nv">bad</span><span class="tok-p">]</span>
   <span class="tok-o">`</span><span class="tok-p">(</span><span class="tok-k">do </span><span class="tok-o">~@</span><span class="tok-p">(</span><span class="tok-nb">map </span><span class="tok-o">#</span><span class="tok-p">(</span><span class="tok-nb">apply </span><span class="tok-nv">criticize-code</span> <span class="tok-nv">%</span><span class="tok-p">)</span>
               <span class="tok-p">[[</span><span class="tok-s">"Sweet lion of Zion, this is bad code:"</span> <span class="tok-nv">bad</span><span class="tok-p">]</span>
                <span class="tok-p">[</span><span class="tok-s">"Great cow of Moscow, this is good code:"</span> <span class="tok-nv">good</span><span class="tok-p">]])))</span>
