@@ -492,7 +492,7 @@ book: cftbat
 <span class="tok-c1">; =&gt; {:sunlight-reaction "Glitter!"}</span>
 </code></pre></div></div>
 
-      <p class="Body">Here, the <code>map</code> function returns a sequential data structure after being given a map data structure, and into converts the seq back into a map.</p>
+      <p class="Body">Here, the <code>map</code> function returns a sequential data structure after being given a map data structure, and <code>into</code> converts the seq back into a map.</p>
       <p class="Body">This will work with other data structures as well:</p>
       <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-nb">map identity </span><span class="tok-p">[</span><span class="tok-ss">:garlic</span> <span class="tok-ss">:sesame-oil</span> <span class="tok-ss">:fried-eggs</span><span class="tok-p">])</span>
 <span class="tok-c1">; =&gt; (:garlic :sesame-oil :fried-eggs)</span>
@@ -732,7 +732,7 @@ book: cftbat
 
       <p class="Body">The next bit of code takes the seq of vectors and combines it with your vamp keys to create maps:</p>
       <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-kd">defn </span><span class="tok-nv">mapify</span>
-  <span class="tok-s">"Return a seq of maps like {:name \"Edward Cullen\" :glitter-index 10}"</span>
+  <span class="tok-s">"Return a seq of maps like {:name "Edward Cullen" :glitter-index 10}"</span>
   <span class="tok-p">[</span><span class="tok-nv">rows</span><span class="tok-p">]</span>
   <span class="tok-p">(</span><span class="tok-nb">map </span><span class="tok-p">(</span><span class="tok-k">fn </span><span class="tok-p">[</span><span class="tok-nv">unmapped-row</span><span class="tok-p">]</span>
          <span class="tok-p">(</span><span class="tok-nb">reduce </span><span class="tok-p">(</span><span class="tok-k">fn </span><span class="tok-p">[</span><span class="tok-nv">row-map</span> <span class="tok-p">[</span><span class="tok-nv">vamp-key</span> <span class="tok-nv">value</span><span class="tok-p">]]</span>
@@ -742,7 +742,7 @@ book: cftbat
        <span class="tok-nv">rows</span><span class="tok-p">))</span>
 </code></pre></div></div>
 
-      <p class="Body"><span>In this function, </span><code>map</code><span> transforms each row—vectors like </span><code>["Bella Swan" 0]</code><span>—</span>into a map by using <code>reduce</code> in a manner similar to the first example in “<code><a href="#2_2__reduce">reduce</a></code>” above. First, <code>map</code> creates a seq of key-value pairs like <code>([:name "Bella Swan"] [:glitter-index 0])</code>. Then, <code>reduce</code><em> </em>builds up a map by associating a vamp key with a converted vamp value into <code>row-map</code>. Here’s the first row mapified:</p>
+      <p class="Body"><span>In this function, </span><code>map</code><span> transforms each row—vectors like </span><code>["Bella Swan" "0"]</code><span>—</span>into a map by using <code>reduce</code> in a manner similar to the first example in “<code><a href="#2_2__reduce">reduce</a></code>” above. First, <code>map</code> creates a seq of key-value pairs like <code>([:name "Bella Swan"] [:glitter-index "0"])</code>. Then, <code>reduce</code><em> </em>builds up a map by associating a vamp key with a converted vamp value into <code>row-map</code>. Here’s the first row mapified:</p>
       <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-nb">first </span><span class="tok-p">(</span><span class="tok-nf">mapify</span> <span class="tok-p">(</span><span class="tok-nb">parse </span><span class="tok-p">(</span><span class="tok-nb">slurp </span><span class="tok-nv">filename</span><span class="tok-p">))))</span>
 <span class="tok-c1">; =&gt; {:glitter-index 10, :name "Edward Cullen"}</span>
 </code></pre></div></div>
