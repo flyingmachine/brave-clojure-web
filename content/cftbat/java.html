@@ -24,11 +24,11 @@ book: cftbat
 	<li class="NumListC">The CPU executes those instructions.</li>
       </ol>
       <p class="Body">Notice in Figure 12-1 that, ultimately, you have to translate programs into instructions that a CPU will understand, and the CPU doesn’t care which programming language you use to produce those instructions.</p>
-      <p class="Body">The JVM is analogous to a computer in that it also needs to translate code into low-level instructions, called <em>Java bytecode</em>. However, as a <em>virtual</em> machine, this translation is implemented as software rather than hardware. A running JVM executes bytecode by translating it on the fly into machine code that its host will understand, a process called <em>just-in-time </em><em>compilation</em>. </p>
       <img src="/assets/images/cftbat/java/compile.png" class="figure" />
       
 	<div class="caption">Figure 12-1: A high-level overview of how a C program is translated into machine code</div>
-      
+
+      <p class="Body">The JVM is analogous to a computer in that it also executes low-level instructions, called <em>Java bytecode</em>. However, as a <em>virtual</em> machine, this execution is implemented in software rather than hardware. A running JVM executes bytecode by translating it on the fly into machine code that its host will understand, a process called <em>just-in-time compilation</em>.</p>
       <p class="Body">For a program to run on the JVM, it must get compiled to Java bytecode. Usually, when you compile programs, the resulting bytecode is saved in a<em> .class</em> file. Then you’ll package these files in <em>Java archive</em> <em>files</em> ( JAR files). And just like how a CPU doesn’t care which programming language you use to generate machine instructions, the JVM doesn’t care how you create <span>bytecode. It doesn’t care if you use Scala, JRuby, Clojure, or even Java to </span><span>create</span> Java bytecode. Generally speaking, the process looks like that shown in Figure 12-2.</p>
       <ol class="List-1">
 	<li class="NumListA">The Java compiler reads source code.</li>
@@ -36,11 +36,11 @@ book: cftbat
 	<li class="NumListB">JVM executes the bytecode.</li>
 	<li class="NumListC">The JVM sends machine instructions to the CPU.</li>
       </ol>
-      <p class="Body">When someone says that Clojure runs on the JVM, one of the things they mean is that Clojure programs get compiled to Java bytecode and JVM <span>processes execute them. From an operations perspective, this means you treat Clojure programs the same as Java programs. You compile them to JAR files and run them using the </span><code>java</code><span> command. If a client needs a pro</span>gram that runs on the JVM, you could secretly write it in Clojure instead of Java and they would be none the wiser. From the outside, you can’t tell the <span>difference between a Java and a Clojure program any more than you can tell the difference between a C and a C++ program. Clojure allows you to be productive </span><em>and</em><span> sneaky.</span></p>
       <img src="/assets/images/cftbat/java/jvm-compile.png" class="figure" />
       
 	<div class="para-style-override-1 caption">Figure 12-2: Java programs produce JVM bytecode, but the JVM still has to produce machine instructions, just like a C compiler.</div>
       
+      <p class="Body">When someone says that Clojure runs on the JVM, one of the things they mean is that Clojure programs get compiled to Java bytecode and JVM <span>processes execute them. From an operations perspective, this means you treat Clojure programs the same as Java programs. You compile them to JAR files and run them using the </span><code>java</code><span> command. If a client needs a pro</span>gram that runs on the JVM, you could secretly write it in Clojure instead of Java and they would be none the wiser. From the outside, you can’t tell the <span>difference between a Java and a Clojure program any more than you can tell the difference between a C and a C++ program. Clojure allows you to be productive </span><em>and</em><span> sneaky.</span></p>
       <h2>Writing, Compiling, and Running a Java Program</h2>
       <p class="BodyFirst">Let’s look at how a real Java program works. In this section, you’ll learn about the object-oriented paradigm that Java uses. Then, you’ll build a <span>simple pirate phrase book using Java. This will help you feel more comfort</span>able with the JVM, it will prepare you for the upcoming section on Java interop (writing Clojure code that uses Java classes, objects, and methods directly), and it’ll come in handy should a scallywag ever attempt to scuttle your booty on the high seas. To tie all the information together, you’ll take a peek at some of Clojure’s Java code at the end of the chapter.</p>
       <h3>Object-Oriented Programming in the World’s Tiniest Nutshell</h3>
