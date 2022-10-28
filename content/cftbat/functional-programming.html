@@ -503,8 +503,8 @@ book: cftbat
 
       <p class="Body">These functions each take the board’s max position and a board position and use a little triangle math to figure out which numbers to feed to <code>connect</code><span>. For example, </span><code>connect-down-left</code><span> will attempt to connect position 1 t</span>o position 4. In case you’re wondering why the functions <code>connect-left</code>, <code>connect-up-left</code>, and <code>connect-up-right</code> aren’t defined, the reason is that the existing functions actually cover these cases. <code>connect</code> returns a board with the mutual connection established; when 4 <em>connects right</em> to 6, 6 <em>connects left</em> to 4. Here are a couple of examples:</p>
       <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-nf">connect-down-left</span> <span class="tok-p">{}</span> <span class="tok-mi">15</span> <span class="tok-mi">1</span><span class="tok-p">)</span>
-<span class="tok-c1">; =&gt; {1 {:connections {4 2}</span>
-      <span class="tok-mi">4</span> <span class="tok-p">{</span><span class="tok-ss">:connections</span> <span class="tok-p">{</span><span class="tok-mi">1</span> <span class="tok-mi">2</span><span class="tok-p">}}}}</span>
+<span class="tok-c1">; =&gt; {1 {:connections {4 2}}</span>
+      <span class="tok-mi">4</span> <span class="tok-p">{</span><span class="tok-ss">:connections</span> <span class="tok-p">{</span><span class="tok-mi">1</span> <span class="tok-mi">2</span><span class="tok-p">}}}</span>
 
 <span class="tok-p">(</span><span class="tok-nf">connect-down-right</span> <span class="tok-p">{}</span> <span class="tok-mi">15</span> <span class="tok-mi">3</span><span class="tok-p">)</span>
 <span class="tok-c1">; =&gt; {3  {:connections {10 6}}</span>
