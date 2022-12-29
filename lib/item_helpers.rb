@@ -37,6 +37,9 @@ class Chapters
         know-your-reducers
         appendix-a
         references
+        },
+        "babooka" => %w{
+        babooka
         }
       }
     end
