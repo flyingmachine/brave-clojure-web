@@ -76,6 +76,8 @@ compile '*' do
       layout 'deploy'
     elsif item.attributes[:filename] =~ /quests\/reducers/
       layout 'reducers'
+    elsif item.attributes[:filename] =~ /quests\/babooka/
+      layout 'babooka'
     else
       layout 'default'
     end
