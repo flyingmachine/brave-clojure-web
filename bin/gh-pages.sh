@@ -4,4 +4,5 @@ rm -rf ~/tmp/brave-clojure
 cp -r output ~/tmp/brave-clojure
 git checkout gh-pages
 cp -r ~/tmp/brave-clojure/* ./
-git checkout -
+rm -rf ./content
+# git checkout -
