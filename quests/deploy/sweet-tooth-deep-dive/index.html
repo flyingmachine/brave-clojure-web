@@ -165,15 +165,15 @@ the <em>infrastructure/ansible/sweet-tooth.yml</em> playbook:</p>
 <div class="listingblock">
 <div class="title">Contents of sweet-tooth.yml</div>
 <div class="content">
-<pre class="pygments highlight"><code data-lang="yaml"><span class="tok-nn">---</span>
-<span class="tok-p-Indicator">-</span> <span class="tok-l-Scalar-Plain">hosts</span><span class="tok-p-Indicator">:</span> <span class="tok-l-Scalar-Plain">webservers</span>
-  <span class="tok-l-Scalar-Plain">become</span><span class="tok-p-Indicator">:</span> <span class="tok-l-Scalar-Plain">true</span>
-  <span class="tok-l-Scalar-Plain">become_method</span><span class="tok-p-Indicator">:</span> <span class="tok-l-Scalar-Plain">sudo</span>
-  <span class="tok-l-Scalar-Plain">roles</span><span class="tok-p-Indicator">:</span>
-    <span class="tok-p-Indicator">-</span> <span class="tok-s">"sweet-tooth-clojure.clojure-uberjar-webapp-common"</span>
-    <span class="tok-p-Indicator">-</span> <span class="tok-s">"sweet-tooth-clojure.clojure-uberjar-webapp-nginx"</span>
-    <span class="tok-p-Indicator">-</span> <span class="tok-s">"sweet-tooth-clojure.clojure-uberjar-webapp-datomic-free"</span>
-    <span class="tok-p-Indicator">-</span> <span class="tok-s">"sweet-tooth-clojure.clojure-uberjar-webapp-app"</span></code></pre>
+<pre class="pygments highlight"><code data-lang="yaml"><span></span><span class="tok-nn">---</span>
+<span class="tok-p tok-p-Indicator">-</span> <span class="tok-nt">hosts</span><span class="tok-p">:</span> <span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">webservers</span>
+  <span class="tok-nt">become</span><span class="tok-p">:</span> <span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">true</span>
+  <span class="tok-nt">become_method</span><span class="tok-p">:</span> <span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">sudo</span>
+  <span class="tok-nt">roles</span><span class="tok-p">:</span>
+    <span class="tok-p tok-p-Indicator">-</span> <span class="tok-s">"sweet-tooth-clojure.clojure-uberjar-webapp-common"</span>
+    <span class="tok-p tok-p-Indicator">-</span> <span class="tok-s">"sweet-tooth-clojure.clojure-uberjar-webapp-nginx"</span>
+    <span class="tok-p tok-p-Indicator">-</span> <span class="tok-s">"sweet-tooth-clojure.clojure-uberjar-webapp-datomic-free"</span>
+    <span class="tok-p tok-p-Indicator">-</span> <span class="tok-s">"sweet-tooth-clojure.clojure-uberjar-webapp-app"</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -218,13 +218,13 @@ see the variable definitions under <em>defaults/main.yml</em>:</p>
 <div class="listingblock">
 <div class="title">defaults/main.yml</div>
 <div class="content">
-<pre class="pygments highlight"><code data-lang="yaml"><span class="tok-nn">---</span>
+<pre class="pygments highlight"><code data-lang="yaml"><span></span><span class="tok-nn">---</span>
 <span class="tok-c1"># User must define clojure_uberjar_webapp_domain</span>
-<span class="tok-l-Scalar-Plain">clojure_uberjar_webapp_app_name</span><span class="tok-p-Indicator">:</span> <span class="tok-s">"{{</span><span class="tok-nv"> </span><span class="tok-s">clojure_uberjar_webapp_domain</span><span class="tok-nv"> </span><span class="tok-s">|</span><span class="tok-nv"> </span><span class="tok-s">replace('.',</span><span class="tok-nv"> </span><span class="tok-s">'-')</span><span class="tok-nv"> </span><span class="tok-s">}}"</span>
-<span class="tok-l-Scalar-Plain">clojure_uberjar_webapp_app_user</span><span class="tok-p-Indicator">:</span> <span class="tok-s">"{{</span><span class="tok-nv"> </span><span class="tok-s">clojure_uberjar_webapp_app_name</span><span class="tok-nv"> </span><span class="tok-s">}}"</span>
-<span class="tok-l-Scalar-Plain">clojure_uberjar_webapp_app_underscored</span><span class="tok-p-Indicator">:</span> <span class="tok-s">"{{</span><span class="tok-nv"> </span><span class="tok-s">clojure_uberjar_webapp_domain</span><span class="tok-nv"> </span><span class="tok-s">|</span><span class="tok-nv"> </span><span class="tok-s">replace('.',</span><span class="tok-nv"> </span><span class="tok-s">'_')</span><span class="tok-nv"> </span><span class="tok-s">}}"</span>
-<span class="tok-l-Scalar-Plain">clojure_uberjar_webapp_app_root</span><span class="tok-p-Indicator">:</span> <span class="tok-s">"/var/www/{{</span><span class="tok-nv"> </span><span class="tok-s">clojure_uberjar_webapp_app_name</span><span class="tok-nv"> </span><span class="tok-s">}}"</span>
-<span class="tok-l-Scalar-Plain">clojure_uberjar_webapp_app_config_dir</span><span class="tok-p-Indicator">:</span> <span class="tok-s">"{{</span><span class="tok-nv"> </span><span class="tok-s">clojure_uberjar_webapp_app_root</span><span class="tok-nv"> </span><span class="tok-s">}}/config"</span></code></pre>
+<span class="tok-nt">clojure_uberjar_webapp_app_name</span><span class="tok-p">:</span> <span class="tok-s">"{{</span><span class="tok-nv"> </span><span class="tok-s">clojure_uberjar_webapp_domain</span><span class="tok-nv"> </span><span class="tok-s">|</span><span class="tok-nv"> </span><span class="tok-s">replace('.',</span><span class="tok-nv"> </span><span class="tok-s">'-')</span><span class="tok-nv"> </span><span class="tok-s">}}"</span>
+<span class="tok-nt">clojure_uberjar_webapp_app_user</span><span class="tok-p">:</span> <span class="tok-s">"{{</span><span class="tok-nv"> </span><span class="tok-s">clojure_uberjar_webapp_app_name</span><span class="tok-nv"> </span><span class="tok-s">}}"</span>
+<span class="tok-nt">clojure_uberjar_webapp_app_underscored</span><span class="tok-p">:</span> <span class="tok-s">"{{</span><span class="tok-nv"> </span><span class="tok-s">clojure_uberjar_webapp_domain</span><span class="tok-nv"> </span><span class="tok-s">|</span><span class="tok-nv"> </span><span class="tok-s">replace('.',</span><span class="tok-nv"> </span><span class="tok-s">'_')</span><span class="tok-nv"> </span><span class="tok-s">}}"</span>
+<span class="tok-nt">clojure_uberjar_webapp_app_root</span><span class="tok-p">:</span> <span class="tok-s">"/var/www/{{</span><span class="tok-nv"> </span><span class="tok-s">clojure_uberjar_webapp_app_name</span><span class="tok-nv"> </span><span class="tok-s">}}"</span>
+<span class="tok-nt">clojure_uberjar_webapp_app_config_dir</span><span class="tok-p">:</span> <span class="tok-s">"{{</span><span class="tok-nv"> </span><span class="tok-s">clojure_uberjar_webapp_app_root</span><span class="tok-nv"> </span><span class="tok-s">}}/config"</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -327,10 +327,10 @@ refer to the variables in <em>defaults/main.yml</em> when we need to.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="yaml"><span class="tok-p-Indicator">-</span> <span class="tok-l-Scalar-Plain">name</span><span class="tok-p-Indicator">:</span> <span class="tok-l-Scalar-Plain">Add java 8 repo</span>
-  <span class="tok-l-Scalar-Plain">apt_repository</span><span class="tok-p-Indicator">:</span> <span class="tok-l-Scalar-Plain">repo='ppa:openjdk-r/ppa'</span>
-  <span class="tok-l-Scalar-Plain">tags</span><span class="tok-p-Indicator">:</span>
-    <span class="tok-p-Indicator">-</span> <span class="tok-l-Scalar-Plain">install</span></code></pre>
+<pre class="pygments highlight"><code data-lang="yaml"><span></span><span class="tok-p tok-p-Indicator">-</span> <span class="tok-nt">name</span><span class="tok-p">:</span> <span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">Add java 8 repo</span>
+  <span class="tok-nt">apt_repository</span><span class="tok-p">:</span> <span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">repo='ppa:openjdk-r/ppa'</span>
+  <span class="tok-nt">tags</span><span class="tok-p">:</span>
+    <span class="tok-p tok-p-Indicator">-</span> <span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">install</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -350,7 +350,7 @@ file <em>infrastructure/deploy</em> has the line</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="shell">ansible-playbook -i inventories/$1 deploy.yml --skip-tags=install</code></pre>
+<pre class="pygments highlight"><code data-lang="shell"><span></span>ansible-playbook -i inventories/<span class="tok-nv">$1</span> deploy.yml --skip-tags<span class="tok-o">=</span>install</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -368,15 +368,15 @@ packages:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="yaml"><span class="tok-p-Indicator">-</span> <span class="tok-l-Scalar-Plain">name</span><span class="tok-p-Indicator">:</span> <span class="tok-l-Scalar-Plain">Install required system packages</span>
-  <span class="tok-l-Scalar-Plain">apt</span><span class="tok-p-Indicator">:</span> <span class="tok-l-Scalar-Plain">pkg="{{ item }}" state=installed update-cache=yes</span>
-  <span class="tok-l-Scalar-Plain">with_items</span><span class="tok-p-Indicator">:</span>
-  <span class="tok-p-Indicator">-</span> <span class="tok-l-Scalar-Plain">openjdk-8-jre</span>
-  <span class="tok-p-Indicator">-</span> <span class="tok-l-Scalar-Plain">wget</span>
-  <span class="tok-p-Indicator">-</span> <span class="tok-l-Scalar-Plain">vim</span>
-  <span class="tok-p-Indicator">-</span> <span class="tok-l-Scalar-Plain">curl</span>
-  <span class="tok-l-Scalar-Plain">tags</span><span class="tok-p-Indicator">:</span>
-    <span class="tok-p-Indicator">-</span> <span class="tok-l-Scalar-Plain">install</span></code></pre>
+<pre class="pygments highlight"><code data-lang="yaml"><span></span><span class="tok-p tok-p-Indicator">-</span> <span class="tok-nt">name</span><span class="tok-p">:</span> <span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">Install required system packages</span>
+  <span class="tok-nt">apt</span><span class="tok-p">:</span> <span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">pkg="{{ item }}" state=installed update-cache=yes</span>
+  <span class="tok-nt">with_items</span><span class="tok-p">:</span>
+  <span class="tok-p tok-p-Indicator">-</span> <span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">openjdk-8-jre</span>
+  <span class="tok-p tok-p-Indicator">-</span> <span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">wget</span>
+  <span class="tok-p tok-p-Indicator">-</span> <span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">vim</span>
+  <span class="tok-p tok-p-Indicator">-</span> <span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">curl</span>
+  <span class="tok-nt">tags</span><span class="tok-p">:</span>
+    <span class="tok-p tok-p-Indicator">-</span> <span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">install</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -405,14 +405,14 @@ actions which will result in the end state.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="yaml"><span class="tok-p-Indicator">-</span> <span class="tok-l-Scalar-Plain">name</span><span class="tok-p-Indicator">:</span> <span class="tok-l-Scalar-Plain">Check existence of local env file</span>
-  <span class="tok-l-Scalar-Plain">local_action</span><span class="tok-p-Indicator">:</span> <span class="tok-l-Scalar-Plain">stat path="{{ clojure_uberjar_webapp_app_env_local_path }}"</span>
-  <span class="tok-l-Scalar-Plain">register</span><span class="tok-p-Indicator">:</span> <span class="tok-l-Scalar-Plain">app_env_local_file</span>
-  <span class="tok-l-Scalar-Plain">ignore_errors</span><span class="tok-p-Indicator">:</span> <span class="tok-l-Scalar-Plain">True</span>
-  <span class="tok-l-Scalar-Plain">become</span><span class="tok-p-Indicator">:</span> <span class="tok-l-Scalar-Plain">False</span>
-  <span class="tok-l-Scalar-Plain">tags</span><span class="tok-p-Indicator">:</span>
-    <span class="tok-p-Indicator">-</span> <span class="tok-l-Scalar-Plain">configure</span>
-<span class="tok-p-Indicator">[</span><span class="tok-nv">source</span><span class="tok-p-Indicator">,</span> <span class="tok-nv">yaml</span><span class="tok-p-Indicator">]</span></code></pre>
+<pre class="pygments highlight"><code data-lang="yaml"><span></span><span class="tok-p tok-p-Indicator">-</span> <span class="tok-nt">name</span><span class="tok-p">:</span> <span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">Check existence of local env file</span>
+  <span class="tok-nt">local_action</span><span class="tok-p">:</span> <span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">stat path="{{ clojure_uberjar_webapp_app_env_local_path }}"</span>
+  <span class="tok-nt">register</span><span class="tok-p">:</span> <span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">app_env_local_file</span>
+  <span class="tok-nt">ignore_errors</span><span class="tok-p">:</span> <span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">True</span>
+  <span class="tok-nt">become</span><span class="tok-p">:</span> <span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">False</span>
+  <span class="tok-nt">tags</span><span class="tok-p">:</span>
+    <span class="tok-p tok-p-Indicator">-</span> <span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">configure</span>
+<span class="tok-p tok-p-Indicator">[</span><span class="tok-nv">source</span><span class="tok-p tok-p-Indicator">,</span> <span class="tok-nv">yaml</span><span class="tok-p tok-p-Indicator">]</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -470,11 +470,11 @@ plays in setting up a functioning server.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="yaml"><span class="tok-p-Indicator">-</span> <span class="tok-l-Scalar-Plain">name</span><span class="tok-p-Indicator">:</span> <span class="tok-l-Scalar-Plain">Copy app env file</span>
-  <span class="tok-l-Scalar-Plain">file</span><span class="tok-p-Indicator">:</span> <span class="tok-l-Scalar-Plain">src="{{ clojure_uberjar_webapp_app_env_local_path }}" dest="{{ clojure_uberjar_webapp_app_env_path }}"</span>
-  <span class="tok-l-Scalar-Plain">tags</span><span class="tok-p-Indicator">:</span>
-    <span class="tok-p-Indicator">-</span> <span class="tok-l-Scalar-Plain">configure</span>
-  <span class="tok-l-Scalar-Plain">when</span><span class="tok-p-Indicator">:</span> <span class="tok-l-Scalar-Plain">app_env_local_file.stat.exists</span></code></pre>
+<pre class="pygments highlight"><code data-lang="yaml"><span></span><span class="tok-p tok-p-Indicator">-</span> <span class="tok-nt">name</span><span class="tok-p">:</span> <span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">Copy app env file</span>
+  <span class="tok-nt">file</span><span class="tok-p">:</span> <span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">src="{{ clojure_uberjar_webapp_app_env_local_path }}" dest="{{ clojure_uberjar_webapp_app_env_path }}"</span>
+  <span class="tok-nt">tags</span><span class="tok-p">:</span>
+    <span class="tok-p tok-p-Indicator">-</span> <span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">configure</span>
+  <span class="tok-nt">when</span><span class="tok-p">:</span> <span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">app_env_local_file.stat.exists</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -506,7 +506,7 @@ walk through the whole process to see how that happens.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="shell">cd character-sheet-example/infrastructure
+<pre class="pygments highlight"><code data-lang="shell"><span></span><span class="tok-nb">cd</span> character-sheet-example/infrastructure
 ./deploy dev</code></pre>
 </div>
 </div>
@@ -517,7 +517,7 @@ you want to use your dev environment variables. When you call
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="shell">ansible-playbook -i inventories/dev sweet-tooth.yml --skip-tags=install</code></pre>
+<pre class="pygments highlight"><code data-lang="shell"><span></span>ansible-playbook -i inventories/dev sweet-tooth.yml --skip-tags<span class="tok-o">=</span>install</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -533,10 +533,10 @@ you’ll see this:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="yaml"><span class="tok-c1"># -*- mode: yaml -*-</span>
+<pre class="pygments highlight"><code data-lang="yaml"><span></span><span class="tok-c1"># -*- mode: yaml -*-</span>
 <span class="tok-nn">---</span>
-<span class="tok-l-Scalar-Plain">clojure_uberjar_webapp_domain</span><span class="tok-p-Indicator">:</span> <span class="tok-l-Scalar-Plain">localhost</span>
-<span class="tok-l-Scalar-Plain">clojure_uberjar_webapp_app_env_local_path</span><span class="tok-p-Indicator">:</span> <span class="tok-l-Scalar-Plain">files/env/dev.sh</span></code></pre>
+<span class="tok-nt">clojure_uberjar_webapp_domain</span><span class="tok-p">:</span> <span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">localhost</span>
+<span class="tok-nt">clojure_uberjar_webapp_app_env_local_path</span><span class="tok-p">:</span> <span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">files/env/dev.sh</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -547,7 +547,7 @@ file. Here’s a look at <em>files/env/dev.sh</em> (located in
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="shell">export GA_ID="dev google analytics id"</code></pre>
+<pre class="pygments highlight"><code data-lang="shell"><span></span><span class="tok-nb">export</span> <span class="tok-nv">GA_ID</span><span class="tok-o">=</span><span class="tok-s2">"dev google analytics id"</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -578,7 +578,7 @@ sites it works OK. Please yell at me if this is a terrible idea!</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="yaaml">- name: Upload http env var file
+<pre class="pygments highlight"><code data-lang="yaaml"><span></span>- name: Upload http env var file
   template: src="templates/http-env.j2" dest="{{ clojure_uberjar_webapp_app_http_env_path }}"
   tags:
     - configure</code></pre>
@@ -595,7 +595,7 @@ do this:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="shell">export HTTP_SERVER_PORT={{ clojure_uberjar_webapp_app_http_port }}</code></pre>
+<pre class="pygments highlight"><code data-lang="shell"><span></span><span class="tok-nb">export</span> <span class="tok-nv">HTTP_SERVER_PORT</span><span class="tok-o">={{</span> clojure_uberjar_webapp_app_http_port <span class="tok-o">}}</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -629,26 +629,26 @@ located at <em>templates/app-upstart.conf.j2</em>:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="conf">start<span class="tok-w"> </span><span class="tok-no">on</span><span class="tok-w"> </span>runlevel<span class="tok-w"> </span>[2345]<span class="tok-w"></span>
+<pre class="pygments highlight"><code data-lang="conf"><span></span>start on runlevel [2345]
 
-start<span class="tok-w"> </span><span class="tok-no">on</span><span class="tok-w"> </span>(started<span class="tok-w"> </span>network-interface<span class="tok-w"></span>
-or<span class="tok-w"> </span>started<span class="tok-w"> </span>network-manager<span class="tok-w"></span>
-or<span class="tok-w"> </span>started<span class="tok-w"> </span>networking)<span class="tok-w"></span>
+start on (started network-interface
+or started network-manager
+or started networking)
 
-stop<span class="tok-w"> </span><span class="tok-no">on</span><span class="tok-w"> </span>(stopping<span class="tok-w"> </span>network-interface<span class="tok-w"></span>
-or<span class="tok-w"> </span>stopping<span class="tok-w"> </span>network-manager<span class="tok-w"></span>
-or<span class="tok-w"> </span>stopping<span class="tok-w"> </span>networking)<span class="tok-w"></span>
+stop on (stopping network-interface
+or stopping network-manager
+or stopping networking)
 
-respawn<span class="tok-w"></span>
+respawn
 
-script<span class="tok-w"></span>
-<span class="tok-w">  </span>set<span class="tok-w"> </span>-a<span class="tok-w"></span>
-<span class="tok-w">  </span>.<span class="tok-w"> </span>{{<span class="tok-w"> </span>clojure_uberjar_webapp_app_combined_config_path<span class="tok-w"> </span>}}<span class="tok-w"></span>
+script
+  set -a
+  . {{ clojure_uberjar_webapp_app_combined_config_path }}
 
-<span class="tok-w">  </span>{{<span class="tok-w"> </span>clojure_uberjar_webapp_app_command<span class="tok-w"> </span>}}<span class="tok-w"></span>
-end<span class="tok-w"> </span>script<span class="tok-w"></span>
+  {{ clojure_uberjar_webapp_app_command }}
+end script
 
-stop<span class="tok-w"> </span><span class="tok-no">on</span><span class="tok-w"> </span>runlevel<span class="tok-w"> </span>[016]<span class="tok-w"></span></code></pre>
+stop on runlevel [016]</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -665,7 +665,7 @@ application. Within that block, we set environment variables with</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="bash">  <span class="tok-nb">set</span> -a
+<pre class="pygments highlight"><code data-lang="bash"><span></span>  <span class="tok-nb">set</span> -a
   . <span class="tok-o">{{</span> clojure_uberjar_webapp_app_combined_config_path <span class="tok-o">}}</span></code></pre>
 </div>
 </div>
@@ -683,9 +683,9 @@ something like this:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="bash"><span class="tok-nb">export </span><span class="tok-nv">GA_ID</span><span class="tok-o">=</span><span class="tok-s2">"dev google analytics id"</span>
-<span class="tok-nb">export </span><span class="tok-nv">DB_URI</span><span class="tok-o">=</span>datomic:free://localhost:4334/localhost
-<span class="tok-nb">export </span><span class="tok-nv">HTTP_SERVER_PORT</span><span class="tok-o">=</span>3000</code></pre>
+<pre class="pygments highlight"><code data-lang="bash"><span></span><span class="tok-nb">export</span> <span class="tok-nv">GA_ID</span><span class="tok-o">=</span><span class="tok-s2">"dev google analytics id"</span>
+<span class="tok-nb">export</span> <span class="tok-nv">DB_URI</span><span class="tok-o">=</span>datomic:free://localhost:4334/localhost
+<span class="tok-nb">export</span> <span class="tok-nv">HTTP_SERVER_PORT</span><span class="tok-o">=</span><span class="tok-m">3000</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -696,11 +696,11 @@ expands to something like:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="bash">/usr/bin/java -Xms300m -Xmx300m <span class="tok-se">\</span>
+<pre class="pygments highlight"><code data-lang="bash"><span></span>/usr/bin/java -Xms300m -Xmx300m <span class="tok-se">\</span>
 -Ddatomic.objectCacheMax<span class="tok-o">=</span>64m <span class="tok-se">\</span>
 -Ddatomic.memoryIndexMax<span class="tok-o">=</span>64m <span class="tok-se">\</span>
 -jar /var/www/localhost/localhost.jar server <span class="tok-se">\</span>
-&gt;&gt; /var/log/localhost/localhost.log 2&gt;<span class="tok-p">&amp;</span>1</code></pre>
+&gt;&gt; /var/log/localhost/localhost.log <span class="tok-m">2</span>&gt;<span class="tok-p">&amp;</span><span class="tok-m">1</span></code></pre>
 </div>
 </div>
 <div class="literalblock">
@@ -720,7 +720,7 @@ source code, in the file
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="clojure"><span class="tok-p">(</span><span class="tok-kd">ns </span><span class="tok-nv">character-sheet.core</span>
+<pre class="pygments highlight"><code data-lang="clojure"><span></span><span class="tok-p">(</span><span class="tok-kd">ns </span><span class="tok-nv">character-sheet.core</span>
   <span class="tok-p">(</span><span class="tok-ss">:gen-class</span><span class="tok-p">)</span>
   <span class="tok-p">(</span><span class="tok-ss">:require</span> <span class="tok-p">[</span><span class="tok-nv">datomic.api</span> <span class="tok-ss">:as</span> <span class="tok-nv">d</span><span class="tok-p">]</span>
             <span class="tok-p">[</span><span class="tok-nv">com.stuartsierra.component</span> <span class="tok-ss">:as</span> <span class="tok-nv">component</span><span class="tok-p">]</span>
@@ -821,11 +821,11 @@ test on your app. Here’s the shell script’s template:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="shell">for f in {{ clojure_uberjar_webapp_app_config_dir }}/.[a-z]*; do
-  source "$f";
-done
+<pre class="pygments highlight"><code data-lang="shell"><span></span><span class="tok-k">for</span> f <span class="tok-k">in</span> <span class="tok-o">{{</span> clojure_uberjar_webapp_app_config_dir <span class="tok-o">}}</span>/.<span class="tok-o">[</span>a-z<span class="tok-o">]</span>*<span class="tok-p">;</span> <span class="tok-k">do</span>
+  <span class="tok-nb">source</span> <span class="tok-s2">"</span><span class="tok-nv">$f</span><span class="tok-s2">"</span><span class="tok-p">;</span>
+<span class="tok-k">done</span>
 
-java -Xms200m -Xmx400m  -jar {{ clojure_uberjar_webapp_app_jar_name }} deploy/check</code></pre>
+java -Xms200m -Xmx400m  -jar <span class="tok-o">{{</span> clojure_uberjar_webapp_app_jar_name <span class="tok-o">}}</span> deploy/check</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -834,9 +834,9 @@ sheet app (it gets saved to <em>/var/www/localhost/check.sh</em>):</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="shell">for f in /var/www/localhost/config/.[a-z]*; do
-  source "$f";
-done
+<pre class="pygments highlight"><code data-lang="shell"><span></span><span class="tok-k">for</span> f <span class="tok-k">in</span> /var/www/localhost/config/.<span class="tok-o">[</span>a-z<span class="tok-o">]</span>*<span class="tok-p">;</span> <span class="tok-k">do</span>
+  <span class="tok-nb">source</span> <span class="tok-s2">"</span><span class="tok-nv">$f</span><span class="tok-s2">"</span><span class="tok-p">;</span>
+<span class="tok-k">done</span>
 
 java -Xms200m -Xmx400m  -jar localhost.jar deploy/check</code></pre>
 </div>
@@ -851,7 +851,7 @@ see what gets run:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="clojure"><span class="tok-p">(</span><span class="tok-kd">ns </span><span class="tok-nv">character-sheet.core</span>
+<pre class="pygments highlight"><code data-lang="clojure"><span></span><span class="tok-p">(</span><span class="tok-kd">ns </span><span class="tok-nv">character-sheet.core</span>
   <span class="tok-p">(</span><span class="tok-ss">:gen-class</span><span class="tok-p">)</span>
   <span class="tok-p">(</span><span class="tok-ss">:require</span> <span class="tok-p">[</span><span class="tok-nv">datomic.api</span> <span class="tok-ss">:as</span> <span class="tok-nv">d</span><span class="tok-p">]</span>
             <span class="tok-p">[</span><span class="tok-nv">com.stuartsierra.component</span> <span class="tok-ss">:as</span> <span class="tok-nv">component</span><span class="tok-p">]</span>
@@ -916,14 +916,14 @@ three <em>notifications</em>:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="yaml"><span class="tok-p-Indicator">-</span> <span class="tok-l-Scalar-Plain">name</span><span class="tok-p-Indicator">:</span> <span class="tok-l-Scalar-Plain">Run check</span>
-  <span class="tok-l-Scalar-Plain">command</span><span class="tok-p-Indicator">:</span> <span class="tok-l-Scalar-Plain">chdir={{ clojure_uberjar_webapp_app_root }}/ bash ./check.sh</span>
-  <span class="tok-l-Scalar-Plain">tags</span><span class="tok-p-Indicator">:</span>
-    <span class="tok-p-Indicator">-</span> <span class="tok-l-Scalar-Plain">deploy</span>
-    <span class="tok-p-Indicator">-</span> <span class="tok-l-Scalar-Plain">check</span>
-  <span class="tok-l-Scalar-Plain">notify</span><span class="tok-p-Indicator">:</span>
-    <span class="tok-p-Indicator">-</span> <span class="tok-l-Scalar-Plain">install schemas</span>
-    <span class="tok-p-Indicator">-</span> <span class="tok-l-Scalar-Plain">restart web app</span></code></pre>
+<pre class="pygments highlight"><code data-lang="yaml"><span></span><span class="tok-p tok-p-Indicator">-</span> <span class="tok-nt">name</span><span class="tok-p">:</span> <span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">Run check</span>
+  <span class="tok-nt">command</span><span class="tok-p">:</span> <span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">chdir={{ clojure_uberjar_webapp_app_root }}/ bash ./check.sh</span>
+  <span class="tok-nt">tags</span><span class="tok-p">:</span>
+    <span class="tok-p tok-p-Indicator">-</span> <span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">deploy</span>
+    <span class="tok-p tok-p-Indicator">-</span> <span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">check</span>
+  <span class="tok-nt">notify</span><span class="tok-p">:</span>
+    <span class="tok-p tok-p-Indicator">-</span> <span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">install schemas</span>
+    <span class="tok-p tok-p-Indicator">-</span> <span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">restart web app</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -957,9 +957,9 @@ once no matter how many notifications they receive.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="yaml">  <span class="tok-l-Scalar-Plain">notify</span><span class="tok-p-Indicator">:</span>
-    <span class="tok-p-Indicator">-</span> <span class="tok-l-Scalar-Plain">install schemas</span>
-    <span class="tok-p-Indicator">-</span> <span class="tok-l-Scalar-Plain">restart web app</span></code></pre>
+<pre class="pygments highlight"><code data-lang="yaml"><span></span>  <span class="tok-nt">notify</span><span class="tok-p">:</span>
+    <span class="tok-p tok-p-Indicator">-</span> <span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">install schemas</span>
+    <span class="tok-p tok-p-Indicator">-</span> <span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">restart web app</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1044,15 +1044,15 @@ scope.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="yaml"><span class="tok-p-Indicator">-</span> <span class="tok-l-Scalar-Plain">name</span><span class="tok-p-Indicator">:</span> <span class="tok-l-Scalar-Plain">nginx app config</span>
-  <span class="tok-l-Scalar-Plain">template</span><span class="tok-p-Indicator">:</span>
+<pre class="pygments highlight"><code data-lang="yaml"><span></span><span class="tok-p tok-p-Indicator">-</span> <span class="tok-nt">name</span><span class="tok-p">:</span> <span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">nginx app config</span>
+  <span class="tok-nt">template</span><span class="tok-p">:</span>
     <span class="tok-c1"># "no-ssl.conf.j2" if clojure_uberjar_webapp_nginx_use_ssl isn't defined or is false</span>
-    <span class="tok-l-Scalar-Plain">src</span><span class="tok-p-Indicator">:</span> <span class="tok-s">"templates/app-nginx-{{</span><span class="tok-nv"> </span><span class="tok-s">'no-'</span><span class="tok-nv"> </span><span class="tok-s">if</span><span class="tok-nv"> </span><span class="tok-s">not</span><span class="tok-nv"> </span><span class="tok-s">(clojure_uberjar_webapp_nginx_use_ssl|d(False))</span><span class="tok-nv"> </span><span class="tok-s">else</span><span class="tok-nv"> </span><span class="tok-s">''</span><span class="tok-nv"> </span><span class="tok-s">}}ssl.conf.j2"</span>
-    <span class="tok-l-Scalar-Plain">dest</span><span class="tok-p-Indicator">:</span> <span class="tok-s">"{{</span><span class="tok-nv"> </span><span class="tok-s">clojure_uberjar_webapp_nginx_sites_available</span><span class="tok-nv"> </span><span class="tok-s">}}"</span>
-  <span class="tok-l-Scalar-Plain">tags</span><span class="tok-p-Indicator">:</span>
-    <span class="tok-p-Indicator">-</span> <span class="tok-l-Scalar-Plain">configure</span>
-  <span class="tok-l-Scalar-Plain">notify</span><span class="tok-p-Indicator">:</span>
-    <span class="tok-p-Indicator">-</span> <span class="tok-s">"nginx</span><span class="tok-nv"> </span><span class="tok-s">config</span><span class="tok-nv"> </span><span class="tok-s">changed"</span></code></pre>
+    <span class="tok-nt">src</span><span class="tok-p">:</span> <span class="tok-s">"templates/app-nginx-{{</span><span class="tok-nv"> </span><span class="tok-s">'no-'</span><span class="tok-nv"> </span><span class="tok-s">if</span><span class="tok-nv"> </span><span class="tok-s">not</span><span class="tok-nv"> </span><span class="tok-s">(clojure_uberjar_webapp_nginx_use_ssl|d(False))</span><span class="tok-nv"> </span><span class="tok-s">else</span><span class="tok-nv"> </span><span class="tok-s">''</span><span class="tok-nv"> </span><span class="tok-s">}}ssl.conf.j2"</span>
+    <span class="tok-nt">dest</span><span class="tok-p">:</span> <span class="tok-s">"{{</span><span class="tok-nv"> </span><span class="tok-s">clojure_uberjar_webapp_nginx_sites_available</span><span class="tok-nv"> </span><span class="tok-s">}}"</span>
+  <span class="tok-nt">tags</span><span class="tok-p">:</span>
+    <span class="tok-p tok-p-Indicator">-</span> <span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">configure</span>
+  <span class="tok-nt">notify</span><span class="tok-p">:</span>
+    <span class="tok-p tok-p-Indicator">-</span> <span class="tok-s">"nginx</span><span class="tok-nv"> </span><span class="tok-s">config</span><span class="tok-nv"> </span><span class="tok-s">changed"</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1071,39 +1071,39 @@ just stick with me and it’ll make sense.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="conf">upstream<span class="tok-w"> </span>localhost_upstream<span class="tok-w"> </span>{<span class="tok-w"> </span><b class="conum">(1)</b>
-<span class="tok-w">    </span>server<span class="tok-w"> </span><span class="tok-mf">127.0.0.1</span>:3000;<span class="tok-w"></span>
-<span class="tok-w">    </span><span class="tok-c"># put more servers here for load balancing</span><span class="tok-w"></span>
-<span class="tok-w">    </span><span class="tok-c"># keepalive(reuse TCP connection) improves performance</span><span class="tok-w"></span>
-<span class="tok-w">    </span>keepalive<span class="tok-w"> </span><span class="tok-m">32</span>;<span class="tok-w"></span>
-}<span class="tok-w"></span>
+<pre class="pygments highlight"><code data-lang="conf"><span></span>upstream localhost_upstream { <b class="conum">(1)</b>
+    server 127.0.0.1:3000;
+    # put more servers here for load balancing
+    # keepalive(reuse TCP connection) improves performance
+    keepalive 32;
+}
 
-server<span class="tok-w"> </span>{<span class="tok-w"></span>
-<span class="tok-w">    </span>server_name<span class="tok-w"> </span>localhost;<span class="tok-w"> </span><b class="conum">(2)</b>
+server {
+    server_name localhost; <b class="conum">(2)</b>
 
-<span class="tok-w">    </span>location<span class="tok-w"> </span>/static/<span class="tok-w"> </span>{<span class="tok-w">  </span><span class="tok-c"># static content</span><span class="tok-w"></span>
-<span class="tok-w">        </span>alias<span class="tok-w"> </span>/var/www/localhost/public/;<span class="tok-w"></span>
-<span class="tok-w">    </span>}<span class="tok-w"></span>
+    location /static/ {  # static content
+        alias /var/www/localhost/public/;
+    }
 
-<span class="tok-w">    </span>location<span class="tok-w"> </span>/<span class="tok-w"> </span>{<span class="tok-w"></span>
-<span class="tok-w">        </span>proxy_pass<span class="tok-w">  </span>http://localhost_upstream;<span class="tok-w"> </span><b class="conum">(3)</b>
+    location / {
+        proxy_pass  http://localhost_upstream; <b class="conum">(3)</b>
 
-<span class="tok-w">        </span><span class="tok-c"># tell http-kit to keep the connection</span><span class="tok-w"></span>
-<span class="tok-w">        </span>proxy_http_version<span class="tok-w"> </span><span class="tok-m">1</span>.1;<span class="tok-w"></span>
-<span class="tok-w">        </span>proxy_set_header<span class="tok-w"> </span>Connection<span class="tok-w"> </span>"";<span class="tok-w"></span>
+        # tell http-kit to keep the connection
+        proxy_http_version 1.1;
+        proxy_set_header Connection "";
 
-<span class="tok-w">        </span>proxy_set_header<span class="tok-w"> </span>X-Forwarded-For<span class="tok-w"> </span>$proxy_add_x_forwarded_for;<span class="tok-w"></span>
-<span class="tok-w">        </span>proxy_set_header<span class="tok-w"> </span>Host<span class="tok-w"> </span>$host;<span class="tok-w"></span>
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header Host $host;
 
-<span class="tok-w">        </span>proxy_set_header<span class="tok-w"> </span>x-forwarded-host<span class="tok-w">  </span>$host;<span class="tok-w"></span>
-<span class="tok-w">        </span>proxy_set_header<span class="tok-w"> </span>x-forwarded-proto<span class="tok-w"> </span>$scheme;<span class="tok-w"></span>
-<span class="tok-w">        </span>proxy_set_header<span class="tok-w"> </span>x-forwarded-port<span class="tok-w">  </span>$server_port;<span class="tok-w"></span>
+        proxy_set_header x-forwarded-host  $host;
+        proxy_set_header x-forwarded-proto $scheme;
+        proxy_set_header x-forwarded-port  $server_port;
 
 
-<span class="tok-w">        </span><span class="tok-k">access_log</span><span class="tok-w">  </span>/var/log/nginx/localhost.access.log;<span class="tok-w"></span>
-<span class="tok-w">        </span>error_log<span class="tok-w">   </span>/var/log/nginx/localhost.error.log;<span class="tok-w"></span>
-<span class="tok-w">    </span>}<span class="tok-w"></span>
-}<span class="tok-w"></span></code></pre>
+        access_log  /var/log/nginx/localhost.access.log;
+        error_log   /var/log/nginx/localhost.error.log;
+    }
+}</code></pre>
 </div>
 </div>
 <div class="paragraph">

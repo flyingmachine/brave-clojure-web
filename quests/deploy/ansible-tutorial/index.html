@@ -255,8 +255,8 @@ increasingly complex ways. To follow along, get the tutorial repo and
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="bash">git clone https://github.com/braveclojure/ansible-tutorial.git
-<span class="tok-nb">cd </span>ansible-tutorial
+<pre class="pygments highlight"><code data-lang="bash"><span></span>git clone https://github.com/braveclojure/ansible-tutorial.git
+<span class="tok-nb">cd</span> ansible-tutorial
 vagrant up</code></pre>
 </div>
 </div>
@@ -273,7 +273,7 @@ specify an inventory with the <code>-i</code> flag. Try this:</p>
 <div class="listingblock">
 <div class="title">Applying a playbook to an inventory</div>
 <div class="content">
-<pre class="pygments highlight"><code data-lang="bash">ansible-playbook -i inventory-vagrant-server playbooks/01.yml</code></pre>
+<pre class="pygments highlight"><code data-lang="bash"><span></span>ansible-playbook -i inventory-vagrant-server playbooks/01.yml</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -291,13 +291,13 @@ groups. Here’s <em>inventory-vagrant-server</em>:</p>
 <div class="listingblock">
 <div class="title">inventory-vagrant-server</div>
 <div class="content">
-<pre class="pygments highlight"><code data-lang="ini"><span class="tok-na">default ansible_ssh_host</span><span class="tok-o">=</span><span class="tok-s">127.0.0.1 ansible_ssh_port=2222 ansible_ssh_user='vagrant' ansible_ssh_private_key_file='.vagrant/machines/default/virtualbox/private_key'</span>
+<pre class="pygments highlight"><code data-lang="ini"><span></span><span class="tok-na">default ansible_ssh_host</span><span class="tok-o">=</span><span class="tok-s">127.0.0.1 ansible_ssh_port=2222 ansible_ssh_user='vagrant' ansible_ssh_private_key_file='.vagrant/machines/default/virtualbox/private_key'</span>
 
 <span class="tok-k">[webservers]</span>
-<span class="tok-err">default</span>
+<span class="tok-na">default</span>
 
 <span class="tok-k">[database]</span>
-<span class="tok-err">default</span></code></pre>
+<span class="tok-na">default</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -339,19 +339,19 @@ both groups.</p>
 <div class="listingblock">
 <div class="title"><em>playbooks/01.yml</em></div>
 <div class="content">
-<pre class="pygments highlight"><code data-lang="yaml"><span class="tok-nn">---</span>
-<span class="tok-p-Indicator">-</span> <span class="tok-l-Scalar-Plain">hosts</span><span class="tok-p-Indicator">:</span> <span class="tok-l-Scalar-Plain">webservers</span>
-  <span class="tok-l-Scalar-Plain">become</span><span class="tok-p-Indicator">:</span> <span class="tok-l-Scalar-Plain">true</span>
-  <span class="tok-l-Scalar-Plain">become_method</span><span class="tok-p-Indicator">:</span> <span class="tok-l-Scalar-Plain">sudo</span>
+<pre class="pygments highlight"><code data-lang="yaml"><span></span><span class="tok-nn">---</span>
+<span class="tok-p tok-p-Indicator">-</span> <span class="tok-nt">hosts</span><span class="tok-p">:</span> <span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">webservers</span>
+  <span class="tok-nt">become</span><span class="tok-p">:</span> <span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">true</span>
+  <span class="tok-nt">become_method</span><span class="tok-p">:</span> <span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">sudo</span>
 
-  <span class="tok-l-Scalar-Plain">tasks</span><span class="tok-p-Indicator">:</span>
-  <span class="tok-p-Indicator">-</span> <span class="tok-l-Scalar-Plain">name</span><span class="tok-p-Indicator">:</span> <span class="tok-l-Scalar-Plain">Create an empty file</span>
-    <span class="tok-l-Scalar-Plain">file</span><span class="tok-p-Indicator">:</span> <span class="tok-l-Scalar-Plain">path=/etc/foo.conf state=touch mode=0644</span>
-  <span class="tok-p-Indicator">-</span> <span class="tok-l-Scalar-Plain">name</span><span class="tok-p-Indicator">:</span> <span class="tok-l-Scalar-Plain">Install nginx</span>
-    <span class="tok-l-Scalar-Plain">apt</span><span class="tok-p-Indicator">:</span>
-      <span class="tok-l-Scalar-Plain">pkg</span><span class="tok-p-Indicator">:</span> <span class="tok-l-Scalar-Plain">nginx</span>
-      <span class="tok-l-Scalar-Plain">state</span><span class="tok-p-Indicator">:</span> <span class="tok-l-Scalar-Plain">installed</span>
-      <span class="tok-l-Scalar-Plain">update-cache</span><span class="tok-p-Indicator">:</span> <span class="tok-l-Scalar-Plain">yes</span></code></pre>
+  <span class="tok-nt">tasks</span><span class="tok-p">:</span>
+  <span class="tok-p tok-p-Indicator">-</span> <span class="tok-nt">name</span><span class="tok-p">:</span> <span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">Create an empty file</span>
+    <span class="tok-nt">file</span><span class="tok-p">:</span> <span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">path=/etc/foo.conf state=touch mode=0644</span>
+  <span class="tok-p tok-p-Indicator">-</span> <span class="tok-nt">name</span><span class="tok-p">:</span> <span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">Install nginx</span>
+    <span class="tok-nt">apt</span><span class="tok-p">:</span>
+      <span class="tok-nt">pkg</span><span class="tok-p">:</span> <span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">nginx</span>
+      <span class="tok-nt">state</span><span class="tok-p">:</span> <span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">installed</span>
+      <span class="tok-nt">update-cache</span><span class="tok-p">:</span> <span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">yes</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -435,22 +435,22 @@ two tasks with the <code>file_path</code> and <code>package</code> variables:</p
 <div class="listingblock">
 <div class="title"><em>playbooks/02.yml</em></div>
 <div class="content">
-<pre class="pygments highlight"><code data-lang="yaml"><span class="tok-nn">---</span>
-<span class="tok-p-Indicator">-</span> <span class="tok-l-Scalar-Plain">hosts</span><span class="tok-p-Indicator">:</span> <span class="tok-l-Scalar-Plain">webservers</span>
-  <span class="tok-l-Scalar-Plain">become</span><span class="tok-p-Indicator">:</span> <span class="tok-l-Scalar-Plain">true</span>
-  <span class="tok-l-Scalar-Plain">become_method</span><span class="tok-p-Indicator">:</span> <span class="tok-l-Scalar-Plain">sudo</span>
-  <span class="tok-l-Scalar-Plain">vars</span><span class="tok-p-Indicator">:</span>
-    <span class="tok-l-Scalar-Plain">file_path</span><span class="tok-p-Indicator">:</span> <span class="tok-l-Scalar-Plain">/etc/bar.conf</span>
-    <span class="tok-l-Scalar-Plain">package</span><span class="tok-p-Indicator">:</span> <span class="tok-l-Scalar-Plain">wget</span>
+<pre class="pygments highlight"><code data-lang="yaml"><span></span><span class="tok-nn">---</span>
+<span class="tok-p tok-p-Indicator">-</span> <span class="tok-nt">hosts</span><span class="tok-p">:</span> <span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">webservers</span>
+  <span class="tok-nt">become</span><span class="tok-p">:</span> <span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">true</span>
+  <span class="tok-nt">become_method</span><span class="tok-p">:</span> <span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">sudo</span>
+  <span class="tok-nt">vars</span><span class="tok-p">:</span>
+    <span class="tok-nt">file_path</span><span class="tok-p">:</span> <span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">/etc/bar.conf</span>
+    <span class="tok-nt">package</span><span class="tok-p">:</span> <span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">wget</span>
 
-  <span class="tok-l-Scalar-Plain">tasks</span><span class="tok-p-Indicator">:</span>
-  <span class="tok-p-Indicator">-</span> <span class="tok-l-Scalar-Plain">name</span><span class="tok-p-Indicator">:</span> <span class="tok-l-Scalar-Plain">Create an empty file</span>
-    <span class="tok-l-Scalar-Plain">file</span><span class="tok-p-Indicator">:</span> <span class="tok-l-Scalar-Plain">path={{ file_path }} state=touch mode=0644</span>
-  <span class="tok-p-Indicator">-</span> <span class="tok-l-Scalar-Plain">name</span><span class="tok-p-Indicator">:</span> <span class="tok-l-Scalar-Plain">Install a package</span>
-    <span class="tok-l-Scalar-Plain">apt</span><span class="tok-p-Indicator">:</span>
-      <span class="tok-l-Scalar-Plain">pkg</span><span class="tok-p-Indicator">:</span> <span class="tok-s">"{{</span><span class="tok-nv"> </span><span class="tok-s">package</span><span class="tok-nv"> </span><span class="tok-s">}}"</span>
-      <span class="tok-l-Scalar-Plain">state</span><span class="tok-p-Indicator">:</span> <span class="tok-l-Scalar-Plain">installed</span>
-      <span class="tok-l-Scalar-Plain">update-cache</span><span class="tok-p-Indicator">:</span> <span class="tok-l-Scalar-Plain">yes</span></code></pre>
+  <span class="tok-nt">tasks</span><span class="tok-p">:</span>
+  <span class="tok-p tok-p-Indicator">-</span> <span class="tok-nt">name</span><span class="tok-p">:</span> <span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">Create an empty file</span>
+    <span class="tok-nt">file</span><span class="tok-p">:</span> <span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">path={{ file_path }} state=touch mode=0644</span>
+  <span class="tok-p tok-p-Indicator">-</span> <span class="tok-nt">name</span><span class="tok-p">:</span> <span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">Install a package</span>
+    <span class="tok-nt">apt</span><span class="tok-p">:</span>
+      <span class="tok-nt">pkg</span><span class="tok-p">:</span> <span class="tok-s">"{{</span><span class="tok-nv"> </span><span class="tok-s">package</span><span class="tok-nv"> </span><span class="tok-s">}}"</span>
+      <span class="tok-nt">state</span><span class="tok-p">:</span> <span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">installed</span>
+      <span class="tok-nt">update-cache</span><span class="tok-p">:</span> <span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">yes</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -488,7 +488,7 @@ to do something more sophisticated than variable substitution.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="bash">ansible-playbook -i inventory-vagrant-server playbooks/02.yml --extra-vars <span class="tok-s2">"file_path=/etc/baz.conf"</span></code></pre>
+<pre class="pygments highlight"><code data-lang="bash"><span></span>ansible-playbook -i inventory-vagrant-server playbooks/02.yml --extra-vars <span class="tok-s2">"file_path=/etc/baz.conf"</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -541,7 +541,7 @@ Ansible variables. In the file
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="yaml"><span class="tok-l-Scalar-Plain">file_path</span><span class="tok-p-Indicator">:</span> <span class="tok-l-Scalar-Plain">/var/log/staging</span></code></pre>
+<pre class="pygments highlight"><code data-lang="yaml"><span></span><span class="tok-nt">file_path</span><span class="tok-p">:</span> <span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">/var/log/staging</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -599,15 +599,15 @@ applying. Our next tutorial playbook, <em>03.yml</em>, includes two roles,
 <div class="listingblock">
 <div class="title"><em>playbooks/03.yml</em></div>
 <div class="content">
-<pre class="pygments highlight"><code data-lang="yaml"><span class="tok-nn">---</span>
-<span class="tok-p-Indicator">-</span> <span class="tok-l-Scalar-Plain">hosts</span><span class="tok-p-Indicator">:</span> <span class="tok-l-Scalar-Plain">webservers</span>
-  <span class="tok-l-Scalar-Plain">become</span><span class="tok-p-Indicator">:</span> <span class="tok-l-Scalar-Plain">true</span>
-  <span class="tok-l-Scalar-Plain">become_method</span><span class="tok-p-Indicator">:</span> <span class="tok-l-Scalar-Plain">sudo</span>
-  <span class="tok-l-Scalar-Plain">vars</span><span class="tok-p-Indicator">:</span>
-    <span class="tok-l-Scalar-Plain">file_path</span><span class="tok-p-Indicator">:</span> <span class="tok-l-Scalar-Plain">/etc/qux.conf</span>
-  <span class="tok-l-Scalar-Plain">roles</span><span class="tok-p-Indicator">:</span>
-    <span class="tok-p-Indicator">-</span> <span class="tok-l-Scalar-Plain">create-file</span>
-    <span class="tok-p-Indicator">-</span> <span class="tok-l-Scalar-Plain">install-package</span></code></pre>
+<pre class="pygments highlight"><code data-lang="yaml"><span></span><span class="tok-nn">---</span>
+<span class="tok-p tok-p-Indicator">-</span> <span class="tok-nt">hosts</span><span class="tok-p">:</span> <span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">webservers</span>
+  <span class="tok-nt">become</span><span class="tok-p">:</span> <span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">true</span>
+  <span class="tok-nt">become_method</span><span class="tok-p">:</span> <span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">sudo</span>
+  <span class="tok-nt">vars</span><span class="tok-p">:</span>
+    <span class="tok-nt">file_path</span><span class="tok-p">:</span> <span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">/etc/qux.conf</span>
+  <span class="tok-nt">roles</span><span class="tok-p">:</span>
+    <span class="tok-p tok-p-Indicator">-</span> <span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">create-file</span>
+    <span class="tok-p tok-p-Indicator">-</span> <span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">install-package</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -630,9 +630,9 @@ familiar site:</p>
 <div class="listingblock">
 <div class="title">playbooks/roles/create-file/tasks/main.yml</div>
 <div class="content">
-<pre class="pygments highlight"><code data-lang="yaml"><span class="tok-nn">---</span>
-<span class="tok-p-Indicator">-</span> <span class="tok-l-Scalar-Plain">name</span><span class="tok-p-Indicator">:</span> <span class="tok-l-Scalar-Plain">Create an empty file</span>
-  <span class="tok-l-Scalar-Plain">file</span><span class="tok-p-Indicator">:</span> <span class="tok-l-Scalar-Plain">path={{ file_path }} state=touch mode=0644</span></code></pre>
+<pre class="pygments highlight"><code data-lang="yaml"><span></span><span class="tok-nn">---</span>
+<span class="tok-p tok-p-Indicator">-</span> <span class="tok-nt">name</span><span class="tok-p">:</span> <span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">Create an empty file</span>
+  <span class="tok-nt">file</span><span class="tok-p">:</span> <span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">path={{ file_path }} state=touch mode=0644</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -647,11 +647,11 @@ places it in <em>playbooks/roles/install-package/tasks/main.yml</em>:</p>
 <div class="listingblock">
 <div class="title">playbooks/roles/install-package/tasks/main.yml</div>
 <div class="content">
-<pre class="pygments highlight"><code data-lang="yaml"><span class="tok-p-Indicator">-</span> <span class="tok-l-Scalar-Plain">name</span><span class="tok-p-Indicator">:</span> <span class="tok-l-Scalar-Plain">Install a package</span>
-  <span class="tok-l-Scalar-Plain">apt</span><span class="tok-p-Indicator">:</span>
-    <span class="tok-l-Scalar-Plain">pkg</span><span class="tok-p-Indicator">:</span> <span class="tok-s">"{{</span><span class="tok-nv"> </span><span class="tok-s">package</span><span class="tok-nv"> </span><span class="tok-s">}}"</span>
-    <span class="tok-l-Scalar-Plain">state</span><span class="tok-p-Indicator">:</span> <span class="tok-l-Scalar-Plain">installed</span>
-    <span class="tok-l-Scalar-Plain">update-cache</span><span class="tok-p-Indicator">:</span> <span class="tok-l-Scalar-Plain">yes</span></code></pre>
+<pre class="pygments highlight"><code data-lang="yaml"><span></span><span class="tok-p tok-p-Indicator">-</span> <span class="tok-nt">name</span><span class="tok-p">:</span> <span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">Install a package</span>
+  <span class="tok-nt">apt</span><span class="tok-p">:</span>
+    <span class="tok-nt">pkg</span><span class="tok-p">:</span> <span class="tok-s">"{{</span><span class="tok-nv"> </span><span class="tok-s">package</span><span class="tok-nv"> </span><span class="tok-s">}}"</span>
+    <span class="tok-nt">state</span><span class="tok-p">:</span> <span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">installed</span>
+    <span class="tok-nt">update-cache</span><span class="tok-p">:</span> <span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">yes</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -686,9 +686,9 @@ include a bunch of roles. Here’s the contents of the <em>deploy</em> script:</
 <div class="listingblock">
 <div class="title">Contents of deploy script</div>
 <div class="content">
-<pre class="pygments highlight"><code data-lang="bash"><span class="tok-c">#!/bin/bash</span>
+<pre class="pygments highlight"><code data-lang="bash"><span></span><span class="tok-ch">#!/bin/bash</span>
 cp ../target/build/app.jar ansible/files/app.jar
-<span class="tok-nb">cd </span>ansible
+<span class="tok-nb">cd</span> ansible
 ansible-playbook -i inventories/<span class="tok-nv">$1</span> sweet-tooth.yml --skip-tags<span class="tok-o">=</span>install</code></pre>
 </div>
 </div>
@@ -714,15 +714,15 @@ defines a couple variables that I’ll cover in the next chapter.</p>
 <div class="listingblock">
 <div class="title">Contents of sweet-tooth.yml</div>
 <div class="content">
-<pre class="pygments highlight"><code data-lang="yaml"><span class="tok-nn">---</span>
-<span class="tok-p-Indicator">-</span> <span class="tok-l-Scalar-Plain">hosts</span><span class="tok-p-Indicator">:</span> <span class="tok-l-Scalar-Plain">webservers</span>
-  <span class="tok-l-Scalar-Plain">become</span><span class="tok-p-Indicator">:</span> <span class="tok-l-Scalar-Plain">true</span>
-  <span class="tok-l-Scalar-Plain">become_method</span><span class="tok-p-Indicator">:</span> <span class="tok-l-Scalar-Plain">sudo</span>
-  <span class="tok-l-Scalar-Plain">roles</span><span class="tok-p-Indicator">:</span>
-    <span class="tok-p-Indicator">-</span> <span class="tok-s">"sweet-tooth-clojure.clojure-uberjar-webapp-common"</span>
-    <span class="tok-p-Indicator">-</span> <span class="tok-s">"sweet-tooth-clojure.clojure-uberjar-webapp-nginx"</span>
-    <span class="tok-p-Indicator">-</span> <span class="tok-s">"sweet-tooth-clojure.clojure-uberjar-webapp-datomic-free"</span>
-    <span class="tok-p-Indicator">-</span> <span class="tok-s">"sweet-tooth-clojure.clojure-uberjar-webapp-app"</span></code></pre>
+<pre class="pygments highlight"><code data-lang="yaml"><span></span><span class="tok-nn">---</span>
+<span class="tok-p tok-p-Indicator">-</span> <span class="tok-nt">hosts</span><span class="tok-p">:</span> <span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">webservers</span>
+  <span class="tok-nt">become</span><span class="tok-p">:</span> <span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">true</span>
+  <span class="tok-nt">become_method</span><span class="tok-p">:</span> <span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">sudo</span>
+  <span class="tok-nt">roles</span><span class="tok-p">:</span>
+    <span class="tok-p tok-p-Indicator">-</span> <span class="tok-s">"sweet-tooth-clojure.clojure-uberjar-webapp-common"</span>
+    <span class="tok-p tok-p-Indicator">-</span> <span class="tok-s">"sweet-tooth-clojure.clojure-uberjar-webapp-nginx"</span>
+    <span class="tok-p tok-p-Indicator">-</span> <span class="tok-s">"sweet-tooth-clojure.clojure-uberjar-webapp-datomic-free"</span>
+    <span class="tok-p tok-p-Indicator">-</span> <span class="tok-s">"sweet-tooth-clojure.clojure-uberjar-webapp-app"</span></code></pre>
 </div>
 </div>
 <div class="paragraph">

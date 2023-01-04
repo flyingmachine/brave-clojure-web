@@ -280,7 +280,7 @@ seq and reducer versions look virtually identical:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="clojure"><span class="tok-nv">---</span>
+<pre class="pygments highlight"><code data-lang="clojure"><span></span><span class="tok-nv">---</span>
 <span class="tok-c1">;; seq version</span>
 <span class="tok-p">(</span><span class="tok-nf">-&gt;&gt;</span> <span class="tok-p">(</span><span class="tok-nb">range </span><span class="tok-mi">10</span><span class="tok-p">)</span>
      <span class="tok-p">(</span><span class="tok-nb">map </span><span class="tok-nv">inc</span><span class="tok-p">)</span>
@@ -423,7 +423,7 @@ function. Let’s look at a kind of stupid example:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="clojure"><span class="tok-nv">---</span>
+<pre class="pygments highlight"><code data-lang="clojure"><span></span><span class="tok-nv">---</span>
 <span class="tok-p">(</span><span class="tok-nf">-&gt;&gt;</span> <span class="tok-p">(</span><span class="tok-nb">list </span><span class="tok-s">"Shake"</span> <span class="tok-s">"Bake"</span><span class="tok-p">)</span>         <span class="tok-c1">; </span><b class="conum">(1)</b>
      <span class="tok-p">(</span><span class="tok-nb">map </span><span class="tok-o">#</span><span class="tok-p">(</span><span class="tok-nb">str </span><span class="tok-nv">%</span> <span class="tok-s">" it off"</span><span class="tok-p">))</span>        <span class="tok-c1">; </span><b class="conum">(2)</b>
      <span class="tok-p">(</span><span class="tok-nb">map </span><span class="tok-nv">clojure.string/lower-case</span><span class="tok-p">)</span> <span class="tok-c1">; </span><b class="conum">(3)</b>
@@ -459,7 +459,7 @@ just combine the two string functions into one:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="clojure"><span class="tok-nv">---</span>
+<pre class="pygments highlight"><code data-lang="clojure"><span></span><span class="tok-nv">---</span>
 <span class="tok-p">(</span><span class="tok-nf">-&gt;&gt;</span> <span class="tok-p">(</span><span class="tok-nb">list </span><span class="tok-s">"Shake"</span> <span class="tok-s">"Bake"</span><span class="tok-p">)</span>
      <span class="tok-p">(</span><span class="tok-nb">map </span><span class="tok-p">(</span><span class="tok-nb">comp </span><span class="tok-nv">clojure.string/lower-case</span> <span class="tok-o">#</span><span class="tok-p">(</span><span class="tok-nb">str </span><span class="tok-nv">%</span> <span class="tok-s">" it off"</span><span class="tok-p">)))</span>
      <span class="tok-p">(</span><span class="tok-nb">into </span><span class="tok-p">[]))</span>
@@ -488,7 +488,7 @@ Clojure code (like the following) and have it "just work":</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="clojure"><span class="tok-nv">---</span>
+<pre class="pygments highlight"><code data-lang="clojure"><span></span><span class="tok-nv">---</span>
 <span class="tok-p">(</span><span class="tok-nf">-&gt;&gt;</span> <span class="tok-p">(</span><span class="tok-nb">range </span><span class="tok-mi">1000</span><span class="tok-p">)</span>
      <span class="tok-p">(</span><span class="tok-nf">r/filter</span> <span class="tok-nv">even?</span><span class="tok-p">)</span>
      <span class="tok-p">(</span><span class="tok-nf">r/map</span> <span class="tok-nv">inc</span><span class="tok-p">)</span>
@@ -556,7 +556,7 @@ exist.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="clojure"><span class="tok-nv">---</span>
+<pre class="pygments highlight"><code data-lang="clojure"><span></span><span class="tok-nv">---</span>
 <span class="tok-p">(</span><span class="tok-kd">defn </span><span class="tok-nv">lifeline-and-years-lived</span>
   <span class="tok-s">"Given a human subject, return vector of lifeline ratio and years</span>
 <span class="tok-s">  person lived"</span>
@@ -575,7 +575,7 @@ vector. Here’s how you’d use it:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="clojure"><span class="tok-nv">---</span>
+<pre class="pygments highlight"><code data-lang="clojure"><span></span><span class="tok-nv">---</span>
 <span class="tok-p">(</span><span class="tok-nf">lifeline-and-years-lived</span> <span class="tok-p">{</span><span class="tok-ss">:palm-stats</span>   <span class="tok-p">{</span><span class="tok-ss">:lifeline-ratio</span> <span class="tok-mf">0.5</span><span class="tok-p">}</span>
                            <span class="tok-ss">:life-history</span> <span class="tok-p">{</span><span class="tok-ss">:years-lived</span> <span class="tok-mi">75</span><span class="tok-p">}})</span>
 <span class="tok-nv">---</span></code></pre>
@@ -607,7 +607,7 @@ performance.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="clojure"><span class="tok-nv">---</span>
+<pre class="pygments highlight"><code data-lang="clojure"><span></span><span class="tok-nv">---</span>
 <span class="tok-p">(</span><span class="tok-nb">map </span><span class="tok-nv">lifeline-and-years-lived</span> <span class="tok-nv">subjects</span><span class="tok-p">)</span>
 <span class="tok-nv">---</span></code></pre>
 </div>
@@ -646,7 +646,7 @@ have this code:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="clojure"><span class="tok-nv">---</span>
+<pre class="pygments highlight"><code data-lang="clojure"><span></span><span class="tok-nv">---</span>
 <span class="tok-p">(</span><span class="tok-nf">r/fold</span> <span class="tok-nb">+ </span><span class="tok-p">(</span><span class="tok-nf">vec</span> <span class="tok-p">(</span><span class="tok-nb">range </span><span class="tok-mi">10000000</span><span class="tok-p">)))</span>
 <span class="tok-nv">---</span></code></pre>
 </div>
@@ -679,7 +679,7 @@ counterpart:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="clojure"><span class="tok-nv">---</span>
+<pre class="pygments highlight"><code data-lang="clojure"><span></span><span class="tok-nv">---</span>
 <span class="tok-p">(</span><span class="tok-nf">require</span> <span class="tok-o">'</span><span class="tok-p">[</span><span class="tok-nv">clojure.core.reducers</span> <span class="tok-ss">:as</span> <span class="tok-nv">r</span><span class="tok-p">])</span>
 <span class="tok-p">(</span><span class="tok-nf">-&gt;&gt;</span> <span class="tok-p">[</span><span class="tok-mi">1</span> <span class="tok-mi">2</span> <span class="tok-mi">3</span> <span class="tok-mi">4</span><span class="tok-p">]</span>
      <span class="tok-p">(</span><span class="tok-nf">r/filter</span> <span class="tok-nv">even?</span><span class="tok-p">)</span>
@@ -705,7 +705,7 @@ this, you might expect it to run in parallel, but it wouldn’t:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="clojure"><span class="tok-nv">---</span>
+<pre class="pygments highlight"><code data-lang="clojure"><span></span><span class="tok-nv">---</span>
 <span class="tok-p">(</span><span class="tok-nf">require</span> <span class="tok-o">'</span><span class="tok-p">[</span><span class="tok-nv">clojure.core.reducers</span> <span class="tok-ss">:as</span> <span class="tok-nv">r</span><span class="tok-p">])</span>
 <span class="tok-p">(</span><span class="tok-nf">-&gt;&gt;</span> <span class="tok-o">'</span><span class="tok-p">(</span><span class="tok-mi">1</span> <span class="tok-mi">2</span> <span class="tok-mi">3</span> <span class="tok-mi">4</span><span class="tok-p">)</span>
      <span class="tok-p">(</span><span class="tok-nf">r/filter</span> <span class="tok-nv">even?</span><span class="tok-p">)</span>
@@ -731,7 +731,7 @@ tripped up:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="clojure"><span class="tok-nv">---</span>
+<pre class="pygments highlight"><code data-lang="clojure"><span></span><span class="tok-nv">---</span>
 <span class="tok-p">(</span><span class="tok-nb">first </span><span class="tok-p">(</span><span class="tok-nf">r/map</span> <span class="tok-nb">inc </span><span class="tok-p">[</span><span class="tok-mi">1</span> <span class="tok-mi">2</span> <span class="tok-mi">3</span><span class="tok-p">]))</span>
 <span class="tok-c1">; =&gt; java.lang.IllegalArgumentException: Don't know how to create ISeq from: clojure.core.reducers$folder$reify__17186</span>
 <span class="tok-nv">---</span></code></pre>
@@ -796,7 +796,7 @@ calls reduce. Here are two examples:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="clojure"><span class="tok-nv">---</span>
+<pre class="pygments highlight"><code data-lang="clojure"><span></span><span class="tok-nv">---</span>
 <span class="tok-p">(</span><span class="tok-nf">-&gt;&gt;</span> <span class="tok-p">[</span><span class="tok-mi">1</span> <span class="tok-mi">2</span> <span class="tok-mi">3</span> <span class="tok-mi">4</span><span class="tok-p">]</span>
      <span class="tok-p">(</span><span class="tok-nf">r/map</span> <span class="tok-nv">inc</span><span class="tok-p">)</span>
      <span class="tok-p">(</span><span class="tok-nb">into </span><span class="tok-p">[])</span>
@@ -882,7 +882,7 @@ lets you do something like this:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="clojure"><span class="tok-nv">---</span>
+<pre class="pygments highlight"><code data-lang="clojure"><span></span><span class="tok-nv">---</span>
 <span class="tok-p">(</span><span class="tok-k">let </span><span class="tok-p">[</span><span class="tok-nv">x</span> <span class="tok-p">(</span><span class="tok-nf">vec</span> <span class="tok-p">(</span><span class="tok-nb">doall </span><span class="tok-p">(</span><span class="tok-nb">range </span><span class="tok-mi">1000000</span><span class="tok-p">)))]</span>
   <span class="tok-p">(</span><span class="tok-nf">times</span> <span class="tok-p">(</span><span class="tok-nf">r/fold</span> <span class="tok-nb">+ </span><span class="tok-nv">x</span><span class="tok-p">)</span>
          <span class="tok-p">(</span><span class="tok-nf">r/reduce</span> <span class="tok-nb">+ </span><span class="tok-nv">x</span><span class="tok-p">)</span>
@@ -906,7 +906,7 @@ at me from behind your monitor for veering off topic.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="clojure"><span class="tok-nv">---</span>
+<pre class="pygments highlight"><code data-lang="clojure"><span></span><span class="tok-nv">---</span>
 <span class="tok-c1">;;----- Simple operations</span></code></pre>
 </div>
 </div>
@@ -950,7 +950,7 @@ them:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="clojure"><span class="tok-nv">---</span>
+<pre class="pygments highlight"><code data-lang="clojure"><span></span><span class="tok-nv">---</span>
 <span class="tok-p">(</span><span class="tok-nf">t1</span> <span class="tok-nv">snums</span><span class="tok-p">)</span>
 <span class="tok-c1">; =&gt; "  127.28 (r/fold + x)"</span>
 <span class="tok-c1">; =&gt; "  131.67 (r/reduce + x)"</span>
@@ -986,7 +986,7 @@ that ideal because parallelization has overhead costs.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="clojure"><span class="tok-nv">---</span>
+<pre class="pygments highlight"><code data-lang="clojure"><span></span><span class="tok-nv">---</span>
 <span class="tok-p">(</span><span class="tok-nf">t2</span> <span class="tok-nv">snums</span><span class="tok-p">)</span>
 <span class="tok-c1">; =&gt; "  166.43 (-&gt;&gt; x (r/map inc) (r/fold +))"</span>
 <span class="tok-c1">; =&gt; "  169.32 (-&gt;&gt; x (r/map inc) (r/reduce +))"</span>
@@ -1005,7 +1005,7 @@ change that:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="clojure"><span class="tok-nv">---</span>
+<pre class="pygments highlight"><code data-lang="clojure"><span></span><span class="tok-nv">---</span>
 <span class="tok-p">(</span><span class="tok-nf">t2</span> <span class="tok-nv">snumsv</span><span class="tok-p">)</span>
 <span class="tok-s">"   74.45 (-&gt;&gt; x (r/map inc) (r/fold +))"</span>
 <span class="tok-s">"  214.04 (-&gt;&gt; x (r/map inc) (r/reduce +))"</span>
@@ -1026,7 +1026,7 @@ with vectors.)</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="clojure"><span class="tok-nv">---</span>
+<pre class="pygments highlight"><code data-lang="clojure"><span></span><span class="tok-nv">---</span>
 <span class="tok-p">(</span><span class="tok-nf">t3</span> <span class="tok-nv">snums</span><span class="tok-p">)</span>
 <span class="tok-s">"  184.07 (-&gt;&gt; x (r/map inc) (r/filter even?) (r/fold +))"</span>
 <span class="tok-s">"  181.03 (-&gt;&gt; x (r/map inc) (r/filter even?) (r/reduce +))"</span>
@@ -1360,7 +1360,7 @@ should behave:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="clojure"><span class="tok-nv">---</span>
+<pre class="pygments highlight"><code data-lang="clojure"><span></span><span class="tok-nv">---</span>
 <span class="tok-p">(</span><span class="tok-nf">scan</span> <span class="tok-p">[</span><span class="tok-mi">1</span> <span class="tok-mi">2</span> <span class="tok-mi">3</span> <span class="tok-mi">4</span><span class="tok-p">])</span>
 <span class="tok-c1">; =&gt; (1 3 6 10)</span></code></pre>
 </div>
@@ -1391,7 +1391,7 @@ implementation:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="clojure"><span class="tok-nv">---</span>
+<pre class="pygments highlight"><code data-lang="clojure"><span></span><span class="tok-nv">---</span>
 <span class="tok-p">(</span><span class="tok-kd">defn </span><span class="tok-nv">scan</span>
   <span class="tok-p">[[</span><span class="tok-nv">x</span> <span class="tok-nv">y</span> <span class="tok-o">&amp;</span> <span class="tok-nv">xs</span><span class="tok-p">]]</span>
   <span class="tok-p">(</span><span class="tok-k">if </span><span class="tok-nv">y</span>

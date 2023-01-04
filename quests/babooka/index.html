@@ -3,19 +3,16 @@
   <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   <meta charset="utf-8">
-  <meta path="/quests/babooka/babooka/">
+  <meta path="/quests/babooka/">
   
-  <title>Babashka Babooka: Write Command-Line Clojure = | Clojure for the Brave and True</title>
+  <title>Babashka Babooka: Write Command-Line Clojure = | Parallel Programming in Clojure with Reducers</title>
   
   <link rel="stylesheet" href="/assets/stylesheets/main.css">
   <link rel="stylesheet" href="/assets/stylesheets/pygments.css">
   <link href="//fonts.googleapis.com/css?family=Roboto+Condensed:400,700italic,700,400italic,300italic,300%7CSource+Sans+Pro:400,200,200italic,300,300italic,400italic,600italic,600,700,700italic,900italic,900%7CSource+Code+Pro:400,700%7CGentium+Book+Basic:400,400italic,700,700italic%7CCourgette" rel="stylesheet" type="text/css">
-
-  <!-- you don't need to keep this, but it's cool for stats! -->
-  <meta name="generator" content="nanoc 3.7.4">
 </head>
 
-  <body class="cftbat-book">
+  <body class="deploy-book">
     <div class="nav">
   <div class="container">
     <div>
@@ -35,23 +32,18 @@
       <div class="logoy">
         <div class="container">
           <div class="title">
-            <a href="/clojure-for-the-brave-and-true">
-              <strong>Clojure </strong><span>for the</span><strong> Brave </strong><span>and </span><strong>True</strong>
+            <a href="/quests/deploy">
+              <strong>Babashka Babooka</strong>
             </a>
           </div>
           <div class="subtitle">
-            learn the ultimate language and become a better programmer
+            Write Command-Line Clojure
           </div>
         </div>
       </div>
     </div>
     <div class="callout">
       <div class="container">
-        <p>
-          Be a pal and buy print and ebooks from
-          <a href="http://nostarch.com" target="_blank">No Starch</a>
-          or <a href="http://amzn.to/1H7MqmT" target="_blank">Amazon</a>
-        </p>
         <form action="//flyingmachinestudios.us1.list-manage.com/subscribe/post?u=60763b0c4890c24bd055f32e6&amp;amp;id=0b40ffd1e1" class="validate" id="mc-embedded-subscribe-form" method="post" name="mc-embedded-subscribe-form" novalidate="" target="_blank">
           <p>
             Follow
@@ -64,7 +56,6 @@
         </form>
       </div>
     </div>
-    <div id="top-nav"></div>
     <div class="container wrap">
       <div class="main">
         <div class="chapter-nav">
@@ -1685,23 +1676,9 @@ knowledge to Babashka</p>
       </div>
       <div class="secondary">
         <div class="wrapper">
-          <div class="junk clearfix">
-            <a href="http://amzn.to/1H7MqmT" target="_blank">
-              <img src="/assets/images/home/book-cover.jpg">
-              The print book longs for you to own it
-            </a>
-          </div>
-          <div class="junk clearfix">
-            <a href="/quests/deploy">
-              <img src="/quests/deploy/images/deploy-cover-1.png">
-              OMG what!? Another book!?<br>Learn to deploy your app!
-            </a>
-          </div>
-          <div class="junk clearfix">
-            <a href="/quests/reducers/intro">
-              <img src="/quests/reducers/images/parallel-cover-1.png">
-              Great mama of the bahamas! Learn about reducers!
-            </a>
+          <div class="junk">
+            <script src="https://gumroad.com/js/gumroad.js"></script>
+<a class="gumroad-button" href="https://gum.co/gHcWk" target="_blank">Buy the ebook!?</a>
           </div>
           <div class="ads">
             <a class="twitter-follow-button" href="https://twitter.com/nonrecursive">Follow @nonrecursive</a>
@@ -1716,64 +1693,62 @@ knowledge to Babashka</p>
           </div>
 <div class="chapter-sections">Chapter Sections</div>
 <ol class="toc">
-<li><a href="/quests/babooka/babooka/#What_is_Babashka_">What is Babashka?</a></li>
-<li><a href="/quests/babooka/babooka/#Why_should_you_use_it_">Why should you use it?</a></li>
-<li><a href="/quests/babooka/babooka/#Installation">Installation</a></li>
-<li><a href="/quests/babooka/babooka/#Babashka_s_output">Babashka’s output</a></li>
-<li><a href="/quests/babooka/babooka/#Namespace_is_optional">Namespace is optional</a></li>
-<li><a href="/quests/babooka/babooka/#What_about_requiring_other_namespaces_">What about requiring other namespaces?</a></li>
-<li><a href="/quests/babooka/babooka/#Make_your_script_executable">Make your script executable</a></li>
-<li><a href="/quests/babooka/babooka/#Summary">Summary</a></li>
-<li><a href="/quests/babooka/babooka/#parsing_options_with_babashka_cli">parsing options with babashka.cli</a></li>
-<li><a href="/quests/babooka/babooka/#dispatching_subcommands_with_babashka_cli">dispatching subcommands with babashka.cli</a></li>
-<li><a href="/quests/babooka/babooka/#Summary">Summary</a></li>
-<li><a href="/quests/babooka/babooka/#File_system_structure">File system structure</a></li>
-<li><a href="/quests/babooka/babooka/#Namespaces">Namespaces</a></li>
-<li><a href="/quests/babooka/babooka/#Summary">Summary</a></li>
-<li><a href="/quests/babooka/babooka/#Pod_usage">Pod usage</a></li>
-<li><a href="/quests/babooka/babooka/#Pod_implementation">Pod implementation</a></li>
-<li><a href="/quests/babooka/babooka/#Summary">Summary</a></li>
-<li><a href="/quests/babooka/babooka/#Direct_Expression_Evaluation">Direct Expression Evaluation</a></li>
-<li><a href="/quests/babooka/babooka/#Invoking_a_Clojure_function">Invoking a Clojure function</a></li>
-<li><a href="/quests/babooka/babooka/#A_basic_task">A basic task</a></li>
-<li><a href="/quests/babooka/babooka/#How_to_require_namespaces_for_tasks">How to require namespaces for tasks</a></li>
-<li><a href="/quests/babooka/babooka/#Use_exec_to_parse_arguments_and_call_a_function">Use exec to parse arguments and call a function</a></li>
-<li><a href="/quests/babooka/babooka/#Task_dependencies__parallel_tasks__and_more">Task dependencies, parallel tasks, and more</a></li>
-<li><a href="/quests/babooka/babooka/#Summary">Summary</a></li>
+<li><a href="/quests/babooka/#What_is_Babashka_">What is Babashka?</a></li>
+<li><a href="/quests/babooka/#Why_should_you_use_it_">Why should you use it?</a></li>
+<li><a href="/quests/babooka/#Installation">Installation</a></li>
+<li><a href="/quests/babooka/#Babashka_s_output">Babashka’s output</a></li>
+<li><a href="/quests/babooka/#Namespace_is_optional">Namespace is optional</a></li>
+<li><a href="/quests/babooka/#What_about_requiring_other_namespaces_">What about requiring other namespaces?</a></li>
+<li><a href="/quests/babooka/#Make_your_script_executable">Make your script executable</a></li>
+<li><a href="/quests/babooka/#Summary">Summary</a></li>
+<li><a href="/quests/babooka/#parsing_options_with_babashka_cli">parsing options with babashka.cli</a></li>
+<li><a href="/quests/babooka/#dispatching_subcommands_with_babashka_cli">dispatching subcommands with babashka.cli</a></li>
+<li><a href="/quests/babooka/#Summary">Summary</a></li>
+<li><a href="/quests/babooka/#File_system_structure">File system structure</a></li>
+<li><a href="/quests/babooka/#Namespaces">Namespaces</a></li>
+<li><a href="/quests/babooka/#Summary">Summary</a></li>
+<li><a href="/quests/babooka/#Pod_usage">Pod usage</a></li>
+<li><a href="/quests/babooka/#Pod_implementation">Pod implementation</a></li>
+<li><a href="/quests/babooka/#Summary">Summary</a></li>
+<li><a href="/quests/babooka/#Direct_Expression_Evaluation">Direct Expression Evaluation</a></li>
+<li><a href="/quests/babooka/#Invoking_a_Clojure_function">Invoking a Clojure function</a></li>
+<li><a href="/quests/babooka/#A_basic_task">A basic task</a></li>
+<li><a href="/quests/babooka/#How_to_require_namespaces_for_tasks">How to require namespaces for tasks</a></li>
+<li><a href="/quests/babooka/#Use_exec_to_parse_arguments_and_call_a_function">Use exec to parse arguments and call a function</a></li>
+<li><a href="/quests/babooka/#Task_dependencies__parallel_tasks__and_more">Task dependencies, parallel tasks, and more</a></li>
+<li><a href="/quests/babooka/#Summary">Summary</a></li>
 </ol>
+          <div class="chapters">
+            <div class="subtitle">Chapters</div>
+            <ol class="toc">
+            </ol>
+          </div>
         </div>
       </div>
     </div>
     <div class="footer">
       <div class="container">
-        <div class="buy">
-          buy print and ebooks from 
-          <a href="http://amzn.to/1H7MqmT" target="_blank">Amazon</a> or
-          <a href="https://www.nostarch.com/clojure" target="_blank">No Starch</a> :)
-        </div>
         <div>
-          <a href="https://groups.google.com/forum/#!forum/braveclojure">Ask questions and report errata at the Google Group</a>
-        </div>
-        <div>
-          © 2017 Daniel Higginbotham
+          © 2023 Daniel Higginbotham
         </div>
       </div>
     </div>
+    <script id="dsq-count-scr" src="//clojureforthebraveandtrue.disqus.com/count.js" async></script>
     <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
     <script src="/assets/scripts/jquery.sticky.js"></script>
     <script src="/assets/scripts/sticky.js"></script>
     <script>
               !function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs')
             </script>
-    <script>
-      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+            <script>
+             (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+               (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+                                      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+             })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
 
-      ga('create', 'UA-43463851-1', 'auto');
-      ga('send', 'pageview');
+             ga('create', 'UA-43463851-1', 'auto');
+             ga('send', 'pageview');
 
-    </script>
+            </script>
   </body>
 </html>

@@ -333,19 +333,19 @@ to market my side project…​ <em>from the shadows.</em>)</p>
 <div class="listingblock">
 <div class="title">install deployment tools on a Mac</div>
 <div class="content">
-<pre class="pygments highlight"><code data-lang="bash"><span class="tok-c"># install Homebrew</span>
-/usr/bin/ruby -e <span class="tok-s2">"$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"</span>
+<pre class="pygments highlight"><code data-lang="bash"><span></span><span class="tok-c1"># install Homebrew</span>
+/usr/bin/ruby -e <span class="tok-s2">"</span><span class="tok-k">$(</span>curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install<span class="tok-k">)</span><span class="tok-s2">"</span>
 
-<span class="tok-c"># install boot</span>
+<span class="tok-c1"># install boot</span>
 brew install boot-clj
 
-<span class="tok-c"># install ansible</span>
+<span class="tok-c1"># install ansible</span>
 brew install ansible
 
-<span class="tok-c"># install VirtualBox</span>
+<span class="tok-c1"># install VirtualBox</span>
 brew cask install virtualbox
 
-<span class="tok-c"># install vagrant</span>
+<span class="tok-c1"># install vagrant</span>
 brew cask install vagrant</code></pre>
 </div>
 </div>
@@ -358,22 +358,22 @@ brew cask install vagrant</code></pre>
 <div class="listingblock">
 <div class="title">install deployment tools on Ubuntu</div>
 <div class="content">
-<pre class="pygments highlight"><code data-lang="bash"><span class="tok-c"># install boot</span>
-<span class="tok-c"># if you have nix:</span>
+<pre class="pygments highlight"><code data-lang="bash"><span></span><span class="tok-c1"># install boot</span>
+<span class="tok-c1"># if you have nix:</span>
 nix-env -i boot
-<span class="tok-c"># otherwise:</span>
+<span class="tok-c1"># otherwise:</span>
 sudo bash -c <span class="tok-s2">"cd /usr/local/bin &amp;&amp; curl -fsSLo boot https://github.com/boot-clj/boot-bin/releases/download/latest/boot.sh &amp;&amp; chmod 755 boot"</span>
 
-<span class="tok-c"># install ansible</span>
+<span class="tok-c1"># install ansible</span>
 sudo apt-get install software-properties-common
 sudo apt-add-repository ppa:ansible/ansible
 sudo apt-get update
 sudo apt-get install ansible
 
-<span class="tok-c"># install VirtualBox</span>
+<span class="tok-c1"># install VirtualBox</span>
 sudo apt-get install virtualbox
 
-<span class="tok-c"># install vagrant</span>
+<span class="tok-c1"># install vagrant</span>
 sudo apt-get install vagrant</code></pre>
 </div>
 </div>
@@ -391,7 +391,7 @@ here.</p>
 <div class="listingblock">
 <div class="title">Check boot installation</div>
 <div class="content">
-<pre class="pygments highlight"><code data-lang="bash">boot --version</code></pre>
+<pre class="pygments highlight"><code data-lang="bash"><span></span>boot --version</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -399,11 +399,11 @@ here.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="bash"><span class="tok-c">#http://boot-clj.com</span>
-<span class="tok-c">#Thu Feb 02 14:15:12 EST 2017</span>
+<pre class="pygments highlight"><code data-lang="bash"><span></span><span class="tok-c1">#http://boot-clj.com</span>
+<span class="tok-c1">#Thu Feb 02 14:15:12 EST 2017</span>
 <span class="tok-nv">BOOT_CLOJURE_NAME</span><span class="tok-o">=</span>org.clojure/clojure
-<span class="tok-nv">BOOT_CLOJURE_VERSION</span><span class="tok-o">=</span>1.9.0-alpha12
-<span class="tok-nv">BOOT_VERSION</span><span class="tok-o">=</span>2.7.1</code></pre>
+<span class="tok-nv">BOOT_CLOJURE_VERSION</span><span class="tok-o">=</span><span class="tok-m">1</span>.9.0-alpha12
+<span class="tok-nv">BOOT_VERSION</span><span class="tok-o">=</span><span class="tok-m">2</span>.7.1</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -412,7 +412,7 @@ here.</p>
 <div class="listingblock">
 <div class="title">Check ansible installation</div>
 <div class="content">
-<pre class="pygments highlight"><code data-lang="bash">ansible --version</code></pre>
+<pre class="pygments highlight"><code data-lang="bash"><span></span>ansible --version</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -420,7 +420,7 @@ here.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="bash">ansible 2.2.1.0
+<pre class="pygments highlight"><code data-lang="bash"><span></span>ansible <span class="tok-m">2</span>.2.1.0
   config <span class="tok-nv">file</span> <span class="tok-o">=</span>
   configured module search <span class="tok-nv">path</span> <span class="tok-o">=</span> Default w/o overrides</code></pre>
 </div>
@@ -431,7 +431,7 @@ here.</p>
 <div class="listingblock">
 <div class="title">Check VirtualBox installation</div>
 <div class="content">
-<pre class="pygments highlight"><code data-lang="bash">VirtualBox --help</code></pre>
+<pre class="pygments highlight"><code data-lang="bash"><span></span>VirtualBox --help</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -450,12 +450,12 @@ All rights reserved.</code></pre>
 <div class="listingblock">
 <div class="title">Check vagrant installation</div>
 <div class="content">
-<pre class="pygments highlight"><code data-lang="bash">vagrant --help</code></pre>
+<pre class="pygments highlight"><code data-lang="bash"><span></span>vagrant --help</code></pre>
 </div>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="bash">Vagrant 1.8.7</code></pre>
+<pre class="pygments highlight"><code data-lang="bash"><span></span>Vagrant <span class="tok-m">1</span>.8.7</code></pre>
 </div>
 </div>
 </div>
@@ -470,8 +470,8 @@ installed, do this:</p>
 <div class="listingblock">
 <div class="title">Get example app with git</div>
 <div class="content">
-<pre class="pygments highlight"><code data-lang="bash">git clone https://github.com/sweet-tooth-clojure/character-sheet-example.git
-<span class="tok-nb">cd </span>character-sheet-example</code></pre>
+<pre class="pygments highlight"><code data-lang="bash"><span></span>git clone https://github.com/sweet-tooth-clojure/character-sheet-example.git
+<span class="tok-nb">cd</span> character-sheet-example</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -484,9 +484,9 @@ run these commands to download the app and move to its directory:</p>
 <div class="listingblock">
 <div class="title">Download example app zip file</div>
 <div class="content">
-<pre class="pygments highlight"><code data-lang="bash">curl -LOks https://github.com/sweet-tooth-clojure/character-sheet-example/archive/master.zip
+<pre class="pygments highlight"><code data-lang="bash"><span></span>curl -LOks https://github.com/sweet-tooth-clojure/character-sheet-example/archive/master.zip
 unzip master.zip
-<span class="tok-nb">cd </span>character-sheet-example/infrastructure</code></pre>
+<span class="tok-nb">cd</span> character-sheet-example/infrastructure</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -504,7 +504,7 @@ gems or Clojars):</p>
 <div class="listingblock">
 <div class="title">Install Ansible roles</div>
 <div class="content">
-<pre class="pygments highlight"><code data-lang="bash">ansible-galaxy install -r ansible/requirements.yml</code></pre>
+<pre class="pygments highlight"><code data-lang="bash"><span></span>ansible-galaxy install -r ansible/requirements.yml</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -556,7 +556,7 @@ server from a hosting company; we get a tighter feedback loop.</p>
 <div class="listingblock">
 <div class="title">Start a Virtual Machine</div>
 <div class="content">
-<pre class="pygments highlight"><code data-lang="bash">vagrant up</code></pre>
+<pre class="pygments highlight"><code data-lang="bash"><span></span>vagrant up</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -597,7 +597,7 @@ is part of what makes them so useful.)</p>
 <div class="listingblock">
 <div class="title">build and deploy the app</div>
 <div class="content">
-<pre class="pygments highlight"><code data-lang="bash">./build <span class="tok-o">&amp;&amp;</span> ./deploy dev</code></pre>
+<pre class="pygments highlight"><code data-lang="bash"><span></span>./build <span class="tok-o">&amp;&amp;</span> ./deploy dev</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -711,7 +711,7 @@ this has the IP address <em>138.197.66.144</em>, so my file looks like this:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="config">default ansible_ssh_host=138.197.66.144 ansible_ssh_user=root
+<pre class="pygments highlight"><code data-lang="config"><span></span>default ansible_ssh_host=138.197.66.144 ansible_ssh_user=root
 
 [webservers]
 default
@@ -733,10 +733,10 @@ something like this:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="yaml"><span class="tok-c1"># -*- mode: yaml -*-</span>
+<pre class="pygments highlight"><code data-lang="yaml"><span></span><span class="tok-c1"># -*- mode: yaml -*-</span>
 <span class="tok-nn">---</span>
-<span class="tok-l-Scalar-Plain">clojure_uberjar_webapp_domain</span><span class="tok-p-Indicator">:</span> <span class="tok-l-Scalar-Plain">138.197.66.144</span>
-<span class="tok-l-Scalar-Plain">clojure_uberjar_webapp_app_env_local_path</span><span class="tok-p-Indicator">:</span> <span class="tok-l-Scalar-Plain">files/env/prod.sh</span></code></pre>
+<span class="tok-nt">clojure_uberjar_webapp_domain</span><span class="tok-p">:</span> <span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">138.197.66.144</span>
+<span class="tok-nt">clojure_uberjar_webapp_app_env_local_path</span><span class="tok-p">:</span> <span class="tok-l tok-l-Scalar tok-l-Scalar-Plain">files/env/prod.sh</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -745,7 +745,7 @@ the <em>character-sheet-example/infrastructure</em> directory:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="bash">./provision prod
+<pre class="pygments highlight"><code data-lang="bash"><span></span>./provision prod
 ./deploy prod</code></pre>
 </div>
 </div>
@@ -838,9 +838,9 @@ part of my Community Picks config:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="bash"><span class="tok-nb">export </span><span class="tok-nv">CA_OAUTH_CLIENT_ID</span><span class="tok-o">=</span><span class="tok-s2">"abc123"</span>
-<span class="tok-nb">export </span><span class="tok-nv">CA_OAUTH_CLIENT_SECRET</span><span class="tok-o">=</span><span class="tok-s2">"supersupersecret"</span>
-<span class="tok-nb">export </span><span class="tok-nv">CA_OAUTH_REDIRECT_URI</span><span class="tok-o">=</span><span class="tok-s2">"http://localhost:3000/session/confirm"</span></code></pre>
+<pre class="pygments highlight"><code data-lang="bash"><span></span><span class="tok-nb">export</span> <span class="tok-nv">CA_OAUTH_CLIENT_ID</span><span class="tok-o">=</span><span class="tok-s2">"abc123"</span>
+<span class="tok-nb">export</span> <span class="tok-nv">CA_OAUTH_CLIENT_SECRET</span><span class="tok-o">=</span><span class="tok-s2">"supersupersecret"</span>
+<span class="tok-nb">export</span> <span class="tok-nv">CA_OAUTH_REDIRECT_URI</span><span class="tok-o">=</span><span class="tok-s2">"http://localhost:3000/session/confirm"</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -896,19 +896,19 @@ you’d like to learn a bit about server management, read on!</p>
 <div class="listingblock">
 <div class="title">install deployment tools on a Mac</div>
 <div class="content">
-<pre class="pygments highlight"><code data-lang="bash"><span class="tok-c"># install Homebrew</span>
-/usr/bin/ruby -e <span class="tok-s2">"$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"</span>
+<pre class="pygments highlight"><code data-lang="bash"><span></span><span class="tok-c1"># install Homebrew</span>
+/usr/bin/ruby -e <span class="tok-s2">"</span><span class="tok-k">$(</span>curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install<span class="tok-k">)</span><span class="tok-s2">"</span>
 
-<span class="tok-c"># install boot</span>
+<span class="tok-c1"># install boot</span>
 brew install boot-clj
 
-<span class="tok-c"># install ansible</span>
+<span class="tok-c1"># install ansible</span>
 brew install ansible
 
-<span class="tok-c"># install VirtualBox</span>
+<span class="tok-c1"># install VirtualBox</span>
 brew cask install virtualbox
 
-<span class="tok-c"># install vagrant</span>
+<span class="tok-c1"># install vagrant</span>
 brew cask install vagrant</code></pre>
 </div>
 </div>
@@ -925,22 +925,22 @@ brew cask install vagrant</code></pre>
 <div class="listingblock">
 <div class="title">install deployment tools on Ubuntu</div>
 <div class="content">
-<pre class="pygments highlight"><code data-lang="bash"><span class="tok-c"># install boot</span>
-<span class="tok-c"># if you have nix:</span>
+<pre class="pygments highlight"><code data-lang="bash"><span></span><span class="tok-c1"># install boot</span>
+<span class="tok-c1"># if you have nix:</span>
 nix-env -i boot
-<span class="tok-c"># otherwise:</span>
+<span class="tok-c1"># otherwise:</span>
 sudo bash -c <span class="tok-s2">"cd /usr/local/bin &amp;&amp; curl -fsSLo boot https://github.com/boot-clj/boot-bin/releases/download/latest/boot.sh &amp;&amp; chmod 755 boot"</span>
 
-<span class="tok-c"># install ansible</span>
+<span class="tok-c1"># install ansible</span>
 sudo apt-get install software-properties-common
 sudo apt-add-repository ppa:ansible/ansible
 sudo apt-get update
 sudo apt-get install ansible
 
-<span class="tok-c"># install VirtualBox</span>
+<span class="tok-c1"># install VirtualBox</span>
 sudo apt-get install virtualbox
 
-<span class="tok-c"># install vagrant</span>
+<span class="tok-c1"># install vagrant</span>
 sudo apt-get install vagrant</code></pre>
 </div>
 </div>
@@ -949,8 +949,8 @@ sudo apt-get install vagrant</code></pre>
 <h3 id="Download_Example_App__Build__Deploy">Download Example App, Build, Deploy</h3>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="bash">git clone https://github.com/sweet-tooth-clojure/character-sheet-example.git
-<span class="tok-nb">cd </span>character-sheet-example/infrastructure
+<pre class="pygments highlight"><code data-lang="bash"><span></span>git clone https://github.com/sweet-tooth-clojure/character-sheet-example.git
+<span class="tok-nb">cd</span> character-sheet-example/infrastructure
 ansible-galaxy install -r ansible/requirements.yml
 vagrant up
 ./build <span class="tok-o">&amp;&amp;</span> ./deploy dev</code></pre>
@@ -961,7 +961,7 @@ vagrant up
 <h3 id="Provision_and_Deploy_to_Prod">Provision and Deploy to Prod</h3>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="bash">./provision prod
+<pre class="pygments highlight"><code data-lang="bash"><span></span>./provision prod
 ./deploy prod</code></pre>
 </div>
 </div>
