@@ -370,7 +370,7 @@ book: cftbat
 
       <p class="Body">Or you could use the <code>use</code> form in Listing 6-3 (which also includes <span>examples</span> of how you can call functions).</p>
       <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-nf">use</span> <span class="tok-o">'</span><span class="tok-p">[</span><span class="tok-nv">the-divine-cheese-code.visualization.svg</span> <span class="tok-ss">:as</span> <span class="tok-nv">svg</span> <span class="tok-ss">:only</span> <span class="tok-p">[</span><span class="tok-nv">points</span><span class="tok-p">]])</span>
-<span class="tok-p">(</span><span class="tok-nb">refer </span><span class="tok-ss">'the-divine-cheese-code.visualization.svg</span> <span class="tok-ss">:as</span> <span class="tok-ss">:only</span> <span class="tok-p">[</span><span class="tok-ss">'points</span><span class="tok-p">])</span>
+<span class="tok-p">(</span><span class="tok-nb">refer </span><span class="tok-ss">'the-divine-cheese-code.visualization.svg</span> <span class="tok-ss">:as</span> <span class="tok-ss">'svg</span> <span class="tok-ss">:only</span> <span class="tok-p">[</span><span class="tok-ss">'points</span><span class="tok-p">])</span>
 <span class="tok-p">(</span><span class="tok-nb">= </span><span class="tok-nv">svg/points</span> <span class="tok-nv">points</span><span class="tok-p">)</span>
 <span class="tok-c1">; =&gt; true</span>
 
