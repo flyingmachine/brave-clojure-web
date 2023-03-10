@@ -138,11 +138,10 @@ book: cftbat
 <span class="tok-p">}</span>
 
 <span class="tok-k">var </span><span class="tok-nb">rest = </span><span class="tok-nv">function</span> <span class="tok-p">(</span><span class="tok-nf">array</span><span class="tok-p">)</span> <span class="tok-p">{</span>
-  <span class="tok-k">var </span><span class="tok-nv">sliced</span> <span class="tok-nb">= </span><span class="tok-nv">array.slice</span><span class="tok-p">(</span><span class="tok-mi">1</span>, <span class="tok-nv">array.length</span><span class="tok-p">)</span><span class="tok-c1">;</span>
-  <span class="tok-k">if </span><span class="tok-p">(</span><span class="tok-nf">sliced.length</span> <span class="tok-nb">== </span><span class="tok-mi">0</span><span class="tok-p">)</span> <span class="tok-p">{</span>
+  <span class="tok-k">if </span><span class="tok-p">(</span><span class="tok-nf">array.length</span> <span class="tok-nb">=== </span><span class="tok-mi">0</span><span class="tok-p">)</span> <span class="tok-p">{</span>
     <span class="tok-nv">return</span> <span class="tok-nv">null</span><span class="tok-c1">;</span>
   <span class="tok-p">}</span> <span class="tok-nv">else</span> <span class="tok-p">{</span>
-    <span class="tok-nv">return</span> <span class="tok-nv">sliced</span><span class="tok-c1">;</span>
+    <span class="tok-nv">return</span> <span class="tok-nv">array.slice</span><span class="tok-p">(</span><span class="tok-mi">1</span>, <span class="tok-nv">array.length</span><span class="tok-p">)</span><span>;</span>
   <span class="tok-p">}</span>
 <span class="tok-p">}</span>
 
