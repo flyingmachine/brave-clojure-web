@@ -3,7 +3,7 @@
   <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   <meta charset="utf-8">
-  <meta path="/quests/babooka/">
+  <meta path="/quests/babooka/babooka/">
   
   <title>Babashka Babooka: Write Command-Line Clojure = | Parallel Programming in Clojure with Reducers</title>
   
@@ -69,6 +69,16 @@
 
         <h1>Babashka Babooka: Write Command-Line Clojure</h1>
 <h1 id="_introduction" class="sect0">Introduction</h1>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://raw.githubusercontent.com/braveclojure/babooka/main/babooka.pdf">Download the free PDF</a></p>
+</li>
+<li>
+<p><a href="https://raw.githubusercontent.com/braveclojure/babooka/main/babooka.epub">Download the free epub</a></p>
+</li>
+</ul>
+</div>
 <div class="paragraph">
 <p>There are two types of programmers in the world: the practical, sensible,
 shell-resigned people who need to google the correct argument order for <code>ln -s</code>;
@@ -120,10 +130,30 @@ then read on!</p>
 If you’re unfamiliar with Clojure, Babashka is actually a great tool for
 learning! <a href="https://www.braveclojure.com/do-things/">This crash course</a> and <a href="https://www.braveclojure.com/organization/">this chapter on namespaces</a> cover what you need
 to understand the Clojure used here. There are many good editor extensions for
-working with Clojure code, including <a href="https://calva.io/getting-started/">Calva for VS Code</a> and <a href="https://docs.cider.mx/cider/index.html">CIDER for emacs</a>.
+working with Clojure code, including <a href="https://calva.io/getting-started/">Calva for VS Code</a> and <a href="https://docs.cider.mx/cider/index.html">CIDER for emacs</a>. If
+you’re new to the command line, check out <a href="https://www.learnenough.com/command-line-tutorial">Learn Enough Command Line to be
+Dangerous</a>.
 </td>
 </tr>
 </table>
+</div>
+<div class="sect1">
+<h2 id="Sponsor">Sponsor</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>If you enjoy this tutorial, <a href="https://github.com/sponsors/flyingmachine">consider sponsoring me, Daniel Higginbotham, through
+GitHub sponsors</a>. As of April 2022 I am spending two days a week working on
+free Clojure educational materials and open source libraries to make Clojure
+more beginner-friendly, and appreciate any support!</p>
+</div>
+<div class="paragraph">
+<p>Please also <a href="https://github.com/sponsors/borkdude">consider sponsoring Michiel Borkent, aka borkdude, who created
+babashka</a>. Michiel is doing truly incredible work to transform the Clojure
+landscape, extending its usefulness and reach in ways that benefit us all. He
+has a proven track record of delivering useful tools and engaging with the
+commuity.</p>
+</div>
+</div>
 </div>
 <div class="sect1">
 <h2 id="What_is_Babashka_">What is Babashka?</h2>
@@ -306,7 +336,7 @@ subconscious hallucinations is deeply amusing to me.</p>
 <div class="listingblock">
 <div class="content">
 <pre class="pygments highlight"><code data-lang="clojure"><span></span><span class="tok-p">(</span><span class="tok-nf">require</span> <span class="tok-o">'</span><span class="tok-p">[</span><span class="tok-nv">clojure.string</span> <span class="tok-ss">:as</span> <span class="tok-nv">str</span><span class="tok-p">])</span>
-<span class="tok-p">(</span><span class="tok-nf">str/join</span> <span class="tok-s">" "</span> <span class="tok-p">[</span><span class="tok-s">"Hello"</span> <span class="tok-s">"inner"</span> <span class="tok-s">"world!"</span><span class="tok-p">])</span></code></pre>
+<span class="tok-p">(</span><span class="tok-nb">prn </span><span class="tok-p">(</span><span class="tok-nf">str/join</span> <span class="tok-s">" "</span> <span class="tok-p">[</span><span class="tok-s">"Hello"</span> <span class="tok-s">"inner"</span> <span class="tok-s">"world!"</span><span class="tok-p">]))</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -330,9 +360,6 @@ subconscious hallucinations is deeply amusing to me.</p>
 </li>
 <li>
 <p>There’s no namespace declaration; we use <code>(require …​)</code></p>
-</li>
-<li>
-<p>You didn’t need to print the string for the string to be printed</p>
 </li>
 <li>
 <p>It’s just Clojure</p>
@@ -365,15 +392,24 @@ detail.</p>
 <div class="sectionbody">
 <div class="paragraph">
 <p>Here’s what’s going on: <code>bb</code> interprets the Clojure code you’ve written,
-executing it on the fly. It prints the last value it encounters to <code>stdout</code>,
-which is why <code>"Hello, inner world!"</code> is returned in your terminal.</p>
+executing it on the fly. <code>prn</code> prints to <code>stdout</code>, which is why <code>"Hello,
+inner world!"</code> is returned in your terminal.</p>
 </div>
-<div class="paragraph">
-<p>INFO: When you print text to <code>stdout</code>, it gets printed to your terminal. This
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+When you print text to <code>stdout</code>, it gets printed to your terminal. This
 tutorial doesn’t get into what <code>stdout</code> actually is, but you can think of it as
 the channel between the internal world of your program and the external world of
 the environment calling your program. When your program sends stuff to <code>stdout</code>,
-your terminal receives it and prints it.</p>
+your terminal receives it and prints it.
+</td>
+</tr>
+</table>
 </div>
 <div class="paragraph">
 <p>Notice that the quotes are maintained when the value is printed. <code>bb</code> will
@@ -383,24 +419,21 @@ print the <em>stringified representation of your data structure</em>. If you upd
 <div class="listingblock">
 <div class="content">
 <pre class="pygments highlight"><code data-lang="clojure"><span></span><span class="tok-s">"Hello, inner world!"</span>
-<span class="tok-p">[</span><span class="tok-s">"It's"</span> <span class="tok-s">"me,"</span> <span class="tok-s">"your"</span> <span class="tok-s">"wacky"</span> <span class="tok-s">"subconscious!"</span><span class="tok-p">]</span></code></pre>
+<span class="tok-p">(</span><span class="tok-nb">prn </span><span class="tok-p">[</span><span class="tok-s">"It's"</span> <span class="tok-s">"me,"</span> <span class="tok-s">"your"</span> <span class="tok-s">"wacky"</span> <span class="tok-s">"subconscious!"</span><span class="tok-p">])</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
 <p>Then <code>["It’s" "me," "your" "wacky" "subconscious!"]</code> would get printed, and
-<code>"Hello, inner world!"</code> would not.</p>
+<code>"Hello, inner world!"</code> would not. You must use a printing function on a form
+for it to be sent to <code>stdout</code></p>
 </div>
 <div class="paragraph">
 <p>If you want to print a string without the surrounding quotes, you can use</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="pygments highlight"><code data-lang="clojure"><span></span><span class="tok-p">(</span><span class="tok-nb">println </span><span class="tok-s">"Hello, inner world!"</span><span class="tok-p">)</span>
-<span class="tok-nv">nil</span></code></pre>
+<pre class="pygments highlight"><code data-lang="clojure"><span></span><span class="tok-p">(</span><span class="tok-nb">println </span><span class="tok-s">"Hello, inner world!"</span><span class="tok-p">)</span></code></pre>
 </div>
-</div>
-<div class="paragraph">
-<p>With <code>nil</code> as the last form, <code>bb</code> does not print to <code>stdout</code> on exit.</p>
 </div>
 </div>
 </div>
@@ -473,9 +506,18 @@ instead of <code>bb hello.clj</code>? You just need to rename your file, add a s
 <span class="tok-p">(</span><span class="tok-nb">str </span><span class="tok-s">"Hello from "</span> <span class="tok-nv">*ns*</span> <span class="tok-s">", inner world!"</span><span class="tok-p">)</span></code></pre>
 </div>
 </div>
-<div class="paragraph">
-<p>INFO: The first line, <code>#!/usr/bin/env bb</code> is the "shebang", and I’m not going to
-explain it.</p>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+The first line, <code>#!/usr/bin/env bb</code> is the "shebang", and I’m not going to
+explain it.
+</td>
+</tr>
+</table>
 </div>
 <div class="paragraph">
 <p>Then run this in your terminal:</p>
@@ -592,10 +634,10 @@ before attempting to read it because <code>slurp</code> will throw an exception 
 find the file for the path you passed it.</p>
 </div>
 <div class="paragraph">
-<p>The <code>add-entry</code> function uses <code>read-entries</code> to get a vector of entries, <code>conj\~s
-an entry, and then uses \~spit</code> to write back to <code>entries.edn</code>. By default,
-<code>spit</code> will overwrite a file; if you want to append to it, you would call it
-like</p>
+<p>The <code>add-entry</code> function uses <code>read-entries</code> to get a vector of entries, uses
+<code>conj</code> to add an entry, and then uses <code>spit</code> to write back to <code>entries.edn</code>. By
+default, <code>spit</code> will overwrite a file; if you want to append to it, you would
+call it like</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -608,10 +650,10 @@ life babyyyyy!</p>
 </div>
 <h1 id="_creating_an_interface_for_your_script" class="sect0">Creating an interface for your script</h1>
 <div class="paragraph">
-<p>OK so in the last line we call <code>(add-entry (first <strong>command-line-args</strong>))</code>.
-<code><strong>command-line-args</strong></code> is a sequence containing, well, all the command line
+<p>OK so in the last line we call <code>(add-entry (first *command-line-args*))</code>.
+<code>*command-line-args*</code> is a sequence containing, well, all the command line
 arguments that were passed to the script. If you were to create the file
-<code>args.clj</code> with the contents <code><strong>command-line-args</strong></code>, then ran <code>bb args.clj 1 2
+<code>args.clj</code> with the contents <code>*command-line-args*</code>, then ran <code>bb args.clj 1 2
 3</code>, it would print <code>("1" "2" "3")</code>.</p>
 </div>
 <div class="paragraph">
@@ -619,13 +661,13 @@ arguments that were passed to the script. If you were to create the file
 <code>./journal "Flying\!\! But to Home Depot??"</code>. This is almost what we want; we
 actually want to call <code>./journal add --entry "Flying\!\! But to Home Depot??"</code>.
 The assumption here is that we’ll want to have other commands like <code>./journal
-list</code> or <code>./joural delete</code>. (You have to escape the exclamation marks otherwise
+list</code> or <code>./journal delete</code>. (You have to escape the exclamation marks otherwise
 bash interprets them as history commands.)</p>
 </div>
 <div class="paragraph">
-<p>To accomplish this, we’ll need to handle the commind line arguments in a more
+<p>To accomplish this, we’ll need to handle the command line arguments in a more
 sophisticated way. The most obvious and least-effort way to do this would be to
-dispatch on the first argument to <code><strong>command-line-args</strong></code>, something like this:</p>
+dispatch on the first argument to <code>*command-line-args*</code>, something like this:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -667,7 +709,7 @@ through <code>stdin</code> — and using that data to handle these three res
 </li>
 <li>
 <p>Parsing command-line arguments into Clojure data, and passing that to the
-dispatched functon</p>
+dispatched function</p>
 </li>
 <li>
 <p>Providing feedback in cases where there’s a problem performing the above
@@ -1101,7 +1143,7 @@ in the <code>journal</code> file. That file should now look like this:</p>
 
 <span class="tok-p">(</span><span class="tok-k">def </span><span class="tok-nv">table</span>
   <span class="tok-p">[{</span><span class="tok-ss">:cmds</span> <span class="tok-p">[</span><span class="tok-s">"add"</span><span class="tok-p">]</span> <span class="tok-ss">:fn</span> <span class="tok-o">#</span><span class="tok-p">(</span><span class="tok-nf">add/add-entry</span> <span class="tok-p">(</span><span class="tok-ss">:opts</span> <span class="tok-nv">%</span><span class="tok-p">))</span> <span class="tok-ss">:spec</span> <span class="tok-nv">cli-opts</span><span class="tok-p">}</span>
-   <span class="tok-p">{</span><span class="tok-ss">:cmds</span> <span class="tok-p">[</span><span class="tok-s">"list"</span><span class="tok-p">]</span> <span class="tok-ss">:fn</span> <span class="tok-o">#</span><span class="tok-p">(</span><span class="tok-nf">list/list-entries</span> <span class="tok-nv">nil</span><span class="tok-p">)}])</span>
+   <span class="tok-p">{</span><span class="tok-ss">:cmds</span> <span class="tok-p">[</span><span class="tok-s">"list"</span><span class="tok-p">]</span> <span class="tok-ss">:fn</span> <span class="tok-o">#</span><span class="tok-p">(</span><span class="tok-nf">list/list-entries</span> <span class="tok-nv">%</span><span class="tok-p">)}])</span>
 
 <span class="tok-p">(</span><span class="tok-nf">cli/dispatch</span> <span class="tok-nv">table</span> <span class="tok-nv">*command-line-args*</span><span class="tok-p">)</span></code></pre>
 </div>
@@ -1620,7 +1662,7 @@ parses command line args before passing to the function</p>
 </div>
 </div>
 </div>
-<h1 id="_resources" class="sect0">Resources</h1>
+<h1 id="_additional_resources" class="sect0">Additional Resources</h1>
 <div class="ulist">
 <ul>
 <li>
@@ -1662,7 +1704,17 @@ knowledge to Babashka</p>
 <li>
 <p>@<a href="mailto:monkey1@fosstodon.org">monkey1@fosstodon.org</a></p>
 </li>
+<li>
+<p>Kira McLean</p>
+</li>
 </ul>
+</div>
+<h1 id="_feedback" class="sect0">Feedback</h1>
+<div class="paragraph">
+<p>If you have feedback, please open an issue at
+<a href="https://github.com/braveclojure/babooka">https://github.com/braveclojure/babooka</a>. I can’t promise I’ll respond in a
+timely manner, or even at all, so I apologize in advice! I’m just not great at
+responding, it’s one of my character flaws, but I appreciate the feedback!</p>
 </div>
         <div class="chapter-nav">
 
@@ -1676,10 +1728,6 @@ knowledge to Babashka</p>
       </div>
       <div class="secondary">
         <div class="wrapper">
-          <div class="junk">
-            <script src="https://gumroad.com/js/gumroad.js"></script>
-<a class="gumroad-button" href="https://gum.co/gHcWk" target="_blank">Buy the ebook!?</a>
-          </div>
           <div class="ads">
             <a class="twitter-follow-button" href="https://twitter.com/nonrecursive">Follow @nonrecursive</a>
             <form action="//flyingmachinestudios.us1.list-manage.com/subscribe/post?u=60763b0c4890c24bd055f32e6&amp;amp;amp;id=0b40ffd1e1" class="validate" id="mc-embedded-subscribe-form" method="post" name="mc-embedded-subscribe-form" novalidate="" target="_blank">
@@ -1693,33 +1741,34 @@ knowledge to Babashka</p>
           </div>
 <div class="chapter-sections">Chapter Sections</div>
 <ol class="toc">
-<li><a href="/quests/babooka/#What_is_Babashka_">What is Babashka?</a></li>
-<li><a href="/quests/babooka/#Why_should_you_use_it_">Why should you use it?</a></li>
-<li><a href="/quests/babooka/#Installation">Installation</a></li>
-<li><a href="/quests/babooka/#Babashka_s_output">Babashka’s output</a></li>
-<li><a href="/quests/babooka/#Namespace_is_optional">Namespace is optional</a></li>
-<li><a href="/quests/babooka/#What_about_requiring_other_namespaces_">What about requiring other namespaces?</a></li>
-<li><a href="/quests/babooka/#Make_your_script_executable">Make your script executable</a></li>
-<li><a href="/quests/babooka/#Summary">Summary</a></li>
-<li><a href="/quests/babooka/#parsing_options_with_babashka_cli">parsing options with babashka.cli</a></li>
-<li><a href="/quests/babooka/#dispatching_subcommands_with_babashka_cli">dispatching subcommands with babashka.cli</a></li>
-<li><a href="/quests/babooka/#Summary">Summary</a></li>
-<li><a href="/quests/babooka/#File_system_structure">File system structure</a></li>
-<li><a href="/quests/babooka/#Namespaces">Namespaces</a></li>
-<li><a href="/quests/babooka/#Summary">Summary</a></li>
-<li><a href="/quests/babooka/#Pod_usage">Pod usage</a></li>
-<li><a href="/quests/babooka/#Pod_implementation">Pod implementation</a></li>
-<li><a href="/quests/babooka/#Summary">Summary</a></li>
-<li><a href="/quests/babooka/#Direct_Expression_Evaluation">Direct Expression Evaluation</a></li>
-<li><a href="/quests/babooka/#Invoking_a_Clojure_function">Invoking a Clojure function</a></li>
-<li><a href="/quests/babooka/#A_basic_task">A basic task</a></li>
-<li><a href="/quests/babooka/#How_to_require_namespaces_for_tasks">How to require namespaces for tasks</a></li>
-<li><a href="/quests/babooka/#Use_exec_to_parse_arguments_and_call_a_function">Use exec to parse arguments and call a function</a></li>
-<li><a href="/quests/babooka/#Task_dependencies__parallel_tasks__and_more">Task dependencies, parallel tasks, and more</a></li>
-<li><a href="/quests/babooka/#Summary">Summary</a></li>
+<li><a href="/quests/babooka/babooka/#Sponsor">Sponsor</a></li>
+<li><a href="/quests/babooka/babooka/#What_is_Babashka_">What is Babashka?</a></li>
+<li><a href="/quests/babooka/babooka/#Why_should_you_use_it_">Why should you use it?</a></li>
+<li><a href="/quests/babooka/babooka/#Installation">Installation</a></li>
+<li><a href="/quests/babooka/babooka/#Babashka_s_output">Babashka’s output</a></li>
+<li><a href="/quests/babooka/babooka/#Namespace_is_optional">Namespace is optional</a></li>
+<li><a href="/quests/babooka/babooka/#What_about_requiring_other_namespaces_">What about requiring other namespaces?</a></li>
+<li><a href="/quests/babooka/babooka/#Make_your_script_executable">Make your script executable</a></li>
+<li><a href="/quests/babooka/babooka/#Summary">Summary</a></li>
+<li><a href="/quests/babooka/babooka/#parsing_options_with_babashka_cli">parsing options with babashka.cli</a></li>
+<li><a href="/quests/babooka/babooka/#dispatching_subcommands_with_babashka_cli">dispatching subcommands with babashka.cli</a></li>
+<li><a href="/quests/babooka/babooka/#Summary">Summary</a></li>
+<li><a href="/quests/babooka/babooka/#File_system_structure">File system structure</a></li>
+<li><a href="/quests/babooka/babooka/#Namespaces">Namespaces</a></li>
+<li><a href="/quests/babooka/babooka/#Summary">Summary</a></li>
+<li><a href="/quests/babooka/babooka/#Pod_usage">Pod usage</a></li>
+<li><a href="/quests/babooka/babooka/#Pod_implementation">Pod implementation</a></li>
+<li><a href="/quests/babooka/babooka/#Summary">Summary</a></li>
+<li><a href="/quests/babooka/babooka/#Direct_Expression_Evaluation">Direct Expression Evaluation</a></li>
+<li><a href="/quests/babooka/babooka/#Invoking_a_Clojure_function">Invoking a Clojure function</a></li>
+<li><a href="/quests/babooka/babooka/#A_basic_task">A basic task</a></li>
+<li><a href="/quests/babooka/babooka/#How_to_require_namespaces_for_tasks">How to require namespaces for tasks</a></li>
+<li><a href="/quests/babooka/babooka/#Use_exec_to_parse_arguments_and_call_a_function">Use exec to parse arguments and call a function</a></li>
+<li><a href="/quests/babooka/babooka/#Task_dependencies__parallel_tasks__and_more">Task dependencies, parallel tasks, and more</a></li>
+<li><a href="/quests/babooka/babooka/#Summary">Summary</a></li>
 </ol>
           <div class="chapters">
-            <div class="subtitle">Chapters</div>
+            <div class="subtitle"></div>
             <ol class="toc">
             </ol>
           </div>
