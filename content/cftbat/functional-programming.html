@@ -4,9 +4,9 @@ kind: chapter
 book: cftbat
 ---
 
-  
-  
-    
+
+
+
       <div class="chapter-number">Chapter 5</div>
       <h1>Functional Programming</h1>
       <p class="x1st-Para"><span>So far, you’ve focused on becoming famil</span>iar with the tools that Clojure provides: immutable data structures, functions, abstractions, and so on. In this chapter, you’ll learn how to <span>think about your programming tasks in a way that makes the best use of those tools. You’ll begin integrating your experience into a new functional pro</span>gramming mindset.</p>
@@ -116,12 +116,12 @@ book: cftbat
 <span class="tok-c1">; =&gt; "Rosanthony"</span>
 </code></pre></div></div>
 
-      <p class="Body">In this example, you first bind the name <code>great-baby-name</code> to <code>"Rosanthony"</code> within the global scope. Next, you introduce a new scope with <code>let</code><span>. Within that scope, you bind </span><code>great-baby-name</code><span> to </span><code>"Bloodthunder"</code><span>. Once Clojure finishes evaluating the </span><code>let</code><span> expression, you’re back in the global </span>scope, and<code> great-baby-name</code> evaluates to <code>"Rosanthony"</code> once again.</p>
+      <p class="Body">In this example, you first bind the name <code>great-baby-name</code> to <code>"Rosanthony"</code> within the global scope. Next, you introduce a new scope with <code>let</code><span>. Within that scope, you bind </span><code>great-baby-name</code><span> to </span><code>"Bloodthunder"</code><span>. Once Clojure finishes evaluating the </span><code>let</code><span> expression, you’re back in the global </span>scope, and <code>great-baby-name</code> evaluates to <code>"Rosanthony"</code> once again.</p>
       <p class="Body"><span>Clojure lets you work around this apparent limitation with recursion. The following example shows the general approach to recursive problem solving:</span></p>
       <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-kd">defn </span><span class="tok-nv">sum</span>
-<span class="tok-err">➊</span>   <span class="tok-p">([</span><span class="tok-nv">vals</span><span class="tok-p">]</span> <span class="tok-p">(</span><span class="tok-nf">sum</span> <span class="tok-nb">vals </span><span class="tok-mi">0</span><span class="tok-p">))</span> 
+<span class="tok-err">➊</span>   <span class="tok-p">([</span><span class="tok-nv">vals</span><span class="tok-p">]</span> <span class="tok-p">(</span><span class="tok-nf">sum</span> <span class="tok-nb">vals </span><span class="tok-mi">0</span><span class="tok-p">))</span>
   <span class="tok-p">([</span><span class="tok-nb">vals </span><span class="tok-nv">accumulating-total</span><span class="tok-p">]</span>
-<span class="tok-err">➋</span>      <span class="tok-p">(</span><span class="tok-k">if </span><span class="tok-p">(</span><span class="tok-nf">empty?</span> <span class="tok-nv">vals</span><span class="tok-p">)</span>  
+<span class="tok-err">➋</span>      <span class="tok-p">(</span><span class="tok-k">if </span><span class="tok-p">(</span><span class="tok-nf">empty?</span> <span class="tok-nv">vals</span><span class="tok-p">)</span>
        <span class="tok-nv">accumulating-total</span>
        <span class="tok-p">(</span><span class="tok-nf">sum</span> <span class="tok-p">(</span><span class="tok-nb">rest </span><span class="tok-nv">vals</span><span class="tok-p">)</span> <span class="tok-p">(</span><span class="tok-nb">+ </span><span class="tok-p">(</span><span class="tok-nb">first </span><span class="tok-nv">vals</span><span class="tok-p">)</span> <span class="tok-nv">accumulating-total</span><span class="tok-p">)))))</span>
 </code></pre></div></div>
@@ -149,7 +149,7 @@ book: cftbat
        <span class="tok-p">(</span><span class="tok-nf">recur</span> <span class="tok-p">(</span><span class="tok-nb">rest </span><span class="tok-nv">vals</span><span class="tok-p">)</span> <span class="tok-p">(</span><span class="tok-nb">+ </span><span class="tok-p">(</span><span class="tok-nb">first </span><span class="tok-nv">vals</span><span class="tok-p">)</span> <span class="tok-nv">accumulating-total</span><span class="tok-p">)))))</span>
 </code></pre></div></div>
 
-      <p class="Body">Using <code>recur</code> isn’t that important if you’re recursively operating on a <span>small collection, but if your collection contains thousands or millions </span><span>values</span>, you will definitely need to whip out <code>recur </code>so you don’t blow up your program with a stack overflow.</p>
+      <p class="Body">Using <code>recur</code> isn’t that important if you’re recursively operating on a <span>small collection, but if your collection contains thousands or millions </span><span>values</span>, you will definitely need to whip out <code>recur</code> so you don’t blow up your program with a stack overflow.</p>
       <p class="Body">One last thing! You might be saying, “Wait a minute—what if I end up creating thousands of intermediate values? Doesn’t this cause the program to thrash because of garbage collection or whatever?”</p>
       <p class="Body">Very good question, eagle-eyed reader! The answer is no! The reason <span>is that, behind the scenes, Clojure’s immutable data structures are implemented using </span><em>structural sharing</em><span>, which is totally beyond the scope of this </span>book. It’s kind of like Git! Read this great article if you want to know more: <em><a href="http://hypirion.com/musings/understanding-persistent-vector-pt-1">http://hypirion.com/musings/understanding-persistent-vector-pt-1</a></em>.</p>
       <h3><a id="Anchor-20"></a>Function Composition Instead of Attribute Mutation</h3>
@@ -289,19 +289,19 @@ book: cftbat
       <h2>Peg Thing</h2>
       <p class="BodyFirst">It’s that time! Time to build a terminal implementation of Peg Thing using everything you’ve learned so far: immutable data structures, lazy sequences, pure functions, recursion—everything! Doing this will help you understand <span>how to combine these concepts and techniques to solve larger problems. Most important, you’ll learn how to model the changes that result from </span>each move a player makes without having to mutate objects like you would in OOP.</p>
       <p class="Body">To build the game, you’ll first learn the game’s mechanics and how to start and play the program. Then, I’ll explain the code’s organization. Finally, I’ll walk through each function.</p>
-      <p class="Body">You can find the complete code repository for Peg Thing at <em><a href="https://www.nostarch.com/clojure/">https://www.nostarch.com/clojure/</a></em>.</p>
+      <p class="Body">You can find the complete code repository for Peg Thing at <em><a href="https://github.com/flyingmachine/pegthing">https://github.com/flyingmachine/pegthing</a></em>.</p>
       <h3>Playing</h3>
       <p class="BodyFirst">As mentioned earlier, Peg Thing is based on the secret mind-sharpening tool passed down from ye olden days and is now distributed by Cracker Barrel.</p>
       <p class="Body">If you’re not familiar with the game, here are the mechanics. You start <span>out with a triangular board consisting of holes filled with pegs, and one </span>hole has a missing a peg, as shown in Figure 5-1.</p>
       <img src="/assets/images/cftbat/functional-programming/peg-thing-starting.png" class="figure" />
-      
+
 	<div class="caption">Figure 5-1: The initial setup for Peg Thing</div>
-      
+
       <p class="Body">The object of the game is to remove as many pegs as possible. You do this by <em>jumping</em> over pegs. In Figure 5-2, peg A jumps over peg B into the empty hole, and you remove peg B from the board.</p>
       <img src="/assets/images/cftbat/functional-programming/peg-thing-jumping.png" class="figure" />
-      
+
 	<div class="caption">Figure 5-2: Jump a peg to remove it from the board.</div>
-      
+
       <p class="Body">To start Peg Thing, download the code, and then run <code>lein run</code> in your <span>terminal while in the </span><em>pegthing</em><span> directory. A prompt appears that looks like this:</span></p>
       <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-nv">Get</span> <span class="tok-nv">ready</span> <span class="tok-nv">to</span> <span class="tok-nv">play</span> <span class="tok-nv">Peg</span> <span class="tok-nv">Thing!</span>
 <span class="tok-nv">How</span> <span class="tok-nv">many</span> <span class="tok-nv">rows?</span> <span class="tok-p">[</span><span class="tok-mi">5</span><span class="tok-p">]</span>
@@ -360,9 +360,9 @@ book: cftbat
       <h3>Creating the Board</h3>
       <p class="BodyFirst">The data structure you use to represent the board should make it easy for you to print the board, check whether a player has made a valid move, actually perform a move, and check whether the game is over. You could structure the board in many ways to allow these tasks. In this case, you’ll represent the board using a map with numerical keys corresponding to each board position and values containing information about that position’s connections. The map will also contain a <code>:rows</code> key, storing the total number of rows. Figure 5-3 shows a board with each position numbered.</p>
       <img src="/assets/images/cftbat/functional-programming/peg-thing-data-structure.png" class="figure" />
-      
+
 	<div class="caption">Figure 5-3: The numbered pegboard</div>
-      
+
       <p class="Body">Here’s the data structure built to represent it:</p>
       <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">{</span><span class="tok-mi">1</span>  <span class="tok-p">{</span><span class="tok-ss">:pegged</span> <span class="tok-nv">true</span>, <span class="tok-ss">:connections</span> <span class="tok-p">{</span><span class="tok-mi">6</span> <span class="tok-mi">3</span>, <span class="tok-mi">4</span> <span class="tok-mi">2</span><span class="tok-p">}}</span>,
  <span class="tok-mi">2</span>  <span class="tok-p">{</span><span class="tok-ss">:pegged</span> <span class="tok-nv">true</span>, <span class="tok-ss">:connections</span> <span class="tok-p">{</span><span class="tok-mi">9</span> <span class="tok-mi">5</span>, <span class="tok-mi">7</span> <span class="tok-mi">4</span><span class="tok-p">}}</span>,
@@ -413,10 +413,10 @@ book: cftbat
   <span class="tok-s">"Is the number triangular? e.g. 1, 3, 6, 10, 15, etc"</span>
   <span class="tok-p">[</span><span class="tok-nv">n</span><span class="tok-p">]</span>
   <span class="tok-p">(</span><span class="tok-nb">= </span><span class="tok-nv">n</span> <span class="tok-p">(</span><span class="tok-nb">last </span><span class="tok-p">(</span><span class="tok-nb">take-while </span><span class="tok-o">#</span><span class="tok-p">(</span><span class="tok-nb">&gt;= </span><span class="tok-nv">n</span> <span class="tok-nv">%</span><span class="tok-p">)</span> <span class="tok-nv">tri</span><span class="tok-p">))))</span>
-<span class="tok-p">(</span><span class="tok-nf">triangular?</span> <span class="tok-mi">5</span><span class="tok-p">)</span> 
+<span class="tok-p">(</span><span class="tok-nf">triangular?</span> <span class="tok-mi">5</span><span class="tok-p">)</span>
 <span class="tok-c1">; =&gt; false</span>
 
-<span class="tok-p">(</span><span class="tok-nf">triangular?</span> <span class="tok-mi">6</span><span class="tok-p">)</span> 
+<span class="tok-p">(</span><span class="tok-nf">triangular?</span> <span class="tok-mi">6</span><span class="tok-p">)</span>
 <span class="tok-c1">; =&gt; true</span>
 </code></pre></div></div>
 
@@ -425,13 +425,13 @@ book: cftbat
   <span class="tok-s">"The triangular number at the end of row n"</span>
   <span class="tok-p">[</span><span class="tok-nv">n</span><span class="tok-p">]</span>
   <span class="tok-p">(</span><span class="tok-nb">last </span><span class="tok-p">(</span><span class="tok-nb">take </span><span class="tok-nv">n</span> <span class="tok-nv">tri</span><span class="tok-p">)))</span>
-<span class="tok-p">(</span><span class="tok-nf">row-tri</span> <span class="tok-mi">1</span><span class="tok-p">)</span> 
+<span class="tok-p">(</span><span class="tok-nf">row-tri</span> <span class="tok-mi">1</span><span class="tok-p">)</span>
 <span class="tok-c1">; =&gt; 1</span>
 
-<span class="tok-p">(</span><span class="tok-nf">row-tri</span> <span class="tok-mi">2</span><span class="tok-p">)</span> 
+<span class="tok-p">(</span><span class="tok-nf">row-tri</span> <span class="tok-mi">2</span><span class="tok-p">)</span>
 <span class="tok-c1">; =&gt; 3</span>
 
-<span class="tok-p">(</span><span class="tok-nf">row-tri</span> <span class="tok-mi">3</span><span class="tok-p">)</span> 
+<span class="tok-p">(</span><span class="tok-nf">row-tri</span> <span class="tok-mi">3</span><span class="tok-p">)</span>
 <span class="tok-c1">; =&gt; 6</span>
 </code></pre></div></div>
 
@@ -441,9 +441,9 @@ book: cftbat
 <span class="tok-s">  positions 2 and 3 in row 2, etc"</span>
   <span class="tok-p">[</span><span class="tok-nv">pos</span><span class="tok-p">]</span>
   <span class="tok-p">(</span><span class="tok-nb">inc </span><span class="tok-p">(</span><span class="tok-nb">count </span><span class="tok-p">(</span><span class="tok-nb">take-while </span><span class="tok-o">#</span><span class="tok-p">(</span><span class="tok-nb">&gt; </span><span class="tok-nv">pos</span> <span class="tok-nv">%</span><span class="tok-p">)</span> <span class="tok-nv">tri</span><span class="tok-p">))))</span>
-<span class="tok-p">(</span><span class="tok-nf">row-num</span> <span class="tok-mi">1</span><span class="tok-p">)</span> 
+<span class="tok-p">(</span><span class="tok-nf">row-num</span> <span class="tok-mi">1</span><span class="tok-p">)</span>
 <span class="tok-c1">; =&gt; 1</span>
-<span class="tok-p">(</span><span class="tok-nf">row-num</span> <span class="tok-mi">5</span><span class="tok-p">)</span> 
+<span class="tok-p">(</span><span class="tok-nf">row-num</span> <span class="tok-mi">5</span><span class="tok-p">)</span>
 <span class="tok-c1">; =&gt; 3</span>
 </code></pre></div></div>
 
@@ -593,9 +593,9 @@ book: cftbat
 
       <p class="Body">Figure 5-4 shows what that board would look like.</p>
       <img src="/assets/images/cftbat/functional-programming/peg-thing-valid-moves.png" class="figure" />
-      
+
 	<div class="caption">Figure 5-4: A pegboard with the 4 position empty</div>
-      
+
       <p class="Body"><span>Given this board, positions 1, 6, 11, and 13 have valid moves, but all </span>others don’t:</p>
       <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-nf">valid-moves</span> <span class="tok-nv">my-board</span> <span class="tok-mi">1</span><span class="tok-p">)</span>  <span class="tok-c1">; =&gt; {4 2}</span>
 <span class="tok-p">(</span><span class="tok-nf">valid-moves</span> <span class="tok-nv">my-board</span> <span class="tok-mi">6</span><span class="tok-p">)</span>  <span class="tok-c1">; =&gt; {4 5}</span>
@@ -610,7 +610,7 @@ book: cftbat
 <span class="tok-s">  otherwise"</span>
   <span class="tok-p">[</span><span class="tok-nv">board</span> <span class="tok-nv">p1</span> <span class="tok-nv">p2</span><span class="tok-p">]</span>
   <span class="tok-p">(</span><span class="tok-nb">get </span><span class="tok-p">(</span><span class="tok-nf">valid-moves</span> <span class="tok-nv">board</span> <span class="tok-nv">p1</span><span class="tok-p">)</span> <span class="tok-nv">p2</span><span class="tok-p">))</span>
-  
+
 <span class="tok-p">(</span><span class="tok-nf">valid-move?</span> <span class="tok-nv">my-board</span> <span class="tok-mi">8</span> <span class="tok-mi">4</span><span class="tok-p">)</span> <span class="tok-c1">; =&gt; nil</span>
 <span class="tok-p">(</span><span class="tok-nf">valid-move?</span> <span class="tok-nv">my-board</span> <span class="tok-mi">1</span> <span class="tok-mi">4</span><span class="tok-p">)</span> <span class="tok-c1">; =&gt; 2</span>
 </code></pre></div></div>
@@ -624,7 +624,7 @@ book: cftbat
 </code></pre></div></div>
 
       <p class="Body"><code>if-let</code><span> is a nifty way to say, “If an expression evaluates to a truthy value, then bind that value to a name the same way that I can in a </span><code>let</code><span> expression. Otherwise, if I’ve provided an </span><code>else</code><span> clause, perform that </span><code>else</code><span> </span>clause; if I haven’t provided an <code>else</code> clause, return <code>nil</code>.” In this case, the test expression is <code>(valid-move? board p1 p2)</code>, and you’re assigning the result to the name <code>jumped</code> if the result is truthy. That’s used in the call to <code>move-peg</code>, which <span>returns a new board. You don’t supply an </span><code>else</code><span> clause, so if the move isn’t </span>valid, the return value of the whole expression is <code>nil</code>.</p>
-      <p class="Body">Finally, the function <code>can-move? </code>is used to determine whether the game is over by finding the first pegged positions with moves available:</p>
+      <p class="Body">Finally, the function <code>can-move?</code> is used to determine whether the game is over by finding the first pegged positions with moves available:</p>
       <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-kd">defn </span><span class="tok-nv">can-move?</span>
   <span class="tok-s">"Do any of the pegged positions have valid moves?"</span>
   <span class="tok-p">[</span><span class="tok-nv">board</span><span class="tok-p">]</span>
@@ -639,7 +639,7 @@ book: cftbat
 </code></pre></div></div>
 
       <p class="Body">The first element of the tuple is a position number, and the second is that position’s information. <code>filter</code> then applies the anonymous function <code>#(get (second %) :pegged)</code> to each of these tuples, filtering out the tuples where the position’s information indicates that the position is not currently housing a peg. Finally, the result is passed to <code>map</code>, which calls <code>first</code> on each tuple to grab just the position number from the tuples.</p>
-      <p class="Body">After you get a seq of pegged positions numbers, you call a predicate <span>function on each one to find the first position that returns a truthy value. The predicate function is created with </span><code>(</code><code>comp not-empty (</code><code>partial valid-moves board))</code><span>. The idea is to first return a map of all valid moves for a position </span>and then test whether that map is empty.</p>
+      <p class="Body">After you get a seq of pegged positions numbers, you call a predicate <span>function on each one to find the first position that returns a truthy value. The predicate function is created with </span><code>(comp not-empty (partial valid-moves board))</code><span>. The idea is to first return a map of all valid moves for a position </span>and then test whether that map is empty.</p>
       <p class="Body">First, the expression <code>(partial valid-moves board)</code> derives an anonymous <span>function from </span><code>valid-moves</code><span> with the first argument, </span><code>board</code><span>, filled in using </span><code>partial</code><span> (because you’re using the same board each time you call </span><code>valid-moves</code><span>). </span>The new function can take a position and return the map of all its valid moves for the current board.</p>
       <p class="Body">Second, you use <code>comp</code> to compose this function with <code>not-empty</code>. This function is self-descriptive; it returns <code>true</code> if the given collection is empty and <code>false</code> otherwise.</p>
       <p class="Body"><span>What’s most interesting about this bit of code is that you’re using a </span>chain of functions to derive a new function, similar to how you use chains <span>of functions to derive new data. In Chapter 3, you learned that Clojure treats functions as data in that functions can receive functions as argu</span>ments and return them. Hopefully, this shows why that feature is fun and u<a id="Anchor-16"></a>seful.</p>
@@ -675,7 +675,7 @@ book: cftbat
 <span class="tok-p">(</span><span class="tok-kd">defn </span><span class="tok-nv">render-row</span>
   <span class="tok-p">[</span><span class="tok-nv">board</span> <span class="tok-nv">row-num</span><span class="tok-p">]</span>
   <span class="tok-p">(</span><span class="tok-nb">str </span><span class="tok-p">(</span><span class="tok-nf">row-padding</span> <span class="tok-nv">row-num</span> <span class="tok-p">(</span><span class="tok-ss">:rows</span> <span class="tok-nv">board</span><span class="tok-p">))</span>
-       <span class="tok-p">(</span><span class="tok-nf">clojure.string/join</span> <span class="tok-s">" "</span> <span class="tok-p">(</span><span class="tok-nb">map </span><span class="tok-p">(</span><span class="tok-nb">partial </span><span class="tok-nv">render-pos</span> <span class="tok-nv">board</span><span class="tok-p">)</span> 
+       <span class="tok-p">(</span><span class="tok-nf">clojure.string/join</span> <span class="tok-s">" "</span> <span class="tok-p">(</span><span class="tok-nb">map </span><span class="tok-p">(</span><span class="tok-nb">partial </span><span class="tok-nv">render-pos</span> <span class="tok-nv">board</span><span class="tok-p">)</span>
                                      <span class="tok-p">(</span><span class="tok-nf">row-positions</span> <span class="tok-nv">row-num</span><span class="tok-p">)))))</span>
 </code></pre></div></div>
 
@@ -784,7 +784,7 @@ book: cftbat
       <h2>Summary</h2>
       <p class="BodyFirst"><span>Pure functions are referentially transparent and side-effect free, which makes them easy to reason about. To get the most from Clojure, try to keep your impure functions to a minimum. In an immutable world, you </span>use recursion instead of <code>for</code>/<code>while</code> loops, and function composition instead of successions of mutations. Pure functions allow powerful techniques like function composition functions and memoization. They’re also super fun!</p>
       <h2>Exercises</h2>
-      <p class="BodyFirst">One of the best ways to develop your functional programming skills is to try to implement existing functions. To that end, most of the following exercises suggest a function for you to implement, but don’t stop there; <span>go through the Clojure cheat sheet (</span><em><a href="http://clojure.org/cheatsheet/">http://clojure.org/cheatsheet/</a></em><span>) and </span>pick more!</p>
+      <p class="BodyFirst">One of the best ways to develop your functional programming skills is to try to implement existing functions. To that end, most of the following exercises suggest a function for you to implement, but don’t stop there; <span>go through the Clojure cheat sheet (</span><em><a href="http://clojure.org/api/cheatsheet">http://clojure.org/api/cheatsheet</a></em><span>) and </span>pick more!</p>
       <ol class="List-1">
 	<li class="NumListA"><span>You used </span><code>(comp :intelligence :attributes)</code><span> to create a function that </span>returns a character’s intelligence. Create a new function, <code>attr</code>, that you can call like <code>(attr :intelligence)</code> and that does the same thing.</li>
 	<li class="NumListB">Implement the <code>comp</code> function.</li>
@@ -792,6 +792,3 @@ book: cftbat
 	<li class="NumListB">Look up and use the <code>update-in</code> function.</li>
 	<li class="NumListC">Implement <code>update-in</code>.</li>
       </ol>
-    
-  
-

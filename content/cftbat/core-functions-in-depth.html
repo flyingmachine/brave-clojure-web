@@ -4,9 +4,9 @@ kind: chapter
 book: cftbat
 ---
 
-  
-  
-    
+
+
+
       <div class="chapter-number">Chapter 4</div>
       <h1>Core Functions in Depth</h1>
       <p class="x1st-Para"><span>If you’re a huge fan of the angsty, </span><span>teenager</span><span>-</span><span>centric, quasi–soap opera </span><em>The Vampire Diaries</em><span> like I am, you’ll remember the episode where the lead protagonist, Elena, starts to question her pale, mysterious crush’s behavior: “Why did he instantly vanish without a trace when I scraped my knee?” and “How come his face turned into a grotesque mask of death when I nicked my </span><span>finger</span><span>?” and so on.</span></p>
@@ -23,14 +23,14 @@ book: cftbat
       <h3>Treating Lists, Vectors, Sets, and Maps as Sequences</h3>
       <p class="BodyFirst">If you think about the <code>map</code> operation independently of any programming language, or even of programming altogether, its essential behavior is to derive a new sequence <em>y</em> from an existing sequence <em>x</em> using a function <em>ƒ</em> such that <em>y</em><span class="Subscript">1</span> = <em>ƒ</em>(<em>x</em><span class="Subscript">1</span>), <em>y</em><span class="Subscript">2</span> = <em>ƒ</em>(<em>x</em><span class="Subscript">2</span>), . . . <em>y</em><span class="Subscript-Italic">n</span> = <em>ƒ</em>(<em>x</em><span class="Subscript-Italic">n</span>). Figure 4-1 illustrates how you might visualize a mapping applied to a sequence.</p>
       <img src="/assets/images/cftbat/core-functions-in-depth/mapping.png" class="figure" />
-      
+
 	<div class="caption">Figure 4-1: Visualizing a mapping</div>
-      
+
       <p class="Body">The term <em>sequence</em> here refers to a collection of elements organized in linear order, as opposed to, say, an unordered collection or a graph without a <em>before-and-after</em> relationship between its nodes. Figure 4-2 shows how you might visualize a sequence, in contrast to the other two collections mentioned.</p>
       <img src="/assets/images/cftbat/core-functions-in-depth/collections.png" class="figure" />
-      
+
 	<div class="caption">Figure 4-2: Sequential and nonsequential collections</div>
-      
+
       <p class="Body"><span>Absent from this description of mapping and sequences is any mention </span>of lists, vectors, or other concrete data structures. Clojure is designed to allow us to think and program in such abstract terms as much as possible, and it does this by implementing functions in terms of data structure abstractions. In this case, <code>map</code> is defined in terms of the sequence abstraction. In conversation, you would say <code>map</code>, <code>reduce</code>, and other sequence functions <em>take a sequence</em> or even <em>take a </em><em>seq</em>. In fact, Clojurists usually use <em>seq</em> instead of <em>sequence</em>, using terms like <em>seq functions</em> and <em>the seq library</em> to refer to functions that perform sequential operations. Whether you use <em>sequence</em> or <em>seq</em>, you’re indicating that the data structure in question will be treated as a sequence and that what it actually is in its truest heart of hearts doesn’t matter in this context.</p>
       <p class="Body">If the core sequence functions <code>first</code>, <code>rest</code>, and <code>cons</code> work on a data structure, you can say the data structure <em>implements</em> the sequence abstraction. Lists, vectors, sets, and maps all implement the sequence abstraction, so they all work with <code>map</code>, as shown here:</p>
       <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-kd">defn </span><span class="tok-nv">titleize</span>
@@ -76,9 +76,9 @@ book: cftbat
 
       <p class="Body">Graphically, you could represent this list as shown in Figure 4-3.</p>
       <img src="/assets/images/cftbat/core-functions-in-depth/linked-list.png" class="figure" />
-      
+
 	<div class="caption">Figure 4-3: A linked list</div>
-      
+
       <p class="Body"><span>You can perform three core functions on a linked list: </span><code>first</code><span>, </span><code>rest</code><span>, and </span><code>cons</code><span>. </span><code>first</code><span> returns the value for the requested node, </span><code>rest</code><span> returns the remaining values after the requested node, and </span><code>cons</code><span> adds a new node with the given </span><span>value to the beginning of the list. After those are implemented, you can </span><span>implement </span><code>map</code><span>, </span><code>reduce</code><span>, </span><code>filter</code><span>, and other seq functions on top of them. </span></p>
       <p class="Body">The following code shows how we would implement and use <code>first</code>, <code>rest</code>, <span>and </span><code>cons</code><span> with our JavaScript node example, as well as how to use them to </span><span>return specific nodes and derive a new list. Note that the parameter of </span><code>first</code><span> </span><span>and </span><code>rest</code><span> is named </span><em>node</em><span>. This might be confusing because you might say, </span><span>“Ain’t I getting the first element of a </span><em>list</em><span>?” Well, you operate on the elements </span>of a list one node at a time!</p>
       <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-k">var </span><span class="tok-nb">first = </span><span class="tok-nv">function</span><span class="tok-p">(</span><span class="tok-nf">node</span><span class="tok-p">)</span> <span class="tok-p">{</span>
@@ -261,9 +261,9 @@ book: cftbat
        <span class="tok-ss">:min</span> <span class="tok-p">(</span><span class="tok-nb">inc </span><span class="tok-mi">10</span><span class="tok-p">))</span>
 </code></pre></div></div>
 
-      <p class="Body">The function <code>assoc</code> takes three arguments: a map, a key, and a value. It derives a new map from the map you give it by <em>associating</em> the given key with the given value. For example, <code>(assoc {:a 1} :b 2)</code> would return <code>{:a 1 :b 2}</code></p>
+      <p class="Body">The function <code>assoc</code> takes three arguments: a map, a key, and a value. It returns derives a new map from the map you give it by <em>associating</em> the given key with the given value. For example, <code>(assoc {:a 1} :b 2)</code> would return <code>{:a 1 :b 2}</code>.</p>
 
-      <p class="Body"><span>Another use for </span><code>reduce</code><span> is to filter out keys from a map based on their value. In the following example, the anonymous function checks whether the value of a key-value pair is greather than 4. If it isn’t, then the key-value pair is filtered out. In the map </span><code>{:human 4.1 :critter 3.9}</code><span>, 3.9 is less than 4, so the </span><code>:critter</code><span> key and its 3.9 value are filtered out.</span></p>
+      <p class="Body"><span>Another use for </span><code>reduce</code><span> is to filter out keys from a map based on their value. In the following example, the anonymous function checks whether the value of a key-value pair is greater than 4. If it isn’t, then the key-value pair is filtered out. In the map </span><code>{:human 4.1 :critter 3.9}</code><span>, 3.9 is less than 4, so the </span><code>:critter</code><span> key and its 3.9 value are filtered out.</span></p>
       <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-nb">reduce </span><span class="tok-p">(</span><span class="tok-k">fn </span><span class="tok-p">[</span><span class="tok-nv">new-map</span> <span class="tok-p">[</span><span class="tok-nb">key </span><span class="tok-nv">val</span><span class="tok-p">]]</span>
           <span class="tok-p">(</span><span class="tok-k">if </span><span class="tok-p">(</span><span class="tok-nb">&gt; val </span><span class="tok-mi">4</span><span class="tok-p">)</span>
             <span class="tok-p">(</span><span class="tok-nb">assoc </span><span class="tok-nv">new-map</span> <span class="tok-nb">key </span><span class="tok-nv">val</span><span class="tok-p">)</span>
@@ -411,7 +411,7 @@ book: cftbat
 </code></pre></div></div>
 
       <p class="Body">The first printed line reports the time taken by the given operation—in this case, 1,001.042 milliseconds. The second is the return value, which is your database record in this case. The return value is exactly the same as it would have been if you hadn’t used <code>time</code>.</p>
-      <p class="Body"><span>A nonlazy implementation of </span><code>map</code><span> would first have to apply </span><code>vampire-</code><code>related-details</code> to every member of <code>social-security-numbers</code> before passing the result to <code>filter</code>. Because you have one million suspects, this would take one million seconds, or 12 days, and half your city would be dead by then! Of course, if it turns out that the only vampire is the last suspect in the record, it will still take that much time with the lazy version, but at least there’s a good chance that it won’t.</p>
+      <p class="Body"><span>A nonlazy implementation of </span><code>map</code><span> would first have to apply </span><code>vampire-related-details</code> to every member of <code>social-security-numbers</code> before passing the result to <code>filter</code>. Because you have one million suspects, this would take one million seconds, or 12 days, and half your city would be dead by then! Of course, if it turns out that the only vampire is the last suspect in the record, it will still take that much time with the lazy version, but at least there’s a good chance that it won’t.</p>
       <p class="Body">Because <code>map</code> is lazy, it doesn’t actually apply <code>vampire-related-details</code> to Social Security numbers until you try to access the mapped element. In fact, <code>map</code> returns a value almost instantly:</p>
       <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-nb">time </span><span class="tok-p">(</span><span class="tok-k">def </span><span class="tok-nv">mapped-details</span> <span class="tok-p">(</span><span class="tok-nb">map </span><span class="tok-nv">vampire-related-details</span> <span class="tok-p">(</span><span class="tok-nb">range </span><span class="tok-mi">0</span> <span class="tok-mi">1000000</span><span class="tok-p">))))</span>
 <span class="tok-c1">; =&gt; "Elapsed time: 0.049 msecs"</span>
@@ -597,9 +597,9 @@ book: cftbat
       <p class="BodyFirst"><code>partial</code> takes a function and any number of arguments. It then returns a new function. When you call the returned function, it calls the original function with the original arguments you supplied it along with the new arguments. </p>
       <p class="Body">Here’s an example:</p>
       <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-k">def </span><span class="tok-nv">add10</span> <span class="tok-p">(</span><span class="tok-nb">partial + </span><span class="tok-mi">10</span><span class="tok-p">))</span>
-<span class="tok-p">(</span><span class="tok-nf">add10</span> <span class="tok-mi">3</span><span class="tok-p">)</span> 
+<span class="tok-p">(</span><span class="tok-nf">add10</span> <span class="tok-mi">3</span><span class="tok-p">)</span>
 <span class="tok-c1">; =&gt; 13</span>
-<span class="tok-p">(</span><span class="tok-nf">add10</span> <span class="tok-mi">5</span><span class="tok-p">)</span> 
+<span class="tok-p">(</span><span class="tok-nf">add10</span> <span class="tok-mi">5</span><span class="tok-p">)</span>
 <span class="tok-c1">; =&gt; 15</span>
 
 <span class="tok-p">(</span><span class="tok-k">def </span><span class="tok-nv">add-missing-elements</span>
@@ -616,7 +616,7 @@ book: cftbat
     <span class="tok-p">(</span><span class="tok-nb">apply </span><span class="tok-nv">partialized-fn</span> <span class="tok-p">(</span><span class="tok-nb">into </span><span class="tok-nv">args</span> <span class="tok-nv">more-args</span><span class="tok-p">))))</span>
 
 <span class="tok-p">(</span><span class="tok-k">def </span><span class="tok-nv">add20</span> <span class="tok-p">(</span><span class="tok-nf">my-partial</span> <span class="tok-nb">+ </span><span class="tok-mi">20</span><span class="tok-p">))</span>
-<span class="tok-p">(</span><span class="tok-nf">add20</span> <span class="tok-mi">3</span><span class="tok-p">)</span> 
+<span class="tok-p">(</span><span class="tok-nf">add20</span> <span class="tok-mi">3</span><span class="tok-p">)</span>
 <span class="tok-c1">; =&gt; 23</span>
 </code></pre></div></div>
 
@@ -661,11 +661,11 @@ book: cftbat
   <span class="tok-p">(</span><span class="tok-k">fn </span><span class="tok-p">[</span><span class="tok-o">&amp;</span> <span class="tok-nv">args</span><span class="tok-p">]</span>
     <span class="tok-p">(</span><span class="tok-nb">not </span><span class="tok-p">(</span><span class="tok-nb">apply </span><span class="tok-nv">fun</span> <span class="tok-nv">args</span><span class="tok-p">))))</span>
 
-<span class="tok-p">(</span><span class="tok-k">def </span><span class="tok-nv">my-pos?</span> <span class="tok-p">(</span><span class="tok-nb">complement </span><span class="tok-nv">neg?</span><span class="tok-p">))</span>
-<span class="tok-p">(</span><span class="tok-nf">my-pos?</span> <span class="tok-mi">1</span><span class="tok-p">)</span>  
+<span class="tok-p">(</span><span class="tok-k">def </span><span class="tok-nv">my-pos?</span> <span class="tok-p">(</span><span class="tok-nb">my-complement </span><span class="tok-nv">neg?</span><span class="tok-p">))</span>
+<span class="tok-p">(</span><span class="tok-nf">my-pos?</span> <span class="tok-mi">1</span><span class="tok-p">)</span>
 <span class="tok-c1">; =&gt; true</span>
 
-<span class="tok-p">(</span><span class="tok-nf">my-pos?</span> <span class="tok-mi">-1</span><span class="tok-p">)</span> 
+<span class="tok-p">(</span><span class="tok-nf">my-pos?</span> <span class="tok-mi">-1</span><span class="tok-p">)</span>
 <span class="tok-c1">; =&gt; false</span>
 </code></pre></div></div>
 
@@ -742,9 +742,9 @@ book: cftbat
        <span class="tok-nv">rows</span><span class="tok-p">))</span>
 </code></pre></div></div>
 
-      <p class="Body"><span>In this function, </span><code>map</code><span> transforms each row—vectors like </span><code>["Bella Swan" 0]</code><span>—</span>into a map by using <code>reduce</code> in a manner similar to the first example in “<code><a href="#2_2__reduce">reduce</a></code>” above. First, <code>map</code> creates a seq of key-value pairs like <code>([:name "Bella Swan"] [:glitter-index 0])</code>. Then, <code>reduce</code><em> </em>builds up a map by associating a vamp key with a converted vamp value into <code>row-map</code>. Here’s the first row mapified:</p>
+      <p class="Body"><span>In this function, </span><code>map</code><span> transforms each row—vectors like </span><code>["Bella Swan" 0]</code><span>—</span>into a map by using <code>reduce</code> in a manner similar to the first example in “<code><a href="#reduce">reduce</a></code>” above. First, <code>map</code> creates a seq of key-value pairs like <code>([:name "Bella Swan"] [:glitter-index 0])</code>. Then, <code>reduce</code><em> </em>builds up a map by associating a vamp key with a converted vamp value into <code>row-map</code>. Here’s the first row mapified:</p>
       <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-nb">first </span><span class="tok-p">(</span><span class="tok-nf">mapify</span> <span class="tok-p">(</span><span class="tok-nb">parse </span><span class="tok-p">(</span><span class="tok-nb">slurp </span><span class="tok-nv">filename</span><span class="tok-p">))))</span>
-<span class="tok-c1">; =&gt; {:glitter-index 10, :name "Edward Cullen"}</span>
+<span class="tok-c1">; =&gt; {:name "Edward Cullen", :glitter-index 10}</span>
 </code></pre></div></div>
 
       <p class="Body">Finally, add this <code>glitter-filter</code> function:</p>
@@ -772,6 +772,3 @@ book: cftbat
 	<li class="NumListC">Write a function that will take your list of maps and convert it back to a CSV string. You’ll need to use the <code>clojure.string/join</code> function.</li>
       </ol>
       <p class="Body">Good luck, McFishwich!</p>
-    
-  
-

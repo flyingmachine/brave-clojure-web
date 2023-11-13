@@ -4,9 +4,9 @@ kind: chapter
 book: cftbat
 ---
 
-  
-  
-    
+
+
+
       <div class="chapter-number">Chapter 6</div>
       <h1>Organizing Your Project: A Librarian’s Tale</h1>
       <p class="x1st-Para">Within each of us lives a librarian named Melvil, a fantastical creature who delights in the organizational arts. Day and night, Melvil yearns to bring order to your codebase. Fortunately, Clojure provides a suite of tools designed specifically to aid this homunculus in its constant struggle against the forces of chaos.</p>
@@ -78,7 +78,7 @@ book: cftbat
 <span class="tok-c1">; =&gt; #'user/great-books</span>
 </code></pre></div></div>
 
-      <p class="Body"><span>By evaluating </span><code>(</code><code>ns-map *ns*)</code><span class="Default-Paragraph-Font">,</span><code> </code><span>you can also get the full map that the namespace uses for looking up a var when given a symbol</span><span class="Default-Paragraph-Font">.</span><span> </span><code>(ns-map *ns*) </code>gives you a very large map that I won’t print here, but try it out! </p>
+      <p class="Body">By evaluating <code>(ns-map *ns*)</code>, you can also get the full map that the namespace uses for looking up a var when given a symbol.<code>(ns-map *ns*)</code> gives you a very large map that I won’t print here, but try it out! </p>
       <p class="Body"><code>#'user/great-books</code> is the <em>reader form</em> of a var. I’ll explain more about reader forms in Chapter 7. For now, just know that you can use <code>#'</code> to grab hold of the var corresponding to the symbol that follows; <code>#'user/great-books</code> lets you use the var associated with the symbol <code>great-books</code> within the <code>user</code> namespace. We can <code>deref</code> vars to get the objects they point to:</p>
       <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-nb">deref </span><span class="tok-o">#</span><span class="tok-ss">'user/great-books</span><span class="tok-p">)</span>
 <span class="tok-c1">; =&gt; ["East of Eden" "The Glass Bead Game"]</span>
@@ -109,7 +109,7 @@ book: cftbat
 
       <p class="Body">You can use the returned namespace as an argument in a function call:</p>
       <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-nv">user=&gt;</span> <span class="tok-p">(</span><span class="tok-nb">ns-name </span><span class="tok-p">(</span><span class="tok-nb">create-ns </span><span class="tok-ss">'cheese.taxonomy</span><span class="tok-p">))</span>
-<span class="tok-c1">; =&gt; cheese-taxonomy</span>
+<span class="tok-c1">; =&gt; cheese.taxonomy</span>
 </code></pre></div></div>
 
       <p class="Body">In practice, you’ll probably never use <code>create-ns</code> in your code, because it’s not very useful to create a namespace and not move into it. Using <code>in-ns</code> is more common because it creates the namespace if it doesn’t exist <em>and</em> switches to it, as shown in Listing 6-1.</p>
@@ -120,7 +120,7 @@ book: cftbat
       <ol class="List-1">
 	<li class="Listing">6-1. Using <span class="LiteralCaption">in-ns</span> to create a namespace and switch to it</li>
       </ol>
-      <p class="Body">Notice that your REPL prompt is now <code>cheese.analysis&gt;</code>, indicating that you are indeed in the new namespace you just created. Now when you use <code>def</code>, it will store the named object in the <code>cheese.analysis</code> namespace.</p>
+      <p class="Body">Notice that your REPL prompt is now <code>cheese.analysis=&gt;</code>, indicating that you are indeed in the new namespace you just created. Now when you use <code>def</code>, it will store the named object in the <code>cheese.analysis</code> namespace.</p>
       <p class="Body"><span>But what if you want to use functions and data from other name­spaces? To do that, you can use a </span><em>fully qualified</em><span> symbol. The general form is </span><span class="LiteralItal">namespace</span><code>/</code><span class="LiteralItal">name</span><span>:</span></p>
       <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-nv">cheese.analysis=&gt;</span> <span class="tok-p">(</span><span class="tok-nb">in-ns </span><span class="tok-ss">'cheese.taxonomy</span><span class="tok-p">)</span>
 <span class="tok-nv">cheese.taxonomy=&gt;</span> <span class="tok-p">(</span><span class="tok-k">def </span><span class="tok-nv">cheddars</span> <span class="tok-p">[</span><span class="tok-s">"mild"</span> <span class="tok-s">"medium"</span> <span class="tok-s">"strong"</span> <span class="tok-s">"sharp"</span> <span class="tok-s">"extra sharp"</span><span class="tok-p">])</span>
@@ -173,7 +173,7 @@ book: cftbat
       <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-nv">cheese.analysis=&gt;</span> <span class="tok-p">(</span><span class="tok-nf">clojure.core/refer</span> <span class="tok-ss">'cheese.taxonomy</span> <span class="tok-ss">:only</span> <span class="tok-p">[</span><span class="tok-ss">'bries</span><span class="tok-p">])</span>
 <span class="tok-nv">cheese.analysis=&gt;</span> <span class="tok-nv">bries</span>
 <span class="tok-c1">; =&gt; ["Wisconsin" "Somerset" "Brie de Meaux" "Brie de Melun"]</span>
-<span class="tok-nv">cheese.analysis=&gt;</span> <span class="tok-nv">cheddars</span> 
+<span class="tok-nv">cheese.analysis=&gt;</span> <span class="tok-nv">cheddars</span>
 <span class="tok-c1">; =&gt; RuntimeException: Unable to resolve symbol: cheddars</span>
 </code></pre></div></div>
 
@@ -181,7 +181,7 @@ book: cftbat
       <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-nv">cheese.analysis=&gt;</span> <span class="tok-p">(</span><span class="tok-nf">clojure.core/refer</span> <span class="tok-ss">'cheese.taxonomy</span> <span class="tok-ss">:exclude</span> <span class="tok-p">[</span><span class="tok-ss">'bries</span><span class="tok-p">])</span>
 <span class="tok-nv">cheese.analysis=&gt;</span> <span class="tok-nv">bries</span>
 <span class="tok-c1">; =&gt; RuntimeException: Unable to resolve symbol: bries</span>
-<span class="tok-nv">cheese.analysis=&gt;</span> <span class="tok-nv">cheddars</span> 
+<span class="tok-nv">cheese.analysis=&gt;</span> <span class="tok-nv">cheddars</span>
 <span class="tok-c1">; =&gt; ["mild" "medium" "strong" "sharp" "extra sharp"]</span>
 </code></pre></div></div>
 
@@ -248,7 +248,7 @@ book: cftbat
   <span class="tok-p">(</span><span class="tok-ss">:gen-class</span><span class="tok-p">))</span>
 </code></pre></div></div>
 
-      <p class="Body"><code>ns</code> is the primary way to create and manage namespaces within Clojure. I’ll explain it in full shortly. For now, though, just know that this line is very similar to the <code>in-ns</code> function we used in Listing 6-1. It creates a namespace if it doesn’t exist and then switches to it. I also cover <code>(:gen-class) </code>in more detail in Chapter 12.</p>
+      <p class="Body"><code>ns</code> is the primary way to create and manage namespaces within Clojure. I’ll explain it in full shortly. For now, though, just know that this line is very similar to the <code>in-ns</code> function we used in Listing 6-1. It creates a namespace if it doesn’t exist and then switches to it. I also cover <code>(:gen-class)</code>in more detail in Chapter 12.</p>
       <p class="Body">The name of the namespace is <code>the-divine-cheese-code.core</code>. In Clojure, there’s a one-to-one mapping between a namespace name and the path of the file where the namespace is declared, according to the following conventions:</p>
       <ul class="List-1">
 	<li class="BulletA">When you create a directory with <code>lein</code> (as you did here), the source code’s root is <em>src</em> by default. </li>
@@ -267,7 +267,7 @@ book: cftbat
       <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-kd">ns </span><span class="tok-nv">the-divine-cheese-code.visualization.svg</span><span class="tok-p">)</span>
 
 <span class="tok-p">(</span><span class="tok-kd">defn </span><span class="tok-nv">latlng-&gt;point</span>
-  <span class="tok-s">"Convert lat/lng map to comma-separated string"</span> 
+  <span class="tok-s">"Convert lat/lng map to comma-separated string"</span>
   <span class="tok-p">[</span><span class="tok-nv">latlng</span><span class="tok-p">]</span>
   <span class="tok-p">(</span><span class="tok-nb">str </span><span class="tok-p">(</span><span class="tok-ss">:lat</span> <span class="tok-nv">latlng</span><span class="tok-p">)</span> <span class="tok-s">","</span> <span class="tok-p">(</span><span class="tok-ss">:lng</span> <span class="tok-nv">latlng</span><span class="tok-p">)))</span>
 
@@ -276,7 +276,7 @@ book: cftbat
   <span class="tok-p">(</span><span class="tok-nf">clojure.string/join</span> <span class="tok-s">" "</span> <span class="tok-p">(</span><span class="tok-nb">map </span><span class="tok-nv">latlng-&gt;point</span> <span class="tok-nv">locations</span><span class="tok-p">)))</span>
 </code></pre></div></div>
 
-      <p class="Body">This defines two functions, <code>latlng-&gt;point</code> and <code>points</code>, which you’ll use to convert a seq of latitude/longitude coordinates into a string of points. <span>To use this code from the </span><em>core.clj</em><span> file, you have to </span><code>require</code><span> it. </span><code>require</code><span> </span>takes a symbol designating a namespace and ensures that the namespace exists and <span>is ready to be used; in this case, when you call </span><code>(require 'the-divine-cheese</code><code>-code.visualization.svg)</code>, Clojure reads and evaluates the corresponding file. By evaluating the file, it creates the <code>the-divine-cheese-code.visualization.svg</code> namespace and defines the functions <code>latlng-&gt;point</code> and <code>points</code> within that namespace. Even though the file <em>svg.clj</em> is in your project’s directory, Clojure doesn’t automatically evaluate it when it runs your project; you have to explicitly tell Clojure that you want to use it.</p>
+      <p class="Body">This defines two functions, <code>latlng-&gt;point</code> and <code>points</code>, which you’ll use to convert a seq of latitude/longitude coordinates into a string of points. <span>To use this code from the </span><em>core.clj</em><span> file, you have to </span><code>require</code><span> it. </span><code>require</code><span> </span>takes a symbol designating a namespace and ensures that the namespace exists and <span>is ready to be used; in this case, when you call </span><code>(require 'the-divine-cheese-code.visualization.svg)</code>, Clojure reads and evaluates the corresponding file. By evaluating the file, it creates the <code>the-divine-cheese-code.visualization.svg</code> namespace and defines the functions <code>latlng-&gt;point</code> and <code>points</code> within that namespace. Even though the file <em>svg.clj</em> is in your project’s directory, Clojure doesn’t automatically evaluate it when it runs your project; you have to explicitly tell Clojure that you want to use it.</p>
       <p class="Body">After requiring the namespace, you can <em>refer</em> it so that you don’t have to use fully qualified names to reference the functions. Go ahead and require <code>the-divine-cheese-code.visualization.svg</code><span> and add the </span><code>heists</code><span> seq to make </span><em>core.clj</em> match the listing:</p>
       <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-kd">ns </span><span class="tok-nv">the-divine-cheese-code.core</span><span class="tok-p">)</span>
 <span class="tok-c1">;; Ensure that the SVG code is evaluated</span>
@@ -384,7 +384,7 @@ book: cftbat
 </code></pre></div></div>
 
       <ol class="List-1">
-	<li class="Listing"><span>Aliasing a namespace after you use it lets you refer to symbols that you excluded.</span></li>
+	<li class="Listing"><span>6-3. Aliasing a namespace after you use it lets you refer to symbols that you excluded.</span></li>
       </ol>
       <p class="Body"><span>If you try Listing 6-3 in a REPL and </span><code>latlng-&gt;point</code><span> doesn’t throw an </span>exception, it’s because you referred <code>latlng-&gt;point</code> in Listing 6-2. You’ll need to restart your REPL session for the code to behave as shown in Listing 6-3.</p>
       <p class="Body">The takeaway here is that <code>require</code> and <code>use</code> load files and optionally <code>alias</code> <span>or </span><code>refer</code><span> their namespaces. As you write Clojure programs and read code written by others, you might encounter even more ways of writing </span><code>require</code><span> and </span><code>use</code><span>, at which point it’ll make sense to read Clojure’s API docs (</span><em><a href="http://clojure.org/libs/">http://clojure.org/libs/</a></em><span>) to understand what’s going on. However, what you’ve learned so far about </span><code>require</code><span> and </span><code>use</code><span> should cover 95.3 percent of your needs.</span></p>
@@ -397,7 +397,7 @@ book: cftbat
 </code></pre></div></div>
 
       <p class="Body"><span>If you called this at the beginning of </span><em>divine_cheese_code.core.clj</em><span>, it would break your code, forcing you to use </span><code>clojure.core/println</code><span> </span>within the <code>-main</code> function.</p>
-      <p class="Body">Within <code>ns</code>, the form <code>(:</code><code>refer-clojure)</code> is called a <em>reference</em>. This might look weird to you. Is this reference a function call? A macro? What is it? You’ll learn more about the underlying machinery in Chapter 7. For now, you just <span>need to understand how each reference maps to function calls. For example, </span>the preceding code is equivalent to this:</p>
+      <p class="Body">Within <code>ns</code>, the form <code>(:refer-clojure)</code> is called a <em>reference</em>. This might look weird to you. Is this reference a function call? A macro? What is it? You’ll learn more about the underlying machinery in Chapter 7. For now, you just <span>need to understand how each reference maps to function calls. For example, </span>the preceding code is equivalent to this:</p>
       <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-nb">in-ns </span><span class="tok-ss">'the-divine-cheese-code.core</span><span class="tok-p">)</span>
 <span class="tok-p">(</span><span class="tok-nb">refer </span><span class="tok-ss">'clojure.core</span> <span class="tok-ss">:exclude</span> <span class="tok-p">[</span><span class="tok-ss">'println</span><span class="tok-p">])</span>
 </code></pre></div></div>
@@ -498,9 +498,9 @@ book: cftbat
         <img src="/assets/images/cftbat/organization/svg-before.png" />
         <img src="/assets/images/cftbat/organization/svg-after.png" />
       </div>
-      
+
 	<div class="caption">Figure 6-1: Flipping, translating, and scaling latitude coordinates to make an SVG image.</div>
-      
+
       <p class="Body"><span>Honestly, this is all completely arbitrary and it’s no longer directly related </span>to code organization, but it’s fun and I think you’ll have a good time going through the code! Make your <em>svg.clj</em> file match Listing 6-4:</p>
       <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-kd">ns </span><span class="tok-nv">the-divine-cheese-code.visualization.svg</span>
   <span class="tok-p">(</span><span class="tok-ss">:require</span> <span class="tok-p">[</span><span class="tok-nv">clojure.string</span> <span class="tok-ss">:as</span> <span class="tok-nv">s</span><span class="tok-p">])</span>
@@ -518,7 +518,7 @@ book: cftbat
 </code></pre></div></div>
 
       <ol class="List-1">
-	<li class="Listing">6-3. Constructing map comparison functions</li>
+	<li class="Listing">6-4. Constructing map comparison functions</li>
       </ol>
       <p class="Body">You define the <code>comparator-over-maps</code> function at ➊. This is probably the trickiest bit, so bear with me. <code>comparator-over-maps</code> is a function that returns a function. The returned function compares the values for the keys provided by the <code>ks</code> parameter using the supplied comparison function, <code>comparison-fn</code>.</p>
       <p class="Body">You use <code>comparator-over-maps</code> to construct the <code>min</code> and <code>max</code> functions ➍, which you’ll use to find the top-left and bottom-right corners of our drawing. Here’s <code>min</code> in action:</p>
@@ -531,31 +531,36 @@ book: cftbat
 <span class="tok-c1">; =&gt; {:a 1 :b 2}</span>
 </code></pre></div></div>
 
-      <p class="Body">At , the first argument to <code>zipmap</code> is <code>ks</code>, so the elements of <code>ks</code> will be the keys of the returned map. The second argument is the result of the map call at ➌. That map call actually performs the comparison.</p>
+      <p class="Body">At ➋, the first argument to <code>zipmap</code> is <code>ks</code>, so the elements of <code>ks</code> will be the keys of the returned map. The second argument is the result of the map call at ➌. That map call actually performs the comparison.</p>
       <p class="Body"><span>Finally, at </span>➍<span> you use </span><code>comparator-over-maps</code><span> to create the comparison functions. If you think of the drawing as being inscribed in a rectangle, </span><code>min</code><span> is the corner of the rectangle closest to (0, 0) and </span><code>max</code><span> is the corner farthest from it.</span></p>
       <p class="Body">Here’s the next part of the code:</p>
-      <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"> <span class="tok-p">(</span><span class="tok-kd">defn </span><span class="tok-nv">translate-to-00</span>
+      <div class="listingblock">
+        <div class="content"><pre class="pygments highlight">
+<code data-lang="clojure" class="block">➊<span class="tok-p">(</span><span class="tok-kd">defn </span><span class="tok-nv">translate-to-00</span>
   <span class="tok-p">[</span><span class="tok-nv">locations</span><span class="tok-p">]</span>
   <span class="tok-p">(</span><span class="tok-k">let </span><span class="tok-p">[</span><span class="tok-nv">mincoords</span> <span class="tok-p">(</span><span class="tok-nb">min </span><span class="tok-nv">locations</span><span class="tok-p">)]</span>
     <span class="tok-p">(</span><span class="tok-nb">map </span><span class="tok-o">#</span><span class="tok-p">(</span><span class="tok-nb">merge-with - </span><span class="tok-nv">%</span> <span class="tok-nv">mincoords</span><span class="tok-p">)</span> <span class="tok-nv">locations</span><span class="tok-p">)))</span>
 
- <span class="tok-p">(</span><span class="tok-kd">defn </span><span class="tok-nv">scale</span>
+➋<span class="tok-p">(</span><span class="tok-kd">defn </span><span class="tok-nv">scale</span>
   <span class="tok-p">[</span><span class="tok-nv">width</span> <span class="tok-nv">height</span> <span class="tok-nv">locations</span><span class="tok-p">]</span>
   <span class="tok-p">(</span><span class="tok-k">let </span><span class="tok-p">[</span><span class="tok-nv">maxcoords</span> <span class="tok-p">(</span><span class="tok-nb">max </span><span class="tok-nv">locations</span><span class="tok-p">)</span>
         <span class="tok-nv">ratio</span> <span class="tok-p">{</span><span class="tok-ss">:lat</span> <span class="tok-p">(</span><span class="tok-nb">/ </span><span class="tok-nv">height</span> <span class="tok-p">(</span><span class="tok-ss">:lat</span> <span class="tok-nv">maxcoords</span><span class="tok-p">))</span>
                <span class="tok-ss">:lng</span> <span class="tok-p">(</span><span class="tok-nb">/ </span><span class="tok-nv">width</span> <span class="tok-p">(</span><span class="tok-ss">:lng</span> <span class="tok-nv">maxcoords</span><span class="tok-p">))}]</span>
     <span class="tok-p">(</span><span class="tok-nb">map </span><span class="tok-o">#</span><span class="tok-p">(</span><span class="tok-nb">merge-with * </span><span class="tok-nv">%</span> <span class="tok-nv">ratio</span><span class="tok-p">)</span> <span class="tok-nv">locations</span><span class="tok-p">)))</span>
-</code></pre></div></div>
+          </code>
+        </pre>
+      </div>
+    </div>
 
-      <p class="Body"><code>translate-to-00</code>, defined at , works by finding the <code>min</code> of our locations and subtracting that value from each location. It uses <code>merge-with</code>, which works like this:</p>
+      <p class="Body"><code>translate-to-00</code>, defined at ➊, works by finding the <code>min</code> of our locations and subtracting that value from each location. It uses <code>merge-with</code>, which works like this:</p>
       <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-nb">merge-with - </span><span class="tok-p">{</span><span class="tok-ss">:lat</span> <span class="tok-mi">50</span> <span class="tok-ss">:lng</span> <span class="tok-mi">10</span><span class="tok-p">}</span> <span class="tok-p">{</span><span class="tok-ss">:lat</span> <span class="tok-mi">5</span> <span class="tok-ss">:lng</span> <span class="tok-mi">5</span><span class="tok-p">})</span>
 <span class="tok-c1">; =&gt; {:lat 45 :lng 5}</span>
 </code></pre></div></div>
 
-      <p class="Body">Then we define the function <code>scale</code> at , which multiplies each point by the ratio between the maximum latitude and longitude and the desired height and width.</p>
+      <p class="Body">Then we define the function <code>scale</code> at ➋, which multiplies each point by the ratio between the maximum latitude and longitude and the desired height and width.</p>
       <p class="Body">Here’s the rest of the code for <em>svg.clj</em>:</p>
       <div class="listingblock"><div class="content"><pre class="pygments highlight"><code data-lang="clojure" class="block"><span class="tok-p">(</span><span class="tok-kd">defn </span><span class="tok-nv">latlng-&gt;point</span>
-  <span class="tok-s">"Convert lat/lng map to comma-separated string"</span> 
+  <span class="tok-s">"Convert lat/lng map to comma-separated string"</span>
   <span class="tok-p">[</span><span class="tok-nv">latlng</span><span class="tok-p">]</span>
   <span class="tok-p">(</span><span class="tok-nb">str </span><span class="tok-p">(</span><span class="tok-ss">:lat</span> <span class="tok-nv">latlng</span><span class="tok-p">)</span> <span class="tok-s">","</span> <span class="tok-p">(</span><span class="tok-ss">:lng</span> <span class="tok-nv">latlng</span><span class="tok-p">)))</span>
 
@@ -642,9 +647,9 @@ book: cftbat
 
       <p class="Body">Nothing too complicated is going on here. Within <code>-main</code> you build up the drawing using the <code>xml</code> and <code>template</code> functions, write the drawing to a file with <code>spit</code>, and then open it with <code>browse/browse-url</code>. You should try that now! Run <code>lein run </code>and you’ll see something that looks like Figure 6-2.</p>
       <p><style>polyline { fill:none; stroke:#5881d8; stroke-width:3}</style><svg height="100" width="50"><g transform="translate(0,100)"><g transform="scale(1,-1)"><polyline points="11.299435028248586,100.0 22.457627118644073,60.441988950276205 0.0,15.469613259668485 22.457627118644073,60.441988950276205 50.0,0.0"></polyline></g></g></svg></p>
-      
+
 	<div class="caption">Figure 6-2: The final SVG of the heist pattern!</div>
-      
+
       <p class="Body">Wait a minute . . . that looks a lot like . . . that looks a lot like a lambda. Clojure’s logo is a lambda . . . oh my god! Clojure, it was you this whole time!</p>
       <h2>Summary</h2>
       <p class="BodyFirst">You learned a lot in this chapter. At this point, you should have all the tools you need to start organizing your projects. You now know that namespaces organize maps between symbols and vars,<em> </em>and that vars are references to Clojure objects (data structures, functions, and so on). <code>def</code> stores an object and updates the current namespace with a map between a symbol and a var that points to the object. You can create private functions with <code>defn-</code>.</p>
@@ -653,6 +658,3 @@ book: cftbat
       <p class="Body"><code>require</code> and <code>use</code> ensure that a namespace exists and is ready to be used, and optionally let you <code>refer</code> and <code>alias</code> the corresponding namespaces. You <span>should use </span><code>ns</code><span> to call </span><code>require</code><span> and </span><code>use</code><span> in your source files. </span><em><a href="https://gist.github.com/ghoseb/287710/">https://gist.github.com/ghoseb/287710/</a></em> is a great reference for all the vagaries of using <code>ns</code>.</p>
       <p class="Body">Lastly and most importantly, it ain’t easy being cheesy.</p>
       <img src="/assets/images/cftbat/organization/cheese.png" class="figure" />
-    
-  
-
